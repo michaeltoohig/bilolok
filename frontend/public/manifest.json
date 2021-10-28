@@ -1,0 +1,51 @@
+{
+  "name": "Bilolok",
+  "short_name": "Bilolok",
+  "description": "An app of Port Vila's kava bars.",
+  "theme_color": "#d29100",
+  "background_color": "#006213",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "en",
+  "orientation": "portrait",
+  "categories": ["travel", "social", "lifestyle"],
+  "icons": [
+    {
+      "src": "/img/AppImages/android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/AppImages/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open About",
+      "short_name": "About",
+      "description": "View the about page",
+      "url": "/about",
+      "icons": [
+        {
+          "src": "/img/notification.jpg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots" : [
+    {
+      "src": "/img/screenshots/1.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/img/screenshots/2.jpeg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    }
+  ]
+}

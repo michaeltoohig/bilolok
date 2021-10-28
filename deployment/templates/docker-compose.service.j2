@@ -1,0 +1,14 @@
+[Unit]
+Description=Start Bilolok docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory={{ repo_directory }}
+ExecStart=/usr/local/bin/docker-compose -f docker-compose.prod.yml up -d --remove-orphans
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target

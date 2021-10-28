@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = "Backend API for Bilolok.com"
+authors = ["Michael Toohig <michael.toohig@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.68.0"
+uvicorn = "^0.15.0"
+fastapi-users = {extras = ["sqlalchemy"], version = "^6.1.2"}
+alembic = "^1.6.5"
+tenacity = "^8.0.1"
+arq = "^0.22"
+asyncpg = "^0.24.0"
+psycopg2-binary = "^2.9.1"
+redis = "^3.5.3"
+fastapi-mail = "^0.4.1"
+gunicorn = "^20.1.0"
+fastapi-crudrouter = "^0.8.4"
+libthumbor = "^2.0.1"
+identicon = "^1.0"
+SQLAlchemy-Utc = "^0.14.0"
+
+[tool.poetry.dev-dependencies]
+aiosqlite = "^0.17.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

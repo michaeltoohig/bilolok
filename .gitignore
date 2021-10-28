@@ -1,0 +1,17 @@
+.env
+
+# backend
+__pycache__
+app.egg-info
+.coverage
+.python-version
+.vscode
+.mypy_cache
+_local_images/
+.venv/
+
+# frontend
+node_modules/
+
+# deployment
+.vault_pass

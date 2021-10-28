@@ -1,0 +1,23 @@
+env_name: production
+admin_email: "{{ vault_admin_email }}"
+repo_name: "{{ vault_repo_name }}"
+
+domain: bilolok.com
+domain_api: api.bilolok.com
+domain_upload: upload.bilolok.com
+domain_image: image.bilolok.com
+
+docker_service_name: docker-compose@bilolok.service
+
+root_directory: /var/www/bilolok.com
+repo_directory: "{{ root_directory }}/app"
+
+be_api_service_name: api.bilolok.service
+be_api_service_port: 5000
+be_remote_directory: "{{ repo_directory }}/backend/app"
+
+fe_local_directory: ../frontend
+fe_remote_directory: "{{ root_directory }}/www"
+
+upload_service_port: 8070
+image_service_port: 8888

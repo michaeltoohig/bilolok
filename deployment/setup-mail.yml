@@ -1,0 +1,129 @@
+# https://www.linode.com/docs/guides/configure-spf-and-dkim-in-postfix-on-debian-9/
+# This was probably the best tutorial and I took most parts from it except the datetime format of the DNS key.
+# It also has two additional steps for DMARC and SPF that should be added to the DNS.
+
+---
+- name: Install Postfix
+  connection: ssh
+  gather_facts: true
+  hosts: all
+  become: yes
+  roles:
+    - role: postfix
+      postfix_install:
+        - postfix
+        - mailutils
+      postfix_hostname: "{{ domain }}"
+      postfix_mailname: "{{ domain }}"
+      postfix_inet_interfaces: loopback-only
+      postfix_mydestination:
+        - $myhostname
+        - localhost.$mydomain
+        - $mydomain
+      postfix_smtpd_tls_cert_file: /etc/letsencrypt/live/{{ domain }}/fullchain.pem
+      postfix_smtpd_tls_key_file: /etc/letsencrypt/live/{{ domain }}/privkey.pem
+      postfix_aliases:
+        - user: root
+          alias: "{{ admin_email }}"
+      postfix_raw_options:
+        - |
+          # postfix extras
+          smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+          masquerade_domains = {{ domain }}
+          # TLS extras
+          smtpd_tls_security_level=may
+          smtp_tls_CApath=/etc/ssl/certs
+          # for opendkim
+          milter_protocol = 6
+          milter_default_action = accept
+          smtpd_milters = local:opendkim/opendkim.sock
+          non_smtpd_milters = local:opendkim/opendkim.sock
+- name: Setup DKIM
+  connection: ssh
+  gather_facts: true
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Packages
+      apt:
+        pkg:
+        - opendkim
+        - opendkim-tools
+        state: present
+
+    - name: Make opendkim directory
+      file:
+        path: /etc/opendkim
+        state: directory
+
+    - name: Copy opendkim.conf
+      copy:
+        src: ./templates/opendkim/opendkim.conf
+        dest: /etc/opendkim.conf
+
+    - name: Connect the milter to Postfix
+      lineinfile:
+        path: /etc/default/opendkim
+        # line: SOCKET="inet:12301@localhost"
+        line: SOCKET="local:/var/spool/postfix/opendkim/opendkim.sock"
+        create: yes
+
+    - name: Create TrustedHosts
+      template:
+        src: ./templates/opendkim/TrustedHosts.j2
+        dest: /etc/opendkim/TrustedHosts
+        owner: opendkim
+        group: opendkim
+        mode: 0600
+    
+    - name: Create KeyTable
+      template:
+        src: ./templates/opendkim/KeyTable.j2
+        dest: /etc/opendkim/KeyTable
+        owner: opendkim
+        group: opendkim
+        mode: 0600
+
+    - name: Create SigningTable
+      template:
+        src: ./templates/opendkim/SigningTable.j2
+        dest: /etc/opendkim/SigningTable
+        owner: opendkim
+        group: opendkim
+        mode: 0600
+
+    - name: Create directory for keys
+      file:
+        path: "/etc/opendkim/keys/{{ domain }}"
+        state: directory
+        mode: 0750
+
+    - name: Check if keys exist
+      stat: 
+        path: "/etc/opendkim/keys/{{ domain }}/mail.private"
+      register: opendkim_keys
+
+    - name: Generate keys
+      command: "opendkim-genkey -b 4096 -s mail -d {{ domain }}"  
+      args:
+        chdir: "/etc/opendkim/keys/{{ domain }}"
+      when: opendkim_keys.stat.exists == false
+
+    - name: Change key owner
+      file:
+        path: "/etc/opendkim/keys/{{ domain }}/mail.private"
+        owner: opendkim
+        group: opendkim
+  
+    - name: extract DKIM public key DNS record
+      slurp:
+        src: "/etc/opendkim/keys/{{ domain }}/mail.txt"
+      register: dkim_dns_record
+
+    - name: display DKIM public key DNS record
+      debug:
+        msg: |
+          ################################################################################################
+          DNS record to add for zone {{ domain }}:
+          {{ dkim_dns_record.content | string | b64decode }}
+          ################################################################################################

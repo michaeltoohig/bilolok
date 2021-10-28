@@ -1,0 +1,9 @@
+---
+- name: save path to poetry virtualenv
+  shell: "{{ poetry_cmd_path }} run {{ poetry_cmd_path }} env info -p"
+  args:
+    chdir: "{{ be_remote_directory }}"
+  register: command_output
+
+- set_fact:
+    poetry_env_path: "{{ command_output.stdout_lines[-1] }}"

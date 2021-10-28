@@ -1,0 +1,19 @@
+[Unit]
+Description=Start Bilolok API Service
+After=network.target
+
+[Service]
+Environment=HOST=127.0.0.1 PORT={{ be_api_service_port }}
+User=root
+Group=www-data
+WorkingDirectory={{ be_remote_directory }}
+Environment="PATH={{ poetry_env_path }}"
+EnvironmentFile={{ repo_directory }}/.env
+# Run the `prestart.sh` scripts manually here
+ExecStartPre={{ poetry_env_path }}/bin/python {{ be_remote_directory }}/app/backend_pre_start.py
+ExecStartPre={{ poetry_env_path }}/bin/alembic upgrade head
+ExecStartPre={{ poetry_env_path }}/bin/python {{ be_remote_directory }}/app/initial_data.py
+ExecStart={{ poetry_env_path }}/bin/gunicorn -k uvicorn.workers.UvicornWorker -c {{ be_remote_directory }}/gunicorn_conf.py app.main:app
+
+[Install]
+WantedBy=multi-user.target

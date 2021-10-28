@@ -1,0 +1,4 @@
+---
+- name: save poetry command location
+  set_fact:
+    poetry_cmd_path: "{{ ansible_env.HOME }}/.poetry/bin/poetry"
