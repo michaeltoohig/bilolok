@@ -26,34 +26,24 @@
                   <h2>No Images Yet</h2>
                 </v-col>
               </v-row>
-              <v-row v-else>
-                <v-col
-                  v-for="(image, i) in images"
-                  :key="i"
-                  class="d-flex child-flex"
-                  cols="4"
-                >
-                  <v-img
-                    :src="image.src"
-                    :lazy-src="image.thumbnail"
-                    aspect-ratio="1"
-                    class="grey lighten-2"
+              <Photoswipe v-else>
+                <v-row>
+                  <v-col
+                    v-for="(image, i) in images"
+                    :key="i"
+                    class="d-flex child-flex"
+                    cols="4"
                   >
-                    <template v-slot:placeholder>
-                      <v-row
-                        class="fill-height ma-0"
-                        align="center"
-                        justify="center"
-                      >
-                        <v-progress-circular
-                          indeterminate
-                          color="grey lighten-5"
-                        ></v-progress-circular>
-                      </v-row>
-                    </template>
-                  </v-img>
-                </v-col>
-              </v-row>
+                    <img
+                      v-pswp="image"
+                      :src="image.thumbnail"
+                      :lazy-src="image.msrc"
+                      aspect-ratio="1"
+                      class="image grey lighten-2"
+                    />
+                  </v-col>
+                </v-row>
+              </Photoswipe>
             </v-container>
           </v-tab-item>
         </v-tabs-items>

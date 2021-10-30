@@ -19,12 +19,13 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         ffp.parent.mkdir(parents=True, exist_ok=True)
         sfp.replace(str(ffp))  # removes original and assumes both are on same filesystem
 
-    def make_src(self, image: Image, width: int = None, height: int = None) -> str:
+    def make_src(self, image: Image, width: int, height: int, **kwargs) -> str:
         uri = img_crypto_url.generate(
             width=width,
             height=height,
             smart=True,
             image_url=str(Image.build_filepath(image.nakamal_id, image.file_id, image.filename)),
+            **kwargs,
         )
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
 

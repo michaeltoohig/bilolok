@@ -31,6 +31,7 @@ class ImageDB(ImageBase):
     user_id: UUID4
     nakamal_id: UUID4
     src: str
+    msrc: str
     thumbnail: str
 
     class Config:

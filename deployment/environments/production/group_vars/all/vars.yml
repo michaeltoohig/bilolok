@@ -1,6 +1,6 @@
 env_name: production
 admin_email: "{{ vault_admin_email }}"
-repo_name: "{{ vault_repo_name }}"
+repo_name: michaeltoohig/bilolok
 
 domain: bilolok.com
 domain_api: api.bilolok.com
