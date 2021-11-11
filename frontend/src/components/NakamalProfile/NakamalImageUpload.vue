@@ -51,6 +51,7 @@ export default {
         },
       }).use(Tus, {
         endpoint: `${uploadDomain}/files/`,
+        chunkSize: 2_000_000,
         headers: {
           authorization: `Bearer ${this.token}`,
         },
