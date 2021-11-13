@@ -2,7 +2,7 @@
 
 import Vue from 'vue';
 
-import nakamalsApi from '@/api/nakamals.js';
+import nakamalsApi from '@/api/nakamals';
 
 import {
   latLng,
@@ -17,7 +17,7 @@ const initialState = () => ({
 const state = initialState();
 
 const getters = {
-  // // Return a single article with the given id.
+  // // Return a single nakamal with the given id.
   // find: (state, _, __, rootGetters) => id => {
   //   // Swap ID referenes with the resolved author objects.
   //   return resolveRelations(state.byId[id], [], rootGetters);
@@ -25,7 +25,7 @@ const getters = {
   find: (state) => id => {
     return state.byId[id]; 
   },
-  // Return a list of articles in the order of `allIds`.
+  // Return a list of nakamals in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
   },
@@ -44,7 +44,7 @@ const getters = {
 
 const actions = {
   load: async ({ commit }) => {
-    let response = await nakamalsApi.getAll({});
+    const response = await nakamalsApi.getAll({});
     const nakamals = response.data
     nakamals.forEach((item) => {
       commit('add', item);
@@ -86,6 +86,8 @@ const actions = {
   },
   select: async ({ commit }, id) => {
     commit('select', id);
+    // dispatch image action to load image of nakamal
+    // disptach('')
   },
   unselect: async ({ commit }) => {
     commit('unselect');

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List, Dict, Optional
 from pathlib import Path
 
 from fastapi_crudrouter.core.databases import pydantify_record
@@ -9,7 +9,7 @@ from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.db.session import database
 from app.models.image import Image, ImageTable
-from app.schemas.image import ImageCreate, ImageUpdate
+from app.schemas.image import ImageCreate, ImageDB, ImageUpdate
 
 
 class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):    
@@ -29,11 +29,39 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         )
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
 
+    def make_one_src(self, image: ImageDB) -> Dict[Any, Any]:
+        image.src = self.make_src(image, height=1080, width=1920, full_fit_in=True)
+        image.msrc = self.make_src(image, height=32, width=32, full_fit_in=True)
+        image.thumbnail = self.make_src(image, height=200, width=200)
+        return image
+
+    def make_all_src(self, images: List[ImageDB]) -> List[Dict[Any, Any]]:
+        for image in images:
+            image = self.make_one_src(image)
+        return images
+
+    async def get(self, id: str) -> Optional[ImageDB]:
+        record = await database.fetch_one(self.model.select().where(self.model.c.id == id))
+        if record:
+            image = pydantify_record(record)
+            image = self.make_one_src(image)
+            return image
+        return None
+
+    async def get_multi(
+        self, *, skip: int = 0, limit: int = 100
+    ) -> List[Image]:
+        data = pydantify_record(await database.fetch_all(self.model.select().offset(skip).limit(limit)))
+        images = self.make_all_src(data)
+        return images
+
     async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[Image]:
-        return pydantify_record(await database.fetch_all(self.model.select() \
+        data = pydantify_record(await database.fetch_all(self.model.select() \
             .where(self.model.c.nakamal_id == nakamal_id) \
             .order_by(desc(self.model.c.created_at)) \
             .offset(skip).limit(limit)))
+        images = self.make_all_src(data)
+        return images
 
 
 image = CRUDImage(ImageTable)

@@ -38,8 +38,4 @@ async def get_all_images(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
     nakamal = NakamalDB(**record)
     images = await crud.image.get_multi_by_nakamal(nakamal.id)
-    for image in images:
-        image.src = crud.image.make_src(image, height=1080, width=1920, full_fit_in=True)
-        image.msrc = crud.image.make_src(image, height=32, width=32, full_fit_in=True)
-        image.thumbnail = crud.image.make_src(image, height=200, width=200)
     return images

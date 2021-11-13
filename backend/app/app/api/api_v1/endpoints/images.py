@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Optional
 
 import jwt
 from fastapi import Depends
@@ -23,11 +23,30 @@ router = DatabasesCRUDRouter(
     create_schema=ImageCreate,
     table=ImageTable,
     database=database,
+    get_one_route=False,
+    get_all_route=False,
     delete_all_route=False,
     update_route=False,
     create_route=False,
     delete_one_route=[Depends(current_superuser)],
 )
+
+
+@router.get("", response_model=List[ImageDB])
+async def get_all(
+    skip: Optional[int] = 0,
+    limit: Optional[int] = 100,
+) -> Any:
+    images = await crud.image.get_multi(skip=skip, limit=limit)
+    return images
+
+
+@router.get("/{item_id}", response_model=ImageDB)
+async def get_one(
+    item_id: str
+) -> Any:
+    image = await crud.image.get(item_id)
+    return image
 
 
 @router.post("/tus-hook", include_in_schema=False,)
