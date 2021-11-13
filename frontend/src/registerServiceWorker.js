@@ -10,9 +10,10 @@ if (process.env.NODE_ENV === 'production') {
         + 'For more details, visit https://goo.gl/AFskqB',
       );
 
-      Notification.requestPermission((status) => {
-        console.log('Status: ', status);
-      });
+      // TODO re-add this later once we actually have something to push to the user
+      // Notification.requestPermission((status) => {
+      //   console.log('Status: ', status);
+      // });
     },
     registered() {
       console.log('Service worker has been registered.');

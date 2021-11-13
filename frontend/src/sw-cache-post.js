@@ -1,3 +1,5 @@
+// This is an example of delayed POST request handling for handling network loss. Will look further into it.
+
 importScripts('your/path/to/dexie/dist/dexie.min.js');
  
 // Listen to fetch requests

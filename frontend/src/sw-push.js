@@ -1,3 +1,5 @@
+// This is an example I found for push notifications that I will look further into later 
+
 (() => {
   'use strict'
 
