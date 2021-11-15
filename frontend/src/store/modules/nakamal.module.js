@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 
+import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import nakamalsApi from '@/api/nakamals';
 
 import {
@@ -17,13 +18,10 @@ const initialState = () => ({
 const state = initialState();
 
 const getters = {
-  // // Return a single nakamal with the given id.
-  // find: (state, _, __, rootGetters) => id => {
-  //   // Swap ID referenes with the resolved author objects.
-  //   return resolveRelations(state.byId[id], [], rootGetters);
-  // },
-  find: (state) => id => {
-    return state.byId[id]; 
+  // Return a single nakamal with the given id.
+  find: (state, _, __, rootGetters) => id => {
+    // Swap ID referenes with the resolved image objects.
+    return resolveRelations(state.byId[id], ['image'], rootGetters);
   },
   // Return a list of nakamals in the order of `allIds`.
   list: (state, getters) => {
@@ -47,14 +45,13 @@ const actions = {
     const response = await nakamalsApi.getAll({});
     const nakamals = response.data
     nakamals.forEach((item) => {
-      commit('add', item);
-      // // Normalize nested data and swap the author object
-      // // in the API response with an ID reference.
-      // commit('add', normalizeRelations(item, ['author']));
-      // // Add or update the author.
-      // commit('author/add', item.author, {
-      //   root: true,
-      // });
+      // Normalize nested data and swap the image object
+      // in the API response with an ID reference.
+      commit('add', normalizeRelations(item, ['image']));
+      // Add or update the image.
+      commit('image/add', item.image, {
+        root: true,
+      });
     });
   },
   loadOne: async ({ commit, dispatch }, id) => {

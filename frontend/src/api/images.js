@@ -5,7 +5,11 @@ const resource = 'images';
 
 export default {
   async getRecent() {
-    return http.get(`${resource}`);
+    return http.get(`${resource}`, {
+      params: {
+        limit: 3,
+      },
+    });
   },
 
   async remove(token, id) {

@@ -1,5 +1,6 @@
 import uuid
 from typing import Optional
+from app.schemas.image import ImageDB
 from pydantic import BaseModel, UUID4, validator
 
 
@@ -29,6 +30,7 @@ class NakamalCreate(NakamalBase):
 
 class NakamalDB(NakamalBase):
     id: UUID4
+    image: Optional[ImageDB] = None
 
     class Config:
         orm_mode = True

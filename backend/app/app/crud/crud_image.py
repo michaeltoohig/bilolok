@@ -63,5 +63,12 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         images = self.make_all_src(data)
         return images
 
+    async def get_one_by_nakamal(self, nakamal_id: str) -> Image:
+        record = await database.fetch_one(self.model.select().where(self.model.c.nakamal_id == nakamal_id))
+        if record:
+            data = pydantify_record(record)
+            return self.make_one_src(data)
+        return None
+
 
 image = CRUDImage(ImageTable)

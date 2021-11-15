@@ -3,37 +3,47 @@
     <h2>Recently Uploaded Images</h2>
     <v-row>
       <v-col cols="12">
-        <div v-for="image in images" :key="image.id">
-          <CardRecentImage :image="image" />
-        </div>
+        <v-carousel
+          hide-delimiters
+        >
+          <v-carousel-item
+            :to="{ name: 'Nakamal', params: { id: image.nakamal_id } }"
+            v-for="(image,i) in images"
+            :key="i"
+            :src="image.src"
+            :lazy-src="image.msrc"
+          >
+          </v-carousel-item>
+        </v-carousel>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import imagesApi from '@/api/images';
-import CardRecentImage from '@/components/home/CardRecentImage.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'SectionRecentImages',
   components: {
-    CardRecentImage,
   },
   data() {
     return {
-      loading: true,
-      images: [],
     };
   },
-  methods: {
-    async getRecentImages() {
-      const response = await imagesApi.getRecent();
-      this.images = response.data;
-    },
+  computed: {
+    ...mapGetters({
+      images: 'image/recent',
+    }),
   },
-  async mounted() {
-    await this.getRecentImages();
+  methods: {
+    // async getRecentImages() {
+    //   const response = await imagesApi.getRecent();
+    //   this.images = response.data;
+    // },
+  },
+  beforeMount() {
+    this.$store.dispatch('image/getRecent');
   },
 };
 </script>

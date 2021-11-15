@@ -1,4 +1,5 @@
 from typing import Any, List, Optional
+from app.api.api_v1.endpoints.images import get_one
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
@@ -20,14 +21,28 @@ router = DatabasesCRUDRouter(
     update_schema=NakamalUpdate,
     table=NakamalTable,
     database=database,
-    # Disable delete_all endpoint
+    get_one_route=False,
+    get_all_route=False,
     delete_all_route=False,
-    # Dependencies for endpoints
     create_route=[Depends(current_active_verified_user)],
     update_route=[Depends(current_active_verified_user)],
     delete_one_route=[Depends(current_superuser)],
 )
 
+
+@router.get("", response_model=List[NakamalDB])
+async def get_all() -> Any:
+    records = await crud.nakamal.get_multi()
+    return records
+
+
+@router.get("/{item_id}", response_model=NakamalDB)
+async def get_one(item_id: str) -> Any:
+    record = await crud.nakamal.get(item_id)
+    if not record:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
+    return record
+    
 
 @router.get("/{item_id}/images", response_model=List[ImageDB])
 async def get_all_images(
@@ -36,6 +51,5 @@ async def get_all_images(
     record = await crud.nakamal.get(item_id)
     if not record:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
-    nakamal = NakamalDB(**record)
-    images = await crud.image.get_multi_by_nakamal(nakamal.id)
+    images = await crud.image.get_multi_by_nakamal(record.id)
     return images

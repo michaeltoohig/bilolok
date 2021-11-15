@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import authModule from './modules/auth.module';
+import imageModule from './modules/image.module';
 import mapModule from './modules/map.module';
 import nakamalModule from './modules/nakamal.module';
 import notifyModule from './modules/notify.module';
@@ -15,6 +16,7 @@ export default new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
     auth: authModule,
+    image: imageModule,
     map: mapModule,
     nakamal: nakamalModule,
     notify: notifyModule,
