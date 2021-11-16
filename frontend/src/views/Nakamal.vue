@@ -67,7 +67,7 @@
     </v-fab-transition>
 
     <NakamalImageUpload
-      v-if="nakamal"
+      v-if="!loading"
       :nakamal="nakamal"
       :open="openUploadDialog"
       @close-modal="() => this.openUploadDialog = false"
@@ -78,7 +78,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
-import nakamalsApi from '@/api/nakamals';
 
 export default {
   name: 'Nakamal',
@@ -89,21 +88,25 @@ export default {
     return {
       tab: 'images',
       openUploadDialog: false,
-      images: [],
     };
   },
   computed: {
     ...mapGetters({
       hasAdminAccess: 'auth/hasAdminAccess',
       nakamal: 'nakamal/selected',
+      getImages: 'image/nakamal',
     }),
+    images() {
+      if (!this.nakamal) return [];
+      return this.getImages(this.nakamal.id);
+    },
     loading() {
       return !this.nakamal;
     },
     activeFab() {
       switch (this.tab) {
         case 'timeline': return { color: 'success', icon: 'mdi-share-variant', action: () => {} };
-        case 'images': return { color: 'red', icon: 'mdi-pencil', action: () => { this.openUploadDialog = !this.openUploadDialog; } };
+        case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => { this.openUploadDialog = !this.openUploadDialog; } };
         default: return {};
       }
     },
@@ -115,16 +118,10 @@ export default {
           this.$router.push({ name: 'Home' });
         });
     },
-    fetchImages(id) {
-      nakamalsApi.get_images(id)
-        .then((response) => {
-          this.images = response.data;
-        });
-    },
   },
   async mounted() {
     const { id } = this.$route.params;
-    this.fetchImages(id);
+    this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {
         if (!this.nakamal) {

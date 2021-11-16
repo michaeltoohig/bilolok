@@ -60,6 +60,12 @@
           @popupclose="popupClosed"
         >
           <h3 class="mb-2 font-weight-bold">{{ selectedNakamal.name }}</h3>
+          <v-img
+            v-if="selectedNakamal.image"
+            contain
+            height="100"
+            :src="selectedNakamal.image.thumbnail"
+          ></v-img>
           <ul class="mb-2 font-weight-light">
             <li>Owner: {{ selectedNakamal.owner || '-' }}</li>
             <li>Number: {{ selectedNakamal.phone || '-' }}</li>
@@ -69,9 +75,9 @@
             block
             outlined
             color="primary"
-            @click="setShowDetails(true)"
+            :to="{ name: 'Nakamal', params: { id: selectedNakamal.id } }"
           >
-            Details
+            View Page
           </v-btn>
         </l-popup>
       </l-layer-group>

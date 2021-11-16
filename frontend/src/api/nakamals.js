@@ -24,7 +24,7 @@ export default {
     return http.delete(`${resource}/${id}`, authHeaders(token));
   },
 
-  async get_images(id, skip = 0, limit = 100) {
+  async getImages(id, skip = 0, limit = 100) {
     return http.get(`${resource}/${id}/images`, {
       params: {
         skip,

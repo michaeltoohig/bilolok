@@ -17,7 +17,6 @@
           :items="nakamals"
           :filter="customFilter"
           outlined
-          color="white"
           item-value="id"
           item-text="name"
           label="Kava Bars"
@@ -27,7 +26,7 @@
           <template v-slot:item="data">
             <template>
               <v-list-item-avatar>
-                <img :src="data.item.images.small">
+                <img v-if="data.item.image" :src="data.item.image.thumbnail">
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.name"></v-list-item-title>
@@ -68,10 +67,10 @@ export default {
       'setShowSearch',
     ]),
     customFilter(item, queryText) {
-      const title = item.title.toLowerCase();
+      const name = item.name.toLowerCase();
       const owner = item.owner.toLowerCase();
       const searchText = queryText.toLowerCase();
-      return title.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
+      return name.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
     },
     searchSelect(id) {
       this.$store.dispatch('nakamal/select', id)

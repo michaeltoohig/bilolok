@@ -3,9 +3,11 @@
 import Vue from 'vue';
 
 import imagesApi from '@/api/images';
+import nakamalsApi from '@/api/nakamals';
 
 const initialState = () => ({
   byId: {},
+  byNakamalId: {},
   allIds: [],
   recentIds: [],
 });
@@ -25,6 +27,11 @@ const getters = {
   recent: (state, getters) => {
     return state.recentIds.map(id => getters.find(id));
   },
+  // Return a list of images of a nakamal.
+  nakamal: (state, getters) => nakamalId => {
+    if (!state.byNakamalId[nakamalId]) return [];
+    return state.byNakamalId[nakamalId].map(id => getters.find(id));
+  },
 };
 
 const actions = {
@@ -35,6 +42,13 @@ const actions = {
       commit('add', item);
     });
     commit('setRecentIds', images.map(i => i.id));
+  },
+  getNakamal: async ({ commit }, nakamalId) => {
+    const response = await nakamalsApi.getImages(nakamalId);
+    const images = response.data;
+    images.forEach((item) => {
+      commit('add', item);
+    });
   },
 };
 
@@ -47,8 +61,16 @@ const mutations = {
   },
   add: (state, item) => {
     Vue.set(state.byId, item.id, item);
-    if (state.allIds.includes(item.id)) return;
-    state.allIds.push(item.id);
+    if (!state.allIds.includes(item.id)) {
+      state.allIds.push(item.id);
+    }
+    if (!state.byNakamalId[item.nakamal_id]) {
+      Vue.set(state.byNakamalId, item.nakamal_id, []);
+      state.byNakamalId[item.nakamal_id].push(item.id);
+    }
+    else if (!state.byNakamalId[item.nakamal_id].includes(item.id)) {
+      state.byNakamalId[item.nakamal_id].push(item.id);
+    }
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

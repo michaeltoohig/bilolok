@@ -35,9 +35,22 @@ const getters = {
       name: '',
       owner: '',
       phone: '',
+      image: null,
     };
     return getters.find(state.selectedId);
   },
+};
+
+function commitAddNakamal(nakamal, commit) {
+  // Normalize nested data and swap the image object
+  // in the API response with an ID reference.
+  commit('add', normalizeRelations(nakamal, ['image']));
+  // Add or update the image.
+  if (nakamal.image) {
+    commit('image/add', nakamal.image, {
+      root: true,
+    });
+  }
 };
 
 const actions = {
@@ -45,20 +58,14 @@ const actions = {
     const response = await nakamalsApi.getAll({});
     const nakamals = response.data
     nakamals.forEach((item) => {
-      // Normalize nested data and swap the image object
-      // in the API response with an ID reference.
-      commit('add', normalizeRelations(item, ['image']));
-      // Add or update the image.
-      commit('image/add', item.image, {
-        root: true,
-      });
+      commitAddNakamal(item, commit);
     });
   },
   loadOne: async ({ commit, dispatch }, id) => {
     try {
       let response = await nakamalsApi.get(id);
       const nakamal = response.data;
-      commit('add', nakamal);
+      commitAddNakamal(nakamal, commit);
       dispatch('load');  // Load all others in background
     }
     catch (error) {
@@ -70,7 +77,7 @@ const actions = {
       let token = rootState.auth.token;
       let response = await nakamalsApi.create(token, payload);
       const nakamal = response.data;
-      commit('add', nakamal);
+      commitAddNakamal(nakamal, commit);
       dispatch('notify/add', {
         title: 'Kava Bar Added',
         text: 'Thank you for sharing!',

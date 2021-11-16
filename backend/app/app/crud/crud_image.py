@@ -51,7 +51,12 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
     async def get_multi(
         self, *, skip: int = 0, limit: int = 100
     ) -> List[Image]:
-        data = pydantify_record(await database.fetch_all(self.model.select().offset(skip).limit(limit)))
+        data = pydantify_record(await database.fetch_all(
+            self.model.select()
+            .order_by(desc(self.model.c.created_at))
+            .offset(skip)
+            .limit(limit)
+        ))
         images = self.make_all_src(data)
         return images
 
