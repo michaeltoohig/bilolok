@@ -11,6 +11,7 @@
       v-model="password"
       label="Password"
       type="password"
+      @keydown.enter="submit"
     ></v-text-field>
 
     <v-btn @click="submit">Submit</v-btn>
