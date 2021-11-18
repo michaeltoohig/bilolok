@@ -1,37 +1,33 @@
 import uuid
 from typing import Optional
 from pydantic import BaseModel, UUID4, validator
-from pydantic.networks import HttpUrl
 
 
-class ImageBase(BaseModel):
+class CheckinBase(BaseModel):
+    private: Optional[bool] = False
+    message: Optional[str] = None
+
+
+class CheckinUpdate(CheckinBase):
     pass
 
 
-class ImageUpdate(ImageBase):
-    pass
-
-
-class ImageCreate(ImageBase):
+class CheckinCreate(CheckinBase):
     id: Optional[UUID4] = None
-    file_id: str
-    filename: str
-    filetype: str
     user_id: UUID4
     nakamal_id: UUID4
-
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    
     @validator("id", pre=True, always=True)
     def default_id(cls, v):
         return v or uuid.uuid4()
 
 
-class ImageDB(ImageBase):
+class CheckinDB(CheckinBase):
     id: UUID4
     user_id: UUID4
     nakamal_id: UUID4
-    src: str
-    msrc: str
-    thumbnail: str
 
     class Config:
         orm_mode = True

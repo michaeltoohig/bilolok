@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, status
 from pydantic.networks import EmailStr
 
-from app import models, schemas
+from app import models
 from app.api.deps import current_superuser
 from app.core.arq_app import get_arq_app
 from app.core.mail import mail, MessageSchema

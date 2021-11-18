@@ -1,7 +1,7 @@
 import authHeaders from './utils';
 import http from './http-common';
 
-const resource = 'nakamals';
+const resource = 'checkins';
 
 export default {
   async get(id) {
@@ -23,17 +23,4 @@ export default {
   async remove(token, id) {
     return http.delete(`${resource}/${id}`, authHeaders(token));
   },
-
-  async getImages(id, skip = 0, limit = 100) {
-    return http.get(`${resource}/${id}/images`, {
-      params: {
-        skip,
-        limit,
-      },
-    });
-  },
-
-  // async getCheckins(id, skip = 0, limit = 100) {
-
-  // },
 };

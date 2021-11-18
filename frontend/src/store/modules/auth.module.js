@@ -71,6 +71,24 @@ const actions = {
       await dispatch('logOut');
     }
   },
+  // jwtRefresh: async ({ commit, dispatch }) => {
+  //   try {
+  //     const response = await authApi.refresh();
+  //     const token = response.data.access_token;
+  //     if (token) {
+  //       saveLocalToken(token);
+  //       commit('setToken', token);
+  //       commit('setLoggedIn', true);
+  //       commit('setLogInError', false);
+  //     }
+  //     else {
+  //       await dispatch('logOut'); 
+  //     }
+  //   }
+  //   catch (error) {
+  //     await dispatch('removeLogIn');
+  //   }
+  // },
   getMe: async ({ commit, dispatch, getters }) => {
     try {
       const response = await usersApi.getMe(getters.token);
@@ -111,6 +129,9 @@ const actions = {
           const response = await usersApi.getMe(token);
           commit('setLoggedIn', true);
           commit('setUserProfile', response.data);
+          // setInterval(() => {
+          //   dispatch('jwtRefresh');
+          // }, 10_000);
         } catch (error) {
           await dispatch('removeLogIn');
         }

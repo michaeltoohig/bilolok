@@ -34,13 +34,3 @@ class NakamalDB(NakamalBase):
 
     class Config:
         orm_mode = True
-
-
-# class NakamalMessageCreate(BaseModel):
-#     body: str
-#     nakamal_id: int
-
-
-# class NakamalMessage(NakamalCreate):
-#     id: int
-#     created_at: datetime

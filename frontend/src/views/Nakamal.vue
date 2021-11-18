@@ -15,6 +15,15 @@
             <li>Light: {{ nakamal.light }}</li>
           </ul>
         </v-card-text>
+        <v-card-actions>
+          <v-btn
+            text
+            color="primary"
+            @click="checkin"
+          >
+            Check-In
+          </v-btn>
+        </v-card-actions>
       </v-card>
 
       <v-container>
@@ -78,6 +87,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
+import checkinsApi from '@/api/checkins';
 
 export default {
   name: 'Nakamal',
@@ -112,6 +122,18 @@ export default {
     },
   },
   methods: {
+    async checkin() {
+      const token = this.$store.getters['auth/token'];
+      const user = this.$store.getters['auth/user'];
+      await checkinsApi.create(token, {
+        nakamal_id: this.nakamal.id,
+      });
+      this.$store.dispatch('notify/add', {
+        title: 'Checked-In!',
+        text: `You are checked in to ${this.nakamal.name}.`,
+        type: 'primary',
+      });
+    },
     remove() {
       this.$store.dispatch('nakamal/remove', this.nakamal.id)
         .then(() => {

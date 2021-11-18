@@ -22,6 +22,10 @@ export default {
     );
   },
 
+  async refresh() {
+    return http.post(`${resource}/jwt/refresh`);
+  },
+
   // async passwordRecovery(email: string) {
   //   return axios.post(`${apiUrl}/api/v1/password-recovery/${email}`);
   // },
