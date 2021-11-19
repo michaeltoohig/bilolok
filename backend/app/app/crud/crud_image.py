@@ -61,15 +61,19 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         return images
 
     async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[Image]:
-        data = pydantify_record(await database.fetch_all(self.model.select() \
+        query = self.model.select() \
             .where(self.model.c.nakamal_id == nakamal_id) \
             .order_by(desc(self.model.c.created_at)) \
-            .offset(skip).limit(limit)))
+            .offset(skip).limit(limit)
+        data = pydantify_record(await database.fetch_all(query))
         images = self.make_all_src(data)
         return images
 
     async def get_one_by_nakamal(self, nakamal_id: str) -> Image:
-        record = await database.fetch_one(self.model.select().where(self.model.c.nakamal_id == nakamal_id))
+        query = self.model.select() \
+            .where(self.model.c.nakamal_id == nakamal_id) \
+            .order_by(desc(self.model.c.created_at))
+        record = await database.fetch_one(query)
         if record:
             data = pydantify_record(record)
             return self.make_one_src(data)

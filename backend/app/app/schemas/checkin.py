@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, UUID4, validator
 
@@ -28,6 +29,7 @@ class CheckinDB(CheckinBase):
     id: UUID4
     user_id: UUID4
     nakamal_id: UUID4
+    created_at: datetime
 
     class Config:
         orm_mode = True

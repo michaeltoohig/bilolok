@@ -27,6 +27,17 @@
       </v-card>
 
       <v-container>
+        <div v-if="checkins">
+          <ul v-for="checkin in checkins" :key="checkin.id">
+            <li>{{ checkin.created_at }}</li>
+          </ul>
+        </div>
+        <div v-else>
+          Be first to checkin
+        </div>
+      </v-container>
+
+      <v-container>
         <v-tabs-items v-model="tab">
           <v-tab-item value="images">
             <v-container class="px-0">
@@ -88,6 +99,7 @@
 import { mapGetters } from 'vuex';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
 import checkinsApi from '@/api/checkins';
+import nakamalsApi from '@/api/nakamals';
 
 export default {
   name: 'Nakamal',
@@ -98,6 +110,8 @@ export default {
     return {
       tab: 'images',
       openUploadDialog: false,
+      // temp checkins data until component is made for checkins timeline
+      checkins: [],
     };
   },
   computed: {
@@ -123,16 +137,33 @@ export default {
   },
   methods: {
     async checkin() {
-      const token = this.$store.getters['auth/token'];
-      const user = this.$store.getters['auth/user'];
-      await checkinsApi.create(token, {
-        nakamal_id: this.nakamal.id,
-      });
-      this.$store.dispatch('notify/add', {
-        title: 'Checked-In!',
-        text: `You are checked in to ${this.nakamal.name}.`,
-        type: 'primary',
-      });
+      try {
+        const token = this.$store.getters['auth/token'];
+        const user = this.$store.getters['auth/user'];
+        await checkinsApi.create(token, {
+          user_id: user.id,
+          nakamal_id: this.nakamal.id,
+        });
+        this.$store.dispatch('notify/add', {
+          title: 'Checked-In!',
+          text: `You are checked in to ${this.nakamal.name}.`,
+          type: 'primary',
+        });
+      } catch (error) {
+        this.$store.dispatch('notify/add', {
+          title: 'Not Allowed',
+          text: error.response.data.detail,
+          type: 'warning',
+        });
+      }
+    },
+    async getCheckins(id) {
+      try {
+        const { data } = await nakamalsApi.getCheckins(id);
+        this.checkins = data;
+      } catch (error) {
+        console.log('error getCheckins');
+      }
     },
     remove() {
       this.$store.dispatch('nakamal/remove', this.nakamal.id)
@@ -143,6 +174,7 @@ export default {
   },
   async mounted() {
     const { id } = this.$route.params;
+    this.getCheckins(id);
     this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {

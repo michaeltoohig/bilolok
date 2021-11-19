@@ -33,7 +33,12 @@ export default {
     });
   },
 
-  // async getCheckins(id, skip = 0, limit = 100) {
-
-  // },
+  async getCheckins(id, skip = 0, limit = 100) {
+    return http.get(`${resource}/${id}/checkins`, {
+      params: {
+        skip,
+        limit,
+      },
+    });
+  },
 };

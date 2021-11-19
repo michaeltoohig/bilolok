@@ -40,6 +40,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         query = self.model.insert()
         try:
             rid = await database.execute(query=query, values=obj_in.dict())
+            if not rid:
+                rid = obj_in.id
             return await self.get(rid)
         except Exception as e:
             # TODO raise 422 "key already exists"

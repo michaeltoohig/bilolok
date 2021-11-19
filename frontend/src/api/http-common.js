@@ -20,11 +20,11 @@ const errorHandler = (error) => {
   if (error.response.status === 401) {
     // TODO this pattern fails for logged in users
     //  eg. an unverified user trying to add a nakamal
-    console.log('!! Unauthorized');
+    console.log('!! Response Handler Caught Unauthorized Error');
     Promise.reject(error);
     router.push('/auth/login?unauthorized=true');
   }
-  // Promise.reject(error);
+  return Promise.reject(error);
 };
 
 http.interceptors.response.use(
