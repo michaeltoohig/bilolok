@@ -7,9 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastapi = "^0.68.0"
+fastapi = "^0.69.0"
 uvicorn = "^0.15.0"
-fastapi-users = {extras = ["sqlalchemy"], version = "^6.1.2"}
+fastapi-users = {extras = ["sqlalchemy"], version = "^8.1.2"}
 alembic = "^1.6.5"
 tenacity = "^8.0.1"
 arq = "^0.22"

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Float
-from fastapi_users.db.sqlalchemy import GUID
+from fastapi_users_db_sqlalchemy import GUID
+
 from app.db.base_class import Base
 
 

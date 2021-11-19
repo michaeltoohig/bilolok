@@ -5,12 +5,12 @@ import jwt
 from fastapi import Depends
 from fastapi_crudrouter import DatabasesCRUDRouter
 from fastapi import status, Body, HTTPException, Header
-from fastapi_users.utils import JWT_ALGORITHM
+from fastapi_users.jwt import JWT_ALGORITHM
 
 from app import crud
 from app.api.deps import current_superuser
 from app.core.config import settings
-from app.core.security import jwt_authentication
+from app.core.users import jwt_authentication
 from app.db.session import database
 from app.models.image import ImageTable
 from app.schemas.image import ImageCreate, ImageDB

@@ -9,7 +9,7 @@ export default {
   },
 
   async updateMe(token, data) {
-    return http.put(`${resource}/me`, data, authHeaders(token));
+    return http.patch(`${resource}/me`, data, authHeaders(token));
   },
 
   async getUsers(token) {
@@ -17,10 +17,12 @@ export default {
   },
 
   async updateUser(token, userId, payload) {
-    return http.put(`${resource}/${userId}`, payload, authHeaders(token));
+    return http.patch(`${resource}/${userId}`, payload, authHeaders(token));
   },
 
+  // TODO replace with using normal registration endpoint
   async createUser(token, payload) {
+    console.log('NotImplementedError: use registration endpoint instead');
     return http.post(`${resource}`, payload, authHeaders(token));
   },
 };

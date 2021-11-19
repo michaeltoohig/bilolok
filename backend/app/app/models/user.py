@@ -1,4 +1,4 @@
-from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
 from app.core.config import settings
 from app.db.base_class import Base

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi_users.db.sqlalchemy import GUID
+from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Column, String, ForeignKey
 
 from app.core.config import settings
