@@ -2,6 +2,7 @@ from typing import Any, List, Dict, Optional
 from pathlib import Path
 
 from fastapi_crudrouter.core.databases import pydantify_record
+from pydantic.types import UUID4
 from sqlalchemy import desc
 
 from app.core.config import settings
@@ -60,7 +61,7 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         images = self.make_all_src(data)
         return images
 
-    async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[Image]:
+    async def get_multi_by_nakamal(self, nakamal_id: UUID4, *, skip: int = 0, limit: int = 100) -> List[Image]:
         query = self.model.select() \
             .where(self.model.c.nakamal_id == nakamal_id) \
             .order_by(desc(self.model.c.created_at)) \
@@ -69,7 +70,7 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         images = self.make_all_src(data)
         return images
 
-    async def get_one_by_nakamal(self, nakamal_id: str) -> Image:
+    async def get_one_by_nakamal(self, nakamal_id: UUID4) -> Image:
         query = self.model.select() \
             .where(self.model.c.nakamal_id == nakamal_id) \
             .order_by(desc(self.model.c.created_at))

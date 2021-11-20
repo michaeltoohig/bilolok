@@ -32,6 +32,10 @@ router = DatabasesCRUDRouter(
 )
 
 
+# TODO get_one endpoint with additional logic added to
+#  include realtime checkin count. Perhaps recent checkins
+
+
 @router.get("", response_model=List[NakamalDB])
 async def get_all() -> Any:
     records = await crud.nakamal.get_multi()
