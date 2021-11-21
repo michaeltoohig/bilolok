@@ -3,7 +3,7 @@ from typing import Any, List, Optional
 
 import jwt
 from fastapi import Depends
-from fastapi_crudrouter import DatabasesCRUDRouter
+from fastapi_crudrouter import OrmarCRUDRouter
 from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
@@ -11,18 +11,14 @@ from app import crud
 from app.api.deps import current_superuser
 from app.core.config import settings
 from app.core.users import jwt_authentication
-from app.db.session import database
-from app.models.image import ImageTable
-from app.schemas.image import ImageCreate, ImageDB
+from app.models.image import Image
+# from app.schemas.image import ImageCreate, ImageDB
 
 
-router = DatabasesCRUDRouter(
+router = OrmarCRUDRouter(
+    schema=Image,
     prefix="images",
     tags=["images"],
-    schema=ImageDB,
-    create_schema=ImageCreate,
-    table=ImageTable,
-    database=database,
     get_one_route=False,
     get_all_route=False,
     delete_all_route=False,
@@ -32,7 +28,7 @@ router = DatabasesCRUDRouter(
 )
 
 
-@router.get("", response_model=List[ImageDB])
+@router.get("", response_model=List[Image])
 async def get_all(
     skip: Optional[int] = 0,
     limit: Optional[int] = 100,
@@ -41,7 +37,7 @@ async def get_all(
     return images
 
 
-@router.get("/{item_id}", response_model=ImageDB)
+@router.get("/{item_id}", response_model=Image)
 async def get_one(
     item_id: str
 ) -> Any:

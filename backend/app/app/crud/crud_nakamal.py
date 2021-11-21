@@ -2,7 +2,7 @@ from typing import Any, List, Optional
 
 from app.crud.base import CRUDBase
 from app.crud.crud_image import image as crud_image
-from app.models.nakamal import Nakamal, NakamalTable
+from app.models.nakamal import Nakamal
 from app.schemas.nakamal import NakamalCreate, NakamalUpdate
 
 
@@ -22,4 +22,4 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalCreate, NakamalUpdate]):
         return nakamals
 
 
-nakamal = CRUDNakamal(NakamalTable)
+nakamal = CRUDNakamal(Nakamal)

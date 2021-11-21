@@ -3,24 +3,18 @@ from app.api.api_v1.endpoints.images import get_one
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi_crudrouter import DatabasesCRUDRouter
+from fastapi_crudrouter import OrmarCRUDRouter
 
 from app import crud
 from app.api.deps import current_active_verified_user, current_superuser
-from app.db.session import database
-from app.models.nakamal import NakamalTable
-from app.schemas.nakamal import NakamalCreate, NakamalDB, NakamalUpdate
-from app.schemas.image import ImageDB
+from app.models.image import Image
+from app.models.nakamal import Nakamal
 
 
-router = DatabasesCRUDRouter(
+router = OrmarCRUDRouter(
+    schema=Nakamal,
     prefix="nakamals",
     tags=["nakamals"],
-    schema=NakamalDB,
-    create_schema=NakamalCreate,
-    update_schema=NakamalUpdate,
-    table=NakamalTable,
-    database=database,
     get_one_route=False,
     get_all_route=False,
     delete_all_route=False,
@@ -30,13 +24,13 @@ router = DatabasesCRUDRouter(
 )
 
 
-@router.get("", response_model=List[NakamalDB])
+@router.get("", response_model=List[Nakamal])
 async def get_all() -> Any:
     records = await crud.nakamal.get_multi()
     return records
 
 
-@router.get("/{item_id}", response_model=NakamalDB)
+@router.get("/{item_id}", response_model=Nakamal)
 async def get_one(item_id: str) -> Any:
     record = await crud.nakamal.get(item_id)
     if not record:
@@ -44,7 +38,7 @@ async def get_one(item_id: str) -> Any:
     return record
     
 
-@router.get("/{item_id}/images", response_model=List[ImageDB])
+@router.get("/{item_id}/images", response_model=List[Image])
 async def get_all_images(
     item_id: str
 ) -> Any:

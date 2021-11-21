@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.db.session import database
-from app.models.image import Image, ImageTable
+from app.models.image import Image
 from app.schemas.image import ImageCreate, ImageDB, ImageUpdate
 
 
@@ -76,4 +76,4 @@ class CRUDImage(CRUDBase[Image, ImageCreate, ImageUpdate]):
         return None
 
 
-image = CRUDImage(ImageTable)
+image = CRUDImage(Image)

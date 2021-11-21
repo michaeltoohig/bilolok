@@ -1,7 +1,6 @@
-from sqlalchemy import Column
-from sqlalchemy_utc import UtcDateTime, utcnow
+import ormar
 
 
-class TimeMixin(object):
-    created_at = Column(UtcDateTime, default=utcnow())
-    updated_at = Column(UtcDateTime, onupdate=utcnow())
+class TimeMixin:
+    created_at = ormar.DateTime(timezone=True, default="CURRENT_TIMESTAMP")
+    updated_at = ormar.DateTime(timezone=True, onupdate="CURRENT_TIMESTAMP")

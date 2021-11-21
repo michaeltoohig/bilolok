@@ -1,8 +1,7 @@
-from sqlalchemy import Column, String, Float
-from fastapi_users_db_sqlalchemy import GUID
+import ormar
+from pydantic import UUID4
 
-from app.db.base_class import Base
-
+from app.db.session import metadata, database
 
 # class KavaSource(Enum):
 #     "UNKNOWN" = 0
@@ -15,24 +14,21 @@ from app.db.base_class import Base
 #     "TAFEA" = 7
 
 
-class Nakamal(Base):
-    """SQLAlchemy nakamals table definition."""
+class Nakamal(ormar.Model):
+    class Meta:
+        # tablename = "nakamals"
+        metadata = metadata
+        database = database
 
-    __tablename__ = "nakamal"
-
-    id = Column(GUID, primary_key=True)
-    # uuid = Column(UUID, primary_key=True, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    lat = Column(Float, nullable=False)
-    lng = Column(Float, nullable=False)
-    light = Column(String)
-    owner = Column(String)
-    phone = Column(String)
+    id: UUID4 = ormar.UUID(primary_key=True, uuid_format="string")
+    name = ormar.Text(nullable=False)
+    lat = ormar.Float(nullable=False)
+    lng = ormar.Float(nullable=False)
+    light = ormar.Text()
+    owner = ormar.Text()
+    phone = ormar.Text()
     # windows = Column(Integer)
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
-
-
-NakamalTable = Nakamal.__table__
 
 
 # class KavaPrice(Base):

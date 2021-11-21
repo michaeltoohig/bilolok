@@ -3,10 +3,10 @@ from typing import Any
 from fastapi import APIRouter, Depends, status
 from pydantic.networks import EmailStr
 
-from app import models, schemas
 from app.api.deps import current_superuser
 from app.core.arq_app import get_arq_app
 from app.core.mail import mail, MessageSchema
+from app.models.user import User
 
 router = APIRouter()
 
@@ -50,7 +50,7 @@ router = APIRouter()
 )
 async def test_email(
     email_to: EmailStr,
-    superuser: models.User = Depends(current_superuser),
+    superuser: User = Depends(current_superuser),
 ) -> Any:
     """
     Test emails.
