@@ -7,7 +7,7 @@
           hide-delimiters
         >
           <v-carousel-item
-            :to="{ name: 'Nakamal', params: { id: image.nakamal_id } }"
+            :to="{ name: 'Nakamal', params: { id: image.nakamal.id } }"
             v-for="(image,i) in images"
             :key="i"
             :src="image.src"

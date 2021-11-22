@@ -64,12 +64,12 @@ const mutations = {
     if (!state.allIds.includes(item.id)) {
       state.allIds.push(item.id);
     }
-    if (!state.byNakamalId[item.nakamal_id]) {
-      Vue.set(state.byNakamalId, item.nakamal_id, []);
-      state.byNakamalId[item.nakamal_id].push(item.id);
+    if (!state.byNakamalId[item.nakamal.id]) {
+      Vue.set(state.byNakamalId, item.nakamal.id, []);
+      state.byNakamalId[item.nakamal.id].push(item.id);
     }
-    else if (!state.byNakamalId[item.nakamal_id].includes(item.id)) {
-      state.byNakamalId[item.nakamal_id].push(item.id);
+    else if (!state.byNakamalId[item.nakamal.id].includes(item.id)) {
+      state.byNakamalId[item.nakamal.id].push(item.id);
     }
   },
   setRecentIds: (state, ids) => {

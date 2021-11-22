@@ -5,14 +5,14 @@ from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import OrmarCRUDRouter
 
-from app import crud
+from app import crud, models
 from app.api.deps import current_active_verified_user, current_superuser
-from app.models.image import Image
-from app.models.nakamal import Nakamal
+# from app.models.image import Image
+# from app.models.nakamal import Nakamal
 
 
 router = OrmarCRUDRouter(
-    schema=Nakamal,
+    schema=models.Nakamal,
     prefix="nakamals",
     tags=["nakamals"],
     get_one_route=False,
@@ -24,26 +24,26 @@ router = OrmarCRUDRouter(
 )
 
 
-@router.get("", response_model=List[Nakamal])
+@router.get("", response_model=List[models.Nakamal])
 async def get_all() -> Any:
-    records = await crud.nakamal.get_multi()
-    return records
+    items = await crud.nakamal.get_multi()
+    return items
 
 
-@router.get("/{item_id}", response_model=Nakamal)
+@router.get("/{item_id}", response_model=models.Nakamal)
 async def get_one(item_id: str) -> Any:
-    record = await crud.nakamal.get(item_id)
-    if not record:
+    item = await crud.nakamal.get(item_id)
+    if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
-    return record
+    return item
     
 
-@router.get("/{item_id}/images", response_model=List[Image])
+@router.get("/{item_id}/images", response_model=List[models.Image])
 async def get_all_images(
     item_id: str
 ) -> Any:
-    record = await crud.nakamal.get(item_id)
-    if not record:
+    item = await crud.nakamal.get(item_id)
+    if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
-    images = await crud.image.get_multi_by_nakamal(record.id)
+    images = await crud.image.get_multi_by_nakamal(item.id)
     return images

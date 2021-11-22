@@ -1,6 +1,10 @@
-import ormar
-from pydantic import UUID4
+from typing import Any, Dict, Optional
+import uuid
 
+import ormar
+from ormar import property_field
+
+from app import models
 from app.db.session import metadata, database
 
 # class KavaSource(Enum):
@@ -14,21 +18,27 @@ from app.db.session import metadata, database
 #     "TAFEA" = 7
 
 
-class Nakamal(ormar.Model):
-    class Meta:
-        # tablename = "nakamals"
-        metadata = metadata
-        database = database
+# class Nakamal(ormar.Model):
+#     class Meta:
+#         tablename = "nakamal"
+#         metadata = metadata
+#         database = database
 
-    id: UUID4 = ormar.UUID(primary_key=True, uuid_format="string")
-    name = ormar.Text(nullable=False)
-    lat = ormar.Float(nullable=False)
-    lng = ormar.Float(nullable=False)
-    light = ormar.Text()
-    owner = ormar.Text()
-    phone = ormar.Text()
+#     id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
+#     name: str = ormar.Text(nullable=False)
+#     lat: float = ormar.Float(nullable=False)
+#     lng: float = ormar.Float(nullable=False)
+#     light: str = ormar.Text()
+#     owner: str = ormar.Text()
+#     phone: str = ormar.Text()
     # windows = Column(Integer)
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
+
+
+
+    # @property_field
+    # def image(self):
+    #     return 
 
 
 # class KavaPrice(Base):
