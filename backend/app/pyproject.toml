@@ -7,9 +7,9 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-fastapi = "^0.68.0"
+fastapi = "^0.69.0"
 uvicorn = "^0.15.0"
-fastapi-users = {extras = ["sqlalchemy"], version = "^6.1.2"}
+fastapi-users = {extras = ["ormar"], version = "^8.1.2"}
 alembic = "^1.6.5"
 tenacity = "^8.0.1"
 arq = "^0.22"
@@ -22,6 +22,7 @@ fastapi-crudrouter = "^0.8.4"
 libthumbor = "^2.0.1"
 identicon = "^1.0"
 SQLAlchemy-Utc = "^0.14.0"
+databases = "^0.5.3"
 
 [tool.poetry.dev-dependencies]
 aiosqlite = "^0.17.0"

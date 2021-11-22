@@ -40,12 +40,12 @@ export default {
     //   nakamal: 'nakamal/selected',
     // }),
     nakamal() {
-      return this.$store.getters['nakamal/find'](this.image.nakamal_id);
+      return this.$store.getters['nakamal/find'](this.image.nakamal.id);
     },
   },
   async mounted() {
     if (!this.nakamal) {
-      this.$store.dispatch('nakamal/loadOne', this.image.nakamal_id);
+      this.$store.dispatch('nakamal/loadOne', this.image.nakamal.id);
     }
   },
 };

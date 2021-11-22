@@ -7,6 +7,7 @@ from app import models
 from app.api.deps import current_superuser
 from app.core.arq_app import get_arq_app
 from app.core.mail import mail, MessageSchema
+# from app.models.user import User
 
 router = APIRouter()
 

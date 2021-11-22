@@ -1,48 +1,53 @@
+from typing import Any, Dict, List, Optional
 from pathlib import Path
+import uuid
 
-from fastapi_users.db.sqlalchemy import GUID
-from sqlalchemy import Column, String, ForeignKey
+import ormar
+from pydantic import AnyHttpUrl
 
 from app.core.config import settings
-from app.db.base_class import Base
 from app.db.mixins import TimeMixin
+from app.db.base_class import BaseMeta
+# from app.models.nakamal import Nakamal
+# from app.models.user import User
 
-class Image(Base, TimeMixin):
-    """SQLAlchemy images table definition."""
+
+# class Image(ormar.Model, TimeMixin):
+#     class Meta(BaseMeta):
+#         tablename = "image"
     
-    __tablename__ = "image"
+#     id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
+#     file_id: str = ormar.Text(unique=True, nullable=False)
+#     filename: str = ormar.Text()
+#     filetype: str = ormar.Text()
+#     # Relationships
+#     user: Optional[Dict[str, Any]] = ormar.ForeignKey(User, name="user_id")
+#     nakamal: Optional[Dict[str, Any]] = ormar.ForeignKey(Nakamal, name="nakamal_id")
+#     # Pydantic fields
+#     src: Optional[AnyHttpUrl] = None
+#     msrc: Optional[AnyHttpUrl] = None
+#     thumbnail: Optional[AnyHttpUrl] = None
 
-    id = Column(GUID, primary_key=True, nullable=False)
-    file_id = Column(String, unique=True, nullable=False)
-    filename = Column(String)
-    filetype = Column(String)
-    # Relationships
-    user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
-    nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
+#     @staticmethod
+#     def build_filepath(nakamal_id: str, file_id: str, filename: str):
+#         IMAGE_PATH_FMT = "nakamals/{subdir}/{n_id}/{f_id}{ext}"
+#         return Path(IMAGE_PATH_FMT.format(
+#             subdir=str(nakamal_id)[:2],
+#             n_id=str(nakamal_id),
+#             f_id=file_id,
+#             ext=Path(filename).suffix,
+#         ))
 
-    @staticmethod
-    def build_filepath(nakamal_id: str, file_id: str, filename: str):
-        IMAGE_PATH_FMT = "nakamals/{subdir}/{n_id}/{f_id}{ext}"
-        return Path(IMAGE_PATH_FMT.format(
-            subdir=str(nakamal_id)[:2],
-            n_id=str(nakamal_id),
-            f_id=file_id,
-            ext=Path(filename).suffix,
-        ))
+#     @property
+#     def filepath(self):
+#         """Relative path to file."""
+#         return self.build_filepath(
+#             nakamal_id=self.nakamal_id,
+#             file_id=self.file_id,
+#             filename=self.filename,
+#         )
 
-    @property
-    def filepath(self):
-        """Relative path to file."""
-        return self.build_filepath(
-            nakamal_id=self.nakamal_id,
-            file_id=self.file_id,
-            filename=self.filename,
-        )
-
-    @property
-    def full_filepath(self):
-        """Full path to file."""
-        return Path(settings.IMAGES_LOCAL_DIR) / self.filepath
-
-
-ImageTable = Image.__table__
+#     @property
+#     def full_filepath(self):
+#         """Full path to file."""
+#         return Path(settings.IMAGES_LOCAL_DIR) / self.filepath

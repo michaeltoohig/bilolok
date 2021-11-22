@@ -1,19 +1,22 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Optional, Union, List
-from fastapi_crudrouter.core.databases import pydantify_record
+from uuid import UUID
 
+from fastapi_crudrouter.core.databases import pydantify_record
 from sqlalchemy import desc, and_, select
 
 from app import models
 from app.crud.base import CRUDBase
 from app.db.session import database
-from app.models.checkin import Checkin, CheckinTable
-from app.schemas.checkin import CheckinCreate, CheckinDB, CheckinUpdate
-from pydantic.types import UUID4
+# from app.models.checkin import Checkin, CheckinTable
+# from app.schemas.checkin import CheckinCreate, models.Checkin, CheckinUpdate
+# from pydantic.types import UUID
 
 
-class CRUDCheckin(CRUDBase[Checkin, CheckinCreate, CheckinUpdate]):
-    async def get(self, id: Any) -> Optional[CheckinDB]:
+# TODO update to use ormar
+
+class CRUDCheckin(CRUDBase[models.Checkin]):
+    async def get(self, id: Any) -> Optional[models.Checkin]:
         query = (
             self.model.select()
             .join(models.user)
@@ -24,7 +27,7 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinCreate, CheckinUpdate]):
             return pydantify_record(record)
         return None
     
-    async def get_multi_by_nakamal(self, nakamal_id: UUID4, *, skip: int = 0, limit: int = 100, exclude_private: bool = True) -> List[CheckinDB]:
+    async def get_multi_by_nakamal(self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100, exclude_private: bool = True) -> List[models.Checkin]:
         j = self.model.join(models.User)
         query = (
             select([self.model, models.User])
@@ -44,7 +47,7 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinCreate, CheckinUpdate]):
         
         return checkins
     
-    async def get_last_by_user(self, user_id: UUID4, *, nakamal_id: Optional[UUID4] = None, exclude_private: bool = True) -> Optional[CheckinDB]:
+    async def get_last_by_user(self, user_id: UUID, *, nakamal_id: Optional[UUID] = None, exclude_private: bool = True) -> Optional[models.Checkin]:
         query = (
             self.model.select()
             .where(
@@ -63,7 +66,7 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinCreate, CheckinUpdate]):
             return pydantify_record(record)
         return None
 
-    async def get_recent_by_nakamal(self, nakamal_id: UUID4, *, user_id: Optional[UUID4] = None, exclude_private: bool = True) -> List[CheckinDB]:
+    async def get_recent_by_nakamal(self, nakamal_id: UUID, *, user_id: Optional[UUID] = None, exclude_private: bool = True) -> List[models.Checkin]:
         threshold = datetime.now(tz=timezone.utc) - timedelta(hours=6)  # XXX hardcoded value
         query = (
             self.model.select()
@@ -84,4 +87,4 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinCreate, CheckinUpdate]):
         return pydantify_record(records)
 
 
-checkin = CRUDCheckin(CheckinTable)
+checkin = CRUDCheckin(models.Checkin)

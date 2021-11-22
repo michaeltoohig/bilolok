@@ -1,14 +1,8 @@
-from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
+from fastapi_users.db import OrmarBaseUserModel
 
-from app.core.config import settings
-from app.db.base_class import Base
+from app.db.base_class import BaseMeta
 
 
-class User(Base, SQLAlchemyBaseUserTable):
-    pass
-
-    # In future can add `name` that will display
-    # in feed or whatever. for now just have messages
-    # like `1 person likes` or `2 people are at...`
-
-UserTable = User.__table__
+# class User(OrmarBaseUserModel):
+#     class Meta(BaseMeta):
+#         tablename = "user"

@@ -3,40 +3,33 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi_crudrouter import DatabasesCRUDRouter
+from fastapi_crudrouter.core.ormar import OrmarCRUDRouter
 
 from app import crud, models
 from app.api.deps import current_superuser, current_active_verified_user, current_active_user
-from app.db.session import database
-from app.models.checkin import CheckinTable
-from app.schemas.checkin import CheckinCreate, CheckinUpdate, CheckinDB
 from starlette.status import HTTP_400_BAD_REQUEST
 
 
-router = DatabasesCRUDRouter(
+router = OrmarCRUDRouter(
+    schema=models.Checkin,
     prefix="checkins",
     tags=["checkins"],
-    schema=CheckinDB,
-    create_schema=CheckinCreate,
-    update_schema=CheckinUpdate,
-    table=CheckinTable,
-    database=database,
     create_route=False,
     delete_all_route=False,
     delete_one_route=[Depends(current_superuser)],
 )
 
 
-@router.get("/me", response_model=List[CheckinDB])
+@router.get("/me", response_model=List[models.Checkin])
 async def get_all_me(
     user: models.User = Depends(current_active_user)
 ) -> Any:
     pass
 
 
-@router.post("", response_model=CheckinDB)
+@router.post("", response_model=models.Checkin)
 async def create_one(
-    obj_in: CheckinCreate,
+    obj_in: models.Checkin,
     user: models.User = Depends(current_active_verified_user)
 ) -> Any:
     """Checkin to a nakamal.
