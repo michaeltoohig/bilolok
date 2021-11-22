@@ -6,7 +6,6 @@ import ormar
 from ormar import property_field
 from fastapi_users.db import OrmarBaseUserModel
 from pydantic import AnyHttpUrl
-from pydantic.typing import ForwardRef
 
 from app.core.config import settings
 from app.core.image import img_crypto_url
@@ -20,14 +19,9 @@ class User(OrmarBaseUserModel):
         tablename = "user"
 
 
-ImageRef = ForwardRef("Image")
-
-
 class Nakamal(ormar.Model):
-    class Meta:
+    class Meta(BaseMeta):
         tablename = "nakamal"
-        metadata = metadata
-        database = database
 
     id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
     name: str = ormar.Text(nullable=False)
@@ -37,12 +31,11 @@ class Nakamal(ormar.Model):
     owner: str = ormar.Text()
     phone: str = ormar.Text()
 
-    image: Optional[ImageRef] = None
-
 
 class Image(ormar.Model, TimeMixin):
     class Meta(BaseMeta):
         tablename = "image"
+        orders_by = ["-created_at"]
     
     id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
     file_id: str = ormar.Text(unique=True, nullable=False)
@@ -102,6 +95,3 @@ class Image(ormar.Model, TimeMixin):
     def full_filepath(self):
         """Full path to file."""
         return Path(settings.IMAGES_LOCAL_DIR) / self.filepath
-
-
-Nakamal.update_forward_refs()

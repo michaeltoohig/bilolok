@@ -4,7 +4,6 @@ import uuid
 import ormar
 from ormar import property_field
 
-from app import models
 from app.db.session import metadata, database
 
 # class KavaSource(Enum):
