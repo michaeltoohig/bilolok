@@ -7,16 +7,16 @@ from fastapi_crudrouter import OrmarCRUDRouter
 from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
-from app import crud
+from app import crud, models
 from app.api.deps import current_superuser
 from app.core.config import settings
 from app.core.users import jwt_authentication
-from app.models.image import Image
+# from app.models.image import Image
 # from app.schemas.image import ImageCreate, ImageDB
 
 
 router = OrmarCRUDRouter(
-    schema=Image,
+    schema=models.Image,
     prefix="images",
     tags=["images"],
     get_one_route=False,
@@ -28,7 +28,7 @@ router = OrmarCRUDRouter(
 )
 
 
-@router.get("", response_model=List[Image])
+@router.get("", response_model=List[models.Image])
 async def get_all(
     skip: Optional[int] = 0,
     limit: Optional[int] = 100,
@@ -37,7 +37,7 @@ async def get_all(
     return images
 
 
-@router.get("/{item_id}", response_model=Image)
+@router.get("/{item_id}", response_model=models.Image)
 async def get_one(
     item_id: str
 ) -> Any:
@@ -93,14 +93,14 @@ async def tus_hook(
             print(exc)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         try:
-            obj_in = ImageCreate(
+            image = await crud.image.create(
                 file_id=file_id,
                 filename=filename,
                 filetype=filetype,
-                user_id=user_id,
-                nakamal_id=nakamal_id,
+                user=user_id,
+                nakamal=nakamal_id,
             )
-            image = await crud.image.create(obj_in=obj_in)
+            print(image)
         except Exception as exc:
             print(exc)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

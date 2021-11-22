@@ -7,10 +7,11 @@ from fastapi_users.db import OrmarUserDatabase
 
 # from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 
+from app import models
 from app.core.config import settings
 from app.core.mail import mail, MessageSchema
 from app.db.session import database
-from app.models.user import User as UserModel
+# from app.models.user import User as UserModel
 from app.schemas.user import User, UserCreate, UserUpdate, UserDB
 
 
@@ -50,13 +51,10 @@ jwt_authentication = JWTAuthentication(
 class MyOrmarUserDatabase(OrmarUserDatabase):
     async def get_multi(self) -> List[UserDB]:
         return await self.model.objects.all()
-        # query = self.users.select()
-        # users = await self.database.fetch_all(query)
-        # return [await self._make_user(user) for user in users]
 
 
 async def get_user_db():
-    yield MyOrmarUserDatabase(UserDB, UserModel)
+    yield MyOrmarUserDatabase(UserDB, models.User)
 
 
 async def get_user_manager(user_db: MyOrmarUserDatabase = Depends(get_user_db)):
