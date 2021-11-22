@@ -6,6 +6,9 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
 ## Roadmap Ideas
 
+[ ] Check-ins
+[ ] Nakamal timeline view of check-ins and images in order
+
 Below are some ideas for the future of this project.
 
  - Have user that visits nakamal most regularly able to have special privileges to modify the profile page of the nakamal.
@@ -39,9 +42,11 @@ FastAPI paginate
 
 SQLAlchemy-Continuum
 
-Will have to use ``databases`` sqlalchemy async framework
+Ormar for async database access and easy database object to HTTP response mapping.
 
-One thing I need to figure out is the combined use of both SQLAlchemy declartively defined models used by alembic and the use of the SQLAlchemy core table definitions used by the databases package and CRUDRouter. You can see this in `app.core.db.base.py` and `app.models.__init__.py`. I prefer to move towards exclusively using the SQLAlchemy core and prepare to migrate to SQLAlchemy 1.3 > 1.4 > 2.0 eventually. 
+#### Ormar - Why not SQLAlchemy Core API via encode/databases?
+
+I found using SQLA Core a bit fragile since I had to define SQL queries manually for each CRUD operation and write different SQL queries depending on which joins I wanted and then also manually handle the mapping the SQL result to HTTP response. Although, it provided great flexibility and kept me cognizant of SQL query performance at every step the overhead is more than I need for this project where I planned to use existing tools whereever possible that increase developer productivity. SQLA Core was quickly becoming a hinderance to that stated goal so I did research on `SQLModel` by the developer of `FastAPI` but found their method of combining SQLAlchemy with Pydantic into a single model felt wrong. I believe they abused the validation hooks of Pydantic for features handled well by SQLAlchemy such as to created computed properties. Plus reading further into their docs and github made me feel it was too young for serious use. So I choose to try Ormar and believe their API of how to handle SQLA table definitions and Pydantic validation schemas felt better to me and overall the project is more mature as it has first-class support in all of the above mentioned packages I want to use in this project. 
 
 ### Frontend
 
