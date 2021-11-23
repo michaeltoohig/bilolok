@@ -27,22 +27,20 @@
         </v-col>
       </v-row>
     </v-container>
+    <SectionRecentCheckins />
     <SectionRecentImages />
   </div>
 </template>
 
 <script>
+import SectionRecentCheckins from '@/components/home/SectionRecentCheckins.vue';
 import SectionRecentImages from '@/components/home/SectionRecentImages.vue';
 
 export default {
   name: 'Home',
   components: {
+    SectionRecentCheckins,
     SectionRecentImages,
-  },
-  data() {
-    return {
-      images: [],
-    };
   },
   methods: {
     openGithub() {

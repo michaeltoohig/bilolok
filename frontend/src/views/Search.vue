@@ -13,6 +13,9 @@ export default {
   components: {
     NakamalList,
   },
+  beforeMount() {
+    this.$store.dispatch('nakamal/load');
+  },
 };
 </script>
 

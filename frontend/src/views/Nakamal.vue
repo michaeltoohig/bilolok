@@ -13,20 +13,22 @@
             <li>Owner: {{ nakamal.owner }}</li>
             <li>Number: {{ nakamal.number }}</li>
             <li>Light: {{ nakamal.light }}</li>
+            <li>Checkins Today: {{ todayCheckins }}</li>
+            <li>Checkins Month: {{ monthCheckins }}</li>
           </ul>
         </v-card-text>
         <v-card-actions>
           <v-btn
             text
             color="primary"
-            @click="checkin"
+            @click="checkin({ nakamal: nakamal.id })"
           >
             Check-In
           </v-btn>
         </v-card-actions>
       </v-card>
 
-      <v-container>
+      <!-- <v-container>
         <div v-if="checkins">
           <v-timeline
             align-top
@@ -65,7 +67,7 @@
         <div v-else>
           Be first to checkin
         </div>
-      </v-container>
+      </v-container> -->
 
       <v-container>
         <v-tabs-items v-model="tab">
@@ -126,10 +128,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
-import checkinsApi from '@/api/checkins';
-import nakamalsApi from '@/api/nakamals';
 
 export default {
   name: 'Nakamal',
@@ -140,8 +140,6 @@ export default {
     return {
       tab: 'images',
       openUploadDialog: false,
-      // temp checkins data until component is made for checkins timeline
-      checkins: [],
     };
   },
   computed: {
@@ -149,10 +147,25 @@ export default {
       hasAdminAccess: 'auth/hasAdminAccess',
       nakamal: 'nakamal/selected',
       getImages: 'image/nakamal',
+      getCheckins: 'checkin/nakamal',
+      getTodayCheckins: 'checkin/countToday',
+      getMonthCheckins: 'checkin/countMonth',
     }),
     images() {
       if (!this.nakamal) return [];
-      return this.getImages(this.nakamal.id);
+      return this.getImages(this.nakamal.id).sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+    },
+    checkins() {
+      if (!this.nakamal) return [];
+      return this.getCheckins(this.nakamal.id);
+    },
+    todayCheckins() {
+      if (!this.nakamal) return 0;
+      return this.getTodayCheckins(this.nakamal.id);
+    },
+    monthCheckins() {
+      if (!this.nakamal) return 0;
+      return this.getMonthCheckins(this.nakamal.id);
     },
     loading() {
       return !this.nakamal;
@@ -166,35 +179,28 @@ export default {
     },
   },
   methods: {
-    async checkin() {
-      try {
-        const token = this.$store.getters['auth/token'];
-        const user = this.$store.getters['auth/user'];
-        await checkinsApi.create(token, {
-          user_id: user.id,
-          nakamal_id: this.nakamal.id,
-        });
-        this.$store.dispatch('notify/add', {
-          title: 'Checked-In!',
-          text: `You are checked in to ${this.nakamal.name}.`,
-          type: 'primary',
-        });
-      } catch (error) {
-        this.$store.dispatch('notify/add', {
-          title: 'Not Allowed',
-          text: error.response.data.detail,
-          type: 'warning',
-        });
-      }
-    },
-    async getCheckins(id) {
-      try {
-        const { data } = await nakamalsApi.getCheckins(id);
-        this.checkins = data;
-      } catch (error) {
-        console.log('error getCheckins');
-      }
-    },
+    ...mapActions({
+      checkin: 'checkin/add',
+    }),
+    // async checkin() {
+    //   try {
+    //     const token = this.$store.getters['auth/token'];
+    //     await checkinsApi.create(token, {
+    //       nakamal: this.nakamal.id,
+    //     });
+    //     this.$store.dispatch('notify/add', {
+    //       title: 'Checked-In!',
+    //       text: `You are checked in to ${this.nakamal.name}.`,
+    //       type: 'primary',
+    //     });
+    //   } catch (error) {
+    //     this.$store.dispatch('notify/add', {
+    //       title: 'Not Allowed',
+    //       text: error.response.data.detail,
+    //       type: 'warning',
+    //     });
+    //   }
+    // },
     remove() {
       this.$store.dispatch('nakamal/remove', this.nakamal.id)
         .then(() => {
@@ -204,7 +210,8 @@ export default {
   },
   async mounted() {
     const { id } = this.$route.params;
-    this.getCheckins(id);
+    // this.getCheckins(id);
+    this.$store.dispatch('checkin/getNakamal', id);
     this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {

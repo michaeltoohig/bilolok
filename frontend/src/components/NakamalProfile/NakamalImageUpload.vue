@@ -57,6 +57,13 @@ export default {
         },
       }).on('dashboard:modal-closed', () => {
         this.$emit('close-modal');
+      }).on('complete', (result) => {
+        if (result.successful.length >= 1) {
+          setTimeout(() => {
+            this.$emit('close-modal');
+            this.$store.dispatch('image/getNakamal', this.nakamal.id);
+          }, 1000);
+        }
       });
       // Doesn't work since image is not ready on backend so can not fetch new images
       // .on('complete', () => {

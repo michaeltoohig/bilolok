@@ -6,9 +6,9 @@ Create Date: ${create_date}
 
 """
 from alembic import op
+import ormar
 import sqlalchemy as sa
 import fastapi_users
-import sqlalchemy_utc
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

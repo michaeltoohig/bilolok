@@ -29,7 +29,7 @@ async def get_all_me(
 
 @router.post("", response_model=models.Checkin)
 async def create_one(
-    obj_in: models.Checkin,
+    obj_in: models.CheckinCreate,
     user: models.User = Depends(current_active_verified_user)
 ) -> Any:
     """Checkin to a nakamal.
@@ -49,11 +49,11 @@ async def create_one(
     for bunny hoppers and things should be okay.
     """
     now = datetime.now(tz=timezone.utc)
-    # TODO check user has not hit some checkin count threshold for the day - no bots or automated checkins
+    # TODO check user has not hit some checkin count threshold for the day - no bots or automated checkin spam
     # Check user's latest checkin is not the same nakamal - no double checkins 
-    last_checkin = await crud.checkin.get_last_by_user(user.id, exlucde_private=False)
+    last_checkin = await crud.checkin.get_last_by_user(user.id, exclude_private=False)
     if last_checkin:
-        same_nakamal = last_checkin.nakamal_id == obj_in.nakamal_id
+        same_nakamal = last_checkin.nakamal.id == obj_in.nakamal
         threshold = last_checkin.created_at + timedelta(hours=12)  # XXX hardcoded value
         within_threshold = now < threshold
         if same_nakamal and within_threshold:
@@ -62,7 +62,7 @@ async def create_one(
                 detail="You already checked-in to this nakamal."
             )
     # Check user's latest checkin at this nakamal was atleast 30 minutes ago - no double checkins by hopping between two nakamals
-    last_nakamal_checkin = await crud.checkin.get_last_by_user(user.id, nakamal_id=obj_in.nakamal_id, exclude_private=False)
+    last_nakamal_checkin = await crud.checkin.get_last_by_user(user.id, nakamal_id=obj_in.nakamal, exclude_private=False)
     if last_nakamal_checkin:
         threshold = last_nakamal_checkin.created_at + timedelta(minutes=15)  # XXX hardcoded value
         if now < threshold:
@@ -71,13 +71,13 @@ async def create_one(
                 detail="You already checked-in to this nakamal recently."
             )
     # Check user has not checked in more than the threshold for a single day
-    count_recent_nakamal_checkins = await crud.checkin.get_recent_by_nakamal(obj_in.nakamal_id, user_id=user.id, exclude_private=False)
+    count_recent_nakamal_checkins = await crud.checkin.get_multi_by_user(user.id, exclude_private=False, nakamal=obj_in.nakamal)
     if len(count_recent_nakamal_checkins) > 3:  # XXX hardcoded value
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail="You already checked-in to this nakamal too many times today."
         )
-    
-    obj_in.user_id = user.id
-    checkin = await crud.checkin.create(obj_in=obj_in)
+    # Create checkin
+    checkin = await crud.checkin.create(**obj_in.dict(), user=user.id)
+    checkin.user.load()
     return checkin

@@ -1,11 +1,11 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 from pathlib import Path
 import uuid
 
+from fastapi_users.db import OrmarBaseUserModel
 import ormar
 from ormar import property_field
-from fastapi_users.db import OrmarBaseUserModel
-from pydantic import AnyHttpUrl
+import pydantic
 
 from app.core.config import settings
 from app.core.image import img_crypto_url
@@ -32,14 +32,6 @@ class Nakamal(ormar.Model):
     phone: str = ormar.Text()
 
 
-class Checkin(ormar.Model, TimeMixin):
-    class Meta(BaseMeta):
-        tablename = "checkin"
-        orders_by = ["-created_at"]
-
-    id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
-
-
 class Image(ormar.Model, TimeMixin):
     class Meta(BaseMeta):
         tablename = "image"
@@ -50,8 +42,14 @@ class Image(ormar.Model, TimeMixin):
     filename: str = ormar.Text()
     filetype: str = ormar.Text()
     # Relationships
-    user: Optional[Dict[str, Any]] = ormar.ForeignKey(User, name="user_id")
-    nakamal: Optional[Dict[str, Any]] = ormar.ForeignKey(Nakamal, name="nakamal_id")
+    user: Union[User, Dict[str, Any]] = ormar.ForeignKey(User, nullable=False, name="user_id")
+    nakamal: Union[Nakamal, Dict[str, Any]] = ormar.ForeignKey(
+        Nakamal,
+        nullable=False,
+        name="nakamal_id",
+        orders_by=["name"],
+        related_orders_by=["-created_at"],
+    )
     
     # Pydantic fields
     # src: Optional[AnyHttpUrl] = None
@@ -105,18 +103,45 @@ class Image(ormar.Model, TimeMixin):
         return Path(settings.IMAGES_LOCAL_DIR) / self.filepath
 
 
+class Checkin(ormar.Model, TimeMixin):
+    class Meta(BaseMeta):
+        tablename = "checkin"
+        orders_by = ["-created_at"]
 
-# class Checkin(Base, TimeMixin):
-#     """SQLAlchemy check-in table definition."""
-    
-#     __tablename__ = "checkin"
+    id: uuid.UUID = ormar.UUID(primary_key=True, default=uuid.uuid4, uuid_format="string")
+    private: bool = ormar.Boolean(nullable=False, default=False)
+    message: str = ormar.Text(nullable=True)
+    lat: float = ormar.Float(nullable=True)
+    lng: float = ormar.Float(nullable=True)
+    # Relationships
+    user: Union[User, Dict[str, Any]] = ormar.ForeignKey(
+        User,
+        nullable=False,
+        name="user_id",
+        orders_by=["email"],
+        related_orders_by=["-created_at"],
+    )
+    nakamal: Union[Nakamal, Dict[str, Any]] = ormar.ForeignKey(Nakamal, nullable=False, name="nakamal_id")
 
-#     id = Column(GUID, primary_key=True, nullable=False)
-#     private = Column(Boolean, nullable=False, default=False)
-#     message = Column(String)
-#     lat = Column(Float)
-#     lng = Column(Float)
-#     # Relationships
-#     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
-#     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
 
+class CheckinCreate(pydantic.BaseModel):
+    nakamal: uuid.UUID
+    private: bool = False
+    message: str = None
+    lat: float = None
+    lng: float = None
+
+    class Config:
+        orm_mode = True
+
+# CheckinCreate = Checkin.get_pydantic(
+#     include={
+#         "nakamal": {"id"},
+#     },
+#     exclude={
+#         "created_at": ...,
+#         "updated_at": ...,
+#         "user": ...,
+#         "nakamal": ...,
+#     }
+# )

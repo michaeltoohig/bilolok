@@ -20,8 +20,9 @@ const state = initialState();
 const getters = {
   // Return a single nakamal with the given id.
   find: (state, _, __, rootGetters) => id => {
-    // Swap ID referenes with the resolved image objects.
-    return resolveRelations(state.byId[id], ['image'], rootGetters);
+    // Swap ID references with the resolved image objects.
+    return state.byId[id];
+    // return resolveRelations(state.byId[id], ['image'], rootGetters);
   },
   // Return a list of nakamals in the order of `allIds`.
   list: (state, getters) => {
@@ -61,12 +62,11 @@ const actions = {
       commitAddNakamal(item, commit);
     });
   },
-  loadOne: async ({ commit, dispatch }, id) => {
+  loadOne: async ({ commit }, id) => {
     try {
       let response = await nakamalsApi.get(id);
       const nakamal = response.data;
       commitAddNakamal(nakamal, commit);
-      dispatch('load');  // Load all others in background
     }
     catch (error) {
       console.log('! load one nakamal in catch');

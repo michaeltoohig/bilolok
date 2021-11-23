@@ -7,7 +7,7 @@
           hide-delimiters
         >
           <v-carousel-item
-            :to="{ name: 'Nakamal', params: { id: image.nakamal.id } }"
+            :to="{ name: 'Nakamal', params: { id: image.nakamal } }"
             v-for="(image,i) in images"
             :key="i"
             :src="image.src"
@@ -25,22 +25,10 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'SectionRecentImages',
-  components: {
-  },
-  data() {
-    return {
-    };
-  },
   computed: {
     ...mapGetters({
       images: 'image/recent',
     }),
-  },
-  methods: {
-    // async getRecentImages() {
-    //   const response = await imagesApi.getRecent();
-    //   this.images = response.data;
-    // },
   },
   beforeMount() {
     this.$store.dispatch('image/getRecent');
