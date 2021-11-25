@@ -1,10 +1,10 @@
 import uuid
 from typing import Optional
-from app.schemas.image import ImageDB
-from pydantic import BaseModel, UUID4, validator
+
+from .base import BaseSchema
 
 
-class NakamalBase(BaseModel):
+class NakamalSchemaBase(BaseSchema):
     name: Optional[str] = None
     lat: Optional[float] = None
     lng: Optional[float] = None
@@ -13,34 +13,19 @@ class NakamalBase(BaseModel):
     light: Optional[str] = None
 
 
-class NakamalUpdate(NakamalBase):
-    pass
+# class NakamalSchemaUpdate(NakamalSchemaBase):
+#     pass
 
 
-class NakamalCreate(NakamalBase):
-    id: Optional[UUID4] = None
+class NakamalSchemaIn(NakamalSchemaBase):
     name: str
     lat: float
     lng: float
     
-    @validator("id", pre=True, always=True)
-    def default_id(cls, v):
-        return v or uuid.uuid4()
+
+class NakamalSchema(NakamalSchemaBase):
+    id: uuid.UUID
 
 
-class NakamalDB(NakamalBase):
-    id: UUID4
-    image: Optional[ImageDB] = None
-
-    class Config:
-        orm_mode = True
-
-
-# class NakamalMessageCreate(BaseModel):
-#     body: str
-#     nakamal_id: int
-
-
-# class NakamalMessage(NakamalCreate):
-#     id: int
-#     created_at: datetime
+class NakamalSchemaOut(NakamalSchema):
+    pass

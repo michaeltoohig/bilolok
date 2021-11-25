@@ -1,28 +1,30 @@
 from pathlib import Path
 from typing import Any, List, Optional
+from app.api.deps.db import get_db
+from app.crud.nakamal import CRUDNakamal
 
 import jwt
 from fastapi import Depends
-from fastapi_crudrouter import DatabasesCRUDRouter
+from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
-from app import crud
-from app.api.deps import current_superuser
+from app.crud.image import CRUDImage
+from app.api.deps.user import current_superuser
 from app.core.config import settings
 from app.core.users import jwt_authentication
-from app.db.session import database
-from app.models.image import ImageTable
-from app.schemas.image import ImageCreate, ImageDB
+from app.models.image import Image
+from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
+from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
-router = DatabasesCRUDRouter(
+router = SQLAlchemyCRUDRouter(
     prefix="images",
     tags=["images"],
-    schema=ImageDB,
-    create_schema=ImageCreate,
-    table=ImageTable,
-    database=database,
+    schema=ImageSchema,
+    create_schema=ImageSchemaIn,
+    db_model=Image,
+    db=get_db,
     get_one_route=False,
     get_all_route=False,
     delete_all_route=False,
@@ -32,31 +34,41 @@ router = DatabasesCRUDRouter(
 )
 
 
-@router.get("", response_model=List[ImageDB])
+@router.get("", response_model=List[ImageSchemaOut])
 async def get_all(
+    db: AsyncSession = Depends(get_db),
+    *,
     skip: Optional[int] = 0,
     limit: Optional[int] = 100,
 ) -> Any:
-    images = await crud.image.get_multi(skip=skip, limit=limit)
-    return images
+    crud_image = CRUDImage(db)
+    images = await crud_image.get_multi()  #skip=skip, limit=limit)
+    return [ImageSchemaOut(**image.dict()) for image in images]
 
 
-@router.get("/{item_id}", response_model=ImageDB)
+@router.get("/{item_id}", response_model=ImageSchemaOut)
 async def get_one(
+    db: AsyncSession = Depends(get_db),
+    *,
     item_id: str
 ) -> Any:
-    image = await crud.image.get(item_id)
-    return image
+    crud_image = CRUDImage(db)
+    image = await crud_image.get_by_id(item_id)
+    return ImageSchemaOut(**image.dict())
 
 
 @router.post("/tus-hook", include_in_schema=False,)
 async def tus_hook(
+    db: AsyncSession = Depends(get_db),
+    *,
     hook_name: str = Header(...),
     tusdIn: Any = Body(...),
 ) -> Any:
     """
     Hook for tusd.
     """
+    crud_image = CRUDImage(db)
+    crud_nakamal = CRUDNakamal(db)
     # Check JWT is valid    
     _, token = tusdIn.get("HTTPRequest").get("Header").get("Authorization")[0].split(" ")
     try:
@@ -74,7 +86,7 @@ async def tus_hook(
 
     # Check Nakamal exists
     nakamal_id = tusdIn.get("Upload").get("MetaData").get("NakamalID")
-    nakamal = await crud.nakamal.get(nakamal_id)
+    nakamal = await crud_nakamal.get(nakamal_id)
     if not nakamal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
 
@@ -89,7 +101,7 @@ async def tus_hook(
             #  For now this is a dirty hard-coded path
             tusUpload = Path(settings.IMAGES_LOCAL_DIR) / "uploads" / file_id
             assert tusUpload.exists()
-            crud.image.save_file(tusUpload, nakamal_id=nakamal_id, file_id=file_id, filename=filename)
+            crud_image.save_file(tusUpload, nakamal_id=nakamal_id, file_id=file_id, filename=filename)
             # Remove Tus `.info` file
             tusInfo = Path(str(tusUpload) + ".info")
             tusInfo.unlink()
@@ -97,14 +109,14 @@ async def tus_hook(
             print(exc)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         try:
-            obj_in = ImageCreate(
+            in_schema = ImageSchemaIn(
                 file_id=file_id,
                 filename=filename,
                 filetype=filetype,
                 user_id=user_id,
                 nakamal_id=nakamal_id,
             )
-            image = await crud.image.create(obj_in=obj_in)
+            image = await crud_image.create(in_schema=in_schema)
         except Exception as exc:
             print(exc)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

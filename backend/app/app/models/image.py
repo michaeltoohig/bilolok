@@ -1,24 +1,26 @@
 from pathlib import Path
 
-from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
 from app.core.config import settings
 from app.db.base_class import Base
 from app.db.mixins import TimeMixin
+
 
 class Image(Base, TimeMixin):
     """SQLAlchemy images table definition."""
     
     __tablename__ = "image"
 
-    id = Column(GUID, primary_key=True, nullable=False)
     file_id = Column(String, unique=True, nullable=False)
     filename = Column(String)
     filetype = Column(String)
     # Relationships
-    user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
-    nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
+    nakamal_id = Column(UUID(as_uuid=True), ForeignKey("nakamal.id"), nullable=False)
+    nakamal = relationship("Nakamal", lazy="joined")
 
     @staticmethod
     def build_filepath(nakamal_id: str, file_id: str, filename: str):
@@ -43,6 +45,3 @@ class Image(Base, TimeMixin):
     def full_filepath(self):
         """Full path to file."""
         return Path(settings.IMAGES_LOCAL_DIR) / self.filepath
-
-
-ImageTable = Image.__table__

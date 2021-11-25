@@ -27,7 +27,7 @@ const actions = {
         commit('setUsers', users);
       }
     }
-    catch {
+    catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },

@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 
+import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import imagesApi from '@/api/images';
 import nakamalsApi from '@/api/nakamals';
 
@@ -16,8 +17,8 @@ const state = initialState();
 
 const getters = {
   // Return a single image with the given id.
-  find: (state) => id => {
-    return state.byId[id];
+  find: (state, _, __, rootGetters) => id => {
+    return resolveRelations(state.byId[id], ['nakamal'], rootGetters);
   },
   // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
@@ -34,12 +35,22 @@ const getters = {
   },
 };
 
+function commitAddImage(image, commit) {
+  // Normalize nested data and swap the image object
+  // in the API response with an ID reference.
+  commit('add', normalizeRelations(image, ['nakamal']));
+  // Add or update the image.
+  commit('nakamal/add', image.nakamal, {
+    root: true,
+  });
+};
+
 const actions = {
   getRecent: async ({ commit }) => {
     const response = await imagesApi.getRecent();
     const images = response.data;
     images.forEach((item) => {
-      commit('add', item);
+      commitAddImage(item, commit);
     });
     commit('setRecentIds', images.map(i => i.id));
   },
@@ -47,7 +58,7 @@ const actions = {
     const response = await nakamalsApi.getImages(nakamalId);
     const images = response.data;
     images.forEach((item) => {
-      commit('add', item);
+      commitAddImage(item, commit);
     });
   },
 };
@@ -64,12 +75,12 @@ const mutations = {
     if (!state.allIds.includes(item.id)) {
       state.allIds.push(item.id);
     }
-    if (!state.byNakamalId[item.nakamal_id]) {
-      Vue.set(state.byNakamalId, item.nakamal_id, []);
-      state.byNakamalId[item.nakamal_id].push(item.id);
+    if (!state.byNakamalId[item.nakamal]) {
+      Vue.set(state.byNakamalId, item.nakamal, []);
+      state.byNakamalId[item.nakamal].push(item.id);
     }
-    else if (!state.byNakamalId[item.nakamal_id].includes(item.id)) {
-      state.byNakamalId[item.nakamal_id].push(item.id);
+    else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
+      state.byNakamalId[item.nakamal].push(item.id);
     }
   },
   setRecentIds: (state, ids) => {

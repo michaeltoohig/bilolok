@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Float
-from fastapi_users_db_sqlalchemy import GUID
+from sqlalchemy.dialects.postgresql import UUID
 
 from app.db.base_class import Base
 
@@ -20,8 +20,6 @@ class Nakamal(Base):
 
     __tablename__ = "nakamal"
 
-    id = Column(GUID, primary_key=True)
-    # uuid = Column(UUID, primary_key=True, unique=True, nullable=False)
     name = Column(String, nullable=False)
     lat = Column(Float, nullable=False)
     lng = Column(Float, nullable=False)
@@ -30,9 +28,6 @@ class Nakamal(Base):
     phone = Column(String)
     # windows = Column(Integer)
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
-
-
-NakamalTable = Nakamal.__table__
 
 
 # class KavaPrice(Base):

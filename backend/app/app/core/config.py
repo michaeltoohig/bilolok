@@ -50,6 +50,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
+    SQLALCHEMY_DATABASE_ECHO: bool = False
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
@@ -61,6 +62,14 @@ class Settings(BaseSettings):
             password=values.get("POSTGRES_PASSWORD"),
             host=values.get("POSTGRES_SERVER"),
             path=f"/{values.get('POSTGRES_DB') or ''}",
+        )
+
+    @property
+    def ASYNC_SQLALCHEMY_DATABASE_URI(self) -> Optional[str]:
+        return (
+            self.SQLALCHEMY_DATABASE_URI.replace("postgresql://", "postgresql+asyncpg://")
+            if self.SQLALCHEMY_DATABASE_URI
+            else self.SQLALCHEMY_DATABASE_URI
         )
 
     REDIS_SERVER: str
@@ -116,7 +125,6 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
-    # TODO replace with Thumbor or other
     THUMBOR_SERVER: str
     THUMBOR_SECURITY_KEY: str
     IMAGES_LOCAL_DIR: str = "_local_images"
@@ -127,3 +135,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+print(settings.SQLALCHEMY_DATABASE_URI)
