@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from sqlalchemy import Column, String, ForeignKey
-from sqlalchemy.dialects.postgresql import UUID
+from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy.orm import relationship
 
 from app.core.config import settings
@@ -18,8 +18,8 @@ class Image(Base, TimeMixin):
     filename = Column(String)
     filetype = Column(String)
     # Relationships
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"), nullable=False)
-    nakamal_id = Column(UUID(as_uuid=True), ForeignKey("nakamal.id"), nullable=False)
+    user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
+    nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
     nakamal = relationship("Nakamal", lazy="joined")
 
     @staticmethod

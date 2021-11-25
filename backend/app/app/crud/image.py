@@ -1,8 +1,7 @@
-from typing import Any, List, Dict, Optional, Type
+from typing import List, Type
 from pathlib import Path
 from uuid import UUID
 
-from fastapi_crudrouter.core.databases import pydantify_record
 from sqlalchemy import desc, select
 
 from app.core.config import settings
@@ -32,7 +31,8 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             # raise DoesNotExist(
             #     f"{self._table.__name__}<id:{item_id}> does not exist"
             # )
-        return self._schema.from_orm(self.make_src_urls(item))
+        item = self.make_src_urls(item)
+        return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[ImageSchema]:
         stmt = select(self._table)

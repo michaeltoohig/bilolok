@@ -1,9 +1,8 @@
 from typing import Optional
 import uuid
 
-from app.schemas.nakamal import NakamalSchema, NakamalSchemaOut
-
 from .base import BaseSchema
+from .nakamal import NakamalSchema, NakamalSchemaOut
 
 
 class ImageSchemaBase(BaseSchema):
@@ -26,11 +25,13 @@ class ImageSchema(ImageSchemaBase):
     id: uuid.UUID
     file_id: str
     filename: str
-    user_id: uuid.UUID  # TODO replace with public user schema
-    nakamal: NakamalSchema
+
     src: str
     msrc: str
     thumbnail: str
+    
+    user_id: uuid.UUID  # TODO replace with public user schema
+    nakamal: NakamalSchema
 
 
 class ImageSchemaOut(ImageSchema):
