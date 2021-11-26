@@ -1,5 +1,4 @@
-from typing import Any, List, Optional
-from app.api.api_v1.endpoints.images import get_one
+from typing import Any, List
 from app.api.deps.db import get_db
 from app.crud.checkin import CRUDCheckin
 from app.schemas.checkin import CheckinSchemaOut
@@ -13,7 +12,7 @@ from app.crud.image import CRUDImage
 from app.models.nakamal import Nakamal
 from app.api.deps.user import current_active_verified_user, current_superuser
 from app.schemas.nakamal import NakamalSchemaIn, NakamalSchema, NakamalSchemaOut
-from app.schemas.image import ImageSchema, ImageSchemaOut
+from app.schemas.image import ImageSchemaOut
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
@@ -82,4 +81,4 @@ async def get_all_images(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
     crud_checkin = CRUDCheckin(db)
     checkins = await crud_checkin.get_multi_by_nakamal(item.id)
-    return [ImageSchemaOut(**checkin.dict()) for checkin in checkins]
+    return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]

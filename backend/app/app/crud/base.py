@@ -34,12 +34,17 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return self._schema.from_orm(item)
 
     async def get_by_id(self, item_id: UUID) -> SCHEMA:
-        item = await self._db_session.get(self._table, item_id)
-        if not item:
+        stmt = (
+            select(self._table)
+            .where(self._table.id == item_id)
+        )
+        result = await self._db_session.execute(stmt)
+        if not result:
             raise Exception("make NotFound error")
             # raise DoesNotExist(
             #     f"{self._table.__name__}<id:{item_id}> does not exist"
             # )
+        (item,) = result.one()
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:

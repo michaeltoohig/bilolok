@@ -61,10 +61,10 @@
         >
           <h3 class="mb-2 font-weight-bold">{{ selectedNakamal.name }}</h3>
           <v-img
-            v-if="selectedNakamal.image"
+            v-if="selectedNakamalImage"
             contain
             height="100"
-            :src="selectedNakamal.image.thumbnail"
+            :src="selectedNakamalImage.thumbnail"
           ></v-img>
           <ul class="mb-2 font-weight-light">
             <li>Owner: {{ selectedNakamal.owner || '-' }}</li>
@@ -240,7 +240,17 @@ export default {
       nakamals: 'nakamal/list',
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
+      getNakamalImages: 'image/nakamal',
+      getNakamalHasImages: 'image/nakamalHasImages',
     }),
+    selectedNakamalImage() {
+      if (this.selectedNakamal) {
+        if (this.getNakamalHasImages(this.selectedNakamal.id)) {
+          return this.getNakamalImages(this.selectedNakamal.id)[0];
+        }
+      }
+      return null;
+    },
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
       return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
@@ -248,6 +258,13 @@ export default {
     // activeFab() {
     //   switch (this.mode)
     // }
+  },
+  watch: {
+    selectedNakamal(n) {
+      if (!this.getNakamalHasImages(n.id)) {
+        this.$store.dispatch('image/getNakamal', n.id);
+      }
+    },
   },
   methods: {
     getLocation() {

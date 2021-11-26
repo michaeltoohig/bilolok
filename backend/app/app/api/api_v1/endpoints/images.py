@@ -42,7 +42,7 @@ async def get_all(
     limit: Optional[int] = 100,
 ) -> Any:
     crud_image = CRUDImage(db)
-    images = await crud_image.get_multi()  #skip=skip, limit=limit)
+    images = await crud_image.get_multi(skip=skip, limit=limit)
     return [ImageSchemaOut(**image.dict()) for image in images]
 
 
@@ -86,7 +86,7 @@ async def tus_hook(
 
     # Check Nakamal exists
     nakamal_id = tusdIn.get("Upload").get("MetaData").get("NakamalID")
-    nakamal = await crud_nakamal.get(nakamal_id)
+    nakamal = await crud_nakamal.get_by_id(nakamal_id)
     if not nakamal:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
 

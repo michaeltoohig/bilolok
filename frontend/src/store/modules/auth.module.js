@@ -127,7 +127,6 @@ const actions = {
   logOut: async ({ dispatch }) => {
     await dispatch('removeLogIn');
     await dispatch('routeLogOut');
-   
   },
   async userLogOut({ dispatch }) {
     dispatch('logOut');

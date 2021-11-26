@@ -1,8 +1,10 @@
+from pathlib import Path
 from typing import List, Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication
+# import pydenticon
 
 from app.core.config import settings
 from app.core.mail import mail, MessageSchema
@@ -25,7 +27,14 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             body="Thanks for joining! You can also join our Facebook group to give feedback and suggest improvements for Bilolok."
         )
         await mail.send_message(message)
-    
+        # Render user's identicon image
+        # identiconPath = Path(settings.IMAGES_LOCAL_DIR) / "users" / f"{user.id}.png"
+        # identiconPath.parent.mkdirs(parents=True, exist_ok=True)
+        # icon = pydenticon.Generator(5, 5)
+        # identicon = icon.generate(str(user.id), 200, 200)
+        # with identiconPath.open("wb") as f:
+        #     f.write(identicon)
+
     async def on_after_forgot_password(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 

@@ -1,6 +1,9 @@
 /* eslint-disable */
 
 import Dexie from 'dexie';
+// import {
+//   setCacheNameDetails,
+// } from 'workbox-core';
 import {
   registerRoute,
   NavigationRoute,
@@ -32,7 +35,7 @@ addEventListener('message', (event) => {
   if (!event.data) return;
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting()
+    self.skipWaiting();
   }
 });
 
@@ -292,7 +295,7 @@ registerRoute(
   // Use a Cache First caching strategy
   new CacheFirst({
     // Put all cached files in a cache named 'images'
-    cacheName: 'images',
+    cacheName: 'bilolok-images',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({

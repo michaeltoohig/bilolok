@@ -12,7 +12,16 @@
             :key="i"
             :src="image.src"
             :lazy-src="image.msrc"
+            gradient="
+              to bottom,
+              rgba(100,115,201,0) 0%,
+              rgba(100,115,201,0.1) 75%,
+              rgba(25,32,72,.9) 100%
+            "
           >
+            <div class="d-flex fill-height justify-center align-end text-center">
+              <h1>{{ image.nakamal.name }}</h1>
+            </div>
           </v-carousel-item>
         </v-carousel>
       </v-col>

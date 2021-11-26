@@ -9,6 +9,7 @@ from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.models.image import Image
 from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
+from sqlalchemy.orm import selectinload
 
 
 class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):    
@@ -23,23 +24,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
     @property
     def _table(self) -> Type[Image]:
         return Image
-
-    async def get_by_id(self, item_id: UUID) -> ImageSchema:
-        item = await self._db_session.get(self._table, item_id)
-        if not item:
-            raise Exception("make NotFound error")
-            # raise DoesNotExist(
-            #     f"{self._table.__name__}<id:{item_id}> does not exist"
-            # )
-        item = self.make_src_urls(item)
-        return self._schema.from_orm(item)
-
-    async def get_multi(self) -> List[ImageSchema]:
-        stmt = select(self._table)
-        items = await self._db_session.execute(stmt)
-        items = [self.make_src_urls(item[0]) for item in items]
-        return (self._schema.from_orm(item) for item in items)
-    
+        
     def save_file(self, sfp: Path, *, nakamal_id: str, file_id: str, filename: str):
         """Save the given file to it's storage path defined by `filepath`."""
         ffp = Path(settings.IMAGES_LOCAL_DIR) / Image.build_filepath(nakamal_id, file_id, filename)
@@ -51,7 +36,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             width=width,
             height=height,
             smart=True,
-            image_url=str(Image.build_filepath(image.nakamal_id, image.file_id, image.filename)),
+            image_url=str(Image.build_filepath(image.nakamal.id, image.file_id, image.filename)),
             **kwargs,
         )
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
@@ -62,8 +47,34 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         image.thumbnail = self.make_src_url(image, height=200, width=200)
         return image
 
+    async def get_by_id(self, item_id: UUID) -> ImageSchema:
+        item = await self._db_session.get(self._table, item_id)
+        if not item:
+            raise Exception("make NotFound error")
+            # raise DoesNotExist(
+            #     f"{self._table.__name__}<id:{item_id}> does not exist"
+            # )
+        item = self.make_src_urls(item)
+        return self._schema.from_orm(item)
+
+    async def get_multi(self, *, skip: int = 0, limit: int = 100) -> List[ImageSchema]:
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .order_by(desc(self._table.created_at))
+            .offset(skip).limit(limit)
+        )
+        results = await self._db_session.execute(query)
+        items = (self.make_src_urls(item) for item in results.scalars())
+        return (self._schema.from_orm(item) for item in items)
+
     async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[Image]:
-        stmt = select(self._table).where(self._table.nakamal_id == nakamal_id)
-        items = await self._db_session.execute(stmt)
-        items = [self.make_src_urls(item[0]) for item in items]
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .order_by(desc(self._table.created_at))
+            .where(self._table.nakamal_id == nakamal_id)
+        )
+        results = await self._db_session.execute(query)
+        items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)

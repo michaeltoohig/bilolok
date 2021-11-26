@@ -418,17 +418,6 @@ brotli = ["brotlicffi", "brotli"]
 http2 = ["h2 (>=3,<5)"]
 
 [[package]]
-name = "identicon"
-version = "1.0"
-description = "identicon python implementation"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-Pillow = "*"
-
-[[package]]
 name = "idna"
 version = "3.2"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -589,6 +578,17 @@ typing-extensions = ">=3.7.4.3"
 [package.extras]
 dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
+
+[[package]]
+name = "pydenticon"
+version = "0.3.1"
+description = "Library for generating identicons. Port of Sigil (https://github.com/cupcake/sigil) with enhancements."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Pillow = "*"
 
 [[package]]
 name = "pyjwt"
@@ -779,7 +779,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "431ae09f93492a4682880097d77a54423f94f2207c69796a3753c5c6ff554d6b"
+content-hash = "399ebcb239d5e216ec1e99d10cab6791cc599a37f22e7d8cc4219ac6658cbe35"
 
 [metadata.files]
 aioredis = [
@@ -1051,9 +1051,6 @@ httpx = [
     {file = "httpx-0.19.0-py3-none-any.whl", hash = "sha256:9bd728a6c5ec0a9e243932a9983d57d3cc4a87bb4f554e1360fce407f78f9435"},
     {file = "httpx-0.19.0.tar.gz", hash = "sha256:92ecd2c00c688b529eda11cedb15161eaf02dee9116712f621c70d9a40b2cdd0"},
 ]
-identicon = [
-    {file = "identicon-1.0.tar.gz", hash = "sha256:54032d908f43476ca534bdd61eb9ec73da0992bca9dcf3fccb5595b311683375"},
-]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
     {file = "idna-3.2.tar.gz", hash = "sha256:467fbad99067910785144ce333826c71fb0e63a425657295239737f7ecd125f3"},
@@ -1247,6 +1244,9 @@ pydantic = [
     {file = "pydantic-1.8.2-cp39-cp39-win_amd64.whl", hash = "sha256:4be75bebf676a5f0f87937c6ddb061fa39cbea067240d98e298508c1bda6f3f3"},
     {file = "pydantic-1.8.2-py3-none-any.whl", hash = "sha256:fec866a0b59f372b7e776f2d7308511784dace622e0992a0b59ea3ccee0ae833"},
     {file = "pydantic-1.8.2.tar.gz", hash = "sha256:26464e57ccaafe72b7ad156fdaa4e9b9ef051f69e175dbbb463283000c05ab7b"},
+]
+pydenticon = [
+    {file = "pydenticon-0.3.1.tar.gz", hash = "sha256:2ef363cdd6f4f0193ce62257486027e36884570f6140bbde51de72df321b77f1"},
 ]
 pyjwt = [
     {file = "PyJWT-2.3.0-py3-none-any.whl", hash = "sha256:e0c4bb8d9f0af0c7f5b1ec4c5036309617d03d56932877f2f7a0beeb5318322f"},

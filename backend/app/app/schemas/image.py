@@ -29,7 +29,7 @@ class ImageSchema(ImageSchemaBase):
     src: str
     msrc: str
     thumbnail: str
-    
+
     user_id: uuid.UUID  # TODO replace with public user schema
     nakamal: NakamalSchema
 

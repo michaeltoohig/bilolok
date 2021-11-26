@@ -4,10 +4,10 @@
     max-width="400"
   >
     <v-img
-      v-if="nakamal.image"
+      v-if="hasImages"
       class="white--text align-end"
       height="200px"
-      :src="nakamal.image.thumbnail"
+      :src="images[0].thumbnail"
     >
       <v-card-title></v-card-title>
     </v-img>
@@ -42,9 +42,23 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'NakamalListItem',
   props: ['nakamal'],
+  computed: {
+    ...mapGetters({
+      getImages: 'image/nakamal',
+    }),
+    hasImages() {
+      return this.images.length > 0;
+    },
+    images() {
+      if (!this.nakamal) return [];
+      return this.getImages(this.nakamal.id);
+    },
+  },
   methods: {
     viewPage(id) {
       this.$store.dispatch('nakamal/select', id)
@@ -58,6 +72,11 @@ export default {
           this.$router.push({ name: 'Map' });
         });
     },
+  },
+  beforeMount() {
+    if (!this.hasImages) {
+      this.$store.dispatch('image/getNakamal', this.nakamal.id);
+    }
   },
 };
 </script>

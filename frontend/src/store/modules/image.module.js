@@ -33,6 +33,15 @@ const getters = {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
   },
+  nakamalHasImages: (state, getters) => nakamalId => {
+    return Object.keys(state.byNakamalId).includes(nakamalId);
+  },
+  // nakamalProfile: (state, getters) => nakamalId => {
+  //   if (!state.byNakamalId[nakamalId]) return null;
+  //   // Arbitrary first image but in future we could mark image as profile for easy filter
+  //   const profileImageId = state.byNakamalId[nakamalId][0]
+  //   return getters.find(profileImageId)
+  // }
 };
 
 function commitAddImage(image, commit) {

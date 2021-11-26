@@ -94,6 +94,7 @@ const actions = {
       }, { root: true });
     }
     catch (error) {
+      await dispatch('auth/checkApiError', error, { root: true });
       dispatch('notify/add', {
         title: 'Not Allowed',
         text: error.response.data.detail,

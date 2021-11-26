@@ -15,10 +15,10 @@ async_engine = create_async_engine(
     # pool_pre_ping=True,
     # connect_args={"options": "-c timezone=utc"},
 )
-async_session = sessionmaker(async_engine, class_=AsyncSession, autocommit=False, autoflush=False)
+async_session = sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
 
-# XXX sync engine/session for pre-start scripts and probably other good uses
+# XXX sync engine/session for pre-start scripts and probably other good uses but not sure I'm using atm
 sync_engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URI,
     echo=settings.SQLALCHEMY_DATABASE_ECHO,
