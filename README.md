@@ -8,10 +8,22 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
 Below are some ideas for the future of this project.
 
- - Have user that visits nakamal most regularly able to have special privileges to modify the profile page of the nakamal.
-   - Set primary profile picture
-   - Set a pinned message on profile
-   - Badge on their profile 
+  - Add username to User model for identifying users in check-ins and image uploads, etc.
+  - Use Pydenticon to create user default avatar based on uuid
+  - Build user profile view on frontend and allow users to browse either theirs or other users profile
+    - Profile has user check-ins, images uploaded, etc. 
+
+I believe the above would conclude a version 1 of Bilolok in terms of features. A user seeing a timeline for a nakamal or user, seeing their own profile and history of nakamal visits, browsing the map of nakamals is a complete feature set for starting out.
+
+For version 2 and beyond we can build upon this foundation such as the following ideas:
+
+  - Have user that checks-in to nakamal most regularly be able to have special privileges to modify the profile page of the nakamal.
+    - Set primary profile picture
+    - Set a pinned message on profile
+    - Badge on their profile 
+  - Add badges for users and include it in their profile timeline
+    - Badges for first image uploaded, first checkin, checking in X times, etc.
+  - Interactive charts for popularity of areas, user history, other visuals.
 
 ## Development
 
@@ -33,15 +45,11 @@ TODO describe initial setup further
 TODO document backend design ideas and packages used.
 
 FastAPI
+SQLAlchemy
 FastAPI Users
 FastAPI CRUDrouter
 FastAPI paginate
-
 SQLAlchemy-Continuum
-
-Will have to use ``databases`` sqlalchemy async framework
-
-One thing I need to figure out is the combined use of both SQLAlchemy declartively defined models used by alembic and the use of the SQLAlchemy core table definitions used by the databases package and CRUDRouter. You can see this in `app.core.db.base.py` and `app.models.__init__.py`. I prefer to move towards exclusively using the SQLAlchemy core and prepare to migrate to SQLAlchemy 1.3 > 1.4 > 2.0 eventually. 
 
 ### Frontend
 
