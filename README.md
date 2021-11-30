@@ -4,7 +4,36 @@ Bilolok means `Kava` in the local language of a small village on the east, south
 
 Bilolok is an open-source application that allows users to browse the hundreds of kava bars in Vanuatu, but focused on Port Vila. It's future may include more social elements similar to the old Foursquare app, but for now will be a catalog of kava bars.
 
-## Roadmap Ideas
+## Version 1 Roadmap
+
+[ ] Profile page
+  [ ] User Avatar
+  [ ] User Timeline
+[ ] Search page
+  [ ] Search filters
+[ ] Nakamal page
+  [ ] Nakamal Timeline
+  [ ] Check-in details
+  [ ] Check-in message
+[ ] Home page
+  [ ] Default to map
+  [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
+
+[ ] SQLAlchemy-Continuum integration
+  [ ] Admin view to un-do unwanted edits
+  
+The following packages are not officially supporting SQLA 1.4 yet but have user
+made forks that are awaiting review to be officially integrated to support the
+new SQLA async version. I'm using those user forks at the moment and will need
+to return the offical project code bases.
+
+[ ] SQLAlchemy 1.4 migration
+  [ ] FastAPI-Users
+  [ ] FastAPI-CRUDRouter
+  [ ] SQLAlchemy-Continuum
+
+
+## Future Roadmap Ideas
 
 Below are some ideas for the future of this project.
 
@@ -36,12 +65,7 @@ FastAPI
 FastAPI Users
 FastAPI CRUDrouter
 FastAPI paginate
-
 SQLAlchemy-Continuum
-
-Will have to use ``databases`` sqlalchemy async framework
-
-One thing I need to figure out is the combined use of both SQLAlchemy declartively defined models used by alembic and the use of the SQLAlchemy core table definitions used by the databases package and CRUDRouter. You can see this in `app.core.db.base.py` and `app.models.__init__.py`. I prefer to move towards exclusively using the SQLAlchemy core and prepare to migrate to SQLAlchemy 1.3 > 1.4 > 2.0 eventually. 
 
 ### Frontend
 

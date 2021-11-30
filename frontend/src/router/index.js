@@ -20,6 +20,11 @@ const routes = [
     // beforeUpdate: authRouteGuard,
   },
   {
+    path: '/profile/me',
+    name: 'Profile',
+    component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
+  },
+  {
     path: '/about',
     name: 'About',
     component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
@@ -38,6 +43,11 @@ const routes = [
     path: '/nakamal/:id',
     name: 'Nakamal',
     component: () => import(/* webpackChunkName: "nakamal" */ '@/views/Nakamal.vue'),
+  },
+  {
+    path: '/nakamal/:id/edit',
+    name: 'NakamalEdit',
+    component: () => import(/* webpackChunkName: "nakamal" */ '@/views/NakamalEdit.vue'),
   },
   {
     path: '/admin',

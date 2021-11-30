@@ -79,7 +79,7 @@
         </template>
 
         <v-list v-if="isLoggedIn">
-          <v-list-item :to="{ name: 'Auth', params: { auth: 'login' } }">
+          <v-list-item :to="{ name: 'Profile' }">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>

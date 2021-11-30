@@ -3,6 +3,7 @@ from typing import Generic, List, TypeVar, Type
 from uuid import uuid4, UUID
 
 from sqlalchemy import select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # from app.db.errors import DoesNotExist
@@ -33,24 +34,36 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         await self._db_session.commit()
         return self._schema.from_orm(item)
 
-    async def get_by_id(self, item_id: UUID) -> SCHEMA:
-        stmt = (
+    async def _get_one(self, item_id: UUID):
+        query = (
             select(self._table)
             .where(self._table.id == item_id)
         )
-        result = await self._db_session.execute(stmt)
-        if not result:
+        try:
+            (item,) = (await self._db_session.execute(query)).one()
+        except NoResultFound:
+            item = None
+        return item
+
+    async def get_by_id(self, item_id: UUID) -> SCHEMA:
+        item = await self._get_one(item_id)
+        if not item:
             raise Exception("make NotFound error")
             # raise DoesNotExist(
             #     f"{self._table.__name__}<id:{item_id}> does not exist"
             # )
-        (item,) = result.one()
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:
         stmt = select(self._table)
         items = await self._db_session.execute(stmt)
         return (self._schema.from_orm(item[0]) for item in items)
+
+    async def remove(self, item_id: UUID) -> SCHEMA:
+        item = await self._get_one(item_id)
+        await self._db_session.delete(item)
+        await self._db_session.commit()
+        return self._schema.from_orm(item)
 
 
 # from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union

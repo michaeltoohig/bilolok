@@ -70,6 +70,27 @@ const actions = {
       commitAddImage(item, commit);
     });
   },
+  remove: async ({ commit, dispatch, rootState }, id) => {
+    try {
+      let token = rootState.auth.token;
+      const data = 
+      await imagesApi.remove(token, id);
+      commit('remove', id);
+      dispatch('notify/add', {
+        title: 'Image Removed',
+        text: 'Image removed from the system.',
+        type: 'warning',
+      }, { root: true });
+    }
+    catch (error) {
+      await dispatch('auth/checkApiError', error, { root: true });
+      dispatch('notify/add', {
+        title: 'Not Allowed',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
+    }
+  },
 };
 
 const mutations = {
@@ -91,6 +112,13 @@ const mutations = {
     else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
       state.byNakamalId[item.nakamal].push(item.id);
     }
+  },
+  remove: (state, id) => {
+    const nakamalId = state.byId[id].nakamal
+    state.allIds.splice(state.allIds.indexOf(id), 1);
+    state.recentIds.splice(state.recentIds.indexOf(id), 1);
+    state.byNakamalId[nakamalId].splice(state.byNakamalId[nakamalId].indexOf(id), 1);
+    Vue.delete(state.byId, id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

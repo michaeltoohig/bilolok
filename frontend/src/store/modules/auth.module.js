@@ -123,6 +123,7 @@ const actions = {
     removeLocalToken();
     commit('setToken', '');
     commit('setLoggedIn', false);
+    commit('setUserProfile', null);
   },
   logOut: async ({ dispatch }) => {
     await dispatch('removeLogIn');

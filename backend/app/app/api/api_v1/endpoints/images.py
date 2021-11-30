@@ -5,7 +5,7 @@ from app.crud.nakamal import CRUDNakamal
 
 import jwt
 from fastapi import Depends
-from fastapi_crudrouter import SQLAlchemyCRUDRouter
+from fastapi_crudrouter import AsyncSQLAlchemyCRUDRouter
 from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
@@ -14,11 +14,13 @@ from app.api.deps.user import current_superuser
 from app.core.config import settings
 from app.core.users import jwt_authentication
 from app.models.image import Image
+from app.models.user import User
 from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
-router = SQLAlchemyCRUDRouter(
+# TODO remove this CRUDRouter as we are no longer even using it due to special schema handling
+router = AsyncSQLAlchemyCRUDRouter(
     prefix="images",
     tags=["images"],
     schema=ImageSchema,
@@ -30,7 +32,7 @@ router = SQLAlchemyCRUDRouter(
     delete_all_route=False,
     update_route=False,
     create_route=False,
-    delete_one_route=[Depends(current_superuser)],
+    delete_one_route=False,
 )
 
 
@@ -54,6 +56,18 @@ async def get_one(
 ) -> Any:
     crud_image = CRUDImage(db)
     image = await crud_image.get_by_id(item_id)
+    return ImageSchemaOut(**image.dict())
+
+
+@router.delete("/{item_id}", response_model=ImageSchemaOut)
+async def delete_one(
+    db: AsyncSession = Depends(get_db),
+    superuser: User = Depends(current_superuser),
+    *,
+    item_id: str
+) -> Any:
+    crud_image = CRUDImage(db)
+    image = await crud_image.remove(item_id)
     return ImageSchemaOut(**image.dict())
 
 

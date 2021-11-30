@@ -44,13 +44,13 @@ const getters = {
 function commitAddNakamal(nakamal, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(nakamal, ['image']));
+  commit('add', normalizeRelations(nakamal, []));
   // Add or update the image.
-  if (nakamal.image) {
-    commit('image/add', nakamal.image, {
-      root: true,
-    });
-  }
+  // if (nakamal.image) {
+  //   commit('image/add', nakamal.image, {
+  //     root: true,
+  //   });
+  // }
 };
 
 const actions = {
@@ -72,6 +72,24 @@ const actions = {
       console.log('! load one nakamal in catch');
     }
   },
+  update: async ({ commit, dispatch, rootState }, { nakamalId, payload }) => {
+    try {
+      let token = rootState.auth.token;
+      const response = await nakamalsApi.update(token, nakamalId, payload);
+      const nakamal = response.data;
+      commitAddNakamal(nakamal, commit);
+      dispatch('notify/add', {
+        title: 'Success',
+        text: 'Nakamal details have been updated.',
+        type: 'primary',
+        duration: 5_000,
+      }, { root: true });
+    }
+    catch (error) {
+      console.log('in update nakamal error', error);
+      await dispatch('auth/checkApiError', error, { root: true });
+    }
+  },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
@@ -85,7 +103,12 @@ const actions = {
       }, { root: true });
     }
     catch (error) { 
-      console.log('! add nakamal in catch');
+      await dispatch('auth/checkApiError', error, { root: true });
+      dispatch('notify/add', {
+        title: 'Not Allowed',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
     }
   },
   select: async ({ commit }, id) => {
@@ -108,9 +131,12 @@ const actions = {
       }, { root: true });
     }
     catch (error) {
-      console.log('! remove nakamal in catch');
-      console.log(error);
-      await dispatch('checkApiError', error);
+      await dispatch('auth/checkApiError', error, { root: true });
+      dispatch('notify/add', {
+        title: 'Not Allowed',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
     }
   },
 };
@@ -140,6 +166,7 @@ const mutations = {
   remove: (state, id) => {
     state.allIds.splice(state.allIds.indexOf(id), 1);
     Vue.delete(state.byId, id);
+    state.selectedId = null;
   }
 };
 

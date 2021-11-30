@@ -11,7 +11,7 @@
         <v-card-text>
           <ul class="list-unstyled">
             <li>Owner: {{ nakamal.owner }}</li>
-            <li>Number: {{ nakamal.number }}</li>
+            <li>Number: {{ nakamal.phone }}</li>
             <li>Light: {{ nakamal.light }}</li>
             <li>Checkins Today: {{ todayCheckins }}</li>
             <li>Checkins Month: {{ monthCheckins }}</li>
@@ -24,6 +24,22 @@
             @click="checkin({ nakamal_id: nakamal.id })"
           >
             Check-In
+          </v-btn>
+          <v-btn
+            v-show="hasAdminAccess"
+            text
+            color="primary"
+            :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
+          >
+            Edit
+          </v-btn>
+          <v-btn
+            v-show="hasAdminAccess"
+            text
+            color="error"
+            @click="remove"
+          >
+            Remove
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -83,18 +99,33 @@
                   <v-col
                     v-for="(image, i) in images"
                     :key="i"
-                    class="d-flex child-flex"
+                    class="d-flex flex-column child-flex"
                     cols="4"
                   >
                     <img
+                      :data-image-id="image.id"
                       v-pswp="image"
                       :src="image.thumbnail"
                       :lazy-src="image.msrc"
-                      aspect-ratio="1"
-                      class="image grey lighten-2"
+                      :aspect-ratio="1"
+                      @contextmenu="show"
                     />
                   </v-col>
                 </v-row>
+
+                <v-menu
+                  v-model="showMenu"
+                  :position-x="x"
+                  :position-y="y"
+                  absolute
+                  offset-y
+                >
+                  <v-list>
+                    <v-list-item link @click="removeImage">
+                      <v-list-item-title>Remove</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </Photoswipe>
             </v-container>
           </v-tab-item>
@@ -140,6 +171,10 @@ export default {
     return {
       tab: 'images',
       openUploadDialog: false,
+      x: 0,
+      y: 0,
+      selectedImageId: null,
+      showMenu: false,
     };
   },
   computed: {
@@ -153,7 +188,8 @@ export default {
     }),
     images() {
       if (!this.nakamal) return [];
-      return this.getImages(this.nakamal.id).sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
+      return this.getImages(this.nakamal.id);
+      // .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
     },
     checkins() {
       if (!this.nakamal) return [];
@@ -182,35 +218,33 @@ export default {
     ...mapActions({
       checkin: 'checkin/add',
     }),
-    // async checkin() {
-    //   try {
-    //     const token = this.$store.getters['auth/token'];
-    //     await checkinsApi.create(token, {
-    //       nakamal: this.nakamal.id,
-    //     });
-    //     this.$store.dispatch('notify/add', {
-    //       title: 'Checked-In!',
-    //       text: `You are checked in to ${this.nakamal.name}.`,
-    //       type: 'primary',
-    //     });
-    //   } catch (error) {
-    //     this.$store.dispatch('notify/add', {
-    //       title: 'Not Allowed',
-    //       text: error.response.data.detail,
-    //       type: 'warning',
-    //     });
-    //   }
-    // },
     remove() {
-      this.$store.dispatch('nakamal/remove', this.nakamal.id)
-        .then(() => {
-          this.$router.push({ name: 'Home' });
-        });
+      /* eslint-disable no-alert, no-restricted-globals */
+      if (confirm('Are you sure you want to remove this nakamal?')) {
+        this.$store.dispatch('nakamal/remove', this.nakamal.id)
+          .then(() => {
+            this.$router.push({ name: 'Home' });
+          });
+      }
+    },
+    show(e) {
+      e.preventDefault();
+      this.showMenu = false;
+      this.selectedImageId = e.target.getAttribute('data-image-id');
+      this.x = e.clientX;
+      this.y = e.clientY;
+      this.$nextTick(() => {
+        this.showMenu = true;
+      });
+    },
+    removeImage() {
+      if (confirm('Are you sure you want to remove this image?')) {
+        this.$store.dispatch('image/remove', this.selectedImageId);
+      }
     },
   },
   async mounted() {
     const { id } = this.$route.params;
-    // this.getCheckins(id);
     this.$store.dispatch('checkin/getNakamal', id);
     this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)

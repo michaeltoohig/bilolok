@@ -48,7 +48,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         return image
 
     async def get_by_id(self, item_id: UUID) -> ImageSchema:
-        item = await self._db_session.get(self._table, item_id)
+        item = await self._get_one(item_id)
         if not item:
             raise Exception("make NotFound error")
             # raise DoesNotExist(
@@ -78,3 +78,10 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         results = await self._db_session.execute(query)
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
+
+    async def remove(self, item_id: UUID) -> Image:
+        item = await self._get_one(item_id)
+        await self._db_session.delete(item)
+        await self._db_session.commit()
+        item = self.make_src_urls(item)
+        return self._schema.from_orm(item)
