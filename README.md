@@ -37,13 +37,6 @@ to return the offical project code bases.
 
 Below are some ideas for the future of this project.
 
-  - Add username to User model for identifying users in check-ins and image uploads, etc.
-  - Use Pydenticon to create user default avatar based on uuid
-  - Build user profile view on frontend and allow users to browse either theirs or other users profile
-    - Profile has user check-ins, images uploaded, etc. 
-
-I believe the above would conclude a version 1 of Bilolok in terms of features. A user seeing a timeline for a nakamal or user, seeing their own profile and history of nakamal visits, browsing the map of nakamals is a complete feature set for starting out.
-
 For version 2 and beyond we can build upon this foundation such as the following ideas:
 
   - Have user that checks-in to nakamal most regularly be able to have special privileges to modify the profile page of the nakamal.
