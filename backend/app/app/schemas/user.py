@@ -1,8 +1,9 @@
+from typing import Optional
 import uuid
-from typing import List, Optional, TypeVar
 
 from fastapi_users import models
-from pydantic import BaseModel, EmailStr, Field
+from app.schemas.base import BaseSchema
+from pydantic import AnyHttpUrl
 
 
 # TODO update schema class names to match other schemas naming convention
@@ -21,12 +22,10 @@ class UserUpdate(models.BaseUserUpdate):
 
 
 class UserDB(User, models.BaseUserDB):
-    pass
+    avatar: Optional[AnyHttpUrl] = None
 
 
 # Additional schema for public facing API
-class UserSchema(models.BaseUser):
+class UserSchema(BaseSchema):
     id: uuid.UUID
-
-    class Config:
-        orm_mode = True
+    avatar: Optional[AnyHttpUrl] = None

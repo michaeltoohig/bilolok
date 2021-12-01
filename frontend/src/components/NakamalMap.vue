@@ -326,16 +326,14 @@ export default {
     },
   },
   beforeMount() {
-    if (this.total === 0) {
-      this.$store.dispatch('nakamal/load');
-    }
+    this.$store.dispatch('nakamal/load');
     this.$root.$on('fly-to-selected', this.flyToSelected);
   },
   mounted() {
     if (this.selectedNakamal) {
       setTimeout(() => {
         this.flyToSelected();
-      }, 1500);
+      }, 500);
     }
   },
 };

@@ -20,9 +20,9 @@ const routes = [
     // beforeUpdate: authRouteGuard,
   },
   {
-    path: '/profile/me',
-    name: 'Profile',
-    component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
+    path: '/user/:id',
+    name: 'User',
+    component: () => import(/* webpackChunkName: "profile" */ '@/views/User.vue'),
   },
   {
     path: '/about',

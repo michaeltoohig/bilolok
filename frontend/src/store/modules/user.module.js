@@ -8,13 +8,13 @@ const initialState = () => ({
 const state = initialState();
 
 const getters = {
-  list: (state) => state.users,
   find: (state) => (userId) => {
     const filteredUsers = state.users.filter((user) => user.id === userId);
     if (filteredUsers.length > 0) {
       return { ...filteredUsers[0] };
     }
   },
+  list: (state) => state.users,
 };
 
 const actions = {
@@ -29,6 +29,16 @@ const actions = {
     }
     catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
+    }
+  },
+  getOne: async ({ commit }, id) => {
+    try {
+      const response = await usersApi.get(id);
+      const user = response.data;
+      commit('setUser', user);
+    }
+    catch (error) {
+      console.log('error in get one user', error);
     }
   },
   updateUser: async ({ commit, dispatch, rootState }, { userId, payload }) => {
@@ -74,6 +84,7 @@ const mutations = {
       state[key] = newState[key];
     });
   },
+  // TODO update below to be same as pattern seen in other modules
   setUsers(state, payload) {
     state.users = payload;
   },
