@@ -1,17 +1,17 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication
-# import pydenticon
+import pydenticon
 
 from app.core.config import settings
 from app.core.mail import mail, MessageSchema
 from app.db.session import async_session
 from app.models.fastapi_users_db_sqlalchemy_asyncpg import SQLAlchemyUserDatabase
-from app.models.user import UserTable
-from app.schemas.user import User, UserCreate, UserUpdate, UserDB, UserSchema
+from app.models.user import User as UserTable
+from app.schemas.user import User, UserCreate, UserUpdate, UserDB
 
 
 class UserManager(BaseUserManager[UserCreate, UserDB]):
@@ -27,13 +27,14 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             body="Thanks for joining! You can also join our Facebook group to give feedback and suggest improvements for Bilolok."
         )
         await mail.send_message(message)
-        # Render user's identicon image
-        # identiconPath = Path(settings.IMAGES_LOCAL_DIR) / "users" / f"{user.id}.png"
-        # identiconPath.parent.mkdirs(parents=True, exist_ok=True)
-        # icon = pydenticon.Generator(5, 5)
-        # identicon = icon.generate(str(user.id), 200, 200)
-        # with identiconPath.open("wb") as f:
-        #     f.write(identicon)
+        # Render user's default avatar image
+        relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
+        fullAvatarPath = Path(settings.IMAGES_LOCAL_DIR) / relativeAvatarPath
+        fullAvatarPath.parent.mkdir(parents=True, exist_ok=True)
+        icon = pydenticon.Generator(5, 5)
+        identicon = icon.generate(str(user.id), 200, 200)
+        with fullAvatarPath.open("wb") as f:
+            f.write(identicon)
 
     async def on_after_forgot_password(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
         print(f"User {user.id} has forgot their password. Reset token: {token}")
@@ -51,7 +52,7 @@ jwt_authentication = JWTAuthentication(
 
 
 async def get_user_db():
-    yield SQLAlchemyUserDatabase(UserDB, async_session, UserTable)
+    yield SQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
 
 
 async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):

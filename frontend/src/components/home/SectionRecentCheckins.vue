@@ -5,12 +5,12 @@
       <v-list-item
         v-for="checkin in checkins"
         :key="checkin.id"
-        :to="{ name: 'Nakamal', params: { id: checkin.nakamal.id } }"
       >
-        <v-list-item-avatar>
+        <v-list-item-avatar tile link>
           <v-img
-            :alt="`${checkin.user_id} avatar`"
-            :src="checkin.user_id"
+            :alt="`${checkin.user.id} avatar`"
+            :src="checkin.user.avatar"
+            @click="goToUser(checkin.user.id)"
           ></v-img>
         </v-list-item-avatar>
 
@@ -28,6 +28,11 @@
             </v-tooltip>
           </v-list-item-subtitle>
         </v-list-item-content>
+        <v-list-item-action>
+          <v-btn text small @click="goToNakamal(checkin.nakamal.id)">
+            View Page
+          </v-btn>
+        </v-list-item-action>
       </v-list-item>
     </v-list>
   </v-container>
@@ -35,26 +40,22 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import dayjs from 'dayjs';
-import RelativeTime from 'dayjs/plugin/relativeTime';
-import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-
-dayjs.extend(RelativeTime);
-dayjs.extend(LocalizedFormat);
+import formatDatetime from '@/mixins/formatDatetime';
 
 export default {
   name: 'SectionRecentCheckins',
+  mixins: [formatDatetime],
   computed: {
     ...mapGetters({
       checkins: 'checkin/recent',
     }),
   },
   methods: {
-    formatTimeAgo(d) {
-      return dayjs(d).fromNow();
+    goToNakamal(id) {
+      this.$router.push({ name: 'Nakamal', params: { id } });
     },
-    formatTime(d) {
-      return dayjs(d).format('LLL');
+    goToUser(id) {
+      this.$router.push({ name: 'User', params: { id } });
     },
   },
   beforeMount() {

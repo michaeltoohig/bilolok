@@ -41,7 +41,11 @@ const actions = {
       }, { root: true });
     }
     catch(error) {
-      console.log('register error', error);
+      dispatch('notify/add', {
+        title: 'Registration Error',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
     }
   },
   jwtLogin: async ({ commit, dispatch }, payload) => {
@@ -67,6 +71,11 @@ const actions = {
       }
     }
     catch (error) {
+      dispatch('notify/add', {
+        title: 'Login Error',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
       commit('setLogInError', true);
       await dispatch('logOut');
     }

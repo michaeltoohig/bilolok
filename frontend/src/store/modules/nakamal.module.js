@@ -66,6 +66,7 @@ const actions = {
       let response = await nakamalsApi.get(id);
       const nakamal = response.data;
       commitAddNakamal(nakamal, commit);
+      // Perhaps do not assume we want to load all right away
       dispatch('load');  // Load all others in background
     }
     catch (error) {

@@ -79,7 +79,7 @@
         </template>
 
         <v-list v-if="isLoggedIn">
-          <v-list-item :to="{ name: 'Profile' }">
+          <v-list-item :to="{ name: 'User', params: { id: me.id } }">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
@@ -154,7 +154,7 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
-      user: 'auth/user',
+      me: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
     }),
     isMapView() {

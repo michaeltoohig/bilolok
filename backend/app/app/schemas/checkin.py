@@ -4,6 +4,7 @@ import uuid
 
 from .base import BaseSchema
 from .nakamal import NakamalSchema
+from .user import UserSchema
 
 
 class CheckinSchemaBase(BaseSchema):
@@ -24,8 +25,7 @@ class CheckinSchemaIn(CheckinSchemaBase):
 class CheckinSchema(CheckinSchemaBase):
     id: uuid.UUID
     created_at: datetime
-
-    user_id: uuid.UUID  # TODO UserSchema
+    user: UserSchema
     nakamal: NakamalSchema
 
 

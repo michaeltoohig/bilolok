@@ -17,5 +17,6 @@ class Checkin(Base, TimeMixin):
     lng = Column(Float)
     # Relationships
     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
+    user = relationship("User", lazy="joined")
     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
     nakamal = relationship("Nakamal", lazy="joined")

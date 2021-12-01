@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import Optional
 import uuid
 
 from .base import BaseSchema
-from .nakamal import NakamalSchema, NakamalSchemaOut
+from .nakamal import NakamalSchema
+from .user import UserSchema
 
 
 class ImageSchemaBase(BaseSchema):
@@ -23,6 +25,7 @@ class ImageSchemaIn(ImageSchemaBase):
 
 class ImageSchema(ImageSchemaBase):
     id: uuid.UUID
+    created_at: datetime
     file_id: str
     filename: str
 
@@ -30,7 +33,7 @@ class ImageSchema(ImageSchemaBase):
     msrc: str
     thumbnail: str
 
-    user_id: uuid.UUID  # TODO replace with public user schema
+    user: UserSchema
     nakamal: NakamalSchema
 
 

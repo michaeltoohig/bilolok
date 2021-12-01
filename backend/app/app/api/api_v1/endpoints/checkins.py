@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi_crudrouter import SQLAlchemyCRUDRouter
+from fastapi_crudrouter import AsyncSQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from app.api.deps.db import get_db
@@ -14,40 +14,30 @@ from app.models.user import User
 from app.schemas.checkin import CheckinSchemaIn, CheckinSchema, CheckinSchemaOut
 
 
-router = SQLAlchemyCRUDRouter(
+router = AsyncSQLAlchemyCRUDRouter(
     prefix="checkins",
     tags=["checkins"],
     schema=CheckinSchema,
     create_schema=CheckinSchemaIn,
     db_model=Checkin,
     db=get_db,
+    get_all_route=False,
     create_route=False,
     delete_all_route=False,
     delete_one_route=[Depends(current_superuser)],
 )
 
 
-# TODO remove this endpoint after async sqlalchemy crudrouter is merged into project 
-# see: https://github.com/awtkns/fastapi-crudrouter/pull/121
 @router.get("", response_model=List[CheckinSchemaOut])
 async def get_all(
     db: AsyncSession = Depends(get_db),
     *,
-    skip: Optional[int] = 0,
-    limit: Optional[int] = 100,
-) -> Any:
+    skip: int = 0,
+    limit: int = 100,
+) -> List[CheckinSchemaOut]:
     crud_checkin = CRUDCheckin(db)
-    checkins = await crud_checkin.get_multi(skip=skip, limit=limit)
-    return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]
-
-
-@router.get("/me", response_model=List[CheckinSchemaOut])
-async def get_all_me(
-    db: AsyncSession = Depends(get_db),
-    *,
-    user: User = Depends(current_active_user)
-) -> Any:
-    pass
+    items = await crud_checkin.get_multi(skip=skip, limit=limit)
+    return [CheckinSchemaOut(**item.dict()) for item in items]
 
 
 @router.post("", response_model=CheckinSchemaOut)

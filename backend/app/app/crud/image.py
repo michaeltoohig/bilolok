@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import List, Optional, Type
 from pathlib import Path
 from uuid import UUID
 
@@ -8,7 +8,7 @@ from app.core.config import settings
 from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.models.image import Image
-from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
+from app.schemas.image import ImageSchemaIn, ImageSchema
 from sqlalchemy.orm import selectinload
 
 
@@ -41,7 +41,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         )
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
 
-    def make_src_urls(self, image: ImageSchema) -> ImageSchemaOut:
+    def make_src_urls(self, image: ImageSchema) -> ImageSchema:
         image.src = self.make_src_url(image, height=1080, width=1920, full_fit_in=True)
         image.msrc = self.make_src_url(image, height=32, width=32, full_fit_in=True)
         image.thumbnail = self.make_src_url(image, height=200, width=200)
@@ -68,7 +68,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[Image]:
+    async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[ImageSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))
@@ -79,7 +79,19 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def remove(self, item_id: UUID) -> Image:
+    async def get_multi_by_user(self, user_id: UUID, *, skip: int = 0, limit: int = 100, nakamal_id: Optional[UUID] = None) -> List[ImageSchema]:
+        query = (
+            select(self._table)
+            .where(self._table.user_id == user_id)
+        )
+        if nakamal_id:
+            query = query.where(self._table.nakamal_id == nakamal_id)
+        query = query.order_by(desc(self._table.created_at))
+        results = await self._db_session.execute(query)
+        items = (self.make_src_urls(item) for item in results.scalars())
+        return (self._schema.from_orm(item) for item in items)
+
+    async def remove(self, item_id: UUID) -> ImageSchema:
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()

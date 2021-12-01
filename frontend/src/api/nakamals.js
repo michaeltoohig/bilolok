@@ -4,9 +4,9 @@ import http from './http-common';
 const resource = 'nakamals';
 
 export default {
-  async get(id) {
-    return http.get(`${resource}/${id}`);
-  },
+  // async get(id) {
+  //   return http.get(`${resource}/${id}`);
+  // },
 
   async getAll(params) {
     return http.get(`${resource}`, { params });

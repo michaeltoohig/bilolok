@@ -1,4 +1,5 @@
 from pathlib import Path
+from uuid import UUID
 
 from sqlalchemy import Column, String, ForeignKey
 from fastapi_users_db_sqlalchemy import GUID
@@ -19,11 +20,12 @@ class Image(Base, TimeMixin):
     filetype = Column(String)
     # Relationships
     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
+    user = relationship("User", lazy="joined")
     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
     nakamal = relationship("Nakamal", lazy="joined")
 
     @staticmethod
-    def build_filepath(nakamal_id: str, file_id: str, filename: str):
+    def build_filepath(nakamal_id: UUID, file_id: str, filename: str):
         IMAGE_PATH_FMT = "nakamals/{subdir}/{n_id}/{f_id}{ext}"
         return Path(IMAGE_PATH_FMT.format(
             subdir=str(nakamal_id)[:2],

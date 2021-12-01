@@ -5,6 +5,7 @@ import Vue from 'vue';
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import imagesApi from '@/api/images';
 import nakamalsApi from '@/api/nakamals';
+import usersApi from '@/api/users';
 
 const initialState = () => ({
   byId: {},
@@ -18,7 +19,7 @@ const state = initialState();
 const getters = {
   // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
-    return resolveRelations(state.byId[id], ['nakamal'], rootGetters);
+    return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
   },
   // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
@@ -42,14 +43,22 @@ const getters = {
   //   const profileImageId = state.byNakamalId[nakamalId][0]
   //   return getters.find(profileImageId)
   // }
+  // Return a list of checkins of a user.
+  // TODO filter by `user` when API response includes an user object that will need to be resolved
+  user: (state, getters) => userId => {
+    return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
+  },
 };
 
 function commitAddImage(image, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(image, ['nakamal']));
+  commit('add', normalizeRelations(image, ['nakamal', 'user']));
   // Add or update the image.
   commit('nakamal/add', image.nakamal, {
+    root: true,
+  });
+  commit('user/setUser', image.user, {
     root: true,
   });
 };
@@ -65,6 +74,13 @@ const actions = {
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getImages(nakamalId);
+    const images = response.data;
+    images.forEach((item) => {
+      commitAddImage(item, commit);
+    });
+  },
+  getUser: async ({ commit }, userId) => {
+    const response = await usersApi.getImages(userId);
     const images = response.data;
     images.forEach((item) => {
       commitAddImage(item, commit);
