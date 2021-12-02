@@ -5,7 +5,7 @@ from app.crud.nakamal import CRUDNakamal
 
 import jwt
 from fastapi import Depends
-from fastapi_crudrouter import AsyncSQLAlchemyCRUDRouter
+from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
 # TODO remove this CRUDRouter as we are no longer even using it due to special schema handling
-router = AsyncSQLAlchemyCRUDRouter(
+router = SQLAlchemyCRUDRouter(
     prefix="images",
     tags=["images"],
     schema=ImageSchema,

@@ -5,7 +5,7 @@ from app.schemas.checkin import CheckinSchemaOut
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi_crudrouter import AsyncSQLAlchemyCRUDRouter
+from fastapi_crudrouter import SQLAlchemyCRUDRouter
 
 from app.crud.nakamal import CRUDNakamal
 from app.crud.image import CRUDImage
@@ -16,7 +16,7 @@ from app.schemas.image import ImageSchemaOut
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
-router = AsyncSQLAlchemyCRUDRouter(
+router = SQLAlchemyCRUDRouter(
     prefix="nakamals",
     tags=["nakamals"],
     schema=NakamalSchema,

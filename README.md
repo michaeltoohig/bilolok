@@ -6,31 +6,31 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
 ## Version 1 Roadmap
 
-[ ] Profile page
-  [ ] User Avatar
-  [ ] User Timeline
-[ ] Search page
-  [ ] Search filters
-[ ] Nakamal page
-  [ ] Nakamal Timeline
-  [ ] Check-in details
-  [ ] Check-in message
-[ ] Home page
-  [ ] Default to map
-  [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
+ - [x] Profile page
+   - [x] User Avatar
+   - [x] User Timeline
+ - [ ] Search page
+   - [ ] Search filters
+ - [ ] Nakamal page
+   - [ ] Nakamal Timeline
+   - [ ] Check-in details
+   - [ ] Check-in message
+ - [ ] Home page
+   - [ ] Default to map
+   - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
 
-[ ] SQLAlchemy-Continuum integration
-  [ ] Admin view to un-do unwanted edits
+ - [ ] SQLAlchemy-Continuum integration
+   - [ ] Admin view to un-do unwanted edits
   
 The following packages are not officially supporting SQLA 1.4 yet but have user
 made forks that are awaiting review to be officially integrated to support the
 new SQLA async version. I'm using those user forks at the moment and will need
 to return the offical project code bases.
 
-[ ] SQLAlchemy 1.4 migration
-  [ ] FastAPI-Users
-  [ ] FastAPI-CRUDRouter
-  [ ] SQLAlchemy-Continuum
+ - [ ] SQLAlchemy 1.4 migration
+   - [ ] FastAPI-Users
+   - [ ] FastAPI-CRUDRouter
+   - [ ] SQLAlchemy-Continuum
 
 
 ## Future Roadmap Ideas

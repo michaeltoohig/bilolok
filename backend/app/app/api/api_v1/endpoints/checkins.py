@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-from fastapi_crudrouter import AsyncSQLAlchemyCRUDRouter
+from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from app.api.deps.db import get_db
@@ -14,7 +14,7 @@ from app.models.user import User
 from app.schemas.checkin import CheckinSchemaIn, CheckinSchema, CheckinSchemaOut
 
 
-router = AsyncSQLAlchemyCRUDRouter(
+router = SQLAlchemyCRUDRouter(
     prefix="checkins",
     tags=["checkins"],
     schema=CheckinSchema,
