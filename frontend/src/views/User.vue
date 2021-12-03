@@ -23,89 +23,73 @@
       </v-card>
 
       <v-container>
-        <v-timeline
-          align-top
-          dense
+        <div
+          v-for="item in items"
+          :key="item.id"
         >
-          <v-timeline-item
-            v-if="items.length === 0"
-            fill-dot
-            small
-            color="info"
-          >
-            <v-alert
-              color="info"
-              icon="mdi-information"
-              class="white--text"
-            >
-              You will see your activity on Bilolok here once you
-              check-in or upload an image to a kava bar.
-            </v-alert>
-          </v-timeline-item>
-          <v-timeline-item
-            v-for="item in items"
-            :key="item.id"
-            :color="itemColor(item)"
-            :icon="itemIcon(item)"
-            fill-dot
-          >
-            <v-card class="elevation-2">
-              <v-card-title>
-                <h2 :class="`headline font-weight-light ${itemColor(item)}--text`">
-                  <span v-if="getItemType(item) === 'checkin'">
-                    Check-in
-                  </span>
-                  <span v-else-if="getItemType(item) === 'image'">
-                    Image
-                  </span>
-                </h2>
-              </v-card-title>
-              <v-card-subtitle>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <span
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <strong>{{ formatTimeAgo(item.created_at) }}</strong>
-                    </span>
-                  </template>
-                  <span>{{ formatTime(item.created_at) }}</span>
-                </v-tooltip>
-              </v-card-subtitle>
-              <v-card-text v-if="item.message" class="text-h5 font-weight-bold">
-                {{ item.message }}
-              </v-card-text>
-              <v-card-text v-if="item.src">
-                <v-img
-                  contain
-                  :max-height="300"
-                  :src="item.src"
-                  :lazy-src="item.msrc"
-                ></v-img>
-              </v-card-text>
-              <v-card-actions>
-                <v-list-item link :to="{ name: 'Nakamal', params: { id: item.nakamal.id } }">
-                  <v-list-item-avatar
-                    v-if="nakamalAvatar(item.nakamal.id)"
-                    color="grey darken-3"
+          <v-card class="elevation-2 mb-3">
+            <v-card-title>
+              <h2 :class="`headline font-weight-light ${itemColor(item)}--text`">
+                <span v-if="getItemType(item) === 'checkin'">
+                  Check-in
+                </span>
+                <span v-else-if="getItemType(item) === 'image'">
+                  Uploaded Image
+                </span>
+              </h2>
+            </v-card-title>
+            <v-card-subtitle>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <span
+                    v-bind="attrs"
+                    v-on="on"
                   >
-                    <v-img
-                      class="elevation-6"
-                      :src="nakamalAvatar(item.nakamal.id).thumbnail"
-                    ></v-img>
-                  </v-list-item-avatar>
+                    <strong>{{ formatTimeAgo(item.created_at) }}</strong>
+                  </span>
+                </template>
+                <span>{{ formatTime(item.created_at) }}</span>
+              </v-tooltip>
+            </v-card-subtitle>
+            <v-card-text v-if="item.message" class="text-h5 font-weight-bold">
+              {{ item.message }}
+            </v-card-text>
+            <v-card-text v-if="item.src">
+              <v-img
+                contain
+                :max-height="300"
+                :src="item.src"
+                :lazy-src="item.msrc"
+              ></v-img>
+            </v-card-text>
+              <v-list-item>
+                <v-list-item-avatar
+                  v-if="nakamalAvatar(item.nakamal.id)"
+                  color="grey darken-3"
+                >
+                  <v-img
+                    :src="nakamalAvatar(item.nakamal.id).thumbnail"
+                  ></v-img>
+                </v-list-item-avatar>
 
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      {{ item.nakamal.name }}
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-card-actions>
-            </v-card>
-          </v-timeline-item>
-        </v-timeline>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    {{ item.nakamal.name }}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-btn
+                    outlined
+                    small
+                    icon
+                    link :to="{ name: 'Nakamal', params: { id: item.nakamal.id } }"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+          </v-card>
+        </div>
       </v-container>
     </div>
   </div>

@@ -5,8 +5,9 @@
       <v-list-item
         v-for="checkin in checkins"
         :key="checkin.id"
+        class="elevation-2 mb-3"
       >
-        <v-list-item-avatar tile link>
+        <v-list-item-avatar tile link class="elevation-2">
           <v-img
             :alt="`${checkin.user.id} avatar`"
             :src="checkin.user.avatar"
@@ -29,8 +30,13 @@
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
-          <v-btn text small @click="goToNakamal(checkin.nakamal.id)">
-            View Page
+          <v-btn
+            outlined
+            small
+            @click="goToNakamal(checkin.nakamal.id)"
+            icon
+          >
+            <v-icon>mdi-chevron-right</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
