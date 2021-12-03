@@ -45,16 +45,16 @@
                   For anyone in Vanuatu, especially CS students, interested in learning
                   software development, I will be happy to work with you and help you
                   contribute your ideas to this project.
-                  <v-btn
-                    color="info"
-                    outlined
-                    @click="openGithub"
-                    class="mt-3"
-                  >
-                    View Source Code
-                  </v-btn>
                 </p>
-                <h4>Have ideas for this application?</h4>
+                <v-btn
+                  color="info"
+                  outlined
+                  @click="openGithub"
+                  class="mb-3"
+                >
+                  View Source Code
+                </v-btn>
+                <h4 class="mt-3">Have ideas for this application?</h4>
                 <p>
                   Find our Facebook page for Bilolok and we can talk about adding your
                   ideas to this project.
@@ -66,7 +66,32 @@
       </v-row>
     </v-container>
     <v-container>
-      <h2>Recent Check-ins</h2>
+      <v-parallax
+        light
+        :src="mapImagePath"
+      >
+        <v-row
+          align="center"
+          justify="center"
+        >
+          <v-col
+            class="text-center"
+            cols="12"
+          >
+            <h1 class="text-h4 font-weight-bold mb-4">
+              Explore the kava bars!
+            </h1>
+            <v-btn
+              x-large
+              outlined
+              color="primary"
+              :to="{ name: 'Map' }"
+            >
+              View the Map
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-parallax>
     </v-container>
     <SectionRecentCheckins />
     <SectionRecentImages />
@@ -77,6 +102,8 @@
 import SectionRecentImages from '@/components/home/SectionRecentImages.vue';
 import SectionRecentCheckins from '@/components/home/SectionRecentCheckins.vue';
 
+const mapImagePath = require('../assets/PortVilaMap.jpg');
+
 export default {
   name: 'Home',
   components: {
@@ -86,6 +113,7 @@ export default {
   data() {
     return {
       openGithubDowndown: false,
+      mapImagePath,
     };
   },
   methods: {
