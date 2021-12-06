@@ -26,7 +26,10 @@
           <template v-slot:item="data">
             <template>
               <v-list-item-avatar>
-                <img v-if="data.item.image" :src="data.item.image.thumbnail">
+                <img
+                  v-if="nakamalAvatar(data.item.id)"
+                  :src="nakamalAvatar(data.item.id).thumbnail"
+                >
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.name"></v-list-item-title>
@@ -60,6 +63,7 @@ export default {
     ...mapGetters({
       showSearch: 'map/showSearch',
       nakamals: 'nakamal/list',
+      getNakamalImages: 'image/nakamal',
     }),
   },
   methods: {
@@ -78,6 +82,13 @@ export default {
           this.setShowSearch(false);
           this.$root.$emit('fly-to-selected');
         });
+    },
+    nakamalAvatar(nakamalId) {
+      const images = this.getNakamalImages(nakamalId);
+      if (images.length > 0) {
+        return images[0];
+      }
+      return null;
     },
   },
 };

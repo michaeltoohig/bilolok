@@ -146,7 +146,7 @@
               color="primary lighten-3"
               @click.stop="newNakamalMarker"
             >
-              <v-icon>mdi-pencil</v-icon>
+              <v-icon>mdi-map-marker-plus</v-icon>
             </v-btn>
           </v-speed-dial>
         </v-fab-transition>

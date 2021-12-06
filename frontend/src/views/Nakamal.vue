@@ -8,15 +8,6 @@
         <v-card-title>
           <h1>{{ nakamal.name }}</h1>
         </v-card-title>
-        <v-card-text>
-          <ul class="list-unstyled">
-            <li>Owner: {{ nakamal.owner }}</li>
-            <li>Number: {{ nakamal.phone }}</li>
-            <li>Light: {{ nakamal.light }}</li>
-            <li>Checkins Today: {{ checkinsCountToday }}</li>
-            <li>Checkins Month: {{ checkinsCountMonth }}</li>
-          </ul>
-        </v-card-text>
         <v-card-text v-if="checkinsCountHighestUser">
           <h4>
             Current Chief
@@ -70,7 +61,14 @@
           background-color="transparent"
         >
           <v-tab href="#timeline">Timeline</v-tab>
-          <v-tab href="#images">Images</v-tab>
+          <v-tab href="#images">
+            <v-badge
+              color="green"
+              :content="imageCount"
+            >
+             Images
+            </v-badge>
+          </v-tab>
         </v-tabs>
       </v-card>
 
@@ -78,19 +76,89 @@
         <v-tabs-items v-model="tab">
           <v-tab-item value="timeline">
             <v-container>
-              <v-alert
-                v-show="!checkins.length"
-                color="info"
-                dark
-              >
-                Be first to check-in!
-              </v-alert>
-              <CardCheckin
-                v-for="checkin in checkins"
-                :key="checkin.id"
-                :item="checkin"
-                :linkUser="true"
-              ></CardCheckin>
+              <v-row>
+                <v-col cols="12" lg="3" md="5">
+                  <v-card
+                    tile
+                    class="mx-auto"
+                    max-width="300"
+                  >
+                    <v-list>
+                      <v-subheader>
+                        Details
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          icon
+                          @click="expandDetails = !expandDetails"
+                        >
+                          <v-icon>
+                            {{ expandDetails ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                          </v-icon>
+                        </v-btn>
+                      </v-subheader>
+                      <v-expand-transition>
+                        <v-list-item-group
+                          v-show="expandDetails"
+                          color="primary"
+                        >
+                          <v-list-item two-line>
+                            <v-list-item-content>
+                              <v-list-item-title>Owner</v-list-item-title>
+                              <v-list-item-subtitle>{{ nakamal.owner }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item two-line>
+                            <v-list-item-content>
+                              <v-list-item-title>Number</v-list-item-title>
+                              <v-list-item-subtitle>{{ nakamal.phone }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item two-line>
+                            <v-list-item-content>
+                              <v-list-item-title>Light</v-list-item-title>
+                              <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item two-line>
+                            <v-list-item-content>
+                              <v-list-item-title>Checkins Today</v-list-item-title>
+                              <v-list-item-subtitle>{{ checkinsCountToday }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-list-item two-line>
+                            <v-list-item-content>
+                              <v-list-item-title>Checkins Month</v-list-item-title>
+                              <v-list-item-subtitle>{{ checkinsCountMonth }}</v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </v-list-item-group>
+                      </v-expand-transition>
+                    </v-list>
+                  </v-card>
+                </v-col>
+
+                <v-col cols="12" lg="6" md="7">
+
+                  <v-alert
+                    v-show="!checkins.length"
+                    class="mx-auto elevation-2"
+                    color="info"
+                    colored-border
+                    prominent
+                    icon="mdi-marker-check"
+                    border="left"
+                    max-width="500"
+                  >
+                    Be first to check-in!
+                  </v-alert>
+                  <CardCheckin
+                    v-for="checkin in checkins"
+                    :key="checkin.id"
+                    :item="checkin"
+                    :linkUser="true"
+                  ></CardCheckin>
+                </v-col>
+              </v-row>
             </v-container>
           </v-tab-item>
           <v-tab-item value="images">
@@ -138,6 +206,19 @@
         </v-tabs-items>
       </v-container>
     </div>
+
+    <v-btn
+      fixed
+      fab
+      small
+      dark
+      bottom
+      left
+      color="primary"
+      @click="$router.push({ name: 'Map' })"
+    >
+      <v-icon>mdi-map</v-icon>
+    </v-btn>
 
     <v-fab-transition>
       <v-btn
@@ -217,6 +298,7 @@ export default {
   },
   data() {
     return {
+      expandDetails: true,
       tab: 'timeline',
       checkinDialog: false,
       checkinMsg: null,
@@ -241,6 +323,10 @@ export default {
       if (this.loading) return [];
       return this.getImages(this.nakamal.id)
         .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+    },
+    imageCount() {
+      if (!this.images.length) return '0';
+      return this.images.length;
     },
     checkins() {
       if (this.loading) return [];
@@ -302,7 +388,7 @@ export default {
     },
     activeFab() {
       switch (this.tab) {
-        case 'timeline': return { color: 'success', icon: 'mdi-check', action: () => { this.checkinDialog = !this.checkinDialog; } };
+        case 'timeline': return { color: 'success', icon: 'mdi-marker-check', action: () => { this.checkinDialog = !this.checkinDialog; } };
         case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => { this.openUploadDialog = !this.openUploadDialog; } };
         default: return {};
       }

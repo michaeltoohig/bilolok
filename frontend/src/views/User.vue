@@ -127,14 +127,10 @@ export default {
     images() {
       const { id } = this.user;
       return this.getUserImages(id);
-      // if (!images) return [];
-      // return images;
     },
     checkins() {
       const { id } = this.user;
       return this.getUserCheckins(id);
-      // if (!checkins) return [];
-      // return checkins;
     },
     items() {
       const newList = this.images.concat(this.checkins);

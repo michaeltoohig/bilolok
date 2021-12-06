@@ -13,10 +13,11 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [ ] Search filters
  - [ ] Nakamal page
    - [ ] Nakamal Timeline
-   - [ ] Check-in details
-   - [ ] Check-in message
+   - [x] Check-in details
+   - [x] Check-in message
+   - [x] Chief
  - [ ] Home page
-   - [ ] Default to map
+   - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
 
  - [ ] SQLAlchemy-Continuum integration
