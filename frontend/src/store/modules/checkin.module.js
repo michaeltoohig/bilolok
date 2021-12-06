@@ -35,27 +35,7 @@ const getters = {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
   },
-  // consider calculating in the component not here in store
-  countToday: (state, getters) => nakamalId => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);  // last midnight
-    return getters.nakamal(nakamalId).filter((c) => {
-      const date = new Date(c.created_at);
-      return today <= date
-    }).length;
-  },
-  // consider calculating in the component not here in store
-  countMonth: (state, getters) => nakamalId => {
-    const month = new Date();
-    month.setDate(month.getDate() - 30);
-    month.setHours(0, 0, 0, 0);  // Set to midnight
-    return getters.nakamal(nakamalId).filter((c) => {
-      const date = new Date(c.created_at);
-      return month <= date
-    }).length;
-  },
   // Return a list of checkins of a user.
-  // TODO filter by `user` when API response includes an user object that will need to be resolved
   user: (state, getters) => userId => {
     return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
   },

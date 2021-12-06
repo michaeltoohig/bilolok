@@ -1,10 +1,11 @@
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, FastAPIUsers
 from fastapi_users.authentication import JWTAuthentication
 import pydenticon
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.mail import mail, MessageSchema
@@ -18,6 +19,10 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
     user_db_model = UserDB
     reset_password_token_secret = settings.SECRET_KEY
     verification_token_secret = settings.SECRET_KEY
+
+    async def get_multi(self) -> List[UserDB]:
+        users = await self.user_db.get_multi()
+        return users
 
     async def on_after_register(self, user: UserDB, request: Optional[Request] = None) -> None:
         print(f"User {user.id} has registered.")
@@ -51,11 +56,21 @@ jwt_authentication = JWTAuthentication(
 )
 
 
+class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
+    async def get_multi(self) -> List[UserDB]:
+        async with self.session.begin() as session:
+            query = select(self.users)
+            result = await session.execute(query)
+            users = result.all()
+
+        return [await self._make_user(user) for user in users] if users else None
+
+
 async def get_user_db():
-    yield SQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
+    yield MySQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
 
 
-async def get_user_manager(user_db: SQLAlchemyUserDatabase = Depends(get_user_db)):
+async def get_user_manager(user_db: MySQLAlchemyUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
 
 

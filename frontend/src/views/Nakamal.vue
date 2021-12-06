@@ -13,18 +13,40 @@
             <li>Owner: {{ nakamal.owner }}</li>
             <li>Number: {{ nakamal.phone }}</li>
             <li>Light: {{ nakamal.light }}</li>
-            <li>Checkins Today: {{ todayCheckins }}</li>
-            <li>Checkins Month: {{ monthCheckins }}</li>
+            <li>Checkins Today: {{ checkinsCountToday }}</li>
+            <li>Checkins Month: {{ checkinsCountMonth }}</li>
           </ul>
         </v-card-text>
-        <v-card-actions>
-          <v-btn
-            text
-            color="primary"
-            @click="checkin({ nakamal_id: nakamal.id })"
+        <v-card-text v-if="checkinsCountHighestUser">
+          <h4>
+            Current Chief
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon
+                  color="primary"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  mdi-information
+                </v-icon>
+              </template>
+              <v-responsive max-width="170">
+                <span>The chief is the user who has the most check-ins in the last 30 days.</span>
+              </v-responsive>
+            </v-tooltip>
+          </h4>
+          <v-avatar
+            tile
+            class="elevation-2"
+            @click="$router.push({ name: 'User', params: { id: checkinsCountHighestUser.id } })"
           >
-            Check-In
-          </v-btn>
+            <v-img
+              :src="checkinsCountHighestUser.avatar"
+            ></v-img>
+          </v-avatar>
+        </v-card-text>
+
+        <v-card-actions>
           <v-btn
             v-show="hasAdminAccess"
             text
@@ -42,54 +64,38 @@
             Remove
           </v-btn>
         </v-card-actions>
-      </v-card>
 
-      <!-- <v-container>
-        <div v-if="checkins">
-          <v-timeline
-            align-top
-            dense
-          >
-            <v-timeline-item
-              v-for="checkin in checkins"
-              :key="checkin.id"
-              color="pink"
-              small
-            >
-              <v-row class="pt-1">
-                <v-col cols="3">
-                  <strong>{{ checkin.created_at }}</strong>
-                </v-col>
-                <v-col>
-                  <strong>{{ checkin.user_id }}</strong>
-                  <div class="text-caption">
-                    {{ checkin.message }}
-                  </div>
-                  <v-avatar>
-                    <v-img
-                      src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Kurt&hairColor=Red&facialHairType=BeardLight&facialHairColor=BrownDark&clotheType=GraphicShirt&clotheColor=Gray01&graphicType=Skull&eyeType=Wink&eyebrowType=RaisedExcitedNatural&mouthType=Disbelief&skinColor=Brown"
-                    ></v-img>
-                  </v-avatar>
-                  <v-avatar>
-                    <v-img
-                      src="https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&accessoriesType=Prescription02&hairColor=Black&facialHairType=MoustacheMagnum&facialHairColor=BrownDark&clotheType=BlazerSweater&clotheColor=Black&eyeType=Default&eyebrowType=FlatNatural&mouthType=Default&skinColor=Tanned"
-                    ></v-img>
-                  </v-avatar>
-                </v-col>
-              </v-row>
-            </v-timeline-item>
-          </v-timeline>
-        </div>
-        <div v-else>
-          Be first to checkin
-        </div>
-      </v-container> -->
+        <v-tabs
+          v-model="tab"
+          background-color="transparent"
+        >
+          <v-tab href="#timeline">Timeline</v-tab>
+          <v-tab href="#images">Images</v-tab>
+        </v-tabs>
+      </v-card>
 
       <v-container>
         <v-tabs-items v-model="tab">
+          <v-tab-item value="timeline">
+            <v-container>
+              <v-alert
+                v-show="!checkins.length"
+                color="info"
+                dark
+              >
+                Be first to check-in!
+              </v-alert>
+              <CardCheckin
+                v-for="checkin in checkins"
+                :key="checkin.id"
+                :item="checkin"
+                :linkUser="true"
+              ></CardCheckin>
+            </v-container>
+          </v-tab-item>
           <v-tab-item value="images">
             <v-container class="px-0">
-              <v-row v-if="images.length === 0">
+              <v-row v-if="!images.length">
                 <v-col>
                   <h2>No Images Yet</h2>
                 </v-col>
@@ -149,6 +155,45 @@
       </v-btn>
     </v-fab-transition>
 
+    <v-dialog v-model="checkinDialog">
+      <v-card>
+        <v-card-title class="text-h5">
+          Check-In
+        </v-card-title>
+
+        <v-card-text>
+          <v-textarea
+            filled
+            counter
+            maxlength="280"
+            label="Message"
+            rows="3"
+            row-height="30"
+            v-model="checkinMsg"
+          ></v-textarea>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn
+            text
+            @click="checkinDialog = false"
+          >
+            Close
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="submitCheckin"
+          >
+            Submit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <NakamalImageUpload
       v-if="!loading"
       :nakamal="nakamal"
@@ -160,16 +205,21 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import dayjs from 'dayjs';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
+import CardCheckin from '@/components/timeline/CardCheckin.vue';
 
 export default {
   name: 'Nakamal',
   components: {
     NakamalImageUpload,
+    CardCheckin,
   },
   data() {
     return {
-      tab: 'images',
+      tab: 'timeline',
+      checkinDialog: false,
+      checkinMsg: null,
       openUploadDialog: false,
       x: 0,
       y: 0,
@@ -183,32 +233,76 @@ export default {
       nakamal: 'nakamal/selected',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
-      getTodayCheckins: 'checkin/countToday',
-      getMonthCheckins: 'checkin/countMonth',
     }),
-    images() {
-      if (!this.nakamal) return [];
-      return this.getImages(this.nakamal.id);
-      // .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
-    },
-    checkins() {
-      if (!this.nakamal) return [];
-      return this.getCheckins(this.nakamal.id);
-    },
-    todayCheckins() {
-      if (!this.nakamal) return 0;
-      return this.getTodayCheckins(this.nakamal.id);
-    },
-    monthCheckins() {
-      if (!this.nakamal) return 0;
-      return this.getMonthCheckins(this.nakamal.id);
-    },
     loading() {
       return !this.nakamal;
     },
+    images() {
+      if (this.loading) return [];
+      return this.getImages(this.nakamal.id)
+        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+    },
+    checkins() {
+      if (this.loading) return [];
+      return this.getCheckins(this.nakamal.id)
+        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+    },
+    checkinsCountToday() {
+      if (this.loading) return 0;
+      const threshold = dayjs().startOf('d').subtract(1, 'd');
+      return this.checkins
+        .filter((c) => dayjs(c.created_at).isAfter(threshold))
+        .length;
+    },
+    checkinsCountMonth() {
+      if (this.loading) return 0;
+      const threshold = dayjs().startOf('d').subtract(30, 'd');
+      return this.checkins
+        .filter((c) => dayjs(c.created_at).isAfter(threshold))
+        .length;
+    },
+    checkinsCountHighestUser() {
+      if (!this.checkins) return null;
+      // Limit checkins to last 30 days only
+      const threshold = dayjs().startOf('d').subtract(30, 'd');
+      const checkins = this.checkins.filter((c) => dayjs(c.created_at).isAfter(threshold));
+      if (checkins.length === 0) return null;
+      // Setup
+      const checkinMap = {};
+      let maxEl = checkins[0];
+      let maxCount = 1;
+      // Find user with most checkins
+      for (let i = 0; i < checkins.length; i += 1) {
+        const el = checkins[i];
+        const userId = el.user.id;
+        // Add userId to checkin map if not exists or increment count
+        if (!checkinMap[userId]) {
+          checkinMap[userId] = {
+            count: 1,
+            created: el.created_at,
+          };
+        } else {
+          // Increment count and set latest created
+          checkinMap[userId].count += 1;
+          if (dayjs(maxEl.created_at).isBefore(el.created_at)) {
+            checkinMap[userId].created = el.created_at;
+          }
+        }
+        // Determine current user with most check-ins or if a tie then most recent check-in
+        if (checkinMap[userId].count > maxCount) {
+          maxCount = checkinMap[userId].count;
+          maxEl = el;
+        } else if (checkinMap[userId].count === maxCount) {
+          if (dayjs(el.created_at).isAfter(dayjs(checkinMap[userId].created))) {
+            maxEl = el;
+          }
+        }
+      }
+      return maxEl.user;
+    },
     activeFab() {
       switch (this.tab) {
-        case 'timeline': return { color: 'success', icon: 'mdi-share-variant', action: () => {} };
+        case 'timeline': return { color: 'success', icon: 'mdi-check', action: () => { this.checkinDialog = !this.checkinDialog; } };
         case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => { this.openUploadDialog = !this.openUploadDialog; } };
         default: return {};
       }
@@ -218,6 +312,10 @@ export default {
     ...mapActions({
       checkin: 'checkin/add',
     }),
+    submitCheckin() {
+      this.checkin({ nakamal_id: this.nakamal.id, message: this.checkinMsg });
+      this.checkinDialog = false;
+    },
     remove() {
       /* eslint-disable no-alert, no-restricted-globals */
       if (confirm('Are you sure you want to remove this nakamal?')) {

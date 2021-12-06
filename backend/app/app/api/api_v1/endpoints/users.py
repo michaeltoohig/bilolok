@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional, Union
 from app.crud.image import CRUDImage
 from app.schemas.checkin import CheckinSchemaOut
 from app.schemas.image import ImageSchemaOut
@@ -9,20 +9,32 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.checkin import CRUDCheckin
 from app.crud.user import CRUDUser
 from app.api.deps.db import get_db
-from app.api.deps.user import current_superuser
-from app.core.users import fastapi_users
-from app.schemas.user import UserSchema
+from app.api.deps.user import optional_current_superuser
+from app.core.users import fastapi_users, get_user_manager, UserManager
+from app.models.user import User
+from app.schemas.user import UserSchema, UserDB
 
 router = fastapi_users.get_users_router()
 
 
-@router.get("", response_model=List[UserSchema])
+@router.get("", response_model=Union[List[UserDB], List[UserSchema]])
 async def get_all(
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    *,
+    superuser: Optional[User] = Depends(optional_current_superuser),
+    user_manager: UserManager = Depends(get_user_manager),
 ) -> Any:
-    crud_user = CRUDUser(db)
-    items = await crud_user.get_multi()
-    return [UserSchema(**item.dict()) for item in items]
+    """
+    Return a list of users. Super Users will see the complete user profile
+    for administrative purposes, others will see the public user schema.
+    """
+    if superuser:
+        items = await user_manager.get_multi()
+        return [UserDB(**item.dict()) for item in items]
+    else:
+        crud_user = CRUDUser(db)
+        items = await crud_user.get_multi()
+        return [UserSchema(**item.dict()) for item in items]
 
 
 @router.get("/{item_id}/images", response_model=List[ImageSchemaOut])
