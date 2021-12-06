@@ -22,7 +22,7 @@ class UserUpdate(models.BaseUserUpdate):
 
 
 class UserDB(User, models.BaseUserDB):
-    avatar: Optional[AnyHttpUrl] = None
+    pass
 
 
 # Additional schema for public facing API

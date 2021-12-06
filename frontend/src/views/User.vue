@@ -62,32 +62,32 @@
                 :lazy-src="item.msrc"
               ></v-img>
             </v-card-text>
-              <v-list-item>
-                <v-list-item-avatar
-                  v-if="nakamalAvatar(item.nakamal.id)"
-                  color="grey darken-3"
-                >
-                  <v-img
-                    :src="nakamalAvatar(item.nakamal.id).thumbnail"
-                  ></v-img>
-                </v-list-item-avatar>
+            <v-list-item>
+              <v-list-item-avatar
+                v-if="nakamalAvatar(item.nakamal.id)"
+                color="grey darken-3"
+              >
+                <v-img
+                  :src="nakamalAvatar(item.nakamal.id).thumbnail"
+                ></v-img>
+              </v-list-item-avatar>
 
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ item.nakamal.name }}
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn
-                    outlined
-                    small
-                    icon
-                    link :to="{ name: 'Nakamal', params: { id: item.nakamal.id } }"
-                  >
-                    <v-icon>mdi-chevron-right</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ item.nakamal.name }}
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-btn
+                  outlined
+                  small
+                  icon
+                  link :to="{ name: 'Nakamal', params: { id: item.nakamal.id } }"
+                >
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+              </v-list-item-action>
+            </v-list-item>
           </v-card>
         </div>
       </v-container>

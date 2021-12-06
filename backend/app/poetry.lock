@@ -287,7 +287,7 @@ fastapi = "*"
 type = "git"
 url = "https://github.com/il-s/fastapi-crudrouter.git"
 reference = "master"
-resolved_reference = "d1650b766bbd08e097e56fb1b7510093ec963440"
+resolved_reference = "0930fd16743dfc6016929b1ddfac1cb274f5d4b0"
 
 [[package]]
 name = "fastapi-mail"

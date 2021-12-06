@@ -117,7 +117,7 @@
                   mdi-close
                 </v-icon>
                 <v-icon v-else>
-                  mdi-chevron-up
+                  mdi-menu
                 </v-icon>
               </v-btn>
             </template>

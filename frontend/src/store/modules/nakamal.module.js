@@ -70,7 +70,8 @@ const actions = {
       dispatch('load');  // Load all others in background
     }
     catch (error) {
-      console.log('! load one nakamal in catch');
+      console.log(error, 'error in catch loadOne');
+      await dispatch('auth/checkApiError', error, { root: true });
     }
   },
   update: async ({ commit, dispatch, rootState }, { nakamalId, payload }) => {
