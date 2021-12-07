@@ -11,33 +11,41 @@
           <v-card-title
             class="text-h5"
           >
-            Current Chief
-          </v-card-title>
-
-          <v-card-subtitle v-text="chief.id"></v-card-subtitle>
-
-          <v-card-text>
-            <h5>Check ins this month:</h5>
-            <span>{{ userCheckinCountMonth(chief.id) }}</span>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-tooltip bottom>
+            Chief
+            <v-tooltip bottom v-model="show">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  text
+                <v-icon
+                  small
+                  class="ml-2"
                   color="secondary"
                   v-bind="attrs"
                   v-on="on"
                 >
-                  What's This?
-                </v-btn>
+                  mdi-information
+                </v-icon>
               </template>
-              <v-responsive max-width="170">
+              <v-responsive max-width="144">
                 <span>The chief is the user who has
                   the most check-ins in the last 30 days.</span>
               </v-responsive>
             </v-tooltip>
+          </v-card-title>
+
+          <v-card-subtitle></v-card-subtitle>
+
+          <v-card-text>
+            <h5>Check-ins this month:</h5>
+            <span>{{ userCheckinCountMonth(chief.id) }}</span>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-btn
+              text
+              color="secondary"
+              @click="show = !show"
+            >
+              What's This?
+            </v-btn>
           </v-card-actions>
         </div>
 
@@ -99,7 +107,7 @@ export default {
   props: ['nakamal'],
   data() {
     return {
-      show: true,
+      show: false,
     };
   },
   computed: {

@@ -36,6 +36,7 @@
 
           <v-tabs
             v-model="tab"
+            :fixed-tabs="$vuetify.breakpoint.mdAndDown"
             background-color="transparent"
           >
             <v-tab href="#details">Details</v-tab>
