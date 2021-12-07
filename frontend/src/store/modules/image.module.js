@@ -34,17 +34,17 @@ const getters = {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
   },
+  // TODO is this needed - it feels hacky seeing it here
   nakamalHasImages: (state, getters) => nakamalId => {
     return Object.keys(state.byNakamalId).includes(nakamalId);
   },
-  // nakamalProfile: (state, getters) => nakamalId => {
-  //   if (!state.byNakamalId[nakamalId]) return null;
-  //   // Arbitrary first image but in future we could mark image as profile for easy filter
-  //   const profileImageId = state.byNakamalId[nakamalId][0]
-  //   return getters.find(profileImageId)
-  // }
-  // Return a list of checkins of a user.
-  // TODO filter by `user` when API response includes an user object that will need to be resolved
+  nakamalProfile: (state, getters) => nakamalId => {
+    if (!state.byNakamalId[nakamalId]) return null;
+    // Arbitrary first image but in future we could mark image as profile for easy filter
+    const profileImageId = state.byNakamalId[nakamalId][0]
+    return getters.find(profileImageId)
+  },
+  // Return a list of images of a user.
   user: (state, getters) => userId => {
     return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
   },

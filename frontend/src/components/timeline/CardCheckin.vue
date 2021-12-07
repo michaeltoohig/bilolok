@@ -55,7 +55,6 @@
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
-          Check-ins This Month: {{ userCheckinCountMonth(item.nakamal.id, item.user.id) }}
         </v-list-item-title>
       </v-list-item-content>
       <v-list-item-action>
@@ -76,7 +75,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import formatDatetime from '@/mixins/formatDatetime';
-import dayjs from 'dayjs';
 
 export default {
   name: 'CardCheckin',
@@ -107,12 +105,6 @@ export default {
     }),
   },
   methods: {
-    userCheckinCountMonth(nakamalId, userId) {
-      return this.getNakamalCheckins(nakamalId)
-        .filter((c) => dayjs(c.created_at).isAfter(dayjs().subtract(30, 'd')))
-        .filter((c) => c.user.id === userId)
-        .length;
-    },
     nakamalAvatar(nakamalId) {
       const images = this.getNakamalImages(nakamalId);
       if (images.length > 0) {
