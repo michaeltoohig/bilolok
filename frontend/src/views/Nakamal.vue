@@ -47,7 +47,7 @@
       </v-container>
 
       <v-tabs-items v-if="!loading" v-model="tab">
-        <v-tab-item value="details" :checkins="checkins">
+        <v-tab-item value="details">
           <TabDetails :nakamal="nakamal"/>
         </v-tab-item>
         <v-tab-item value="timeline">
@@ -217,8 +217,8 @@ export default {
   },
   async mounted() {
     const { id } = this.$route.params;
+    await this.$store.dispatch('image/getNakamal', id);
     this.$store.dispatch('checkin/getNakamal', id);
-    this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {
         if (!this.nakamal) {

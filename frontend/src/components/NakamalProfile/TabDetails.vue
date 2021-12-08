@@ -61,6 +61,16 @@
       </div>
     </v-card>
 
+    <v-alert
+      v-show="hasRecentCheckin"
+      outlined
+      prominent
+      icon="mdi-marker-check"
+      border="left"
+    >
+      There are recent check-ins at this kava bar.
+    </v-alert>
+
     <v-card>
       <v-list>
         <v-list-item two-line>
@@ -113,7 +123,12 @@ export default {
   computed: {
     ...mapGetters({
       getCheckins: 'checkin/nakamal',
+      recentNakamalIds: 'checkin/recentNakamalIds',
     }),
+    hasRecentCheckin() {
+      if (!this.nakamal) return false;
+      return this.recentNakamalIds.includes(this.nakamal.id);
+    },
     checkins() {
       return this.getCheckins(this.nakamal.id)
         .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));

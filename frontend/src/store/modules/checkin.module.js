@@ -31,6 +31,9 @@ const getters = {
     // return state.allIds.map(id => getters.find(id)).filter(c => c.created_at)
     return state.recentIds.map(id => getters.find(id));
   },
+  recentNakamalIds: (state, getters) => {
+    return [...new Set(getters.recent.map((c) => c.nakamal.id))];
+  },
   // Return a list of images of a nakamal.
   nakamal: (state, getters) => nakamalId => {
     if (!state.byNakamalId[nakamalId]) return [];
@@ -60,8 +63,9 @@ const actions = {
     let checkins = [];
     const response = await checkinsApi.getRecent();
     checkins = response.data;
-    if (!checkins.length < 5) {
-      const response = await checkinsApi.getAll({ limit: 5 })  // XXX hardcoded value
+    const threshold = 3  // XXX hardcoded value
+    if (!checkins.length < threshold) {
+      const response = await checkinsApi.getAll({ limit: threshold })
       checkins = response.data;
     }
     checkins.forEach((item) => {

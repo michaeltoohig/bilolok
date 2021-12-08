@@ -49,7 +49,7 @@
       <l-marker
         v-for="nakamal in nakamals"
         :key="nakamal.id"
-        :icon="icon"
+        :icon="iconMarker(nakamal.id)"
         :lat-lng="nakamal.latLng"
         @click="markerClick(nakamal.id)"
       ></l-marker>
@@ -175,7 +175,8 @@ import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 
-const iconPath = require('../assets/map-marker.svg');
+const iconMarkerPath = require('../assets/map-marker.svg');
+const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 
 export default {
   name: 'NakamalMap',
@@ -217,7 +218,12 @@ export default {
       },
       popupOffset: point(0, -30),
       icon: icon({
-        iconUrl: iconPath,
+        iconUrl: iconMarkerPath,
+        iconSize: [54, 44],
+        iconAnchor: [16, 40],
+      }),
+      iconCheckmark: icon({
+        iconUrl: iconMarkerCheckmarkPath,
         iconSize: [54, 44],
         iconAnchor: [16, 40],
       }),
@@ -242,6 +248,8 @@ export default {
       selectedNakamal: 'nakamal/selected',
       getNakamalImages: 'image/nakamal',
       getNakamalHasImages: 'image/nakamalHasImages',
+      recentCheckins: 'checkin/recent',
+      recentNakamalIds: 'checkin/recentNakamalIds',
     }),
     selectedNakamalImage() {
       if (this.selectedNakamal) {
@@ -293,9 +301,8 @@ export default {
         'setShowSearch',
       ],
     ),
-    showSearch() {
-      this.fab = false;
-      this.setShowSearch(true);
+    iconMarker(nakamalId) {
+      return this.recentNakamalIds.includes(nakamalId) ? this.iconCheckmark : this.icon;
     },
     newNakamalMarker() {
       this.fab = false;
@@ -327,6 +334,7 @@ export default {
   },
   beforeMount() {
     this.$store.dispatch('nakamal/load');
+    this.$store.dispatch('checkin/getRecent');
     this.$root.$on('fly-to-selected', this.flyToSelected);
   },
   mounted() {
