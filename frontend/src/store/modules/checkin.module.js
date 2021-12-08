@@ -28,6 +28,7 @@ const getters = {
   },
   // Return a list of recent images.
   recent: (state, getters) => {
+    // return state.allIds.map(id => getters.find(id)).filter(c => c.created_at)
     return state.recentIds.map(id => getters.find(id));
   },
   // Return a list of images of a nakamal.
@@ -56,8 +57,13 @@ function commitAddCheckin(checkin, commit) {
 
 const actions = {
   getRecent: async ({ commit }) => {
+    let checkins = [];
     const response = await checkinsApi.getRecent();
-    const checkins = response.data;
+    checkins = response.data;
+    if (!checkins.length < 5) {
+      const response = await checkinsApi.getAll({ limit: 5 })  // XXX hardcoded value
+      checkins = response.data;
+    }
     checkins.forEach((item) => {
       commitAddCheckin(item, commit);
     });

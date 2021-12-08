@@ -8,14 +8,18 @@ export default {
   //   return http.get(`${resource}/${id}`);
   // },
 
-  // async getAll(params) {
-  //   return http.get(`${resource}`, { ...params });
-  // },
+  async getAll(params) {
+    return http.get(`${resource}`, {
+      params: {
+        ...params,
+      },
+    });
+  },
 
   async getRecent() {
     return http.get(`${resource}`, {
       params: {
-        limit: 3,
+        recent: true,
       },
     });
   },

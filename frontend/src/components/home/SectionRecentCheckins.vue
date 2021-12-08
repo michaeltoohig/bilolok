@@ -53,8 +53,12 @@ export default {
   mixins: [formatDatetime],
   computed: {
     ...mapGetters({
-      checkins: 'checkin/recent',
+      recentCheckins: 'checkin/recent',
     }),
+    checkins() {
+      const n = Math.min(this.recentCheckins.length, 3);
+      return this.recentCheckins.slice(0, n);
+    },
   },
   methods: {
     goToNakamal(id) {

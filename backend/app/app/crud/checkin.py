@@ -1,4 +1,5 @@
 
+from datetime import datetime, timezone, timedelta, tzinfo
 from typing import Optional, List, Type
 from uuid import UUID, uuid4
 
@@ -22,6 +23,13 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
     @property
     def _table(self) -> Type[Checkin]:
         return Checkin
+
+    async def create(self, in_schema: CheckinSchemaIn, *, user_id: UUID) -> CheckinSchema:
+        item_id = uuid4()
+        item = self._table(id=item_id, **in_schema.dict(), user_id=user_id)
+        self._db_session.add(item)
+        await self._db_session.commit()
+        return await self.get_by_id(item_id)
 
     async def get_by_id(self, item_id: UUID) -> CheckinSchema:
         query = (
@@ -48,12 +56,17 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
-    async def create(self, in_schema: CheckinSchemaIn, *, user_id: UUID) -> CheckinSchema:
-        item_id = uuid4()
-        item = self._table(id=item_id, **in_schema.dict(), user_id=user_id)
-        self._db_session.add(item)
-        await self._db_session.commit()
-        return await self.get_by_id(item_id)
+    async def get_recent(self) -> List[CheckinSchema]:
+        threshold = datetime.now(tz=timezone.utc) - timedelta(hours=3)  # XXX hardcoded value
+        query = (
+            select(self._table)
+            .where(self._table.created_at >= threshold)
+            .options(selectinload(self._table.nakamal))
+            .options(selectinload(self._table.user))
+            .order_by(desc(self._table.created_at))
+        )
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
 
     async def get_multi_by_nakamal(self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100) -> List[CheckinSchema]:
         query = (

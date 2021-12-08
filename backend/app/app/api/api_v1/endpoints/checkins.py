@@ -1,7 +1,7 @@
 from typing import Any, List, Optional
 from datetime import datetime, timedelta, timezone
 
-from fastapi import Depends, status
+from fastapi import Depends, status, Query
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -32,12 +32,17 @@ router = SQLAlchemyCRUDRouter(
 async def get_all(
     db: AsyncSession = Depends(get_db),
     *,
+    recent: bool = Query(False),
     skip: int = 0,
     limit: int = 100,
 ) -> List[CheckinSchemaOut]:
     crud_checkin = CRUDCheckin(db)
-    items = await crud_checkin.get_multi(skip=skip, limit=limit)
-    return [CheckinSchemaOut(**item.dict()) for item in items]
+    if recent:
+        items = await crud_checkin.get_recent()
+        return [CheckinSchemaOut(**item.dict()) for item in items]
+    else:
+        items = await crud_checkin.get_multi(skip=skip, limit=limit)
+        return [CheckinSchemaOut(**item.dict()) for item in items]
 
 
 @router.post("", response_model=CheckinSchemaOut)
