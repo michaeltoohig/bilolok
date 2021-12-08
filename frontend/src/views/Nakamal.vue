@@ -7,11 +7,24 @@
       <v-container>
         <v-card color="secondary" class="">
           <div class="pt-3 px-3 d-md-flex pa-sm-4 text-center text-md-start">
-            <v-avatar class="ma-3" size="164" v-if="nakamalProfile">
-              <v-img
-                :src="nakamalProfile.thumbnail"
-              ></v-img>
-            </v-avatar>
+            <v-badge
+              avatar
+              color="secondary"
+              overlap
+              offset-x="45"
+              offset-y="45"
+            >
+              <template v-slot:badge>
+                <v-avatar size="32" icon>
+                  <v-icon>mdi-marker-check</v-icon>
+                </v-avatar>
+              </template>
+              <v-avatar class="ma-3" size="164" v-if="nakamalProfile">
+                <v-img
+                  :src="nakamalProfile.thumbnail"
+                ></v-img>
+              </v-avatar>
+            </v-badge>
 
             <h1 class="align-self-start">{{ nakamal.name }}</h1>
           </div>
@@ -166,10 +179,15 @@ export default {
       nakamal: 'nakamal/selected',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
+      recentNakamalIds: 'checkin/recentNakamalIds',
     }),
     nakamalProfile() {
       if (!this.nakamal) return null;
       return this.$store.getters['image/nakamalProfile'](this.nakamal.id);
+    },
+    hasRecentCheckin() {
+      if (!this.nakamal) return false;
+      return this.recentNakamalIds.includes(this.nakamal.id);
     },
     // loading() {
     //   return !this.nakamal;
