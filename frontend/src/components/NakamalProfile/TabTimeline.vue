@@ -12,25 +12,30 @@
     >
       Be first to check-in!
     </v-alert>
-    <CardCheckin
-      v-for="checkin in checkins"
-      :key="checkin.id"
-      :item="checkin"
-      :linkUser="true"
-    ></CardCheckin>
+    <div
+      v-for="item in timelineItems"
+      :key="item.id"
+    >
+      <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkUser="true"/>
+      <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkUser="true"/>
+    </div>
   </v-container>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
+import timeline from '@/mixins/timeline';
 import CardCheckin from '@/components/timeline/CardCheckin.vue';
+import CardImage from '@/components/timeline/CardImage.vue';
 
 export default {
   name: 'TabTimeline',
+  mixins: [timeline],
   props: ['nakamal'],
   components: {
     CardCheckin,
+    CardImage,
   },
   computed: {
     ...mapGetters({

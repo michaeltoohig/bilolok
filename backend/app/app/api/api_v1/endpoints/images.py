@@ -10,9 +10,10 @@ from fastapi import status, Body, HTTPException, Header
 from fastapi_users.jwt import JWT_ALGORITHM
 
 from app.crud.image import CRUDImage
+from app.crud.user import CRUDUser
 from app.api.deps.user import current_superuser
 from app.core.config import settings
-from app.core.users import jwt_authentication
+from app.core.users import UserManager, get_user_manager, jwt_authentication
 from app.models.image import Image
 from app.models.user import User
 from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
@@ -74,6 +75,7 @@ async def delete_one(
 @router.post("/tus-hook", include_in_schema=False,)
 async def tus_hook(
     db: AsyncSession = Depends(get_db),
+    user_manager: UserManager = Depends(get_user_manager),
     *,
     hook_name: str = Header(...),
     tusdIn: Any = Body(...),
@@ -95,6 +97,18 @@ async def tus_hook(
         user_id = data.get("user_id")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        # Check user is verified and active or superuser
+        user = await user_manager.get(user_id)
+        status_code = status.HTTP_401_UNAUTHORIZED
+        if user:
+            status_code = status.HTTP_403_FORBIDDEN
+            if not user.is_active:
+                status_code = status.HTTP_401_UNAUTHORIZED
+                user = None
+            if not user.is_verified or not user.is_superuser:
+                user = None
+        if not user:
+            raise HTTPException(status_code=status_code)
     except jwt.PyJWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 

@@ -95,6 +95,19 @@
     </v-container>
     <SectionRecentCheckins />
     <SectionRecentImages />
+
+    <hr class="mt-5"/>
+    <div class="my-5 d-flex justify-center">
+      <a
+        href='https://play.google.com/store/apps/details?id=com.bilolok.twa&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'
+      >
+        <img
+          width="175"
+          alt='Get it on Google Play'
+          src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'
+        />
+      </a>
+    </div>
   </div>
 </template>
 

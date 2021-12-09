@@ -1,23 +1,11 @@
 <template>
   <div>
-    <div v-if="isLoggedIn">
-      <DashboardModal
-        :uppy="uppy"
-        :open="open"
-        :plugins="[]"
-        :props="{theme: 'light'}"
-      />
-    </div>
-    <div v-else>
-      <v-dialog
-        v-model="open"
-      >
-        <v-card>
-          <v-card-title>Not Logged In</v-card-title>
-          <v-card-text>To upload an image you must be logged in.</v-card-text>
-        </v-card>
-      </v-dialog>
-    </div>
+    <DashboardModal
+      :uppy="uppy"
+      :open="open"
+      :plugins="[]"
+      :props="{theme: 'light'}"
+    />
   </div>
 </template>
 
@@ -40,7 +28,6 @@ export default {
   },
   computed: {
     ...mapGetters({
-      isLoggedIn: 'auth/isLoggedIn',
       user: 'auth/user',
       token: 'auth/token',
     }),
@@ -49,20 +36,39 @@ export default {
         meta: {
           NakamalID: this.nakamal.id,
         },
-      }).use(Tus, {
-        endpoint: `${uploadDomain}/files/`,
-        chunkSize: 2_000_000,
-        headers: {
-          authorization: `Bearer ${this.token}`,
-        },
-      }).on('dashboard:modal-closed', () => {
-        this.$emit('close-modal');
-      }).on('complete', () => {
-        this.$emit('close-modal');
-        setTimeout(() => {
-          this.$store.dispatch('image/getNakamal', this.nakamal.id);
-        }, 500);
-      });
+      })
+        .use(Tus, {
+          endpoint: `${uploadDomain}/files/`,
+          chunkSize: 2_000_000,
+          headers: {
+            authorization: `Bearer ${this.token}`,
+          },
+        })
+        .on('dashboard:modal-closed', () => {
+          this.$emit('close-modal');
+        })
+        .on('complete', () => {
+          this.$emit('close-modal');
+          setTimeout(() => {
+            this.$store.dispatch('image/getNakamal', this.nakamal.id);
+          }, 500);
+        })
+        .on('upload-error', (_, error) => {
+          this.$emit('close-modal');
+          if (error.isNetworkError) {
+            this.$store.dispatch('notify/add', {
+              title: 'Network Error',
+              text: 'Upload failed due to network issues. Try again later.',
+              type: 'warning',
+            });
+          } else {
+            this.$store.dispatch('notify/add', {
+              title: 'Upload Error',
+              text: 'Upload failed due to some unknown issues. Try again later.',
+              type: 'warning',
+            });
+          }
+        });
     },
   },
   beforeDestroy() {

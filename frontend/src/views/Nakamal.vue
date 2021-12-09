@@ -15,7 +15,7 @@
               offset-y="45"
             >
               <template v-slot:badge>
-                <v-avatar size="32" icon>
+                <v-avatar size="32" icon v-show="hasRecentCheckin">
                   <v-icon>mdi-marker-check</v-icon>
                 </v-avatar>
               </template>
@@ -176,6 +176,7 @@ export default {
   computed: {
     ...mapGetters({
       hasAdminAccess: 'auth/hasAdminAccess',
+      isUserVerified: 'auth/isUserVerified',
       nakamal: 'nakamal/selected',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
@@ -208,9 +209,9 @@ export default {
     // },
     activeFab() {
       switch (this.tab) {
-        case 'details': return { color: 'success', icon: 'mdi-marker-check', action: () => { this.checkinDialog = !this.checkinDialog; } };
-        case 'timeline': return { color: 'success', icon: 'mdi-marker-check', action: () => { this.checkinDialog = !this.checkinDialog; } };
-        case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => { this.uploadImageDialog = !this.uploadImageDialog; } };
+        case 'details': return { color: 'success', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
+        case 'timeline': return { color: 'success', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
+        case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => this.toggleUploadImageDialog() };
         default: return {};
       }
     },
@@ -219,6 +220,20 @@ export default {
     ...mapActions({
       checkin: 'checkin/add',
     }),
+    toggleUploadImageDialog() {
+      if (this.isUserVerified) {
+        this.uploadImageDialog = !this.uploadImageDialog;
+      } else {
+        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
+    },
+    toggleCheckinDialog() {
+      if (this.isUserVerified) {
+        this.checkinDialog = !this.checkinDialog;
+      } else {
+        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
+    },
     submitCheckin() {
       this.checkin({ nakamal_id: this.nakamal.id, message: this.checkinMsg });
       this.checkinDialog = false;

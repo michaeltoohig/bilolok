@@ -71,6 +71,61 @@
         <router-view></router-view>
       </v-main>
       <Notifications></Notifications>
+
+      <v-dialog
+        v-model="showAuthModal"
+        persistent
+        max-width="400"
+      >
+        <v-card>
+          <v-card-title>Login Required</v-card-title>
+          <v-card-subtitle>You must be logged in to perform that action.</v-card-subtitle>
+          <v-card-text>
+            <p>
+              We require users have an account with us to perform some actions.
+            </p>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn
+              text
+              outlined
+              @click="goToLogin"
+            >Login</v-btn>
+            <v-btn
+              text
+              outlined
+              @click="goToSignup"
+            >Register</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn text @click="closeAuthModal">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="showUserVerifiedModal"
+        persistent
+        max-width="400"
+      >
+        <v-card>
+          <v-card-title>Email Verification Required</v-card-title>
+          <v-card-subtitle>You must verify your email to perform that action.</v-card-subtitle>
+          <v-card-text>
+            <p>
+            To prevent abuse we require a user verify the email address they
+            provided during sign up. Look in your email for a messag from
+            Bilolok and a link to verify your email will be inside that email.
+            </p>
+            <p>
+            Then, you may try again.
+            </p>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </v-app>
 </template>
@@ -88,17 +143,44 @@ export default {
     Notifications,
   },
   mixins: [update],
+  // data() {
+  //   return {
+  //     showAuthModal: false,
+  //     showUserVerifiedModal: false,
+  //   };
+  // },
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',
+      showAuthModal: 'auth/showAuthModal',
+      showUserVerifiedModal: 'auth/showUserVerifiedModal',
     }),
   },
   methods: {
     ...mapActions({
       checkLoggedIn: 'auth/checkLoggedIn',
     }),
+    closeAuthModal() {
+      this.$store.dispatch('auth/setShowAuthModal', false);
+    },
+    closeUserVerifiedModal() {
+      this.$store.dispatch('auth/setShowUserVerifiedModal', false);
+    },
+    goToLogin() {
+      this.closeAuthModal();
+      this.$router.push({ name: 'Auth', params: { auth: 'login' } });
+    },
+    goToSignup() {
+      this.closeAuthModal();
+      this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
+    },
+    // setShowUserVerifiedModal() {
+    //   console.log('yyy');
+    //   this.showUserVerifiedModal = true;
+    // },
   },
   async created() {
+    // this.$on('showUserVerifiedModal', this.setShowUserVerifiedModal);
     await this.checkLoggedIn();
   },
 };

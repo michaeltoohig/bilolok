@@ -10,6 +10,8 @@ const initialState = function () {
     logInError: false,
     token: null,
     user: null,
+    showAuthModal: false,
+    showUserVerifiedModal: false,
   }
 };
 
@@ -25,6 +27,9 @@ const getters = {
   user: (state) => state.user,
   token: (state) => state.token,
   isLoggedIn: (state) => state.isLoggedIn,
+  isUserVerified: (state) => state.isLoggedIn && state.user.is_verified,
+  showAuthModal: (state) => state.showAuthModal,
+  showUserVerifiedModal: (state) => state.showUserVerifiedModal,
 }
 
 const actions = {
@@ -194,6 +199,16 @@ const actions = {
   //     commitAddNotification(context, { color: 'error', content: 'Error resetting password' });
   //   }
   // },
+  setShowAuthModal: async ({ commit }, show) => {
+    commit('setShowAuthModal', show);
+  },
+  setShowUserVerifiedModal: async ({ commit, getters }, show) => {
+    if (!getters.isLoggedIn) {
+      commit('setShowAuthModal', true);
+    } else {
+      commit('setShowUserVerifiedModal', show);
+    }
+  },
 };
 
 const mutations = {
@@ -214,6 +229,12 @@ const mutations = {
   },
   setUserProfile(state, payload) {
     state.user = payload;
+  },
+  setShowAuthModal(state, show) {
+    state.showAuthModal = show;
+  },
+  setShowUserVerifiedModal(state, show) {
+    state.showUserVerifiedModal = show;
   },
 };
 

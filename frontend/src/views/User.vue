@@ -24,71 +24,11 @@
 
       <v-container>
         <div
-          v-for="item in items"
+          v-for="item in timelineItems"
           :key="item.id"
         >
-          <v-card class="elevation-2 mb-3">
-            <v-card-title>
-              <h2 :class="`headline font-weight-light ${itemColor(item)}--text`">
-                <span v-if="getItemType(item) === 'checkin'">
-                  Check-in
-                </span>
-                <span v-else-if="getItemType(item) === 'image'">
-                  Uploaded Image
-                </span>
-              </h2>
-            </v-card-title>
-            <v-card-subtitle>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on, attrs }">
-                  <span
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    <strong>{{ formatTimeAgo(item.created_at) }}</strong>
-                  </span>
-                </template>
-                <span>{{ formatTime(item.created_at) }}</span>
-              </v-tooltip>
-            </v-card-subtitle>
-            <v-card-text v-if="item.message" class="text-h5 font-weight-bold">
-              {{ item.message }}
-            </v-card-text>
-            <v-card-text v-if="item.src">
-              <v-img
-                contain
-                :max-height="300"
-                :src="item.src"
-                :lazy-src="item.msrc"
-              ></v-img>
-            </v-card-text>
-            <v-list-item>
-              <v-list-item-avatar
-                v-if="nakamalAvatar(item.nakamal.id)"
-                color="grey darken-3"
-              >
-                <v-img
-                  :src="nakamalAvatar(item.nakamal.id).thumbnail"
-                ></v-img>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ item.nakamal.name }}
-                </v-list-item-title>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn
-                  outlined
-                  small
-                  icon
-                  link :to="{ name: 'Nakamal', params: { id: item.nakamal.id } }"
-                >
-                  <v-icon>mdi-chevron-right</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-card>
+          <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkNakamal="true"/>
+          <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkNakamal="true"/>
         </div>
       </v-container>
     </div>
@@ -97,11 +37,18 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import timeline from '@/mixins/timeline';
 import formatDatetime from '@/mixins/formatDatetime';
+import CardCheckin from '@/components/timeline/CardCheckin.vue';
+import CardImage from '@/components/timeline/CardImage.vue';
 
 export default {
   name: 'User',
-  mixins: [formatDatetime],
+  mixins: [formatDatetime, timeline],
+  components: {
+    CardCheckin,
+    CardImage,
+  },
   data() {
     return {
       loading: true,
@@ -124,17 +71,13 @@ export default {
       getUserImages: 'image/user',
       getNakamalImages: 'image/nakamal',
     }),
-    images() {
-      const { id } = this.user;
-      return this.getUserImages(id);
-    },
     checkins() {
       const { id } = this.user;
       return this.getUserCheckins(id);
     },
-    items() {
-      const newList = this.images.concat(this.checkins);
-      return newList.sort((a, b) => b.created_at.localeCompare(a.created_at));
+    images() {
+      const { id } = this.user;
+      return this.getUserImages(id);
     },
   },
   watch: {
@@ -147,24 +90,6 @@ export default {
       await this.$store.dispatch('checkin/getUser', id);
       await this.$store.dispatch('image/getUser', id);
       this.loading = false;
-    },
-    getItemType(item) {
-      // TODO Hacky way to find object type - should be improved
-      if ('private' in item) return 'checkin';
-      if ('src' in item) return 'image';
-      return 'other';
-    },
-    itemColor(item) {
-      const type = this.getItemType(item);
-      if (type === 'checkin') return 'red';
-      if (type === 'image') return 'blue';
-      return 'black';
-    },
-    itemIcon(item) {
-      const type = this.getItemType(item);
-      if (type === 'checkin') return 'mdi-check';
-      if (type === 'image') return 'mdi-image';
-      return 'mdi-info';
     },
     nakamalAvatar(nakamalId) {
       const images = this.getNakamalImages(nakamalId);

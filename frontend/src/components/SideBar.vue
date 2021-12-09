@@ -48,19 +48,6 @@
         <BoundedNakamalsList v-on:close-drawer="drawer = false"></BoundedNakamalsList>
         <v-divider></v-divider>
       </div>
-
-      <v-spacer></v-spacer>
-      <div class="d-flex justify-center">
-        <a
-          href='https://play.google.com/store/apps/details?id=com.bilolok.twa&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'
-        >
-          <img
-            width="144"
-            alt='Get it on Google Play'
-            src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'
-          />
-        </a>
-      </div>
     </v-navigation-drawer>
 
     <v-app-bar
