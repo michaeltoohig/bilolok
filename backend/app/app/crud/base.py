@@ -55,9 +55,9 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:
-        stmt = select(self._table)
-        items = await self._db_session.execute(stmt)
-        return (self._schema.from_orm(item[0]) for item in items)
+        query = select(self._table)
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
 
     async def remove(self, item_id: UUID) -> SCHEMA:
         item = await self._get_one(item_id)
