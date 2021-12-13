@@ -16,6 +16,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Check-in details
    - [x] Check-in message
    - [x] Chief
+   - [ ] Resources (20vt, tusker, billiard table, etc)
  - [ ] Home page
    - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
