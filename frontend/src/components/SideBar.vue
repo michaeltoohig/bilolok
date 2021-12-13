@@ -63,7 +63,18 @@
 
       <v-spacer></v-spacer>
 
+      <v-btn
+        v-if="!isLoggedIn"
+        small
+        text
+        outlined
+        :to="{ name: 'Auth', params: { auth: 'login' } }"
+      >
+        Login
+      </v-btn>
+
       <v-menu
+        v-if="isLoggedIn"
         left
         bottom
         transition="slide-x-transition"
@@ -74,7 +85,7 @@
             v-bind="attrs"
             v-on="on"
           >
-            <v-icon>{{ isLoggedIn ? 'mdi-account' : 'mdi-dots-vertical' }}</v-icon>
+            <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
 
@@ -100,16 +111,6 @@
           </v-list-item>
         </v-list>
 
-        <v-list v-else>
-          <v-list-item :to="{ name: 'Auth', params: { auth: 'login' } }">
-            <v-list-item-icon>
-              <v-icon>mdi-login</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              Log In
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
       </v-menu>
     </v-app-bar>
   </div>
