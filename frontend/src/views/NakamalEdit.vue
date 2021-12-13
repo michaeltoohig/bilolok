@@ -41,15 +41,12 @@
               required
             ></v-text-field>
             <v-select
-              v-model="$v.extras.$model"
-              :error="$v.extras.$error"
-              :items="[
-                'Food',
-                'Alcohol',
-                'TV',
-                'Games',
-              ]"
-              label="Extras"
+              v-model="$v.resources.$model"
+              :error="$v.resources.$error"
+              :items="allResources"
+              item-value="id"
+              item-text="name"
+              label="Resources"
               multiple
             ></v-select>
             <v-select
@@ -152,6 +149,7 @@ import {
 import {
   LMap, LTileLayer, LMarker,
 } from 'vue2-leaflet';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 const iconPath = require('../assets/map-marker.svg');
 
@@ -170,7 +168,8 @@ export default {
       owner: '',
       phone: '',
       light: null,
-      extras: [],
+      resources: [],
+      allResources: [],
       lat: 0,
       lng: 0,
 
@@ -198,7 +197,7 @@ export default {
       light: {
         required,
       },
-      extras: {},
+      resources: {},
       lat: {
         required,
       },
@@ -229,7 +228,8 @@ export default {
       this.owner = '';
       this.phone = '';
       this.light = null;
-      this.extras = [];
+      this.resources = [];
+      this.oldResources = [];
       this.lat = null;
       this.lng = null;
 
@@ -239,7 +239,8 @@ export default {
         this.owner = this.nakamal.owner;
         this.phone = this.nakamal.phone;
         this.light = this.nakamal.light;
-        this.extras = this.nakamal.extras;
+        this.resources = this.nakamal.resources.map((r) => r.id);
+        this.oldResources = this.resources; // save original selected resources
         this.lat = this.nakamal.lat;
         this.lng = this.nakamal.lng;
         this.setCenter(this.nakamal.latLng);
@@ -257,11 +258,11 @@ export default {
         owner: this.owner,
         phone: this.phone,
         light: this.light,
-        extras: this.extras,
         lat: this.lat,
         lng: this.lng,
       };
       this.$store.dispatch('nakamal/update', { nakamalId: this.nakamal.id, payload });
+      // TODO submit PUT and DELETE requests for resources that have changed from oldResources
       this.$router.push({ name: 'Nakamal', id: this.nakamal.id });
     },
     ...mapActions(
@@ -274,6 +275,8 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('nakamal/load');
+    const response = await nakamalResourcesApi.getAll();
+    this.allResources = response.data;
     this.setCenter(this.nakamal.latLng);
     this.reset();
   },

@@ -94,14 +94,11 @@
               sm="6"
             >
               <v-select
-                v-model="extras"
-                :items="[
-                  'Food',
-                  'Alcohol',
-                  'TV',
-                  'Games',
-                ]"
-                label="Extras"
+                v-model="selectedResources"
+                :items="resources"
+                item-value="id"
+                item-text="name"
+                label="Resources"
                 multiple
               ></v-select>
             </v-col>
@@ -160,6 +157,7 @@ import {
 import {
   LMarker, LTooltip,
 } from 'vue2-leaflet';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 const iconPath = require('../assets/map-marker.svg');
 
@@ -183,12 +181,12 @@ export default {
         iconSize: [54, 44],
         iconAnchor: [16, 40],
       }),
-
       name: '',
       owner: '',
       phone: '',
       light: null,
-      extras: [],
+      selectedResources: [],
+      resources: [],
     };
   },
   computed: {
@@ -203,16 +201,20 @@ export default {
         lat: this.center.lat,
         lng: this.center.lng,
         light: this.light,
-        // extras: this.extras,
+        resources: this.selectedResources,
       };
     },
   },
   methods: {
-    submit() {
-      this.$store.dispatch('nakamal/add', this.form);
+    async submit() {
+      await this.$store.dispatch('nakamal/add', this.form);
       this.$store.dispatch('map/setShowNewNakamalMarker', false);
       this.dialog = false;
     },
+  },
+  async mounted() {
+    const response = await nakamalResourcesApi.getAll();
+    this.resources = response.data;
   },
 };
 </script>

@@ -8,6 +8,7 @@
         <v-card color="secondary" class="">
           <div class="pt-3 px-3 d-md-flex pa-sm-4 text-center text-md-start">
             <v-badge
+              v-if="nakamalProfile"
               avatar
               color="secondary"
               overlap
@@ -19,7 +20,7 @@
                   <v-icon>mdi-marker-check</v-icon>
                 </v-avatar>
               </template>
-              <v-avatar class="ma-3" size="164" v-if="nakamalProfile">
+              <v-avatar class="ma-3" size="164">
                 <v-img
                   :src="nakamalProfile.thumbnail"
                 ></v-img>

@@ -4,6 +4,7 @@ import Vue from 'vue';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import nakamalsApi from '@/api/nakamals';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 import {
   latLng,
@@ -95,8 +96,21 @@ const actions = {
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
+      // Extract resources from payload if exists
+      let resources = [];
+      if ('resources' in payload) {
+        resources = payload.resources;
+        delete payload.resources;
+      }
+      // POST new nakamal
       let response = await nakamalsApi.create(token, payload);
       const nakamal = response.data;
+      // PUT resources to new nakamal
+      if (resources.length) {
+        for (let i = 0; i < resources.length; i += 1) {
+          await nakamalsApi.putResource(token, nakamal.id, resources[i]);
+        };
+      }
       commitAddNakamal(nakamal, commit);
       dispatch('notify/add', {
         title: 'Kava Bar Added',

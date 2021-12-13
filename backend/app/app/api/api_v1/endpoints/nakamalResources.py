@@ -9,7 +9,7 @@ from app.schemas.nakamal import NakamalResourceSchemaIn, NakamalResourceSchemaOu
 
 
 router = SQLAlchemyCRUDRouter(
-    prefix="nakamalResource",
+    prefix="nakamalResources",
     tags=["nakamals"],
     schema=NakamalResourceSchemaOut,
     create_schema=NakamalResourceSchemaIn,
