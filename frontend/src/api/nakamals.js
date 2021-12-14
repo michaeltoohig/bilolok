@@ -41,4 +41,12 @@ export default {
       },
     });
   },
+
+  async putResource(token, id, resourceId) {
+    return http.put(`${resource}/${id}/resources/${resourceId}`, authHeaders(token));
+  },
+
+  async deleteResource(token, id, resourceId) {
+    return http.delete(`${resource}/${id}/resources/${resourceId}`, authHeaders(token));
+  },
 };

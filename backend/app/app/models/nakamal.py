@@ -1,5 +1,8 @@
-from sqlalchemy import Column, String, Float
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from fastapi_users_db_sqlalchemy import GUID
+from sqlalchemy import Table
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
 
@@ -15,19 +18,56 @@ from app.db.base_class import Base
 #     "TAFEA" = 7
 
 
+nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,
+    Column("nakamal_id", GUID, ForeignKey("nakamal.id"), primary_key=True),
+    Column("resource_id", GUID, ForeignKey("nakamal_resource.id"), primary_key=True),
+)
+
+
 class Nakamal(Base):
     """SQLAlchemy nakamals table definition."""
 
     __tablename__ = "nakamal"
 
     name = Column(String, nullable=False)
+    aliases = Column(ARRAY(String))
     lat = Column(Float, nullable=False)
     lng = Column(Float, nullable=False)
     light = Column(String)
     owner = Column(String)
     phone = Column(String)
-    # windows = Column(Integer)
+    windows = Column(Integer, default=1)
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
+    # checkins = relationship("Checkin", cascade="save-update, merge, delete")
+    resources = relationship("NakamalResource", secondary=nakamal_resource_association, lazy="joined")
+
+
+class NakamalResource(Base):
+    """SQLAlchemy nakamal resource table definition.
+    
+    Where a resource is amenity or feature of the nakamal.
+    Examples:
+      - Nakamal has food for sale
+      - Nakamal has alcohol for sale
+      - Nakamal has private shelters for groups
+    """
+
+    __tablename__ = "nakamal_resource"
+
+    name = Column(String, nullable=False)
+
+
+# class NakamalAlias(Base):
+#     """Nakamal alias table definition."""
+
+#     __tablename__ = "nakamal_alias"
+
+#     name = Column(String, nullable=False)
+#     # Relationships
+#     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
+#     user = relationship("User", lazy="joined")
+#     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
+#     nakamal = relationship("Nakamal", lazy="joined")
 
 
 # class KavaPrice(Base):

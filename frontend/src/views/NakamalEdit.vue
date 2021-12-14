@@ -28,6 +28,25 @@
               :error="$v.name.$error"
               required
             ></v-text-field>
+            <v-combobox
+              v-model="aliases"
+              chips
+              clearable
+              label="Other Names"
+              multiple
+            >
+              <template v-slot:selection="{ attrs, item, select, selected }">
+                <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeAlias(item)"
+                >
+                  <strong>{{ item }}</strong>
+                </v-chip>
+              </template>
+            </v-combobox>
             <v-text-field
               label="owner"
               v-model.trim="$v.owner.$model"
@@ -40,16 +59,20 @@
               :error="$v.phone.$error"
               required
             ></v-text-field>
+            <v-text-field
+              label="Windows"
+              type="number"
+              v-model.trim="$v.windows.$model"
+              :error="$v.windows.$error"
+              required
+            ></v-text-field>
             <v-select
-              v-model="$v.extras.$model"
-              :error="$v.extras.$error"
-              :items="[
-                'Food',
-                'Alcohol',
-                'TV',
-                'Games',
-              ]"
-              label="Extras"
+              v-model="$v.resources.$model"
+              :error="$v.resources.$error"
+              :items="allResources"
+              item-value="id"
+              item-text="name"
+              label="Resources"
               multiple
             ></v-select>
             <v-select
@@ -141,6 +164,8 @@ import {
   mapGetters,
 } from 'vuex';
 import {
+  // integer,
+  // minValue,
   validationMixin,
 } from 'vuelidate';
 import {
@@ -152,6 +177,7 @@ import {
 import {
   LMap, LTileLayer, LMarker,
 } from 'vue2-leaflet';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 const iconPath = require('../assets/map-marker.svg');
 
@@ -167,10 +193,13 @@ export default {
     return {
       valid: true,
       name: '',
+      aliases: [],
       owner: '',
       phone: '',
       light: null,
-      extras: [],
+      windows: 1,
+      resources: [],
+      allResources: [],
       lat: 0,
       lng: 0,
 
@@ -193,12 +222,18 @@ export default {
       name: {
         required,
       },
+      aliases: {},
       owner: {},
       phone: {},
       light: {
         required,
       },
-      extras: {},
+      windows: {
+        required,
+        // integer,
+        // minValue: minValue(1),
+      },
+      resources: {},
       lat: {
         required,
       },
@@ -224,22 +259,31 @@ export default {
     },
   },
   methods: {
+    removeAlias(alias) {
+      this.aliases.splice(this.aliases.indexOf(alias), 1);
+    },
     reset() {
       this.name = '';
+      this.aliases = [];
       this.owner = '';
       this.phone = '';
       this.light = null;
-      this.extras = [];
+      this.windows = 1;
+      this.resources = [];
+      this.oldResources = [];
       this.lat = null;
       this.lng = null;
 
       this.$v.$reset();
       if (this.nakamal) {
         this.name = this.nakamal.name;
+        this.aliases = this.nakamal.aliases;
         this.owner = this.nakamal.owner;
         this.phone = this.nakamal.phone;
         this.light = this.nakamal.light;
-        this.extras = this.nakamal.extras;
+        this.windows = this.nakamal.windows;
+        this.resources = this.nakamal.resources.map((r) => r.id);
+        this.oldResources = this.resources; // save original selected resources
         this.lat = this.nakamal.lat;
         this.lng = this.nakamal.lng;
         this.setCenter(this.nakamal.latLng);
@@ -254,14 +298,20 @@ export default {
 
       const payload = {
         name: this.name,
+        aliases: this.aliases,
         owner: this.owner,
         phone: this.phone,
         light: this.light,
-        extras: this.extras,
+        windows: this.windows,
         lat: this.lat,
         lng: this.lng,
       };
       this.$store.dispatch('nakamal/update', { nakamalId: this.nakamal.id, payload });
+      this.$store.dispatch('nakamal/updateResources', {
+        nakamalId: this.nakamal.id,
+        oldResources: this.oldResources,
+        resources: this.resources,
+      });
       this.$router.push({ name: 'Nakamal', id: this.nakamal.id });
     },
     ...mapActions(
@@ -274,6 +324,8 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('nakamal/load');
+    const response = await nakamalResourcesApi.getAll();
+    this.allResources = response.data;
     this.setCenter(this.nakamal.latLng);
     this.reset();
   },

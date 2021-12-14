@@ -1,18 +1,22 @@
 from typing import Any, List
+from uuid import UUID
 from app.api.deps.db import get_db
 from app.crud.checkin import CRUDCheckin
+from app.crud.nakamalResource import CRUDNakamalResource
 from app.schemas.checkin import CheckinSchemaOut
 
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
+from sqlalchemy import delete
 
 from app.crud.nakamal import CRUDNakamal
 from app.crud.image import CRUDImage
-from app.models.nakamal import Nakamal
+from app.models.nakamal import Nakamal, nakamal_resource_association
 from app.api.deps.user import current_active_verified_user, current_superuser
-from app.schemas.nakamal import NakamalSchemaIn, NakamalSchema, NakamalSchemaOut
+from app.schemas.nakamal import NakamalResourceSchemaIn, NakamalResourceSchemaOut, NakamalSchemaIn, NakamalSchema, NakamalSchemaOut, NakamalSchemaUpdate
 from app.schemas.image import ImageSchemaOut
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 
@@ -21,6 +25,7 @@ router = SQLAlchemyCRUDRouter(
     tags=["nakamals"],
     schema=NakamalSchema,
     create_schema=NakamalSchemaIn,
+    update_schema=NakamalSchemaUpdate,
     db_model=Nakamal,
     db=get_db,
     get_one_route=False,
@@ -45,20 +50,51 @@ async def get_all(
 async def get_one(
     db: AsyncSession = Depends(get_db),
     *,
-    item_id: str
+    item_id: UUID
 ) -> Any:
     crud_nakamal = CRUDNakamal(db)
     item = await crud_nakamal.get_by_id(item_id)
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
     return item
-    
+
+
+# TODO sort out handling eager loading
+@router.put("/{item_id}", response_model=NakamalSchemaOut)
+async def update_one(
+    db: AsyncSession = Depends(get_db),
+    user = Depends(current_active_verified_user),
+    *,
+    item_id: UUID,
+    update_schema: NakamalSchemaUpdate,
+) -> Any:
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item_id)
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
+
+    item = await crud_nakamal.update(item_id, update_schema)
+    return NakamalSchemaOut(**item.dict())
+
+
+@router.delete("/{item_id}", response_model=NakamalSchemaOut)
+async def delete_one(
+    db: AsyncSession = Depends(get_db),
+    user = Depends(current_superuser),
+    *,
+    item_id: UUID,
+) -> Any:
+    # XXX fails when checkins or images or resources exist on the relationships
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.delete(item_id)
+    return NakamalSchemaOut(**item.dict())
+
 
 @router.get("/{item_id}/images", response_model=List[ImageSchemaOut])
 async def get_all_images(
     db: AsyncSession = Depends(get_db),
     *,
-    item_id: str
+    item_id: UUID
 ) -> Any:
     crud_nakamal = CRUDNakamal(db)
     item = await crud_nakamal.get_by_id(item_id)
@@ -73,7 +109,7 @@ async def get_all_images(
 async def get_all_images(
     db: AsyncSession = Depends(get_db),
     *,
-    item_id: str
+    item_id: UUID
 ) -> Any:
     crud_nakamal = CRUDNakamal(db)
     item = await crud_nakamal.get_by_id(item_id)
@@ -82,3 +118,48 @@ async def get_all_images(
     crud_checkin = CRUDCheckin(db)
     checkins = await crud_checkin.get_multi_by_nakamal(item.id)
     return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]
+
+
+@router.put("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
+async def put_one_resource(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item_id: UUID,
+    resource_id: UUID,
+) -> Any:
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item_id)
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
+    crud_resource = CRUDNakamalResource(db)
+    resource = await crud_resource.get_by_id(resource_id)
+    if not resource:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal Resource not found.")
+    try:
+        query = nakamal_resource_association.insert().values(nakamal_id=item.id, resource_id=resource.id)
+        await db.execute(query)
+    except IntegrityError as exc:
+        await db.rollback()
+    item = await crud_nakamal.get_by_id(item.id)
+    return NakamalSchemaOut(**item.dict())
+
+
+@router.delete("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
+async def delete_one_resource(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item_id: UUID,
+    resource_id: UUID,
+) -> Any:
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item_id)
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
+    crud_resource = CRUDNakamalResource(db)
+    resource = await crud_resource.get_by_id(resource_id)
+    if not resource:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal Resource not found.")
+    query = delete(nakamal_resource_association).where(nakamal_resource_association.c.nakamal_id == item.id, nakamal_resource_association.c.resource_id == resource.id)
+    await db.execute(query)
+    item = await crud_nakamal.get_by_id(item.id)
+    return NakamalSchemaOut(**item.dict())

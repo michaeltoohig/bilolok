@@ -4,6 +4,7 @@ import Vue from 'vue';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import nakamalsApi from '@/api/nakamals';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 import {
   latLng,
@@ -92,11 +93,41 @@ const actions = {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },
+  updateResources: async ({ commit, rootState }, { nakamalId, oldResources, resources }) => {
+    try {
+      let token = rootState.auth.token;
+      const deleteList = oldResources.filter(id => resources.indexOf(id) === -1);
+      const putlist = resources.filter(id => oldResources.indexOf(id) === -1);
+      deleteList.forEach(id => {
+        nakamalsApi.deleteResource(token, nakamalId, id);
+      });
+      putlist.forEach(id => {
+        nakamalsApi.putResource(token, nakamalId, id);
+      });
+    }
+    catch (error) {
+      console.log('in update nakamal resource error', error);
+      await dispatch('auth/checkApiError', error, { root: true });
+    }
+  },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
+      // Extract resources from payload if exists
+      let resources = [];
+      if ('resources' in payload) {
+        resources = payload.resources;
+        delete payload.resources;
+      }
+      // POST new nakamal
       let response = await nakamalsApi.create(token, payload);
       const nakamal = response.data;
+      // PUT resources to new nakamal
+      if (resources.length) {
+        for (let i = 0; i < resources.length; i += 1) {
+          await nakamalsApi.putResource(token, nakamal.id, resources[i]);
+        };
+      }
       commitAddNakamal(nakamal, commit);
       dispatch('notify/add', {
         title: 'Kava Bar Added',

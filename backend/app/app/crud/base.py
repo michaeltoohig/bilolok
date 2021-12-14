@@ -2,7 +2,7 @@ import abc
 from typing import Generic, List, TypeVar, Type
 from uuid import uuid4, UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update, delete
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -34,6 +34,18 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         await self._db_session.commit()
         return self._schema.from_orm(item)
 
+    async def update(self, id: UUID, update_schema) -> SCHEMA:
+        stmt = update(self._table).where(self._table.id == id).values(update_schema.dict())
+        await self._db_session.execute(stmt)
+        # TODO look into `returning` instead of using `get_by_id`
+        return await self.get_by_id(id)
+
+    async def delete(self, id: UUID) -> SCHEMA:
+        item = await self.get_by_id(id)
+        stmt = delete(self._table).where(self._table.id == id)
+        await self._db_session.execute(stmt)
+        return item
+
     async def _get_one(self, item_id: UUID):
         query = (
             select(self._table)
@@ -55,9 +67,9 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:
-        stmt = select(self._table)
-        items = await self._db_session.execute(stmt)
-        return (self._schema.from_orm(item[0]) for item in items)
+        query = select(self._table)
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
 
     async def remove(self, item_id: UUID) -> SCHEMA:
         item = await self._get_one(item_id)

@@ -72,7 +72,36 @@
     </v-alert>
 
     <v-card>
+      <v-card-text>
+        <h4>This kava bar has...</h4>
+        <v-chip
+          v-for="resource in nakamal.resources"
+          :key="resource.id"
+          class="mr-2"
+        >
+          {{ resource.name }}
+        </v-chip>
+      </v-card-text>
+
       <v-list>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Light</v-list-item-title>
+            <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title># of Windows</v-list-item-title>
+            <v-list-item-subtitle>{{ nakamal.windows }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Other Names</v-list-item-title>
+            <v-list-item-subtitle>{{ nakamal.aliases.join(", ") }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Owner</v-list-item-title>
@@ -83,12 +112,6 @@
           <v-list-item-content>
             <v-list-item-title>Number</v-list-item-title>
             <v-list-item-subtitle>{{ nakamal.phone }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item two-line>
-          <v-list-item-content>
-            <v-list-item-title>Light</v-list-item-title>
-            <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>

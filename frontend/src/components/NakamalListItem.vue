@@ -15,11 +15,13 @@
     <v-card-title class="pb-0">
       {{ nakamal.name }}
     </v-card-title>
+    <v-card-subtitle v-if="nakamal.aliases" class="pt-2">
+      {{ nakamal.aliases.join(', ') }}
+    </v-card-subtitle>
 
     <v-card-text class="text--primary">
-      <div>Location: {{ nakamal.lat }} S, {{ nakamal.lng }} E</div>
-
-      <div>Somewhere in Vanuatu</div>
+      <div>Light: {{ nakamal.light }}</div>
+      <div>Windows: {{ nakamal.windows || '-' }}</div>
     </v-card-text>
 
     <v-card-actions>
