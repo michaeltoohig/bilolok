@@ -71,7 +71,6 @@ async def create_one(
     now = datetime.now(tz=timezone.utc)
     # TODO check user has not hit some checkin count threshold for the day - no bots or automated checkin spam
     # Check user's latest checkin is not the same nakamal - no double checkins 
-    
     crud_checkin = CRUDCheckin(db)
     last_checkin = await crud_checkin.get_last_by_user(user.id, exclude_private=False)
     if last_checkin:
@@ -83,7 +82,7 @@ async def create_one(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="You already checked-in to this nakamal."
             )
-    # Check user's latest checkin at this nakamal was atleast 30 minutes ago - no double checkins by hopping between two nakamals
+    # Check user's latest checkin at this nakamal was atleast X minutes ago - no double checkins by hopping between two nakamals
     last_nakamal_checkin = await crud_checkin.get_last_by_user(user.id, nakamal_id=in_schema.nakamal_id, exclude_private=False)
     if last_nakamal_checkin:
         threshold = last_nakamal_checkin.created_at + timedelta(minutes=15)  # XXX hardcoded value
@@ -93,8 +92,11 @@ async def create_one(
                 detail="You already checked-in to this nakamal recently."
             )
     # Check user has not checked in more than the threshold for a single day
-    recent_nakamal_checkins = await crud_checkin.get_multi_by_user(user.id, nakamal_id=in_schema.nakamal_id, exclude_private=False)
-    if len(list(recent_nakamal_checkins)) > 3:  # XXX hardcoded value
+    checkin_threshold = 3  # XXX hardcoded value
+    recent_nakamal_checkins = await crud_checkin.get_multi_by_user(user.id, limit=checkin_threshold, nakamal_id=in_schema.nakamal_id, exclude_private=False)
+    threshold = datetime.now(tz=timezone.utc) - timedelta(hours=12)
+    count = len(filter(lambda c: c.created_at >= threshold, recent_nakamal_checkins))
+    if count > checkin_threshold:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You already checked-in to this nakamal too many times today."
