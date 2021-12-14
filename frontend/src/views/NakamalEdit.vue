@@ -112,36 +112,46 @@
           :error="$v.lng.$error"
         ></v-text-field>
 
-        <div id="map-wrapper">
-          <l-map
-            style="z-index: 0;"
-            ref="map"
-            :zoom="zoom"
-            :center="center"
-            :bounds="bounds"
-            :max-bounds="maxBounds"
-            :min-zoom="16"
-            :max-zoom="18"
-            @update:bounds="setBounds"
-            @update:center="setCenter"
-            @update:zoom="setZoom"
-          >
-            <l-tile-layer
-              :url="url"
-              :attribution="attribution"
-            />
+        <v-btn
+          text
+          outlined
+          @click="toggleMap"
+          class="mb-3"
+        >
+          Update location
+        </v-btn>
+        <v-expand-transition>
+          <div v-show="showMap" id="map-wrapper">
+            <l-map
+              style="z-index: 0;"
+              ref="map"
+              :zoom="zoom"
+              :center="center"
+              :bounds="bounds"
+              :max-bounds="maxBounds"
+              :min-zoom="16"
+              :max-zoom="18"
+              @update:bounds="setBounds"
+              @update:center="setCenter"
+              @update:zoom="setZoom"
+            >
+              <l-tile-layer
+                :url="url"
+                :attribution="attribution"
+              />
 
-            <l-marker
-              :icon="icon"
-              :lat-lng="nakamal.latLng"
-            ></l-marker>
+              <l-marker
+                :icon="icon"
+                :lat-lng="nakamal.latLng"
+              ></l-marker>
 
-            <l-marker
-              :icon="icon"
-              :lat-lng="center"
-            ></l-marker>
-          </l-map>
-        </div>
+              <l-marker
+                :icon="icon"
+                :lat-lng="center"
+              ></l-marker>
+            </l-map>
+          </div>
+        </v-expand-transition>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -203,6 +213,7 @@ export default {
       lat: 0,
       lng: 0,
 
+      showMap: false,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -259,6 +270,12 @@ export default {
     },
   },
   methods: {
+    toggleMap() {
+      this.showMap = !this.showMap;
+      setTimeout(() => {
+        this.$refs.map.mapObject.invalidateSize();
+      }, 250);
+    },
     removeAlias(alias) {
       this.aliases.splice(this.aliases.indexOf(alias), 1);
     },

@@ -74,6 +74,7 @@
     <v-card>
       <v-card-text>
         <h4>This kava bar has...</h4>
+        <span><strong v-if="!nakamal.resources.length">...nothing but kava</strong></span>
         <v-chip
           v-for="resource in nakamal.resources"
           :key="resource.id"
