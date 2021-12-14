@@ -95,7 +95,7 @@ async def create_one(
     checkin_threshold = 3  # XXX hardcoded value
     recent_nakamal_checkins = await crud_checkin.get_multi_by_user(user.id, limit=checkin_threshold, nakamal_id=in_schema.nakamal_id, exclude_private=False)
     threshold = datetime.now(tz=timezone.utc) - timedelta(hours=12)
-    count = len(filter(lambda c: c.created_at >= threshold, recent_nakamal_checkins))
+    count = len(list(filter(lambda c: c.created_at >= threshold, recent_nakamal_checkins)))
     if count > checkin_threshold:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

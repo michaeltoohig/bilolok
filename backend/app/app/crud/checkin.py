@@ -86,6 +86,7 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
     async def get_multi_by_user(self, user_id: UUID, *, skip: int = 0, limit: int = 100, nakamal_id: Optional[UUID] = None, exclude_private: bool = True) -> List[CheckinSchema]:
         query = (
             select(self._table)
+            .options(selectinload(self._table.nakamal))
             .where(self._table.user_id == user_id)
         )
         if nakamal_id:
