@@ -45,6 +45,72 @@
             </v-col>
             <v-col
               cols="12"
+            >
+              <v-combobox
+                v-model="aliases"
+                chips
+                clearable
+                label="Other Names"
+                multiple
+              >
+                <template v-slot:selection="{ attrs, item, select, selected }">
+                  <v-chip
+                    v-bind="attrs"
+                    :input-value="selected"
+                    close
+                    @click="select"
+                    @click:close="removeAlias(item)"
+                  >
+                    <strong>{{ item }}</strong>
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-col>
+            <v-col
+              cols="12"
+            >
+              <v-text-field
+                v-model="windows"
+                label="# of Windows"
+                type="number"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-select
+                v-model="selectedResources"
+                :items="resources"
+                item-value="id"
+                item-text="name"
+                label="Resources"
+                multiple
+              ></v-select>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
+            >
+              <v-autocomplete
+                v-model="light"
+                :items="[
+                  'White',
+                  'Red',
+                  'Orange',
+                  'Yellow',
+                  'Green',
+                  'Blue',
+                  'Purple',
+                  'Pink',
+                  'Other',
+                ]"
+                label="Light Colour"
+              ></v-autocomplete>
+            </v-col>
+            <v-col
+              cols="12"
               sm="6"
             >
               <v-text-field
@@ -88,39 +154,6 @@
                 required
                 :value="center.lng"
               ></v-text-field>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-            >
-              <v-select
-                v-model="selectedResources"
-                :items="resources"
-                item-value="id"
-                item-text="name"
-                label="Resources"
-                multiple
-              ></v-select>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="6"
-            >
-              <v-autocomplete
-                v-model="light"
-                :items="[
-                  'White',
-                  'Red',
-                  'Orange',
-                  'Yellow',
-                  'Green',
-                  'Blue',
-                  'Purple',
-                  'Pink',
-                  'Other',
-                ]"
-                label="Light Colour"
-              ></v-autocomplete>
             </v-col>
           </v-row>
         </v-container>
@@ -182,9 +215,11 @@ export default {
         iconAnchor: [16, 40],
       }),
       name: '',
+      aliases: [],
       owner: '',
       phone: '',
       light: null,
+      windows: 1,
       selectedResources: [],
       resources: [],
     };
@@ -196,6 +231,8 @@ export default {
     form() {
       return {
         name: this.name,
+        aliases: this.aliases,
+        windows: this.windows,
         owner: this.owner,
         phone: this.phone,
         lat: this.center.lat,
@@ -206,6 +243,9 @@ export default {
     },
   },
   methods: {
+    removeAlias(alias) {
+      this.aliases.splice(this.aliases.indexOf(alias), 1);
+    },
     async submit() {
       await this.$store.dispatch('nakamal/add', this.form);
       this.$store.dispatch('map/setShowNewNakamalMarker', false);

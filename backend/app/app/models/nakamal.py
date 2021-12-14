@@ -38,6 +38,7 @@ class Nakamal(Base):
     phone = Column(String)
     windows = Column(Integer, default=1)
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
+    # checkins = relationship("Checkin", cascade="save-update, merge, delete")
     resources = relationship("NakamalResource", secondary=nakamal_resource_association, lazy="joined")
 
 

@@ -28,6 +28,25 @@
               :error="$v.name.$error"
               required
             ></v-text-field>
+            <v-combobox
+              v-model="aliases"
+              chips
+              clearable
+              label="Other Names"
+              multiple
+            >
+              <template v-slot:selection="{ attrs, item, select, selected }">
+                <v-chip
+                  v-bind="attrs"
+                  :input-value="selected"
+                  close
+                  @click="select"
+                  @click:close="removeAlias(item)"
+                >
+                  <strong>{{ item }}</strong>
+                </v-chip>
+              </template>
+            </v-combobox>
             <v-text-field
               label="owner"
               v-model.trim="$v.owner.$model"
@@ -38,6 +57,13 @@
               label="Phone"
               v-model.trim="$v.phone.$model"
               :error="$v.phone.$error"
+              required
+            ></v-text-field>
+            <v-text-field
+              label="Windows"
+              type="number"
+              v-model.trim="$v.windows.$model"
+              :error="$v.windows.$error"
               required
             ></v-text-field>
             <v-select
@@ -138,6 +164,8 @@ import {
   mapGetters,
 } from 'vuex';
 import {
+  // integer,
+  // minValue,
   validationMixin,
 } from 'vuelidate';
 import {
@@ -165,9 +193,11 @@ export default {
     return {
       valid: true,
       name: '',
+      aliases: [],
       owner: '',
       phone: '',
       light: null,
+      windows: 1,
       resources: [],
       allResources: [],
       lat: 0,
@@ -192,10 +222,16 @@ export default {
       name: {
         required,
       },
+      aliases: {},
       owner: {},
       phone: {},
       light: {
         required,
+      },
+      windows: {
+        required,
+        // integer,
+        // minValue: minValue(1),
       },
       resources: {},
       lat: {
@@ -223,11 +259,16 @@ export default {
     },
   },
   methods: {
+    removeAlias(alias) {
+      this.aliases.splice(this.aliases.indexOf(alias), 1);
+    },
     reset() {
       this.name = '';
+      this.aliases = [];
       this.owner = '';
       this.phone = '';
       this.light = null;
+      this.windows = 1;
       this.resources = [];
       this.oldResources = [];
       this.lat = null;
@@ -236,9 +277,11 @@ export default {
       this.$v.$reset();
       if (this.nakamal) {
         this.name = this.nakamal.name;
+        this.aliases = this.nakamal.aliases;
         this.owner = this.nakamal.owner;
         this.phone = this.nakamal.phone;
         this.light = this.nakamal.light;
+        this.windows = this.nakamal.windows;
         this.resources = this.nakamal.resources.map((r) => r.id);
         this.oldResources = this.resources; // save original selected resources
         this.lat = this.nakamal.lat;
@@ -255,14 +298,20 @@ export default {
 
       const payload = {
         name: this.name,
+        aliases: this.aliases,
         owner: this.owner,
         phone: this.phone,
         light: this.light,
+        windows: this.windows,
         lat: this.lat,
         lng: this.lng,
       };
       this.$store.dispatch('nakamal/update', { nakamalId: this.nakamal.id, payload });
-      // TODO submit PUT and DELETE requests for resources that have changed from oldResources
+      this.$store.dispatch('nakamal/updateResources', {
+        nakamalId: this.nakamal.id,
+        oldResources: this.oldResources,
+        resources: this.resources,
+      });
       this.$router.push({ name: 'Nakamal', id: this.nakamal.id });
     },
     ...mapActions(

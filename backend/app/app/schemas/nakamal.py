@@ -42,12 +42,14 @@ class NakamalSchemaBase(BaseSchema):
     windows: Optional[int] = None
 
 
-# class NakamalSchemaUpdate(NakamalSchemaBase):
-#     pass
+class NakamalSchemaUpdate(NakamalSchemaBase):
+    pass
 
 
 class NakamalSchemaIn(NakamalSchemaBase):
     name: str
+    light: str
+    windows: int
     lat: float
     lng: float
 

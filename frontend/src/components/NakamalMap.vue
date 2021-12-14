@@ -67,8 +67,9 @@
             :src="selectedNakamalImage.thumbnail"
           ></v-img>
           <ul class="mb-2 font-weight-light">
-            <li>Owner: {{ selectedNakamal.owner || '-' }}</li>
-            <li>Number: {{ selectedNakamal.phone || '-' }}</li>
+            <li>Light: {{ selectedNakamal.light || '-' }}</li>
+            <li>Windows: {{ selectedNakamal.windows || '-' }}</li>
+            <li>Other Names: {{ aliasNames(selectedNakamal.aliases) }}</li>
           </ul>
           <v-btn
             small
@@ -275,6 +276,10 @@ export default {
     },
   },
   methods: {
+    aliasNames(aliases) {
+      if (!aliases) return '-';
+      return aliases.join(', ');
+    },
     getLocation() {
       if (!('geolocation' in navigator)) {
         console.log('Geolocation is not available.');
