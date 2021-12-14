@@ -99,7 +99,7 @@
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Other Names</v-list-item-title>
-            <v-list-item-subtitle>{{ nakamal.aliases.join(", ") }}</v-list-item-subtitle>
+            <v-list-item-subtitle>{{ aliasNames(nakamal.aliases) }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>
@@ -211,6 +211,10 @@ export default {
     },
   },
   methods: {
+    aliasNames(aliases) {
+      if (!aliases) return '-';
+      return aliases.join(', ');
+    },
     userCheckinCountMonth(userId) {
       if (!this.checkins) return null;
       return this.checkins
