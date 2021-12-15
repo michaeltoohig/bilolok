@@ -2,10 +2,11 @@
   <div>
     <h1>Log In</h1>
     <v-btn @click="signup">Sign Up</v-btn>
+    <v-btn @click="forgotPassword">Forgot Password</v-btn>
 
     <v-text-field
       v-model="username"
-      label="Username"
+      label="Email"
     ></v-text-field>
     <v-text-field
       v-model="password"
@@ -31,6 +32,9 @@ export default {
   methods: {
     signup() {
       this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
+    },
+    forgotPassword() {
+      this.$router.push({ name: 'Auth', params: { auth: 'forgotPassword' } });
     },
     submit() {
       this.$store.dispatch('auth/jwtLogin', {

@@ -218,7 +218,7 @@ export default {
       aliases: [],
       owner: '',
       phone: '',
-      light: null,
+      light: 'Other',
       windows: 1,
       selectedResources: [],
       resources: [],
@@ -226,6 +226,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      // isUserVerified: 'auth/isUserVerified',
       center: 'map/center',
     }),
     form() {

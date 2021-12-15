@@ -80,13 +80,24 @@
         transition="slide-x-transition"
       >
         <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            icon
-            v-bind="attrs"
-            v-on="on"
+          <v-badge
+            :value="!isUserVerified"
+            bordered
+            bottom
+            color="red"
+            icon="mdi-lock"
+            overlap
+            offset-x="20"
+            offset-y="20"
           >
-            <v-icon>mdi-account</v-icon>
-          </v-btn>
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+            >
+              <v-icon>mdi-account</v-icon>
+            </v-btn>
+          </v-badge>
         </template>
 
         <v-list v-if="isLoggedIn">
@@ -96,6 +107,14 @@
             </v-list-item-icon>
             <v-list-item-title>
               Profile
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item v-if="!isUserVerified" @click="sendVerificationEmail">
+            <v-list-item-icon>
+              <v-icon color="red">mdi-lock</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              Send Verification Email
             </v-list-item-title>
           </v-list-item>
 
@@ -157,12 +176,16 @@ export default {
       isLoggedIn: 'auth/isLoggedIn',
       me: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
+      isUserVerified: 'auth/isUserVerified',
     }),
     isMapView() {
       return this.$route.name === 'Map';
     },
   },
   methods: {
+    async sendVerificationEmail() {
+      this.$store.dispatch('auth/requestVerification');
+    },
     logout() {
       this.$store.dispatch('auth/userLogOut');
     },

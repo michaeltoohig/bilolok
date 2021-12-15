@@ -239,6 +239,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isUserVerified: 'auth/isUserVerified',
       location: 'map/location',
       bounds: 'map/bounds',
       center: 'map/center',

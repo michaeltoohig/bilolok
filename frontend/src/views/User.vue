@@ -23,6 +23,36 @@
       </v-card>
 
       <v-container>
+        <v-alert
+          v-if="isMe && !isUserVerified"
+          class="my-3"
+          type="info"
+          prominent
+          text
+        >
+          <h3 class="text-h5">
+            Email Not Verified
+          </h3>
+          <div>
+            Your email account is not yet verified. You will not be
+            able to perform some actions until you verify your email
+            account.
+          </div>
+
+          <v-divider
+            class="my-4 info"
+            style="opacity: 0.22"
+          ></v-divider>
+
+          <div>
+            <v-btn
+              color="info"
+              @click="sendVerificationEmail"
+            >
+              Send Verification Email
+            </v-btn>
+          </div>
+        </v-alert>
         <div
           v-for="item in timelineItems"
           :key="item.id"
@@ -66,6 +96,7 @@ export default {
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
       me: 'auth/user',
+      isUserVerified: 'auth/isUserVerified',
       hasAdminAccess: 'auth/hasAdminAccess',
       getUserCheckins: 'checkin/user',
       getUserImages: 'image/user',
@@ -84,6 +115,9 @@ export default {
     $route: 'fetchData',
   },
   methods: {
+    async sendVerificationEmail() {
+      this.$store.dispatch('auth/requestVerification');
+    },
     async fetchData() {
       this.loading = true;
       const { id } = this.user;

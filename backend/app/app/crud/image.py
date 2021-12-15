@@ -82,6 +82,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
     async def get_multi_by_user(self, user_id: UUID, *, skip: int = 0, limit: int = 100, nakamal_id: Optional[UUID] = None) -> List[ImageSchema]:
         query = (
             select(self._table)
+            .options(selectinload(self._table.nakamal))
             .where(self._table.user_id == user_id)
         )
         if nakamal_id:

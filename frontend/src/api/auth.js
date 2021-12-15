@@ -22,20 +22,19 @@ export default {
     );
   },
 
-  // async passwordRecovery(email: string) {
-  //   return axios.post(`${apiUrl}/api/v1/password-recovery/${email}`);
-  // },
-  // async resetPassword(password: string, token: string) {
-  //   return axios.post(`${apiUrl}/api/v1/reset-password/`, {
-  //     new_password: password,
-  //     token,
-  //   });
-  // },
+  async forgotPassword(payload) {
+    return http.post(`${resource}/forgot-password`, payload);
+  },
 
-  // async getMe(token) {
-  //   return http.get(`${apiUrl}/api/v1/users/me`, authHeaders(token));
-  // },
-  // async updateMe(token, data) {
-  //   return http.put(`${apiUrl}/api/v1/users/me`, data, authHeaders(token));
-  // },
+  async resetPassword(payload) {
+    return http.post(`${resource}/reset-password`, payload);
+  },
+
+  async requestVerification(email) {
+    return http.post(`${resource}/request-verify-token`, { email });
+  },
+
+  async verify(token) {
+    return http.post(`${resource}/verify`, { token });
+  },
 };

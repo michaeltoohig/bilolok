@@ -199,6 +199,34 @@ const actions = {
   //     commitAddNotification(context, { color: 'error', content: 'Error resetting password' });
   //   }
   // },
+  requestVerification: async ({ dispatch, getters }) => {
+    await authApi.requestVerification(getters.user.email);
+    dispatch('notify/add', {
+      title: 'Email Verification Sent',
+      text: 'Please check your inbox for the link to verify your email.',
+      type: 'info',
+      duration: 10_000,
+    }, { root: true });
+  },
+  verify: async ({ dispatch }, token) => {
+    try {
+      await authApi.verify(token);
+      dispatch('notify/add', {
+        title: 'Email Verified',
+        text: 'You email has been verified. You may now upload images, check-in, add kava bars to the map, etc.',
+        type: 'success',
+        duration: 10_000,
+      }, { root: true });
+      dispatch('getMe');
+    }
+    catch (error) {
+      dispatch('notify/add', {
+        title: 'Email Verification Error',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
+    }
+  },
   setShowAuthModal: async ({ commit }, show) => {
     commit('setShowAuthModal', show);
   },

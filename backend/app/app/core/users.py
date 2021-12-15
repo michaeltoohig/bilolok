@@ -29,7 +29,15 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         message = MessageSchema(
             subject="Welcome to Bilolok!",
             recipients=[user.email],
-            body="Thanks for joining! You can also join our Facebook group to give feedback and suggest improvements for Bilolok."
+            body="""
+                Thanks for joining the Bilolok Beta!
+                The app is not completely ready for public use you may run into
+                bugs and errors periodically but I will address them if you let
+                me know you found the error.
+                You can find our Facebook page to contact us. Also, until you
+                verify your email you will not be able to perform some actions
+                on the app.
+            """
         )
         await mail.send_message(message)
         # Render user's default avatar image
@@ -43,9 +51,29 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
 
     async def on_after_forgot_password(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
         print(f"User {user.id} has forgot their password. Reset token: {token}")
+        link = "{}/auth/resetPassword?token={}".format(settings.FRONTEND_HOST, token)
+        message = MessageSchema(
+            subject="Forgot Your Password?",
+            recipients=[user.email],
+            body="""
+                Reset your password by copying the following link into your URL bar:
+                {link}
+            """.format(link=link)
+        )
+        await mail.send_message(message)
 
     async def on_after_request_verify(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
         print(f"Verification requested for user {user.id}. Verification token: {token}")
+        link = "{}/auth/verify?token={}".format(settings.FRONTEND_HOST, token)
+        message = MessageSchema(
+            subject="Verify Your Email",
+            recipients=[user.email],
+            body="""
+                Copy the following link into your browser to verify your email:
+                {link}
+            """.format(link=link)
+        )
+        await mail.send_message(message)
 
 
 jwt_authentication = JWTAuthentication(
