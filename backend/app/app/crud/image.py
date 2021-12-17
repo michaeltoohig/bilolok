@@ -9,6 +9,7 @@ from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.models.image import Image
 from app.schemas.image import ImageSchemaIn, ImageSchema
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
 
@@ -24,6 +25,18 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
     @property
     def _table(self) -> Type[Image]:
         return Image
+
+    async def _get_one(self, item_id: UUID):
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .where(self._table.id == item_id)
+        )
+        try:
+            (item,) = (await self._db_session.execute(query)).one()
+        except NoResultFound:
+            item = None
+        return item
         
     def save_file(self, sfp: Path, *, nakamal_id: str, file_id: str, filename: str):
         """Save the given file to it's storage path defined by `filepath`."""

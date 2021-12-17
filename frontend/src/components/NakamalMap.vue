@@ -136,7 +136,7 @@
               dark
               small
               color="primary lighten-2"
-              @click.stop="showSearch"
+              @click.stop="setShowSearch(true)"
             >
               <v-icon>mdi-magnify</v-icon>
             </v-btn>

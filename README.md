@@ -16,13 +16,13 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Check-in details
    - [x] Check-in message
    - [x] Chief
-   - [ ] Resources (20vt, tusker, billiard table, etc)
+   - [x] Resources (20vt, tusker, billiard table, etc)
  - [ ] Home page
    - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
  - [ ] User Auth Features
-   - [ ] Resend email verification link
-   - [ ] Forgot password process
+   - [x] Resend email verification link
+   - [x] Forgot password process
    - [ ] Add auth check to open auth modal for existing features
 
  - [ ] SQLAlchemy-Continuum integration
@@ -31,7 +31,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 The following were recommended additions
 
  - [ ] Add kava source to nakamal / include in search filters
- - [ ] Support multiple names of nakamal
+ - [x] Support multiple names of nakamal
   
 The following packages are not officially supporting SQLA 1.4 yet but have user
 made forks that are awaiting review to be officially integrated to support the
