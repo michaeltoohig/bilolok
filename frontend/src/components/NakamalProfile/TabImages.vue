@@ -5,7 +5,7 @@
         <h2>No Images Yet</h2>
       </v-col>
     </v-row>
-    <Photoswipe>
+    <Photoswipe :options="{ history: true }">
       <v-row>
         <v-col
           v-for="(image, i) in images"
@@ -64,8 +64,12 @@ export default {
       getCheckins: 'checkin/nakamal',
     }),
     images() {
-      return this.getImages(this.nakamal.id)
+      const sortedImages = this.getImages(this.nakamal.id)
         .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+      return sortedImages.map((i) => ({
+        pid: i.id,
+        ...i,
+      }));
     },
   },
   methods: {

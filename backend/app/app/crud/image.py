@@ -55,7 +55,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
 
     def make_src_urls(self, image: ImageSchema) -> ImageSchema:
-        image.src = self.make_src_url(image, height=1080, width=1920, full_fit_in=True)
+        image.src = self.make_src_url(image, height=720, width=1280, full_fit_in=True)
         image.msrc = self.make_src_url(image, height=32, width=32, full_fit_in=True)
         image.thumbnail = self.make_src_url(image, height=200, width=200)
         return image
