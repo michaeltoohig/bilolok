@@ -66,6 +66,7 @@ export default {
     images() {
       const sortedImages = this.getImages(this.nakamal.id)
         .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+      // maybe not most effecient way to add `pid` to each image object
       return sortedImages.map((i) => ({
         pid: i.id,
         ...i,

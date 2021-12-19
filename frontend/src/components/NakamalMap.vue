@@ -131,7 +131,7 @@
             <template v-slot:activator>
               <v-btn
                 v-model="fab"
-                color="primary darken-2"
+                color="secondary darken-2"
                 dark
                 fab
               >
@@ -147,7 +147,7 @@
               fab
               dark
               small
-              color="primary lighten-1"
+              color="secondary darken-1"
               @click.stop="getLocation"
             >
               <v-icon>mdi-crosshairs-gps</v-icon>
@@ -156,7 +156,7 @@
               fab
               dark
               small
-              color="primary lighten-2"
+              color="secondary darken-1"
               @click.stop="setShowSearch(true)"
             >
               <v-icon>mdi-magnify</v-icon>
@@ -165,7 +165,7 @@
               fab
               dark
               small
-              color="primary lighten-3"
+              color="secondary darken-1"
               @click.stop="newNakamalMarker"
             >
               <v-icon>mdi-map-marker-plus</v-icon>
@@ -343,7 +343,11 @@ export default {
     },
     newNakamalMarker() {
       this.fab = false;
-      this.setShowNewNakamalMarker(true);
+      if (this.isUserVerified) {
+        this.setShowNewNakamalMarker(true);
+      } else {
+        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
     },
     flyTo(latlng, zoom = 18) {
       this.$refs.map.mapObject.setView(latlng, zoom);
