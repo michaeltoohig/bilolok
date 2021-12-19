@@ -67,7 +67,7 @@
     </v-container>
     <v-container>
       <v-parallax
-        light
+        :dark="darkMode"
         :src="mapImagePath"
       >
         <v-row
@@ -78,7 +78,7 @@
             class="text-center"
             cols="12"
           >
-            <h1 class="text-h4 font-weight-bold mb-4">
+            <h1 class="text-h4 font-weight-bold mb-4" :class="{'black--text': !darkMode}">
               Explore the kava bars!
             </h1>
             <v-btn
@@ -112,10 +112,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import SectionRecentImages from '@/components/home/SectionRecentImages.vue';
 import SectionRecentCheckins from '@/components/home/SectionRecentCheckins.vue';
 
-const mapImagePath = require('../assets/PortVilaMap.jpg');
+const lightMapImage = require('../assets/PortVilaMap-light.jpg');
+const darkMapImage = require('../assets/PortVilaMap-dark.jpg');
 
 export default {
   name: 'Home',
@@ -126,8 +128,20 @@ export default {
   data() {
     return {
       openGithubDowndown: false,
-      mapImagePath,
+      darkMapImage,
+      lightMapImage,
     };
+  },
+  computed: {
+    ...mapGetters({
+      darkMode: 'setting/darkMode',
+    }),
+    mapImagePath() {
+      if (this.darkMode) {
+        return darkMapImage;
+      }
+      return lightMapImage;
+    },
   },
   methods: {
     openGithub() {

@@ -3,7 +3,6 @@
     v-model="show"
     persistent
     scrollable
-    :fullscreen="fullscreen || $vuetify.breakpoint.smAndDown"
     max-height="70vh"
   >
     <v-card>

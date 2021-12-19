@@ -3,7 +3,7 @@
     <v-card
       v-if="chief"
       class="mb-3"
-      color="primary"
+      color="secondary darken-2"
       dark
     >
       <div class="d-flex flex-no-wrap justify-space-between">
@@ -41,7 +41,7 @@
           <v-card-actions>
             <v-btn
               text
-              color="secondary"
+              color="secondary lighten-2"
               @click="show = !show"
             >
               What's This?

@@ -59,18 +59,39 @@
           :options="{ offset: popupOffset }"
           @popupclose="popupClosed"
         >
-          <h3 class="mb-2 font-weight-bold">{{ selectedNakamal.name }}</h3>
+          <h3 class="mb-2 text-h6 font-weight-bold">{{ selectedNakamal.name }}</h3>
           <v-img
             v-if="selectedNakamalImage"
             contain
-            height="100"
+            height="114"
             :src="selectedNakamalImage.thumbnail"
           ></v-img>
-          <ul class="mb-2 font-weight-light">
-            <li>Light: {{ selectedNakamal.light || '-' }}</li>
-            <li>Windows: {{ selectedNakamal.windows || '-' }}</li>
-            <li>Other Names: {{ aliasNames(selectedNakamal.aliases) }}</li>
-          </ul>
+          <v-list light dense>
+            <v-list-item>
+              <v-list-item-content class="py-0">
+                <v-list-item-title class="font-weight-bold">Light</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ selectedNakamal.light }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content class="py-0">
+                <v-list-item-title class="font-weight-bold"># of Windows</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ selectedNakamal.windows || '-' }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content class="py-0">
+                <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ aliasNames(selectedNakamal.aliases) }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
           <v-btn
             small
             block
@@ -207,9 +228,6 @@ export default {
         [-17.627, 168.11],
         [-17.830, 168.47],
       ]),
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       // withPopup: latLng(-17.751526, 168.2421994),
       // withTooltip: latLng(-17.748758, 168.308369),
       // currentZoom: 18,
@@ -252,7 +270,20 @@ export default {
       getNakamalHasImages: 'image/nakamalHasImages',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
+      darkMode: 'setting/darkMode',
     }),
+    url() {
+      if (this.darkMode) {
+        return 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
+      }
+      return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    },
+    attribution() {
+      if (this.darkMode) {
+        return 'Map tiles by Carto, under CC BY 3.0. Data by OpenStreetMap, under ODbL.';
+      }
+      return '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
+    },
     selectedNakamalImage() {
       if (this.selectedNakamal) {
         if (this.getNakamalHasImages(this.selectedNakamal.id)) {
@@ -326,6 +357,9 @@ export default {
         .then(() => {
           this.flyToSelected();
         });
+      // .then(() => {
+      //   this.setShowDetails(true);
+      // });
     },
     popupClosed() {
       this.$store.dispatch('nakamal/unselect');

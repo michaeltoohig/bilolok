@@ -6,6 +6,7 @@ import imageModule from './modules/image.module';
 import mapModule from './modules/map.module';
 import nakamalModule from './modules/nakamal.module';
 import notifyModule from './modules/notify.module';
+import settingModule from './modules/setting.module';
 import userModule from './modules/user.module';
 
 Vue.use(Vuex);
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     map: mapModule,
     nakamal: nakamalModule,
     notify: notifyModule,
+    setting: settingModule,
     user: userModule,
   },
 });

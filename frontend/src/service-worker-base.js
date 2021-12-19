@@ -31,9 +31,8 @@ import { timeout } from 'workbox-core/_private/timeout.js';
 precacheAndRoute(self.__WB_MANIFEST);
 
 addEventListener('message', (event) => {
-  console.log(event, event.data, event.data.type)
+  console.log(event, event.data, event.data.type);
   if (!event.data) return;
-  
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
@@ -50,14 +49,14 @@ db.version(2).stores({
 });
 
 const getTile = async (url) => {
-  let key = urlToCacheKey(url)
-  return db.tiles.where('coords').equals(key).first()
-}
+  let key = urlToCacheKey(url);
+  return db.tiles.where('coords').equals(key).first();
+};
 
 const saveTile = async ({ url, tile }) => {
   let key = urlToCacheKey(url)
   let cached;
-  cached = await db.tiles.where('coords').equals(key).first()
+  cached = await db.tiles.where('coords').equals(key).first();
   if (cached) {
     db.tiles.where('coords').equals(key).modify(t => {
       t.accessed = new Date();
@@ -65,9 +64,9 @@ const saveTile = async ({ url, tile }) => {
     })
   }
   else {
-    db.tiles.put({ coords: key, accessed: new Date(), tile: tile })
+    db.tiles.put({ coords: key, accessed: new Date(), tile: tile });
   }
-}
+};
 
 const updateTileAccessedDate = async (key) => {
   db.tiles.where('coords').equals(key).modify(tile => {
@@ -78,36 +77,48 @@ const updateTileAccessedDate = async (key) => {
 // TODO use perhaps periodically to clear unused tiles after extended periods
 const removeExpiredTiles = async () => {
   let threshold = new Date();
-  threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds)) 
+  threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds));
   db.tiles.where('accessed').below(threshold).delete();
 };
 
 const urlToCacheKey = (url) => {
+  // XXX theme provides a quick-fix to differentiate dark and light tiles in the cache.
+  // It is a bit hacky but until multiple themes are availalble for the user to select
+  // this will work although it theoretically doubles the amount of tiles in the cache.
+  // An alternative may be to only allow one set of tiles in cache and have whatever 
+  // triggers the change to the map tile source to dump all tiles and begin saving 
+  // cached tiles all over again.
+  let theme;
+  if (url.includes('openstreetmap')) {
+    theme = 'light';
+  } else {
+    theme = 'dark';
+  }
   let segments = url.split('/').slice(-3);
   let x = segments[0];
   let y = segments[1];
   let z = segments[2].split('.')[0];
-  return `x:${x}y:${y}z:${z}`
-}
+  return `theme:${theme}x:${x}y:${y}z:${z}`;
+};
 
 const expireCacheItems = async () => {};
 
 const cacheMatch = async ({ url, event }) => {
   let cachedResponse;
-  let cached = await getTile(url)
+  let cached = await getTile(url);
   if (cached) {
-    let threshold = new Date()
-    threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds))
+    let threshold = new Date();
+    threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds));
     if (cached.accessed < threshold) {
       if (process.env.NODE_ENV !== 'production') {
-        console.log(`Stale cache tile found. Will revalidate.`)
+        console.log(`Stale cache tile found. Will revalidate.`);
       }
-      event.waitUntil(fetchAndCachePut({ url: url }))
+      event.waitUntil(fetchAndCachePut({ url: url }));
     }
     else {
-      updateTileAccessedDate(cached.coords)
+      updateTileAccessedDate(cached.coords);
     }
-    cachedResponse = new Response(cached.tile.stream())
+    cachedResponse = new Response(cached.tile.stream());
   }
   if (process.env.NODE_ENV !== 'production') {
     if (process.env.NODE_ENV !== 'production') {
@@ -215,6 +226,11 @@ const mapTileHandler = async ({ url, event, params }) => {
 
 registerRoute(
   ({ url }) => url.href.includes('tile.openstreetmap.org'),
+  mapTileHandler,
+);
+
+registerRoute(
+  ({ url }) => url.href.includes('global.ssl.fastly.net/dark_all'),
   mapTileHandler,
 );
 

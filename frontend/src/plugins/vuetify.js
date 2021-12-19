@@ -4,6 +4,7 @@ import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
 
 import colors from 'vuetify/lib/util/colors';
+import theme from './theme';
 
 const porsche = '#E5A55B';
 const palmLeaf = '#16240A';
@@ -18,6 +19,10 @@ export default new Vuetify({
       customProperties: true,
     },
     themes: {
+      dark: theme,
+      light: theme,
+    },
+    // themes: {
     //   dark: {
     //     primary: porsche,
     //     secondary: slateGrey,
@@ -32,15 +37,15 @@ export default new Vuetify({
     //     success: palmLeaf,
     //     info: christi,
     //   },
-      light: {
-        primary: colors.brown.darken1,
-        secondary: colors.brown.lighten4,
-        accent: colors.orange.darken4,
-        error: colors.orange.darken1,
-        info: colors.purple.darken3,
-        success: colors.green.darken4,
-        warning: colors.deepOrange.darken2,
-      },
-    },
+    //   light: {
+    //     primary: colors.brown.darken1,
+    //     secondary: colors.brown.lighten4,
+    //     accent: colors.orange.darken4,
+    //     error: colors.orange.darken1,
+    //     info: colors.purple.darken3,
+    //     success: colors.green.darken4,
+    //     warning: colors.deepOrange.darken2,
+    //   },
+    // },
   },
 });

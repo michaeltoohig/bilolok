@@ -64,6 +64,14 @@
       <v-spacer></v-spacer>
 
       <v-btn
+        icon
+        @click="toggleDarkMode"
+      >
+        <v-icon v-if="darkMode">mdi-weather-sunny</v-icon>
+        <v-icon v-else>mdi-weather-night</v-icon>
+      </v-btn>
+
+      <v-btn
         v-if="!isLoggedIn"
         small
         text
@@ -177,6 +185,7 @@ export default {
       me: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
       isUserVerified: 'auth/isUserVerified',
+      darkMode: 'setting/darkMode',
     }),
     isMapView() {
       return this.$route.name === 'Map';
@@ -191,6 +200,9 @@ export default {
     },
     goAdmin() {
       this.$router.push({ name: 'AdminUsers' });
+    },
+    toggleDarkMode() {
+      this.$store.dispatch('setting/setDarkMode', !this.darkMode);
     },
   },
 };

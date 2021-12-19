@@ -143,18 +143,19 @@ export default {
     Notifications,
   },
   mixins: [update],
-  // data() {
-  //   return {
-  //     showAuthModal: false,
-  //     showUserVerifiedModal: false,
-  //   };
-  // },
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',
       showAuthModal: 'auth/showAuthModal',
       showUserVerifiedModal: 'auth/showUserVerifiedModal',
+      darkMode: 'setting/darkMode',
     }),
+  },
+  watch: {
+    // This may be a less performant solution to update theme
+    darkMode(value) {
+      this.$vuetify.theme.dark = value;
+    },
   },
   methods: {
     ...mapActions({
@@ -182,6 +183,9 @@ export default {
   async created() {
     // this.$on('showUserVerifiedModal', this.setShowUserVerifiedModal);
     await this.checkLoggedIn();
+    if (process.browser) {
+      this.$store.dispatch('setting/checkDarkMode');
+    }
   },
 };
 </script>

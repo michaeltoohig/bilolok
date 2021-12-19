@@ -5,12 +5,12 @@
     </div>
     <div v-else>
       <v-container>
-        <v-card color="secondary" class="">
+        <v-card class="">
           <div class="pt-3 px-3 d-md-flex pa-sm-4 text-center text-md-start">
             <v-badge
               v-if="nakamalProfile"
               avatar
-              color="secondary"
+              :color="darkMode ? 'black' : 'primary darken-2'"
               overlap
               offset-x="45"
               offset-y="45"
@@ -33,7 +33,7 @@
             <v-btn
               v-show="hasAdminAccess"
               text
-              color="primary"
+              color="secondary lighten-2"
               :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
             >
               Edit
@@ -41,7 +41,7 @@
             <v-btn
               v-show="hasAdminAccess"
               text
-              color="error"
+              color="secondary lighten-2"
               @click="remove"
             >
               Remove
@@ -51,6 +51,7 @@
           <v-tabs
             v-model="tab"
             :fixed-tabs="$vuetify.breakpoint.mdAndDown"
+            color="primary lighten-2"
             background-color="transparent"
           >
             <v-tab href="#details">Details</v-tab>
@@ -176,6 +177,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      darkMode: 'setting/darkMode',
       hasAdminAccess: 'auth/hasAdminAccess',
       isUserVerified: 'auth/isUserVerified',
       nakamal: 'nakamal/selected',
@@ -210,8 +212,8 @@ export default {
     // },
     activeFab() {
       switch (this.tab) {
-        case 'details': return { color: 'success', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
-        case 'timeline': return { color: 'success', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
+        case 'details': return { color: 'secondary', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
+        case 'timeline': return { color: 'secondary', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
         case 'images': return { color: 'red', icon: 'mdi-image-plus', action: () => this.toggleUploadImageDialog() };
         default: return {};
       }
