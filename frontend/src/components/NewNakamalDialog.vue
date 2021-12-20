@@ -19,6 +19,7 @@
           <v-btn
             x-small
             text
+            color="black"
             v-bind="attrs"
             v-on="on"
           >

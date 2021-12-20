@@ -8,6 +8,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
  - [x] Profile page
    - [x] User Avatar
+   - [ ] Custom Avatar
    - [x] User Timeline
  - [ ] Search page
    - [ ] Search filters
@@ -16,14 +17,14 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Check-in details
    - [x] Check-in message
    - [x] Chief
-   - [x] Resources (20vt, tusker, billiard table, etc)
+   - [x] Resources (wasemaot, tusker, billiard table, etc)
  - [ ] Home page
    - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
- - [ ] User Auth Features
+ - [x] User Auth Features
    - [x] Resend email verification link
    - [x] Forgot password process
-   - [ ] Add auth check to open auth modal for existing features
+   - [x] Add auth check to open auth modal for existing features
 
  - [ ] SQLAlchemy-Continuum integration
    - [ ] Admin view to un-do unwanted edits

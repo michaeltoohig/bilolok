@@ -192,7 +192,7 @@ export default {
     },
   },
   methods: {
-    async sendVerificationEmail() {
+    sendVerificationEmail() {
       this.$store.dispatch('auth/requestVerification');
     },
     logout() {

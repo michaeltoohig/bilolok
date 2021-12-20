@@ -121,6 +121,7 @@
             </p>
           </v-card-text>
           <v-card-actions>
+            <v-btn text @click="sendVerificationEmail">Send Email Verification</v-btn>
             <v-spacer></v-spacer>
             <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
           </v-card-actions>
@@ -175,13 +176,11 @@ export default {
       this.closeAuthModal();
       this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
     },
-    // setShowUserVerifiedModal() {
-    //   console.log('yyy');
-    //   this.showUserVerifiedModal = true;
-    // },
+    sendVerificationEmail() {
+      this.$store.dispatch('auth/requestVerification');
+    },
   },
   async created() {
-    // this.$on('showUserVerifiedModal', this.setShowUserVerifiedModal);
     await this.checkLoggedIn();
     if (process.browser) {
       this.$store.dispatch('setting/checkDarkMode');
