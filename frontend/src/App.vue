@@ -121,7 +121,11 @@
             </p>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="sendVerificationEmail">Send Email Verification</v-btn>
+            <v-btn
+              text
+              outlined
+              @click="sendVerificationEmail"
+            >Send Email Verification</v-btn>
             <v-spacer></v-spacer>
             <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
           </v-card-actions>
