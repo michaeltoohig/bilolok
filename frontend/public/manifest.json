@@ -24,6 +24,12 @@
       "src": "/img/AppImages/512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "/img/AppImages/Maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
