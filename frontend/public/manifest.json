@@ -9,15 +9,19 @@
   "start_url": "/",
   "lang": "en",
   "orientation": "portrait",
-  "categories": ["travel", "social", "lifestyle"],
+  "categories": [
+    "travel",
+    "social",
+    "lifestyle"
+  ],
   "icons": [
     {
-      "src": "/img/AppImages/android/android-launchericon-192-192.png",
+      "src": "/img/AppImages/192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/img/AppImages/android/android-launchericon-512-512.png",
+      "src": "/img/AppImages/512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
@@ -36,7 +40,7 @@
       ]
     }
   ],
-  "screenshots" : [
+  "screenshots": [
     {
       "src": "/img/screenshots/1.jpeg",
       "sizes": "1280x720",
