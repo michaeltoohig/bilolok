@@ -78,13 +78,19 @@
         <v-chip
           v-for="resource in nakamal.resources"
           :key="resource.id"
-          class="mr-2"
+          class="mr-2 mb-2"
         >
           {{ resource.name }}
         </v-chip>
       </v-card-text>
 
       <v-list>
+        <v-list-item two-line>
+          <v-list-item-content>
+            <v-list-item-title>Area</v-list-item-title>
+            <v-list-item-subtitle>{{ nakamal.area.name }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title>Light</v-list-item-title>

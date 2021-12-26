@@ -27,6 +27,28 @@ class NakamalResourceSchemaOut(NakamalResourceSchema):
 
 
 #
+# NakamalArea
+#
+
+
+class NakamalAreaSchemaBase(BaseSchema):
+    name: Optional[str] = None
+
+
+class NakamalAreaSchemaIn(NakamalAreaSchemaBase):
+    name: str
+
+
+class NakamalAreaSchema(NakamalAreaSchemaBase):
+    id: uuid.UUID
+    name: str
+
+
+class NakamalAreaSchemaOut(NakamalAreaSchema):
+    pass
+
+
+#
 # Nakamal
 #
 
@@ -43,7 +65,7 @@ class NakamalSchemaBase(BaseSchema):
 
 
 class NakamalSchemaUpdate(NakamalSchemaBase):
-    pass
+    area_id: Optional[uuid.UUID] = None
 
 
 class NakamalSchemaIn(NakamalSchemaBase):
@@ -52,11 +74,13 @@ class NakamalSchemaIn(NakamalSchemaBase):
     windows: int
     lat: float
     lng: float
+    area_id: uuid.UUID
 
 
 class NakamalSchema(NakamalSchemaBase):
     id: uuid.UUID
     resources: List[NakamalResourceSchema]
+    area: NakamalAreaSchema
 
 
 class NakamalSchemaOut(NakamalSchema):

@@ -1,7 +1,7 @@
 import authHeaders from './utils';
 import http from './http-common';
 
-const resource = 'nakamal-resources';
+const resource = 'nakamal-areas';
 
 export default {
   async getAll(params) {

@@ -95,6 +95,20 @@
         </template>
       </v-card-text>
       <v-card-text>
+        <div class="mb-5">
+          <v-select
+            v-model="$v.area.$model"
+            :error="$v.area.$error"
+            :items="allAreas"
+            item-value="id"
+            item-text="name"
+            label="Area"
+          ></v-select>
+          <v-btn outlined @click="showNewAreaDialog = !showNewAreaDialog">
+            <span>Add New Area</span>
+          </v-btn>
+        </div>
+
         <v-text-field
           label="Latitude"
           type="text"
@@ -165,6 +179,23 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
+    <v-dialog
+      v-model="showNewAreaDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title>Add New Area</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="newAreaName" label="Area Name"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn outlined @click="submitNewArea">Submit</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn @click="showNewAreaDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -188,6 +219,7 @@ import {
   LMap, LTileLayer, LMarker,
 } from 'vue2-leaflet';
 import nakamalResourcesApi from '@/api/nakamalResources';
+import nakamalAreasApi from '@/api/nakamalAreas';
 
 const iconPath = require('../assets/map-marker.svg');
 
@@ -210,9 +242,13 @@ export default {
       windows: 1,
       resources: [],
       allResources: [],
+      area: null,
+      allAreas: [],
       lat: 0,
       lng: 0,
 
+      showNewAreaDialog: false,
+      newAreaName: '',
       showMap: false,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
@@ -245,6 +281,9 @@ export default {
         // minValue: minValue(1),
       },
       resources: {},
+      area: {
+        required,
+      },
       lat: {
         required,
       },
@@ -288,6 +327,7 @@ export default {
       this.windows = 1;
       this.resources = [];
       this.oldResources = [];
+      this.area = null;
       this.lat = null;
       this.lng = null;
 
@@ -301,6 +341,7 @@ export default {
         this.windows = this.nakamal.windows;
         this.resources = this.nakamal.resources.map((r) => r.id);
         this.oldResources = this.resources; // save original selected resources
+        this.area = this.nakamal.area.id;
         this.lat = this.nakamal.lat;
         this.lng = this.nakamal.lng;
         this.setCenter(this.nakamal.latLng);
@@ -320,6 +361,7 @@ export default {
         phone: this.phone,
         light: this.light,
         windows: this.windows,
+        area_id: this.area,
         lat: this.lat,
         lng: this.lng,
       };
@@ -331,6 +373,20 @@ export default {
       });
       this.$router.push({ name: 'Nakamal', id: this.nakamal.id });
     },
+    async submitNewArea() {
+      if (this.newAreaName === '' || !this.newAreaName) return null;
+      try {
+        const token = this.$store.getters['auth/token'];
+        await nakamalAreasApi.create(token, { name: this.newAreaName });
+        await this.getAreas();
+        this.showNewAreaDialog = false;
+        this.newAreaName = '';
+      } catch (error) {
+        console.log('error adding area');
+        // this.$store.dispatch('notify/add', {})
+      }
+      return null;
+    },
     ...mapActions(
       'map', [
         'setBounds',
@@ -338,11 +394,19 @@ export default {
         'setZoom',
       ],
     ),
+    async getResources() {
+      const response = await nakamalResourcesApi.getAll();
+      this.allResources = response.data;
+    },
+    async getAreas() {
+      const response = await nakamalAreasApi.getAll();
+      this.allAreas = response.data;
+    },
   },
   async mounted() {
     await this.$store.dispatch('nakamal/load');
-    const response = await nakamalResourcesApi.getAll();
-    this.allResources = response.data;
+    this.getResources();
+    this.getAreas();
     this.setCenter(this.nakamal.latLng);
     this.reset();
   },

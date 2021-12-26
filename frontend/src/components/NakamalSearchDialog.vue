@@ -33,11 +33,17 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                <v-list-item-subtitle v-html="data.item.owner"></v-list-item-subtitle>
+                <v-list-item-subtitle
+                  v-html="nakamalAliases(data.item.aliases)"
+                >
+                </v-list-item-subtitle>
               </v-list-item-content>
             </template>
           </template>
         </v-autocomplete>
+      </v-card-text>
+      <v-card-text>
+        <p>TO DO: add nakamal filters here</p>
       </v-card-text>
       <v-card-actions class="justify-end">
         <v-btn
@@ -72,9 +78,12 @@ export default {
     ]),
     customFilter(item, queryText) {
       const name = item.name.toLowerCase();
-      const owner = item.owner.toLowerCase();
+      let aliases = [];
+      if (item.aliases) {
+        aliases = item.aliases.map((a) => a.toLowerCase());
+      }
       const searchText = queryText.toLowerCase();
-      return name.indexOf(searchText) > -1 || owner.indexOf(searchText) > -1;
+      return name.indexOf(searchText) > -1 || aliases.some((a) => a.indexOf(searchText) > -1);
     },
     searchSelect(id) {
       this.$store.dispatch('nakamal/select', id)
@@ -89,6 +98,10 @@ export default {
         return images[0];
       }
       return null;
+    },
+    nakamalAliases(aliases) {
+      if (!aliases) return '-';
+      return aliases.join(', ');
     },
   },
 };

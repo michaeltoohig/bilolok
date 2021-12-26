@@ -10,7 +10,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] User Avatar
    - [ ] Custom Avatar
    - [x] User Timeline
- - [ ] Search page
+ - [ ] Search page (or just search filters in map)
    - [ ] Search filters
  - [x] Nakamal page
    - [x] Nakamal Timeline
@@ -18,6 +18,8 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Check-in message
    - [x] Chief
    - [x] Resources (wasemaot, tusker, billiard table, etc)
+   - [x] Area (Freswota, Namburu, Nambatu, etc)
+   - [ ] Kava Source (Malekula, Santo, etc)
  - [ ] Home page
    - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
@@ -33,6 +35,7 @@ The following were recommended additions
 
  - [ ] Add kava source to nakamal / include in search filters
  - [x] Support multiple names of nakamal
+ - [ ] Add nakamal area / include in search filters
   
 The following packages are not officially supporting SQLA 1.4 yet but have user
 made forks that are awaiting review to be officially integrated to support the
@@ -51,13 +54,17 @@ Below are some ideas for the future of this project.
 
 For version 2 and beyond we can build upon this foundation such as the following ideas:
 
-  - Have user that checks-in to nakamal most regularly be able to have special privileges to modify the profile page of the nakamal.
+  - Have user that checks-in to nakamal most regularly (aka the chief of the kava bar) be able to have special privileges to modify the profile page of the nakamal.
     - Set primary profile picture
-    - Set a pinned message on profile
-    - Badge on their profile 
+    - Set a pinned message on profile of nakamal
+    - Badge on user profile 
   - Add badges for users and include it in their profile timeline
     - Badges for first image uploaded, first checkin, checking in X times, etc.
   - Interactive charts for popularity of areas, user history, other visuals.
+  - Add chart to nakamals with multiple windows that shows most popular windows
+    - Use check-in and regex `@w[ie](n?)do(w?)(\s?)#(\s?)(\d)+` to find which windows are mentioned
+    - Use another regex with special character to mark the window as bad
+    - chart shows windows with positve and negative and no reviews then
 
 ## Development
 

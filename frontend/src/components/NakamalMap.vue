@@ -85,6 +85,14 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-content class="py-0">
+                <v-list-item-title class="font-weight-bold">Area</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ selectedNakamal.area.name }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content class="py-0">
                 <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
                 <v-list-item-subtitle>
                   {{ aliasNames(selectedNakamal.aliases) }}

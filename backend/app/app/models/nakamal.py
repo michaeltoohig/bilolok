@@ -1,3 +1,4 @@
+from enum import Enum
 from sqlalchemy import Column, String, Float, Integer, ForeignKey
 from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Table
@@ -7,15 +8,14 @@ from sqlalchemy.orm import relationship
 from app.db.base_class import Base
 
 
-# class KavaSource(Enum):
-#     "UNKNOWN" = 0
-#     "MIX" = 1
-#     "TORBA" = 2
-#     "PENAMA" = 3
-#     "SANMA" = 4
-#     "MALAPA" = 5
-#     "SHEFA" = 6
-#     "TAFEA" = 7
+# class Province(Enum):
+#     NOT_KNOWN = "NOT_KNOWN"
+#     TORBA = "TORBA"
+#     PENAMA = "PENAMA"
+#     SANMA = "SANMA"
+#     MALAMPA = "MALAMPA"
+#     SHEFA = "SHEFA"
+#     TAFEA = "TAFEA"
 
 
 nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,
@@ -40,6 +40,8 @@ class Nakamal(Base):
     # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
     # checkins = relationship("Checkin", cascade="save-update, merge, delete")
     resources = relationship("NakamalResource", secondary=nakamal_resource_association, lazy="joined")
+    area_id = Column(GUID, ForeignKey("nakamal_area.id"), nullable=False)
+    area = relationship("NakamalArea", lazy="joined")
 
 
 class NakamalResource(Base):
@@ -57,17 +59,21 @@ class NakamalResource(Base):
     name = Column(String, nullable=False)
 
 
-# class NakamalAlias(Base):
-#     """Nakamal alias table definition."""
+# class NakamalKavaSource(Base):
+#     """SQLAlchemy nakamal kava source table definition."""
 
-#     __tablename__ = "nakamal_alias"
+#     __tablename__ = "nakamal_kava_source"
 
-#     name = Column(String, nullable=False)
-#     # Relationships
-#     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
-#     user = relationship("User", lazy="joined")
-#     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
-#     nakamal = relationship("Nakamal", lazy="joined")
+#     name = Column(String, unique=True, nullable=False)
+#     province = Column(String, nullable=False)
+
+
+class NakamalArea(Base):
+    """SQLAlchemy nakamal area table definition."""
+
+    __tablename__ = "nakamal_area"
+
+    name = Column(String, unique=True, nullable=False)
 
 
 # class KavaPrice(Base):

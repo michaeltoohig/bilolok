@@ -12,7 +12,7 @@
             Bilolok
           </v-list-item-title>
           <v-list-item-subtitle>
-            Kava Bar Application
+            ...means kava
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

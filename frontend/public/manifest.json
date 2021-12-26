@@ -48,12 +48,12 @@
   ],
   "screenshots": [
     {
-      "src": "/img/screenshots/1.jpeg",
+      "src": "/img/screenshots/1.jpg",
       "sizes": "1280x720",
       "type": "image/jpeg"
     },
     {
-      "src": "/img/screenshots/2.jpeg",
+      "src": "/img/screenshots/2.jpg",
       "sizes": "1280x720",
       "type": "image/jpeg"
     }

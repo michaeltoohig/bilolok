@@ -69,6 +69,19 @@
             </v-col>
             <v-col
               cols="12"
+              sm="6"
+            >
+              <v-select
+                v-model="selectedArea"
+                :items="areas"
+                item-value="id"
+                item-text="name"
+                label="Area"
+              ></v-select>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="6"
             >
               <v-text-field
                 v-model="windows"
@@ -192,6 +205,7 @@ import {
   LMarker, LTooltip,
 } from 'vue2-leaflet';
 import nakamalResourcesApi from '@/api/nakamalResources';
+import nakamalAreaApi from '@/api/nakamalAreas';
 
 const iconPath = require('../assets/map-marker.svg');
 
@@ -219,10 +233,12 @@ export default {
       aliases: [],
       owner: '',
       phone: '',
-      light: 'Other',
+      light: null,
       windows: 1,
       selectedResources: [],
       resources: [],
+      selectedArea: null,
+      areas: [],
     };
   },
   computed: {
@@ -241,10 +257,19 @@ export default {
         lng: this.center.lng,
         light: this.light,
         resources: this.selectedResources,
+        area_id: this.selectedArea,
       };
     },
   },
   methods: {
+    async getResources() {
+      const response = await nakamalResourcesApi.getAll();
+      this.resources = response.data;
+    },
+    async getAreas() {
+      const response = await nakamalAreaApi.getAll();
+      this.areas = response.data;
+    },
     removeAlias(alias) {
       this.aliases.splice(this.aliases.indexOf(alias), 1);
     },
@@ -255,8 +280,8 @@ export default {
     },
   },
   async mounted() {
-    const response = await nakamalResourcesApi.getAll();
-    this.resources = response.data;
+    this.getResources();
+    this.getAreas();
   },
 };
 </script>
