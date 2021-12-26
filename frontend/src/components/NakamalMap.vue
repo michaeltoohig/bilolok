@@ -54,7 +54,7 @@
         @click="markerClick(nakamal.id)"
       ></l-marker>
 
-      <l-layer-group ref="nakamalPopup">
+      <l-layer-group v-if="selectedNakamal" ref="nakamalPopup">
         <l-popup
           :options="{ offset: popupOffset }"
           @popupclose="popupClosed"
@@ -87,7 +87,9 @@
               <v-list-item-content class="py-0">
                 <v-list-item-title class="font-weight-bold">Area</v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ selectedNakamal.area.name }}
+                  <span v-if="selectedNakamal.area">
+                    {{ selectedNakamal.area.name }}
+                  </span>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
