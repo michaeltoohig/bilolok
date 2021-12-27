@@ -364,7 +364,11 @@ export default {
     },
     flyToSelected() {
       this.$refs.nakamalPopup.mapObject.openPopup(this.selectedNakamal.latLng);
-      this.flyTo(this.selectedNakamal.latLng);
+      // Adjust targetLatLng to slightly below center to allow space for popup in view
+      let targetLatLng = this.selectedNakamal.latLng;
+      const targetPoint = this.$refs.map.mapObject.project(targetLatLng, 18).subtract([0, 150]);
+      targetLatLng = this.$refs.map.mapObject.unproject(targetPoint, 18);
+      this.flyTo(targetLatLng, 18);
     },
     markerClick(id) {
       this.$store.dispatch('nakamal/select', id)
@@ -386,12 +390,15 @@ export default {
       }, 500);
     },
   },
-  beforeMount() {
-    this.$store.dispatch('nakamal/load');
-    this.$store.dispatch('checkin/getRecent');
+  async created() {
+    this.$store.dispatch('map/RESET');
     this.$root.$on('fly-to-selected', this.flyToSelected);
   },
-  mounted() {
+  async mounted() {
+    // this.loading = true;
+    await this.$store.dispatch('nakamal/load');
+    await this.$store.dispatch('checkin/getRecent');
+    // this.loading = false;
     if (this.selectedNakamal) {
       setTimeout(() => {
         this.flyToSelected();

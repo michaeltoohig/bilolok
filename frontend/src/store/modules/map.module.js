@@ -39,6 +39,9 @@ const getters = {
 };
 
 const actions = {
+  RESET: ({ commit }) => {
+    commit('RESET');
+  },
   setLocation: async ({ commit }, location) => {
     commit('setLocation', location);
   },
