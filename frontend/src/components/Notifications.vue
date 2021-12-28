@@ -51,13 +51,17 @@ export default {
 <style lang="scss" scoped>
 $margin: 15px;
 
+.notification-wrapper {
+  position: fixed;
+}
+
 .top-right {
     top: $margin;
     right: $margin;
     left: auto;
     width: 300px;
     //height: 600px;
-    position: absolute;
+    position: fixed;
     opacity: 0.95;
     z-index: 100;
     display: flex;

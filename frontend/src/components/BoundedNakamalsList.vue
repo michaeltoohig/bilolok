@@ -26,7 +26,7 @@ export default {
   computed: {
     ...mapGetters({
       bounds: 'map/bounds',
-      nakamals: 'nakamal/list',
+      nakamals: 'nakamal/filteredList',
       selectedNakamal: 'nakamal/selected',
     }),
     boundNakamals() {

@@ -55,63 +55,7 @@
       ></l-marker>
 
       <l-layer-group v-if="selectedNakamal" ref="nakamalPopup">
-        <l-popup
-          :options="{ offset: popupOffset }"
-          @popupclose="popupClosed"
-        >
-          <h3 class="mb-2 text-h6 font-weight-bold">{{ selectedNakamal.name }}</h3>
-          <v-img
-            v-if="selectedNakamalImage"
-            contain
-            height="114"
-            :src="selectedNakamalImage.thumbnail"
-          ></v-img>
-          <v-list light dense>
-            <v-list-item>
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold">Light</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ selectedNakamal.light }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold"># of Windows</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ selectedNakamal.windows || '-' }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold">Area</v-list-item-title>
-                <v-list-item-subtitle>
-                  <span v-if="selectedNakamal.area">
-                    {{ selectedNakamal.area.name }}
-                  </span>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-content class="py-0">
-                <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ aliasNames(selectedNakamal.aliases) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-          <v-btn
-            small
-            block
-            outlined
-            color="primary"
-            :to="{ name: 'Nakamal', params: { id: selectedNakamal.id } }"
-          >
-            View Page
-          </v-btn>
-        </l-popup>
+        <NakamalMapPopup></NakamalMapPopup>
       </l-layer-group>
 
       <l-control
@@ -197,15 +141,16 @@ import {
   mapGetters,
 } from 'vuex';
 import {
-  icon, latLngBounds, point,
+  icon, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LPopup, LControl, LLayerGroup,
+  LMap, LTileLayer, LMarker, LControl, LLayerGroup,
 } from 'vue2-leaflet';
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
+import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
 
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
@@ -217,35 +162,24 @@ export default {
     NetworkStatusDialog,
     NakamalSearchDialog,
     NewNakamalDialog,
+    NakamalMapPopup,
     LMap,
     LTileLayer,
     LMarker,
-    LPopup,
     LControl,
     LLayerGroup,
   },
   data() {
     return {
       fab: false,
-      // zoom: 18,
-      // center: latLng(-17.741526, 168.312024),
-      // bounds: latLngBounds([
-      //   [-17.667, 168.21],
-      //   [-17.830, 168.47],
-      // ]),
       minZoom: 12,
       maxBounds: latLngBounds([
         [-17.627, 168.11],
         [-17.830, 168.47],
       ]),
-      // withPopup: latLng(-17.751526, 168.2421994),
-      // withTooltip: latLng(-17.748758, 168.308369),
-      // currentZoom: 18,
-      // currentCenter: latLng(-17.741526, 168.312024),
       mapOptions: {
         zoomSnap: 0.5,
       },
-      popupOffset: point(0, -30),
       icon: icon({
         iconUrl: iconMarkerPath,
         iconSize: [54, 44],
@@ -273,10 +207,10 @@ export default {
       center: 'map/center',
       zoom: 'map/zoom',
       showNewNakamalMarker: 'map/showNewNakamalMarker',
-      nakamals: 'nakamal/list',
+      nakamals: 'nakamal/filteredList',
+      hasFilters: 'nakamal/hasFilters',
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
-      getNakamalImages: 'image/nakamal',
       getNakamalHasImages: 'image/nakamalHasImages',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
@@ -294,21 +228,10 @@ export default {
       }
       return '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
     },
-    selectedNakamalImage() {
-      if (this.selectedNakamal) {
-        if (this.getNakamalHasImages(this.selectedNakamal.id)) {
-          return this.getNakamalImages(this.selectedNakamal.id)[0];
-        }
-      }
-      return null;
-    },
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
       return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
     },
-    // activeFab() {
-    //   switch (this.mode)
-    // }
   },
   watch: {
     selectedNakamal(n) {
@@ -318,16 +241,11 @@ export default {
     },
   },
   methods: {
-    aliasNames(aliases) {
-      if (!aliases) return '-';
-      return aliases.join(', ');
-    },
     getLocation() {
       if (!('geolocation' in navigator)) {
         console.log('Geolocation is not available.');
         return;
       }
-
       // get position
       navigator.geolocation.getCurrentPosition((pos) => {
         console.log(pos);
@@ -368,7 +286,7 @@ export default {
       let targetLatLng = this.selectedNakamal.latLng;
       const targetPoint = this.$refs.map.mapObject.project(targetLatLng, 18).subtract([0, 150]);
       targetLatLng = this.$refs.map.mapObject.unproject(targetPoint, 18);
-      this.flyTo(targetLatLng, 18);
+      this.flyTo(targetLatLng);
     },
     markerClick(id) {
       this.$store.dispatch('nakamal/select', id)
@@ -378,9 +296,6 @@ export default {
       // .then(() => {
       //   this.setShowDetails(true);
       // });
-    },
-    popupClosed() {
-      this.$store.dispatch('nakamal/unselect');
     },
     tileLoadComplete() {
       setTimeout(() => {

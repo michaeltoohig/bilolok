@@ -120,7 +120,7 @@
                   'Pink',
                   'Other',
                 ]"
-                label="Light Colour"
+                label="Light Color"
               ></v-autocomplete>
             </v-col>
             <v-col

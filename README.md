@@ -35,7 +35,7 @@ The following were recommended additions
 
  - [ ] Add kava source to nakamal / include in search filters
  - [x] Support multiple names of nakamal
- - [ ] Add nakamal area / include in search filters
+ - [x] Add nakamal area / include in search filters
   
 The following packages are not officially supporting SQLA 1.4 yet but have user
 made forks that are awaiting review to be officially integrated to support the

@@ -89,7 +89,7 @@
                 'Pink',
                 'Other',
               ]"
-              label="Light Colour"
+              label="Light Color"
             ></v-select>
           </v-form>
         </template>
@@ -135,35 +135,42 @@
           Update location
         </v-btn>
         <v-expand-transition>
-          <div v-show="showMap" id="map-wrapper">
-            <l-map
-              style="z-index: 0;"
-              ref="map"
-              :zoom="zoom"
-              :center="center"
-              :bounds="bounds"
-              :max-bounds="maxBounds"
-              :min-zoom="16"
-              :max-zoom="18"
-              @update:bounds="setBounds"
-              @update:center="setCenter"
-              @update:zoom="setZoom"
-            >
-              <l-tile-layer
-                :url="url"
-                :attribution="attribution"
-              />
+          <div v-show="showMap">
+            <div id="map-wrapper">
+              <l-map
+                style="z-index: 0;"
+                ref="map"
+                :zoom="zoom"
+                :center="center"
+                :bounds="bounds"
+                :max-bounds="maxBounds"
+                :min-zoom="16"
+                :max-zoom="18"
+                @update:bounds="setBounds"
+                @update:center="setCenter"
+                @update:zoom="setZoom"
+              >
+                <l-tile-layer
+                  :url="url"
+                  :attribution="attribution"
+                />
 
-              <l-marker
-                :icon="icon"
-                :lat-lng="nakamal.latLng"
-              ></l-marker>
+                <l-marker
+                  :icon="icon"
+                  :lat-lng="nakamal.latLng"
+                ></l-marker>
 
-              <l-marker
-                :icon="icon"
-                :lat-lng="center"
-              ></l-marker>
-            </l-map>
+                <l-marker
+                  :icon="icon"
+                  :lat-lng="center"
+                ></l-marker>
+              </l-map>
+            </div>
+            <v-btn
+              outlined
+              @click="setNewLocation"
+              class="mt-3"
+            >Set New Location</v-btn>
           </div>
         </v-expand-transition>
       </v-card-text>
@@ -246,6 +253,7 @@ export default {
       allAreas: [],
       lat: 0,
       lng: 0,
+      // currentNakamalLocation: null,
 
       showNewAreaDialog: false,
       newAreaName: '',
@@ -302,18 +310,23 @@ export default {
       return this.$store.getters['nakamal/find'](this.$router.currentRoute.params.id);
     },
   },
-  watch: {
-    center(newValue) {
-      this.lat = newValue.lat;
-      this.lng = newValue.lng;
-    },
-  },
   methods: {
     toggleMap() {
       this.showMap = !this.showMap;
       setTimeout(() => {
         this.$refs.map.mapObject.invalidateSize();
       }, 250);
+    },
+    setNewLocation() {
+      const { lat, lng } = this.center;
+      this.lat = lat;
+      this.lng = lng;
+      this.$store.dispatch('notify/add', {
+        type: 'info',
+        title: 'Location Updated',
+        text: 'The new nakamal location will be saved.',
+        duration: 3_000,
+      });
     },
     removeAlias(alias) {
       this.aliases.splice(this.aliases.indexOf(alias), 1);

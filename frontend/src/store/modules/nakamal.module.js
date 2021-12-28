@@ -14,6 +14,7 @@ const initialState = () => ({
   byId: {},
   allIds: [],
   selectedId: null,
+  filters: {},
 });
 
 const state = initialState();
@@ -27,6 +28,22 @@ const getters = {
   // Return a list of nakamals in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
+  },
+  filteredList: (state, getters) => {
+    let nakamals = state.allIds.map(id => getters.find(id));
+    if ('area' in state.filters) {
+      nakamals = nakamals.filter((n) => n.area.id === state.filters.area);
+    }
+    if ('light' in state.filters) {
+      nakamals = nakamals.filter((n) => n.light === state.filters.light);
+    }
+    return nakamals;
+  },
+  filters: (state) => {
+    return state.filters;
+  },
+  hasFilters: (state) => {
+    return Object.keys(state.filters).length > 0;
   },
   total: (state) => {
     return state.allIds.length;
@@ -146,11 +163,15 @@ const actions = {
   },
   select: async ({ commit }, id) => {
     commit('select', id);
-    // dispatch image action to load image of nakamal
-    // disptach('')
   },
   unselect: async ({ commit }) => {
     commit('unselect');
+  },
+  setFilter: ({ commit }, { key, value }) => {
+    commit('setFilter', { key, value });
+  },
+  removeFilters: ({ commit }) => {
+    commit('removeFilters');
   },
   remove: async ({ commit, dispatch, rootState }, id) => {
     try {
@@ -195,6 +216,12 @@ const mutations = {
   },
   unselect: (state) => {
     state.selectedId = null;
+  },
+  setFilter: (state, { key, value }) => {
+    Vue.set(state.filters, key, value);
+  },
+  removeFilters: (state) => {
+    Vue.set(state, 'filters', {});
   },
   remove: (state, id) => {
     state.allIds.splice(state.allIds.indexOf(id), 1);
