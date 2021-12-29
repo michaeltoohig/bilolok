@@ -41,40 +41,25 @@
             </template>
           </template>
         </v-autocomplete>
-      </v-card-text>
-      <v-card-text>
-        <v-alert outlined text icon="mdi-map-marker" color="primary" elevation="2">
-          {{ nakamals.length }} kava bars on map
+
+        <v-alert
+          v-if="hasFilters"
+          text
+          color="info"
+          elevation="2"
+        >
+          You currently have map filters enabled so only kava bars
+          visible on the map may be searched. If you wish to search
+          all kava bars then clear the filters.
         </v-alert>
-        <v-select
-          @change="changeArea"
-          v-model="selectedArea"
-          :items="areas"
-          item-value="id"
-          item-text="name"
-          label="Area"
-        ></v-select>
-        <v-select
-          @change="changeLight"
-          v-model="selectedLight"
-          :items="[
-            'White',
-            'Red',
-            'Orange',
-            'Yellow',
-            'Green',
-            'Blue',
-            'Purple',
-            'Pink',
-            'Other',
-          ]"
-          label="Light Color"
-        ></v-select>
       </v-card-text>
       <v-card-actions class="justify-end">
         <v-btn
+          v-if="hasFilters"
+          text
           outlined
-          @click="clearFilters"
+          color="secondary"
+          @click="removeFilters"
         >
           Clear Filters
         </v-btn>
@@ -95,23 +80,15 @@ import {
   mapActions,
   mapGetters,
 } from 'vuex';
-import nakamalAreaApi from '@/api/nakamalAreas';
 
 export default {
   name: 'NakamalSearchDialog',
-  data() {
-    return {
-      areas: [],
-      selectedArea: null,
-      selectedLight: null,
-    };
-  },
   computed: {
     ...mapGetters({
       showSearch: 'map/showSearch',
       nakamals: 'nakamal/filteredList',
+      hasFilters: 'nakamal/hasFilters',
       getNakamalImages: 'image/nakamal',
-      filters: 'nakamal/filters',
     }),
   },
   methods: {
@@ -119,7 +96,6 @@ export default {
       'setShowSearch',
     ]),
     ...mapActions('nakamal', [
-      'setFilter',
       'removeFilters',
     ]),
     customFilter(item, queryText) {
@@ -149,32 +125,6 @@ export default {
       if (!aliases) return '-';
       return aliases.join(', ');
     },
-    async getAreas() {
-      const response = await nakamalAreaApi.getAll();
-      this.areas = response.data;
-    },
-    clearFilters() {
-      this.selectedArea = null;
-      this.selectedLight = null;
-      this.removeFilters();
-    },
-    changeArea(value) {
-      this.setFilter({ key: 'area', value });
-    },
-    changeLight(value) {
-      this.setFilter({ key: 'light', value });
-    },
-  },
-  async beforeMount() {
-    await this.getAreas();
-  },
-  async mounted() {
-    if ('area' in this.filters) {
-      this.selectedArea = this.filters.area;
-    }
-    if ('light' in this.filters) {
-      this.selectedLight = this.filters.light;
-    }
   },
 };
 </script>

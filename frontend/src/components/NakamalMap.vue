@@ -113,7 +113,16 @@
               color="secondary darken-1"
               @click.stop="setShowSearch(true)"
             >
-              <v-icon>mdi-magnify</v-icon>
+              <v-icon>mdi-map-search</v-icon>
+            </v-btn>
+            <v-btn
+              fab
+              dark
+              small
+              color="secondary darken-1"
+              @click.stop="setShowFilters(true)"
+            >
+              <v-icon>mdi-map-marker-minus</v-icon>
             </v-btn>
             <v-btn
               fab
@@ -132,6 +141,8 @@
     <NakamalSearchDialog></NakamalSearchDialog>
 
     <NakamalBottomSheet></NakamalBottomSheet>
+
+    <NakamalFilterSidebar></NakamalFilterSidebar>
   </v-container>
 </template>
 
@@ -151,6 +162,7 @@ import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
+import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
 
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
@@ -163,6 +175,7 @@ export default {
     NakamalSearchDialog,
     NewNakamalDialog,
     NakamalMapPopup,
+    NakamalFilterSidebar,
     LMap,
     LTileLayer,
     LMarker,
@@ -171,6 +184,7 @@ export default {
   },
   data() {
     return {
+      drawer: true,
       fab: false,
       minZoom: 12,
       maxBounds: latLngBounds([
@@ -256,12 +270,18 @@ export default {
       });
     },
     ...mapActions(
+      'nakamal', [
+        'removeFilters',
+      ],
+    ),
+    ...mapActions(
       'map', [
         'setLocation',
         'setBounds',
         'setCenter',
         'setZoom',
         'setShowNewNakamalMarker',
+        'setShowFilters',
         'setShowDetails',
         'setShowSearch',
       ],
@@ -273,6 +293,15 @@ export default {
       this.fab = false;
       if (this.isUserVerified) {
         this.setShowNewNakamalMarker(true);
+        if (this.hasFilters) {
+          this.removeFilters();
+          this.$store.dispatch('notify/add', {
+            title: 'Filters Removed',
+            text: 'We removed filters so you do not accidentally add an existing kava bar.',
+            color: 'info',
+            duration: 5_000,
+          });
+        }
       } else {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
