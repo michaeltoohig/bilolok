@@ -4,7 +4,6 @@
     @input="toggleShowFilters"
     app
     right
-    absolute
     temporary
     class="pa-2"
   >
