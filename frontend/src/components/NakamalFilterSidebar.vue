@@ -2,6 +2,7 @@
   <v-navigation-drawer
     :value="showFilters"
     @input="toggleShowFilters"
+    app
     right
     absolute
     temporary
@@ -85,8 +86,7 @@ export default {
   },
   methods: {
     toggleShowFilters(val) {
-      // this.setShowFilters(val);
-      console.log('yy', val);
+      this.setShowFilters(val);
     },
     ...mapActions('map', [
       'setShowFilters',
