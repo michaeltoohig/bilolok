@@ -5,6 +5,7 @@
     app
     right
     temporary
+    touchless
     class="pa-2"
   >
     <template v-slot:prepend>
@@ -41,6 +42,15 @@
       ]"
       label="Light Color"
     ></v-select>
+    <v-select
+      @change="changeResources"
+      v-model="selectedResources"
+      :items="resources"
+      item-value="id"
+      item-text="name"
+      label="Resources"
+      multiple
+    ></v-select>
 
     <template v-slot:append>
       <div class="pa-2">
@@ -55,6 +65,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import nakamalAreaApi from '@/api/nakamalAreas';
+import nakamalResourcesApi from '@/api/nakamalResources';
 
 export default {
   name: 'NakamalFilterSidebar',
@@ -63,6 +74,8 @@ export default {
       areas: [],
       selectedArea: null,
       selectedLight: null,
+      resources: [],
+      selectedResources: [],
     };
   },
   computed: {
@@ -80,6 +93,7 @@ export default {
       if (!this.hasFilters) {
         this.selectedArea = null;
         this.selectedLight = null;
+        this.selectedResources = [];
       }
     },
   },
@@ -98,9 +112,14 @@ export default {
       const response = await nakamalAreaApi.getAll();
       this.areas = response.data;
     },
+    async getResources() {
+      const response = await nakamalResourcesApi.getAll();
+      this.resources = response.data;
+    },
     clearFilters() {
       this.selectedArea = null;
       this.selectedLight = null;
+      this.selectedResources = [];
       this.removeFilters();
     },
     changeArea(value) {
@@ -109,9 +128,13 @@ export default {
     changeLight(value) {
       this.setFilter({ key: 'light', value });
     },
+    changeResources(value) {
+      this.setFilter({ key: 'resources', value });
+    },
   },
   async beforeMount() {
     await this.getAreas();
+    await this.getResources();
   },
 };
 </script>

@@ -37,6 +37,14 @@ const getters = {
     if ('light' in state.filters) {
       nakamals = nakamals.filter((n) => n.light === state.filters.light);
     }
+    if ('resources' in state.filters) {
+      nakamals = nakamals.filter((n) => {
+        if (n.resources.length > 0) {
+          return state.filters.resources.every((rid) => n.resources.map((r) => r.id).indexOf(rid) > -1);
+          // return n.resources.every((r) => state.filters.resources.indexOf(r.id) > -1);
+        }
+      });
+    }
     return nakamals;
   },
   filters: (state) => {
@@ -218,7 +226,12 @@ const mutations = {
     state.selectedId = null;
   },
   setFilter: (state, { key, value }) => {
-    Vue.set(state.filters, key, value);
+    if (value === []) {
+      Vue.delete(state.filters, 'resources');
+    }
+    else {
+      Vue.set(state.filters, key, value);
+    }
   },
   removeFilters: (state) => {
     Vue.set(state, 'filters', {});
