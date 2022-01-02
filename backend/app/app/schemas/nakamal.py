@@ -90,6 +90,7 @@ class NakamalSchemaBase(BaseSchema):
 
 class NakamalSchemaUpdate(NakamalSchemaBase):
     area_id: Optional[uuid.UUID] = None
+    kava_source_id: Optional[uuid.UUID] = None
 
 
 class NakamalSchemaIn(NakamalSchemaBase):
