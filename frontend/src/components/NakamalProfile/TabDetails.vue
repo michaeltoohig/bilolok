@@ -87,14 +87,20 @@
       <v-list>
         <v-list-item two-line>
           <v-list-item-content>
+            <v-list-item-title>Light</v-list-item-title>
+            <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item two-line>
+          <v-list-item-content>
             <v-list-item-title>Area</v-list-item-title>
             <v-list-item-subtitle>{{ nakamal.area.name }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title>Light</v-list-item-title>
-            <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
+            <v-list-item-title>Kava Source</v-list-item-title>
+            <v-list-item-subtitle>{{ kavaSource(nakamal.kava_source) }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item two-line>
@@ -221,6 +227,13 @@ export default {
     aliasNames(aliases) {
       if (!aliases) return '-';
       return aliases.join(', ');
+    },
+    kavaSource(ks) {
+      let v = ks.province;
+      if (ks.island) {
+        v += `: ${ks.island}`;
+      }
+      return v;
     },
     userCheckinCountMonth(userId) {
       if (!this.checkins) return null;

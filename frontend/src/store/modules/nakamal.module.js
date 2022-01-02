@@ -4,7 +4,6 @@ import Vue from 'vue';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import nakamalsApi from '@/api/nakamals';
-import nakamalResourcesApi from '@/api/nakamalResources';
 
 import {
   latLng,
@@ -44,6 +43,9 @@ const getters = {
           // return n.resources.every((r) => state.filters.resources.indexOf(r.id) > -1);
         }
       });
+    }
+    if ('kava_source' in state.filters) {
+      nakamals = nakamals.filter((n) => n.kava_source.id === state.filters.kava_source);
     }
     return nakamals;
   },

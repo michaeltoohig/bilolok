@@ -18,6 +18,10 @@
         {{ nakamals.length }} kava bars on map
       </v-alert>
     </template>
+    <SelectLight
+      v-model="selectedLight"
+      @input="changeLight"
+    ></SelectLight>
     <v-select
       @change="changeArea"
       v-model="selectedArea"
@@ -27,20 +31,12 @@
       label="Area"
     ></v-select>
     <v-select
-      @change="changeLight"
-      v-model="selectedLight"
-      :items="[
-        'White',
-        'Red',
-        'Orange',
-        'Yellow',
-        'Green',
-        'Blue',
-        'Purple',
-        'Pink',
-        'Other',
-      ]"
-      label="Light Color"
+      @change="changeKavaSource"
+      v-model="selectedKavaSource"
+      :items="kava_sources"
+      item-value="id"
+      item-text="name"
+      label="Kava Source"
     ></v-select>
     <v-select
       @change="changeResources"
@@ -54,7 +50,7 @@
 
     <template v-slot:append>
       <div class="pa-2">
-        <v-btn block :disabled="!hasFilters" @click="clearFilters">
+        <v-btn block outlined color="primary" :disabled="!hasFilters" @click="clearFilters">
           Clear Filters
         </v-btn>
       </div>
@@ -64,11 +60,16 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import SelectLight from '@/components/SelectLight.vue';
 import nakamalAreaApi from '@/api/nakamalAreas';
 import nakamalResourcesApi from '@/api/nakamalResources';
+import nakamalKavaSourcesApi from '@/api/nakamalKavaSources';
 
 export default {
   name: 'NakamalFilterSidebar',
+  components: {
+    SelectLight,
+  },
   data() {
     return {
       areas: [],
@@ -76,6 +77,8 @@ export default {
       selectedLight: null,
       resources: [],
       selectedResources: [],
+      selectedKavaSource: null,
+      rawKavaSources: [],
     };
   },
   computed: {
@@ -85,6 +88,21 @@ export default {
       filters: 'nakamal/filters',
       nakamals: 'nakamal/filteredList',
     }),
+    kava_sources() {
+      /* eslint-disable arrow-body-style */
+      return this.rawKavaSources.map((ks) => {
+        let name = ks.province;
+        if (ks.island) {
+          name += `: ${ks.island}`;
+        }
+        return {
+          id: ks.id,
+          name,
+        };
+      }).sort((a, b) => {
+        return (a.name < b.name) ? 1 : -1;
+      });
+    },
   },
   watch: {
     showFilters() {
@@ -93,6 +111,7 @@ export default {
       if (!this.hasFilters) {
         this.selectedArea = null;
         this.selectedLight = null;
+        this.selectedKavaSource = null;
         this.selectedResources = [];
       }
     },
@@ -116,9 +135,14 @@ export default {
       const response = await nakamalResourcesApi.getAll();
       this.resources = response.data;
     },
+    async getKavaSources() {
+      const response = await nakamalKavaSourcesApi.getAll();
+      this.rawKavaSources = response.data;
+    },
     clearFilters() {
       this.selectedArea = null;
       this.selectedLight = null;
+      this.selectedKavaSource = null;
       this.selectedResources = [];
       this.removeFilters();
     },
@@ -131,10 +155,14 @@ export default {
     changeResources(value) {
       this.setFilter({ key: 'resources', value });
     },
+    changeKavaSource(value) {
+      this.setFilter({ key: 'kava_source', value });
+    },
   },
   async beforeMount() {
     await this.getAreas();
     await this.getResources();
+    await this.getKavaSources();
   },
 };
 </script>

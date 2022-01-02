@@ -2,6 +2,30 @@ import uuid
 from typing import List, Optional
 
 from .base import BaseSchema
+from app.models.nakamal import Province
+
+
+#
+# Nakamal Kava Source
+#
+
+
+class NakamalKavaSourceSchemaBase(BaseSchema):
+    island: Optional[str] = None
+    province: Optional[Province] = None
+
+
+class NakamalKavaSourceSchemaIn(NakamalKavaSourceSchemaBase):
+    province: Province
+
+
+class NakamalKavaSourceSchema(NakamalKavaSourceSchemaBase):
+    id: uuid.UUID
+    province: Province
+
+
+class NakamalKavaSourceSchemaOut(NakamalKavaSourceSchema):
+    pass
 
 
 #
@@ -75,10 +99,12 @@ class NakamalSchemaIn(NakamalSchemaBase):
     lat: float
     lng: float
     area_id: uuid.UUID
+    kava_source_id: uuid.UUID
 
 
 class NakamalSchema(NakamalSchemaBase):
     id: uuid.UUID
+    kava_source: NakamalKavaSourceSchema
     resources: List[NakamalResourceSchema]
     area: NakamalAreaSchema
 

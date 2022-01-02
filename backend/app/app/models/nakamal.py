@@ -1,21 +1,12 @@
 from enum import Enum
-from sqlalchemy import Column, String, Float, Integer, ForeignKey
+from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum as SQLAEnum
 from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Table
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
-
-
-# class Province(Enum):
-#     NOT_KNOWN = "NOT_KNOWN"
-#     TORBA = "TORBA"
-#     PENAMA = "PENAMA"
-#     SANMA = "SANMA"
-#     MALAMPA = "MALAMPA"
-#     SHEFA = "SHEFA"
-#     TAFEA = "TAFEA"
 
 
 nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,
@@ -37,8 +28,9 @@ class Nakamal(Base):
     owner = Column(String)
     phone = Column(String)
     windows = Column(Integer, default=1)
-    # kava_source = Column(Integer, default=KavaSource.UNKNOWN)
     # checkins = relationship("Checkin", cascade="save-update, merge, delete")
+    kava_source_id = Column(GUID, ForeignKey("nakamal_kava_source.id"), nullable=False)
+    kava_source = relationship("NakamalKavaSource", lazy="joined")
     resources = relationship("NakamalResource", secondary=nakamal_resource_association, lazy="joined")
     area_id = Column(GUID, ForeignKey("nakamal_area.id"), nullable=False)
     area = relationship("NakamalArea", lazy="joined")
@@ -59,13 +51,26 @@ class NakamalResource(Base):
     name = Column(String, nullable=False)
 
 
-# class NakamalKavaSource(Base):
-#     """SQLAlchemy nakamal kava source table definition."""
+class Province(Enum):
+    UNDEFINED = "UNDEFINED"
+    ANY = "ANY"
+    TORBA = "TORBA"
+    PENAMA = "PENAMA"
+    SANMA = "SANMA"
+    MALAMPA = "MALAMPA"
+    SHEFA = "SHEFA"
+    TAFEA = "TAFEA"
 
-#     __tablename__ = "nakamal_kava_source"
 
-#     name = Column(String, unique=True, nullable=False)
-#     province = Column(String, nullable=False)
+class NakamalKavaSource(Base):
+    """SQLAlchemy nakamal kava source table definition."""
+
+    __tablename__ = "nakamal_kava_source"
+
+    # XXX for now allow users to manually add islands but restrict the province field with Enum
+    #  down the road we can standardize the island field but I want to see some raw responses first
+    island = Column(String)
+    province = Column(SQLAEnum(Province), nullable=False)
 
 
 class NakamalArea(Base):

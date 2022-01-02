@@ -11,16 +11,14 @@
             <div
               class="title primary--text text--darken-2"
               v-if="nakamal"
-            >{{nakamal.name}}</div>
+            >{{ nakamal.name }}</div>
             <div
               class="title primary--text text--darken-2"
               v-else
             >-----</div>
           </div>
           <v-form
-            v-model="valid"
             ref="form"
-            lazy-validation
           >
             <v-text-field
               label="Name"
@@ -29,7 +27,8 @@
               required
             ></v-text-field>
             <v-combobox
-              v-model="aliases"
+              v-model="$v.aliases.$model"
+              :error="$v.aliases.$error"
               chips
               clearable
               label="Other Names"
@@ -75,38 +74,23 @@
               label="Resources"
               multiple
             ></v-select>
-            <v-select
+            <SelectLight
               v-model="$v.light.$model"
               :error="$v.light.$error"
-              :items="[
-                'White',
-                'Red',
-                'Orange',
-                'Yellow',
-                'Green',
-                'Blue',
-                'Purple',
-                'Pink',
-                'Other',
-              ]"
-              label="Light Color"
-            ></v-select>
+            ></SelectLight>
+            <SelectKavaSource
+              v-model="$v.kava_source.$model"
+              :error="$v.kava_source.$error"
+            ></SelectKavaSource>
           </v-form>
         </template>
       </v-card-text>
       <v-card-text>
         <div class="mb-5">
-          <v-select
+          <SelectArea
             v-model="$v.area.$model"
             :error="$v.area.$error"
-            :items="allAreas"
-            item-value="id"
-            item-text="name"
-            label="Area"
-          ></v-select>
-          <v-btn outlined @click="showNewAreaDialog = !showNewAreaDialog">
-            <span>Add New Area</span>
-          </v-btn>
+          ></SelectArea>
         </div>
 
         <v-text-field
@@ -175,34 +159,19 @@
         </v-expand-transition>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn @click="cancel">Cancel</v-btn>
-        <v-btn @click="reset">Reset</v-btn>
         <v-btn
           @click="submit"
-          :disabled="!valid"
+          text
+          outlined
+          color="primary"
         >
           Save
         </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn text @click="cancel">Cancel</v-btn>
+        <v-btn text @click="reset">Reset</v-btn>
       </v-card-actions>
     </v-card>
-
-    <v-dialog
-      v-model="showNewAreaDialog"
-      max-width="400"
-    >
-      <v-card>
-        <v-card-title>Add New Area</v-card-title>
-        <v-card-text>
-          <v-text-field v-model="newAreaName" label="Area Name"></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn outlined @click="submitNewArea">Submit</v-btn>
-          <v-spacer></v-spacer>
-          <v-btn @click="showNewAreaDialog = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -212,12 +181,11 @@ import {
   mapGetters,
 } from 'vuex';
 import {
-  // integer,
-  // minValue,
   validationMixin,
 } from 'vuelidate';
 import {
   required,
+  minValue,
 } from 'vuelidate/lib/validators';
 import {
   icon, latLngBounds,
@@ -226,13 +194,18 @@ import {
   LMap, LTileLayer, LMarker,
 } from 'vue2-leaflet';
 import nakamalResourcesApi from '@/api/nakamalResources';
-import nakamalAreasApi from '@/api/nakamalAreas';
+import SelectArea from '@/components/SelectArea.vue';
+import SelectKavaSource from '@/components/SelectKavaSource.vue';
+import SelectLight from '@/components/SelectLight.vue';
 
 const iconPath = require('../assets/map-marker.svg');
 
 export default {
   name: 'NakamalEdit',
   components: {
+    SelectArea,
+    SelectKavaSource,
+    SelectLight,
     LMap,
     LTileLayer,
     LMarker,
@@ -240,7 +213,6 @@ export default {
   mixins: [validationMixin],
   data() {
     return {
-      valid: true,
       name: '',
       aliases: [],
       owner: '',
@@ -250,13 +222,11 @@ export default {
       resources: [],
       allResources: [],
       area: null,
-      allAreas: [],
+      kava_source: null,
       lat: 0,
       lng: 0,
       // currentNakamalLocation: null,
 
-      showNewAreaDialog: false,
-      newAreaName: '',
       showMap: false,
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
@@ -286,10 +256,13 @@ export default {
       windows: {
         required,
         // integer,
-        // minValue: minValue(1),
+        minValue: minValue(1),
       },
       resources: {},
       area: {
+        required,
+      },
+      kava_source: {
         required,
       },
       lat: {
@@ -341,6 +314,7 @@ export default {
       this.resources = [];
       this.oldResources = [];
       this.area = null;
+      this.kava_source = null;
       this.lat = null;
       this.lng = null;
 
@@ -355,6 +329,7 @@ export default {
         this.resources = this.nakamal.resources.map((r) => r.id);
         this.oldResources = this.resources; // save original selected resources
         this.area = this.nakamal.area.id;
+        this.kava_source = this.nakamal.kava_source.id;
         this.lat = this.nakamal.lat;
         this.lng = this.nakamal.lng;
         this.setCenter(this.nakamal.latLng);
@@ -386,20 +361,6 @@ export default {
       });
       this.$router.push({ name: 'Nakamal', id: this.nakamal.id });
     },
-    async submitNewArea() {
-      if (this.newAreaName === '' || !this.newAreaName) return null;
-      try {
-        const token = this.$store.getters['auth/token'];
-        await nakamalAreasApi.create(token, { name: this.newAreaName });
-        await this.getAreas();
-        this.showNewAreaDialog = false;
-        this.newAreaName = '';
-      } catch (error) {
-        console.log('error adding area');
-        // this.$store.dispatch('notify/add', {})
-      }
-      return null;
-    },
     ...mapActions(
       'map', [
         'setBounds',
@@ -411,15 +372,10 @@ export default {
       const response = await nakamalResourcesApi.getAll();
       this.allResources = response.data;
     },
-    async getAreas() {
-      const response = await nakamalAreasApi.getAll();
-      this.allAreas = response.data;
-    },
   },
   async mounted() {
     await this.$store.dispatch('nakamal/load');
     this.getResources();
-    this.getAreas();
     this.setCenter(this.nakamal.latLng);
     this.reset();
   },

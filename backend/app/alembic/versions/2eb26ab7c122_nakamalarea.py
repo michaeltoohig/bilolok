@@ -31,7 +31,7 @@ def upgrade():
 
     # Add initial row to nakamal_area that handles undefined area / initial default value since database has nakamals already
     nakamal_area_id = uuid.uuid4()
-    op.execute(f"INSERT INTO nakamal_area(id, name) VALUES('{str(nakamal_area_id)}', 'Undefined')")
+    op.execute(f"INSERT INTO nakamal_area(id, name) VALUES('{str(nakamal_area_id)}', 'UNDEFINED')")
 
     # Add column with default value set temporarily
     op.add_column('nakamal', sa.Column('area_id', fastapi_users_db_sqlalchemy.GUID(), nullable=False, server_default=str(nakamal_area_id)))
