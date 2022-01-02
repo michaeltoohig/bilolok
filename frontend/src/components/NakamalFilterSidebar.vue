@@ -4,7 +4,7 @@
     @input="toggleShowFilters"
     app
     right
-    temporary
+    :temporary="$vuetify.breakpoint.mdAndDown"
     touchless
     class="pa-2"
   >
@@ -18,6 +18,7 @@
         {{ nakamals.length }} kava bars on map
       </v-alert>
     </template>
+    <h5>Filters</h5>
     <SelectLight
       v-model="selectedLight"
       @input="changeLight"

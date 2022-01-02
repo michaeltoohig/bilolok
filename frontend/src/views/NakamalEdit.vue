@@ -350,6 +350,7 @@ export default {
         light: this.light,
         windows: this.windows,
         area_id: this.area,
+        kava_source_id: this.kava_source,
         lat: this.lat,
         lng: this.lng,
       };

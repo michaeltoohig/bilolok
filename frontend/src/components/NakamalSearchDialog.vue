@@ -6,12 +6,9 @@
     max-width="600"
   >
     <v-card>
-      <v-toolbar
-        color="primary"
-        dark
-      >
-        Search and Filter
-      </v-toolbar>
+      <v-card-title>
+        Search
+      </v-card-title>
       <v-card-text>
         <v-autocomplete
           :items="nakamals"
@@ -45,7 +42,7 @@
         <v-alert
           v-if="hasFilters"
           text
-          color="info"
+          color="secondary"
           elevation="2"
         >
           You currently have map filters enabled so only kava bars
@@ -58,7 +55,6 @@
           v-if="hasFilters"
           text
           outlined
-          color="secondary"
           @click="removeFilters"
         >
           Clear Filters

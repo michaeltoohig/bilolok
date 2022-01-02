@@ -20,7 +20,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Chief
    - [x] Resources (wasemaot, tusker, billiard table, etc)
    - [x] Area (Freswota, Namburu, Nambatu, etc)
-   - [ ] Kava Source (Malekula, Santo, etc)
+   - [x] Kava Source (Malekula, Santo, etc)
  - [ ] Home page
    - [x] Big eye-catching link to map view
    - [ ] Change 'about', 'recent activity' as dialogs or bottom sheets to map
@@ -34,7 +34,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
 The following were recommended additions
 
- - [ ] Add kava source to nakamal / include in search filters
+ - [x] Add kava source to nakamal / include in search filters
  - [x] Support multiple names of nakamal
  - [x] Add nakamal area / include in search filters
   
