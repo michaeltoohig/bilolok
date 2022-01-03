@@ -11,57 +11,6 @@
           </p>
 
           <hr class="mb-5"/>
-
-          <v-alert
-            text
-            color="info"
-            icon="mdi-github"
-          >
-            <v-row align="center">
-              <v-col class="grow">
-                <h3 class="text-h5">
-                  Work In Progress
-                </h3>
-                <div>
-                  This application is a <strong>work in progress</strong> and is free
-                  and open source which can be found on Github.
-                </div>
-              </v-col>
-              <v-col class="shrink">
-                <v-btn icon @click="openGithubDowndown = !openGithubDowndown">
-                  <v-icon>mdi-chevron-down</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-
-            <v-expand-transition>
-              <div v-show="openGithubDowndown">
-                <v-divider
-                  class="my-4 info"
-                  style="opacity: 0.22"
-                ></v-divider>
-                <h4>Want to join the development?</h4>
-                <p>
-                  For anyone in Vanuatu, especially CS students, interested in learning
-                  software development, I will be happy to work with you and help you
-                  contribute your ideas to this project.
-                </p>
-                <v-btn
-                  color="info"
-                  outlined
-                  @click="openGithub"
-                  class="mb-3"
-                >
-                  View Source Code
-                </v-btn>
-                <h4 class="mt-3">Have ideas for this application?</h4>
-                <p>
-                  Find our Facebook page for Bilolok and we can talk about adding your
-                  ideas to this project.
-                </p>
-              </div>
-            </v-expand-transition>
-          </v-alert>
         </v-col>
       </v-row>
     </v-container>
@@ -127,7 +76,6 @@ export default {
   },
   data() {
     return {
-      openGithubDowndown: false,
       darkMapImage,
       lightMapImage,
     };
@@ -141,11 +89,6 @@ export default {
         return darkMapImage;
       }
       return lightMapImage;
-    },
-  },
-  methods: {
-    openGithub() {
-      window.open('https://github.com/michaeltoohig/bilolok');
     },
   },
 };

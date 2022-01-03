@@ -34,11 +34,11 @@ const routes = [
     name: 'Map',
     component: () => import(/* webpackChunkName: "map" */ '@/views/Map.vue'),
   },
-  {
-    path: '/search',
-    name: 'Search',
-    component: () => import(/* webpackChunkName: "search" */ '@/views/Search.vue'),
-  },
+  // {
+  //   path: '/search',
+  //   name: 'Search',
+  //   component: () => import(/* webpackChunkName: "search" */ '@/views/Search.vue'),
+  // },
   {
     path: '/nakamal/:id',
     name: 'Nakamal',

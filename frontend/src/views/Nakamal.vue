@@ -111,7 +111,7 @@
       </v-btn>
     </v-fab-transition>
 
-    <v-dialog v-model="checkinDialog">
+    <v-dialog max-width="500" v-model="checkinDialog">
       <v-card>
         <v-card-title class="text-h5">
           Check-In

@@ -10,9 +10,9 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] User Avatar
    - [ ] Custom Avatar
    - [x] User Timeline
- - [ ] Search filters
+ - [x] Search filters
    - [x] Search filters on map
-   - [ ] Remove redundant search page
+   - [x] Remove redundant search page
  - [x] Nakamal page
    - [x] Nakamal Timeline
    - [x] Check-in details
@@ -29,6 +29,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Forgot password process
    - [x] Add auth check to open auth modal for existing features
 
+ - [ ] Set map bounds after each filter is applied
  - [ ] SQLAlchemy-Continuum integration
    - [ ] Admin view to un-do unwanted edits
 

@@ -34,6 +34,8 @@
           v-for="item in items"
           :key="item.title"
           :to="item.link"
+          exact
+          :href="item.href"
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -48,6 +50,21 @@
         <BoundedNakamalsList v-on:close-drawer="drawer = false"></BoundedNakamalsList>
         <v-divider></v-divider>
       </div>
+
+      <v-list>
+        <v-list-item
+          dense
+          v-for="item in remoteItems"
+          :key="item.title"
+          target="_blank"
+          :href="item.href"
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
     </v-navigation-drawer>
 
     <v-app-bar
@@ -167,14 +184,21 @@ export default {
           icon: 'mdi-map',
         },
         {
-          title: 'Search',
-          link: { name: 'Search' },
-          icon: 'mdi-magnify',
-        },
-        {
           title: 'About',
           link: { name: 'About' },
-          icon: 'mdi-info',
+          icon: 'mdi-information-variant',
+        },
+      ],
+      remoteItems: [
+        {
+          title: 'Follow our FB Page',
+          href: 'https://www.facebook.com/bilolokapp',
+          icon: 'mdi-facebook',
+        },
+        {
+          title: 'Report A Bug',
+          href: 'https://github.com/michaeltoohig/bilolok/issues',
+          icon: 'mdi-bug',
         },
       ],
     };

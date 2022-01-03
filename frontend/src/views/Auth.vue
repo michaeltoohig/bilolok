@@ -1,6 +1,10 @@
 <template>
   <div class="auth">
-    <component :is="$route.params.auth"></component>
+    <v-container>
+      <v-responsive max-width="500" class="mx-auto">
+        <component :is="$route.params.auth"></component>
+      </v-responsive>
+    </v-container>
   </div>
 </template>
 

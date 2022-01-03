@@ -60,6 +60,9 @@
 </template>
 
 <script>
+// import {
+//   latLngBounds,
+// } from 'leaflet';
 import { mapActions, mapGetters } from 'vuex';
 import SelectLight from '@/components/SelectLight.vue';
 import nakamalAreaApi from '@/api/nakamalAreas';
@@ -149,15 +152,23 @@ export default {
     },
     changeArea(value) {
       this.setFilter({ key: 'area', value });
+      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+      // this.$store.dispatch('map/setBounds', bounds);
     },
     changeLight(value) {
       this.setFilter({ key: 'light', value });
+      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+      // this.$store.dispatch('map/setBounds', bounds);
     },
     changeResources(value) {
       this.setFilter({ key: 'resources', value });
+      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+      // this.$store.dispatch('map/setBounds', bounds);
     },
     changeKavaSource(value) {
       this.setFilter({ key: 'kava_source', value });
+      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+      // this.$store.dispatch('map/setBounds', bounds);
     },
   },
   async beforeMount() {
