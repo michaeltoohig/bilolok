@@ -60,9 +60,6 @@
 </template>
 
 <script>
-// import {
-//   latLngBounds,
-// } from 'leaflet';
 import { mapActions, mapGetters } from 'vuex';
 import SelectLight from '@/components/SelectLight.vue';
 import nakamalAreaApi from '@/api/nakamalAreas';
@@ -152,23 +149,19 @@ export default {
     },
     changeArea(value) {
       this.setFilter({ key: 'area', value });
-      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-      // this.$store.dispatch('map/setBounds', bounds);
+      this.$root.$emit('fly-to-bounds');
     },
     changeLight(value) {
       this.setFilter({ key: 'light', value });
-      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-      // this.$store.dispatch('map/setBounds', bounds);
+      this.$root.$emit('fly-to-bounds');
     },
     changeResources(value) {
       this.setFilter({ key: 'resources', value });
-      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-      // this.$store.dispatch('map/setBounds', bounds);
+      this.$root.$emit('fly-to-bounds');
     },
     changeKavaSource(value) {
       this.setFilter({ key: 'kava_source', value });
-      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-      // this.$store.dispatch('map/setBounds', bounds);
+      this.$root.$emit('fly-to-bounds');
     },
   },
   async beforeMount() {

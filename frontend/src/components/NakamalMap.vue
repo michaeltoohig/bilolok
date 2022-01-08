@@ -317,6 +317,16 @@ export default {
       targetLatLng = this.$refs.map.mapObject.unproject(targetPoint, 18);
       this.flyTo(targetLatLng);
     },
+    flyToBounds() {
+      this.$nextTick().then(() => {
+        if (this.nakamals.length === 0) {
+          this.$refs.map.mapObject.flyToBounds(this.maxBounds, { duration: 1.0 });
+        } else {
+          const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+          this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
+        }
+      });
+    },
     markerClick(id) {
       this.$store.dispatch('nakamal/select', id)
         .then(() => {
@@ -337,6 +347,7 @@ export default {
   async created() {
     this.$store.dispatch('map/RESET');
     this.$root.$on('fly-to-selected', this.flyToSelected);
+    this.$root.$on('fly-to-bounds', this.flyToBounds);
   },
   async mounted() {
     // this.loading = true;

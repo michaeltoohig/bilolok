@@ -13,7 +13,7 @@ const routes = [
   {
     path: '/auth/:auth',
     name: 'Auth',
-    component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/Auth.vue'),
     // importing store to this file caused a circular dependency error
     // so authRouteGuard is in the component.
     // beforeEnter: authRouteGuard,
@@ -22,32 +22,32 @@ const routes = [
   {
     path: '/user/:id',
     name: 'User',
-    component: () => import(/* webpackChunkName: "profile" */ '@/views/User.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/User.vue'),
   },
   {
     path: '/about',
     name: 'About',
-    component: () => import(/* webpackChunkName: "about" */ '@/views/About.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/About.vue'),
   },
   {
     path: '/map',
     name: 'Map',
-    component: () => import(/* webpackChunkName: "map" */ '@/views/Map.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/Map.vue'),
   },
   // {
   //   path: '/search',
   //   name: 'Search',
-  //   component: () => import(/* webpackChunkName: "search" */ '@/views/Search.vue'),
+  //   component: () => import(/* webpackChunkName: "public" */ '@/views/Search.vue'),
   // },
   {
     path: '/nakamal/:id',
     name: 'Nakamal',
-    component: () => import(/* webpackChunkName: "nakamal" */ '@/views/Nakamal.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/Nakamal.vue'),
   },
   {
     path: '/nakamal/:id/edit',
     name: 'NakamalEdit',
-    component: () => import(/* webpackChunkName: "nakamal" */ '@/views/NakamalEdit.vue'),
+    component: () => import(/* webpackChunkName: "public" */ '@/views/NakamalEdit.vue'),
   },
   {
     path: '/admin',
