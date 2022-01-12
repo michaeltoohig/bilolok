@@ -246,8 +246,8 @@ export default {
       }
     },
     submitCheckin() {
-      this.checkin({ nakamal_id: this.nakamal.id, message: this.checkinMsg });
       this.checkinDialog = false;
+      this.checkin({ nakamal_id: this.nakamal.id, message: this.checkinMsg });
     },
     remove() {
       /* eslint-disable no-alert, no-restricted-globals */

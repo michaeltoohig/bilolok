@@ -7,6 +7,8 @@ import Dexie from 'dexie';
 import {
   registerRoute,
   NavigationRoute,
+  setDefaultHandler,
+  setCatchHandler,
 } from 'workbox-routing';
 import {
   NetworkOnly,
@@ -14,12 +16,14 @@ import {
   StaleWhileRevalidate,
   CacheFirst,
   Strategy,
+  StrategyHandler,
 } from 'workbox-strategies';
 import {
   createHandlerBoundToURL,
   PrecacheFallbackPlugin,
   precacheAndRoute,
 } from 'workbox-precaching';
+import { BackgroundSyncPlugin } from 'workbox-background-sync';
 import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
 // Used for filtering matches based on status code, header, or both
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
@@ -27,8 +31,23 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { timeout } from 'workbox-core/_private/timeout.js';
 
+const precacheUrls = [
+  { revision: null, url: '/api/v1/nakamal-areas' },
+  { revision: null, url: '/api/v1/nakamal-kava-resources' },
+  { revision: null, url: '/api/v1/nakamal-resources' },
+  ...self.__WB_MANIFEST,
+];
+console.log('yyy', precacheUrls);
+
 // Use with precache injection
-precacheAndRoute(self.__WB_MANIFEST);
+precacheAndRoute(precacheUrls);
+
+// Warm our cache with some needed resources for offline use
+// precacheAndRoute([
+//   { url: '/api/v1/nakamal-areas', revision: null },
+//   { url: '/api/v1/nakamal-kava-resources', revision: null },
+//   { url: '/api/v1/nakamal-resources', revision: null },
+// ]);
 
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type);
@@ -225,12 +244,8 @@ const mapTileHandler = async ({ url, event, params }) => {
 }
 
 registerRoute(
-  ({ url }) => url.href.includes('tile.openstreetmap.org'),
-  mapTileHandler,
-);
-
-registerRoute(
-  ({ url }) => url.href.includes('global.ssl.fastly.net/dark_all'),
+  ({ url }) => url.href.includes('tile.openstreetmap.org') ||
+               url.href.includes('global.ssl.fastly.net/dark_all'),
   mapTileHandler,
 );
 
@@ -303,11 +318,46 @@ registerRoute(
 //   }),
 // );
 
-// TODO cache thumbnails separate from full-size images
-// Cache images with a Cache First strategy
+// Nakamal API cache
+registerRoute(
+  ({ request }) => request.url.includes('/api/v1/'),
+  new NetworkFirst({
+    cacheName: 'bilolok-api-nakamals',
+    plugins: [
+      // Ensure that only requests that result in a 200 status are cached
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  }),
+);
+
+// Nakamal thumbnail cache
 registerRoute(
   // Check to see if the request's destination is for an image
-  ({ request }) => request.destination === 'image',
+  ({ request }) => request.destination === 'image' && request.url.includes('/nakamals/') && request.url.includes('/200x200/'),
+  // Use a Cache First caching strategy
+  new CacheFirst({
+    // Put all cached files in a cache named 'images'
+    cacheName: 'bilolok-thumbnails',
+    plugins: [
+      // Ensure that only requests that result in a 200 status are cached
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      // Don't cache more than 60 items, and expire them after 30 days
+      new ExpirationPlugin({
+        maxEntries: 200,
+        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+      }),
+    ],
+  }),
+);
+
+// Nakamal image cache
+registerRoute(
+  // Check to see if the request's destination is for an image
+  ({ request }) => request.destination === 'image' && request.url.includes('/nakamals/') && request.url.includes('/full-fit-in/'),
   // Use a Cache First caching strategy
   new CacheFirst({
     // Put all cached files in a cache named 'images'
@@ -315,7 +365,7 @@ registerRoute(
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
-        statuses: [200],
+        statuses: [0, 200],
       }),
       // Don't cache more than 60 items, and expire them after 30 days
       new ExpirationPlugin({
@@ -324,6 +374,83 @@ registerRoute(
       }),
     ],
   }),
+);
+
+// User image cache
+registerRoute(
+  // Check to see if the request's destination is for an image
+  ({ request }) => request.destination === 'image' && request.url.includes('/users/'),
+  // Use a Cache First caching strategy
+  new CacheFirst({
+    // Put all cached files in a cache named 'images'
+    cacheName: 'bilolok-avatars',
+    plugins: [
+      // Ensure that only requests that result in a 200 status are cached
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      // Don't cache more than 60 items, and expire them after 30 days
+      new ExpirationPlugin({
+        maxEntries: 60,
+        maxAgeSeconds: 60 * 60 * 24, // 1 Days
+      }),
+    ],
+  }),
+);
+
+// Use a stale-while-revalidate strategy for all other requests.
+setDefaultHandler(new StaleWhileRevalidate());
+
+// This "catch" handler is triggered when any of the other routes fail to
+// generate a response.
+setCatchHandler(async ({event}) => {
+  // The FALLBACK_URL entries must be added to the cache ahead of time, either
+  // via runtime or precaching. If they are precached, then call
+  // `matchPrecache(FALLBACK_URL)` (from the `workbox-precaching` package)
+  // to get the response from the correct cache.
+  //
+  // Use event, request, and url to figure out how to respond.
+  // One approach would be to use request.destination, see
+  // https://medium.com/dev-channel/service-worker-caching-strategies-based-on-request-types-57411dd7652c
+  switch (event.request.destination) {
+    case 'document':
+      // If using precached URLs:
+      // return matchPrecache(FALLBACK_HTML_URL);
+      return caches.match('/index.html');
+    break;
+
+    // case 'image':
+    //   return caches.match('/wifi-connection-offline.png');
+    // break;
+
+    default:
+      // If we don't have a fallback, just return an error response.
+      return Response.error();
+  }
+});
+
+const bgSyncCheckinPlugin = new BackgroundSyncPlugin('api-checkin-queue', {
+  maxRetentionTime: 60 * 60 * 24, // Retry for 24 hours
+});
+
+registerRoute(
+  ({ request }) => request.url.includes('/api/v1/checkins'),
+  new NetworkOnly({
+    plugins: [bgSyncCheckinPlugin],
+  }),
+  'POST',
+);
+
+const bgSyncNakamalPlugin = new BackgroundSyncPlugin('api-nakamal-queue', {
+  maxRetentionTime: 60 * 60 * 24, // Retry for 24 hours
+});
+
+registerRoute(
+  ({ request }) => request.url.includes('/api/v1/nakamals'),
+  new NetworkOnly({
+    plugins: [bgSyncNakamalPlugin],
+  }),
+  'POST',
 );
 
 // const ourDomains = ["localhost:8000"];

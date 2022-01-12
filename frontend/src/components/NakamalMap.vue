@@ -4,6 +4,7 @@
   <v-container
     fluid
     id="map-wrapper"
+    :class="isOffline ? 'map-offline' : 'map-online'"
     class="pa-0"
   >
     <v-progress-linear
@@ -147,6 +148,7 @@
 </template>
 
 <script>
+import OfflineMixin from '@/mixins/offline';
 import {
   mapActions,
   mapGetters,
@@ -169,6 +171,7 @@ const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 
 export default {
   name: 'NakamalMap',
+  mixins: [OfflineMixin],
   components: {
     NakamalBottomSheet,
     NetworkStatusDialog,
@@ -364,8 +367,11 @@ export default {
 </script>
 
 <style scoped>
-#map-wrapper {
+.map-online {
   height: calc(100vh - 50px);
+}
+.map-offline {
+  height: calc(100vh - 80px);
 }
 .example-custom-control > .v-card {
   z-index: 2000;

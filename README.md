@@ -4,6 +4,7 @@ Bilolok means `Kava` in the local language of a small village on the east, south
 
 Bilolok is an open-source application that allows users to browse the hundreds of kava bars in Vanuatu, but focused on Port Vila. It's future may include more social elements similar to the old Foursquare app, but for now will be a catalog of kava bars.
 
+
 ## Version 1 Roadmap
 
  - [x] Profile page
@@ -29,7 +30,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Forgot password process
    - [x] Add auth check to open auth modal for existing features
 
- - [ ] Set map bounds after each filter is applied
+ - [x] Set map bounds after each filter is applied
  - [ ] SQLAlchemy-Continuum integration
    - [ ] Admin view to un-do unwanted edits
 
@@ -50,6 +51,35 @@ to return the offical project code bases.
    - [ ] SQLAlchemy-Continuum
 
 
+### Version 1.1 Roadmap
+
+I will focus on features related to a better offline user experience the goal of 
+version 1.1. Unlike version 2 which brings features to the users' that they interact
+with and will see, these features should blend in smoothly with the current app and
+mostly "Just Work" behind the scenes.
+
+- [x] App loads while offline
+   - [x] prefetch nakamal areas, resources, kava sources on app load
+   - [ ] prefetch add nakamal map marker
+- [ ] Allow for POST requests while offline
+   - [x] nakamal
+   - [x] checkin
+   - [ ] resources, areas, kava sources are not available to POST offline
+           due to them being dependents of creating a nakamal and therefore
+           I won't have an ID available to create the nakamal while offline
+           so why bother creating these resources while offline also?
+           So add a note that these resources may not be created while offline.
+   - [ ] Add UI element to display queued POST requests while offline - connect to IndexedDB with dexie maybe?
+   - [ ] Add notification that POST request is queued instead of submitted.
+- [ ] Try using NetworkFirst for endpoints such as GET checkins and other dynamic resources
+        Currently, after returning to network a queued POST /checkins is not visible to user until
+        the second full page reload to get the new resource into cache on first refresh and into
+        the UI on the second reload.
+   - [ ] NetworkFirst /nakamals
+      - [ ] CacheFirst /nakamals/{uuid}
+   - [ ] NetworkFirst /checkins
+
+
 ## Future Roadmap Ideas
 
 Below are some ideas for the future of this project.
@@ -68,11 +98,13 @@ For version 2 and beyond we can build upon this foundation such as the following
     - Use another regex with special character to mark the window as bad
     - chart shows windows with positve and negative and no reviews then
 
+
 ## Development
 
 I welcome contributions and discussions for development. Below is some explanations of the current architecture and plans for future development.
 
 Also, for anyone in Vanuatu, especially students interested in learning software development, I will be happy to work with you and help you contribute your ideas to this project.
+
 
 ### Backend
 
@@ -93,6 +125,7 @@ FastAPI Users
 FastAPI CRUDrouter
 FastAPI paginate
 SQLAlchemy-Continuum
+
 
 ### Frontend
 

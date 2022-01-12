@@ -35,20 +35,20 @@
         icons, but ultimately I was distracted by other projects, friends, work, etc.
         and did not continue it.</p>
 
-      <v-card outlined elevation="2" class="my-5">
-        <v-img :src="malokayLogo"></v-img>
+      <v-card outlined elevation="2" class="my-5 pt-3">
+        <v-img class="ml-5" :src="malokayLogo"></v-img>
         <v-card-subtitle>Original logo. The name was a mix of
           <i>Malok</i> and <i>Okay</i>. The idea was to find kava that
           was okay to drink.</v-card-subtitle>
       </v-card>
 
-      <div class="d-flex flex-row justify-space-between my-5">
-        <v-card outlined elevation="2" max-width="240">
-          <v-img :src="malokayKavaMarker"></v-img>
+      <div class="d-flex flex-row justify-space-between justify-md-space-around my-5">
+        <v-card outlined elevation="2" max-width="170">
+          <v-img class="mt-3" :src="malokayKavaMarker"></v-img>
           <v-card-subtitle>Malokay map marker for kava bars</v-card-subtitle>
         </v-card>
-        <v-card outlined elevation="2" max-width="240">
-          <v-img :src="malokayKavaBeerMarker"></v-img>
+        <v-card outlined elevation="2" max-width="170">
+          <v-img class="mt-3" :src="malokayKavaBeerMarker"></v-img>
           <v-card-subtitle>Malokay map marker for kava bars with alcohol for sale</v-card-subtitle>
         </v-card>
       </div>
@@ -106,6 +106,7 @@
               contribute your ideas to this project.
             </p>
             <v-btn
+              v-show="false"
               color="info"
               outlined
               @click="openGithub"

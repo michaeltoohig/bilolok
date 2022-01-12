@@ -1,5 +1,19 @@
 <template>
   <v-app>
+    <v-system-bar
+      app
+      fixed
+      height="30"
+      color="primary"
+      v-if="isOffline"
+      dark
+    >
+      <span class="mx-auto">
+      <v-icon>mdi-wifi-strength-alert-outline</v-icon>
+      You are offline!
+      </span>
+    </v-system-bar>
+
     <v-main v-if="loggedIn===null">
       <v-container fill-height>
         <v-layout align-center justify-center>
@@ -137,9 +151,10 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import OfflineMixin from '@/mixins/offline';
+import UpdateMixin from './mixins/update';
 import Notifications from './components/Notifications.vue';
 import SideBar from './components/SideBar.vue';
-import update from './mixins/update';
 
 export default {
   name: 'App',
@@ -147,7 +162,7 @@ export default {
     SideBar,
     Notifications,
   },
-  mixins: [update],
+  mixins: [UpdateMixin, OfflineMixin],
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',

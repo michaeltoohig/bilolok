@@ -2,7 +2,7 @@
   <v-dialog
     v-model="dialog"
     persistent
-    max-width="600px"
+    max-width="500px"
   >
     <template v-slot:activator="{ on, attrs }">
       <v-fab-transition>
@@ -20,13 +20,16 @@
     </template>
     <v-card>
       <v-card-title>
-        <span class="headline">No Network Connection</span>
+        <v-icon class="mr-2">mdi-wifi-strength-alert-outline</v-icon>
+        You Are Offline
       </v-card-title>
       <v-card-text>
         <p>
-          You are currently offline. The app is made so that
-          the map should continue to work in areas you've
-          already visited.
+          You are currently offline. The app will continue to
+          work with data you have already downloaded previously.
+          Trying to view the map in areas you have not browsed
+          recently will fail. We are working on adding more offline
+          functionality in the future to improve offline experience.
         </p>
       </v-card-text>
       <v-card-actions>
