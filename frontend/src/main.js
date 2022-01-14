@@ -10,6 +10,7 @@ import '@mdi/font/css/materialdesignicons.css';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css'; // eslint-ignore import/no-extraneous-dependencies
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'; // eslint-ignore
+import './geo';
 
 Vue.config.productionTip = false;
 

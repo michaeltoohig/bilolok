@@ -37,12 +37,13 @@ const getters = {
       nakamals = nakamals.filter((n) => n.light === state.filters.light);
     }
     if ('resources' in state.filters) {
-      nakamals = nakamals.filter((n) => {
-        if (n.resources.length > 0) {
-          return state.filters.resources.every((rid) => n.resources.map((r) => r.id).indexOf(rid) > -1);
-          // return n.resources.every((r) => state.filters.resources.indexOf(r.id) > -1);
-        }
-      });
+      if (state.filters.resources.length > 0) {
+        nakamals = nakamals.filter((n) => {
+          if (n.resources.length > 0) {
+            return state.filters.resources.every((rid) => n.resources.map((r) => r.id).indexOf(rid) > -1);
+          }
+        });
+      }
     }
     if ('kava_source' in state.filters) {
       nakamals = nakamals.filter((n) => n.kava_source.id === state.filters.kava_source);

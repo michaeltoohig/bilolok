@@ -4,6 +4,7 @@ import { latLng } from 'leaflet';
 
 const initialState = () => ({
   location: null,
+  showLocationProgress: false,
   bounds: null,
   center: latLng(-17.741526, 168.312024),
   zoom: 15,
@@ -18,6 +19,9 @@ const state = initialState()
 const getters = {
   location: (state) => {
     return state.location;
+  },
+  showLocationProgress: (state) => {
+    return state.showLocationProgress;
   },
   bounds: (state) => {
     return state.bounds;
@@ -48,6 +52,9 @@ const actions = {
   },
   setLocation: async ({ commit }, location) => {
     commit('setLocation', location);
+  },
+  setShowLocationProgress: async ({ commit }, show) => {
+    commit('setShowLocationProgress', show);
   },
   setBounds: async ({ commit }, bounds) => {
     commit('setBounds', bounds);
@@ -81,6 +88,9 @@ const mutations = {
   },
   setLocation: (state, location) => {
     state.location = location;
+  },
+  setShowLocationProgress: (state, show) => {
+    state.showLocationProgress = show;
   },
   setBounds: (state, bounds) => {
     state.bounds = bounds;

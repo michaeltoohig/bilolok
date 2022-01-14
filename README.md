@@ -71,13 +71,16 @@ mostly "Just Work" behind the scenes.
            So add a note that these resources may not be created while offline.
    - [ ] Add UI element to display queued POST requests while offline - connect to IndexedDB with dexie maybe?
    - [ ] Add notification that POST request is queued instead of submitted.
-- [ ] Try using NetworkFirst for endpoints such as GET checkins and other dynamic resources
+- [x] Try using NetworkFirst for endpoints such as GET checkins and other dynamic resources
         Currently, after returning to network a queued POST /checkins is not visible to user until
         the second full page reload to get the new resource into cache on first refresh and into
         the UI on the second reload.
-   - [ ] NetworkFirst /nakamals
-      - [ ] CacheFirst /nakamals/{uuid}
-   - [ ] NetworkFirst /checkins
+   - [x] NetworkFirst /nakamals
+   - [x] NetworkFirst /checkins
+- [ ] Better Geolocation API
+   - [ ] Improve accuracy
+   - [ ] Distinct marker for user's location
+   - [ ] UI element to show fetching location in progress
 
 
 ## Future Roadmap Ideas

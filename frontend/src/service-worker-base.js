@@ -15,12 +15,8 @@ import {
   NetworkFirst,
   StaleWhileRevalidate,
   CacheFirst,
-  Strategy,
-  StrategyHandler,
 } from 'workbox-strategies';
 import {
-  createHandlerBoundToURL,
-  PrecacheFallbackPlugin,
   precacheAndRoute,
 } from 'workbox-precaching';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';
@@ -29,7 +25,6 @@ import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
 import { ExpirationPlugin } from 'workbox-expiration';
-import { timeout } from 'workbox-core/_private/timeout.js';
 
 const precacheUrls = [
   { revision: null, url: '/api/v1/nakamal-areas' },
@@ -37,17 +32,9 @@ const precacheUrls = [
   { revision: null, url: '/api/v1/nakamal-resources' },
   ...self.__WB_MANIFEST,
 ];
-console.log('yyy', precacheUrls);
 
 // Use with precache injection
 precacheAndRoute(precacheUrls);
-
-// Warm our cache with some needed resources for offline use
-// precacheAndRoute([
-//   { url: '/api/v1/nakamal-areas', revision: null },
-//   { url: '/api/v1/nakamal-kava-resources', revision: null },
-//   { url: '/api/v1/nakamal-resources', revision: null },
-// ]);
 
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type);

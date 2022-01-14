@@ -98,42 +98,70 @@
                 </v-icon>
               </v-btn>
             </template>
-            <v-btn
-              fab
-              dark
-              small
-              color="secondary darken-1"
-              @click.stop="getLocation"
-            >
-              <v-icon>mdi-crosshairs-gps</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="secondary darken-1"
-              @click.stop="setShowSearch(true)"
-            >
-              <v-icon>mdi-map-search</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="secondary darken-1"
-              @click.stop="setShowFilters(true)"
-            >
-              <v-icon>mdi-map-marker-minus</v-icon>
-            </v-btn>
-            <v-btn
-              fab
-              dark
-              small
-              color="secondary darken-1"
-              @click.stop="newNakamalMarker"
-            >
-              <v-icon>mdi-map-marker-plus</v-icon>
-            </v-btn>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="secondary darken-1"
+                  @click.stop="getLocation"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-crosshairs-gps</v-icon>
+                </v-btn>
+              </template>
+              <span>Get Location</span>
+            </v-tooltip>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="secondary darken-1"
+                  @click.stop="setShowSearch(true)"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-map-search</v-icon>
+                </v-btn>
+              </template>
+              <span>Search</span>
+            </v-tooltip>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="secondary darken-1"
+                  @click.stop="setShowFilters(true)"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-map-minus</v-icon>
+                </v-btn>
+              </template>
+              <span>Filter</span>
+            </v-tooltip>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="secondary darken-1"
+                  @click.stop="newNakamalMarker"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-map-marker-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>Add Kava Bar</span>
+            </v-tooltip>
           </v-speed-dial>
         </v-fab-transition>
       </l-control>
@@ -144,6 +172,28 @@
     <NakamalBottomSheet></NakamalBottomSheet>
 
     <NakamalFilterSidebar></NakamalFilterSidebar>
+
+    <v-dialog
+      v-model="showLocationProgress"
+      max-width="500"
+    >
+      <v-card>
+        <v-progress-linear
+          color="primary"
+          indeterminate
+          absolute
+          top
+          height="6"
+        ></v-progress-linear>
+        <v-card-title>Getting Your Location</v-card-title>
+        <v-card-text>
+          <div class="d-flex flex-row justify-start align-center">
+            <v-icon class="mr-3" size="64">mdi-crosshairs-gps</v-icon>
+            Please wait while we get your device's location. This may take a few seconds.
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -220,6 +270,7 @@ export default {
     ...mapGetters({
       isUserVerified: 'auth/isUserVerified',
       location: 'map/location',
+      showLocationProgress: 'map/showLocationProgress',
       bounds: 'map/bounds',
       center: 'map/center',
       zoom: 'map/zoom',
@@ -258,19 +309,52 @@ export default {
     },
   },
   methods: {
+    getLocationSuccess(pos, result) {
+      this.setShowLocationProgress(false);
+      if (result === 'success') {
+        this.setLocation(pos.coords);
+        this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+      } else {
+        this.getLocationError({});
+      }
+    },
+    getLocationError(error) {
+      console.log('Location error:', error);
+      this.setShowLocationProgress(false);
+      this.$store.dispatch('notify/add', {
+        title: 'Location Not Found',
+        text: 'Your device did not provide an accurate location.',
+        color: 'error',
+        duration: 5_000,
+      });
+    },
+    getLocationProgress(pos) {
+      this.setShowLocationProgress(true);
+      console.log('Location progress:', pos);
+    },
     getLocation() {
       if (!('geolocation' in navigator)) {
-        console.log('Geolocation is not available.');
+        this.$store.dispatch('notify/add', {
+          title: 'Location Not Available',
+          text: 'Your device does not provide location or you have blocked location access.',
+          color: 'info',
+          duration: 5_000,
+        });
         return;
       }
       // get position
-      navigator.geolocation.getCurrentPosition((pos) => {
-        console.log(pos);
-        this.setLocation(pos.coords);
-        this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
-      }, (error) => {
-        console.log('error getting location', error);
-      });
+      this.setShowLocationProgress(true);
+      navigator.geolocation.getAccurateCurrentPosition(
+        this.getLocationSuccess,
+        this.getLocationError,
+        this.getLocationProgress,
+        {
+          desiredAccuracy: 20,
+          desiredAccuracyCountMin: 2,
+          maxWait: 12000,
+          enableLowAccuracyOnTimeout: true,
+        },
+      );
     },
     ...mapActions(
       'nakamal', [
@@ -280,6 +364,7 @@ export default {
     ...mapActions(
       'map', [
         'setLocation',
+        'setShowLocationProgress',
         'setBounds',
         'setCenter',
         'setZoom',

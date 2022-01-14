@@ -81,9 +81,6 @@
             <h3 class="text-h5">
               Want to Contribute?
             </h3>
-            <div>
-              This application can be found on Github.
-            </div>
           </v-col>
           <v-col class="shrink">
             <v-btn icon @click="openGithubDropDown = !openGithubDropDown">
