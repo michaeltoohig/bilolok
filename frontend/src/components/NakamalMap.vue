@@ -41,10 +41,48 @@
         :show="showNewNakamalMarker"
       ></NewNakamalDialog>
 
+      <v-dialog
+        v-model="showNearbyNakamals"
+        persistent
+        scrollable
+        width="500"
+      >
+        <v-card>
+          <v-card-title >
+            Nearby Kava Bars
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text v-if="nearbyNakamals.length > 0">
+            <v-row dense>
+              <v-col cols="12" v-for="nakamal in nearbyNakamals" :key="nakamal.id">
+                <NakamalListItem
+                  :nakamal="nakamal"
+                  v-on:fly-to-nearby="flyToNearby"
+                ></NakamalListItem>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-text v-else class="text-center mt-5 font-weight-bold h5">
+            No kava bars nearby...
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              @click="showNearbyNakamals = false"
+            >
+              close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
       <l-marker
         v-if="location"
-        :icon="icon"
+        :icon="iconGeolocation"
         :lat-lng="[location.latitude, location.longitude]"
+        @click="showNearbyNakamals = true;"
       ></l-marker>
 
       <l-marker
@@ -176,6 +214,7 @@
     <v-dialog
       v-model="showLocationProgress"
       max-width="500"
+      persistent
     >
       <v-card>
         <v-progress-linear
@@ -209,15 +248,20 @@ import {
 import {
   LMap, LTileLayer, LMarker, LControl, LLayerGroup,
 } from 'vue2-leaflet';
+
+import sphereKnn from 'sphere-knn';
+
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
 import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
+import NakamalListItem from '@/components/NakamalListItem.vue';
 
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
+const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg');
 
 export default {
   name: 'NakamalMap',
@@ -229,6 +273,7 @@ export default {
     NewNakamalDialog,
     NakamalMapPopup,
     NakamalFilterSidebar,
+    NakamalListItem,
     LMap,
     LTileLayer,
     LMarker,
@@ -237,7 +282,8 @@ export default {
   },
   data() {
     return {
-      drawer: true,
+      showNearbyNakamals: false,
+      nearbyNakamals: [],
       fab: false,
       minZoom: 12,
       maxBounds: latLngBounds([
@@ -257,6 +303,11 @@ export default {
         iconSize: [54, 44],
         iconAnchor: [16, 40],
       }),
+      iconGeolocation: icon({
+        iconUrl: iconMarkerGeolocationPath,
+        iconSize: [43, 43],
+        iconAnchor: [22, 42],
+      }),
       // Loading bar variables
       mapLoading: false,
       mapTileLoading: 0,
@@ -268,6 +319,9 @@ export default {
   },
   computed: {
     ...mapGetters({
+      // showDistance: 'map/showDistance', // testing idea - needs refined
+      // showDistanceLine: 'map/showDistanceLine',
+      // distance: 'map/displayDistance',
       isUserVerified: 'auth/isUserVerified',
       location: 'map/location',
       showLocationProgress: 'map/showLocationProgress',
@@ -314,6 +368,8 @@ export default {
       if (result === 'success') {
         this.setLocation(pos.coords);
         this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+        // Testing sphere Knn
+        this.findNearestNakamals();
       } else {
         this.getLocationError({});
       }
@@ -344,17 +400,36 @@ export default {
       }
       // get position
       this.setShowLocationProgress(true);
+
+      // Mock get location
+      this.getLocationSuccess({
+        coords: {
+          latitude: this.center.lat,
+          longitude: this.center.lng,
+        },
+      }, 'success');
+      return;
+      /* eslint-disable */
       navigator.geolocation.getAccurateCurrentPosition(
         this.getLocationSuccess,
         this.getLocationError,
         this.getLocationProgress,
         {
           desiredAccuracy: 20,
+          // minCount: 1,
           desiredAccuracyCountMin: 2,
-          maxWait: 12000,
-          enableLowAccuracyOnTimeout: true,
+          maxWait: 15000,
+          // enableLowAccuracyOnTimeout: true,
         },
       );
+    },
+    findNearestNakamals() {
+      const lookup = sphereKnn(this.nakamals);
+      this.nearbyNakamals = lookup(this.location.latitude, this.location.longitude, 10, 1000);
+    },
+    flyToNearby(id) {
+      this.showNearbyNakamals = false;
+      this.markerClick(id);
     },
     ...mapActions(
       'nakamal', [

@@ -59,30 +59,39 @@ with and will see, these features should blend in smoothly with the current app 
 mostly "Just Work" behind the scenes.
 
 - [x] App loads while offline
-   - [x] prefetch nakamal areas, resources, kava sources on app load
-   - [ ] prefetch add nakamal map marker
+  - [x] prefetch nakamal areas, resources, kava sources on app load
+  - [ ] prefetch add nakamal map marker
 - [ ] Allow for POST requests while offline
-   - [x] nakamal
-   - [x] checkin
-   - [ ] resources, areas, kava sources are not available to POST offline
-           due to them being dependents of creating a nakamal and therefore
-           I won't have an ID available to create the nakamal while offline
-           so why bother creating these resources while offline also?
-           So add a note that these resources may not be created while offline.
-   - [ ] Add UI element to display queued POST requests while offline - connect to IndexedDB with dexie maybe?
-   - [ ] Add notification that POST request is queued instead of submitted.
+  - [x] nakamal
+  - [x] checkin
+  - [ ] resources, areas, kava sources are not available to POST offline
+         due to them being dependents of creating a nakamal and therefore
+         I won't have an ID available to create the nakamal while offline
+         so why bother creating these resources while offline also?
+         So add a note that these resources may not be created while offline.
+  - [ ] Add UI element to display queued POST requests while offline - connect to IndexedDB with dexie maybe?
+  - [ ] Add notification that POST request is queued instead of submitted.
 - [x] Try using NetworkFirst for endpoints such as GET checkins and other dynamic resources
         Currently, after returning to network a queued POST /checkins is not visible to user until
         the second full page reload to get the new resource into cache on first refresh and into
         the UI on the second reload.
-   - [x] NetworkFirst /nakamals
-   - [x] NetworkFirst /checkins
-- [ ] Better Geolocation API
-   - [ ] Improve accuracy
-   - [ ] Distinct marker for user's location
-   - [ ] UI element to show fetching location in progress
+  - [x] NetworkFirst /nakamals
+  - [x] NetworkFirst /checkins
+- [x] Better Geolocation API
+  - [x] Improve accuracy
+  - [x] Distinct marker for user's location
+  - [x] UI element to show fetching location in progress
+- [x] Show nearby nakamals to user if user location icon is selected
+  - [x] show distance
+- [x] Show distance if location available for NakamalMapPopup
+- [ ] Show Polyline for user to nakamal - currently removed code for these functions
+  - [x] Show Polyline between user location and nakamal when selected
+  - [x] Show distance
+    - [ ] Make easier to read distance
+  - [ ] flyTo bounding box of Polyline
+  - [ ] Remove Polyline or redraw when user location updates
 
-
+ 
 ## Future Roadmap Ideas
 
 Below are some ideas for the future of this project.

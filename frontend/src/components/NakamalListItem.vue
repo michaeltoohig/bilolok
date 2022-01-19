@@ -15,27 +15,53 @@
     <v-card-title class="pb-0">
       {{ nakamal.name }}
     </v-card-title>
-    <v-card-subtitle v-if="nakamal.aliases" class="pt-2">
+    <v-card-subtitle v-if="nakamal.aliases.length > 0" class="pt-2">
       {{ nakamal.aliases.join(', ') }}
     </v-card-subtitle>
 
     <v-card-text class="text--primary">
-      <div>Light: {{ nakamal.light }}</div>
-      <div>Windows: {{ nakamal.windows || '-' }}</div>
+      <v-row>
+        <v-col cols="6">
+          <div class="font-weight-light">
+            Distance:
+            <span class="font-weight-bold">{{ displayDistance }}</span>
+          </div>
+          <div class="font-weight-light">
+            Light:
+            <span class="font-weight-bold">{{ nakamal.light }}</span>
+          </div>
+          <div class="font-weight-light">
+            Windows:
+            <span class="font-weight-bold">{{ nakamal.windows || '-' }}</span>
+          </div>
+        </v-col>
+        <v-col cols="6">
+          <div class="font-weight-light">
+            Area:
+            <span class="font-weight-bold">{{ nakamal.area.name }}</span>
+          </div>
+          <div class="font-weight-light">
+            Kava Source:
+            <span class="font-weight-bold">{{ kavaSource(nakamal.kava_source) }}</span>
+          </div>
+          <div class="font-weight-light">
+          </div>
+        </v-col>
+      </v-row>
     </v-card-text>
 
     <v-card-actions>
       <v-btn
         text
+        outlined
         @click="viewPage(nakamal.id)"
-        color="primary"
       >
         View Page
       </v-btn>
       <v-btn
         text
+        outlined
         @click="viewMap(nakamal.id)"
-        color="primary"
       >
         View on Map
       </v-btn>
@@ -44,6 +70,7 @@
 </template>
 
 <script>
+import { latLng } from 'leaflet';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -51,14 +78,26 @@ export default {
   props: ['nakamal'],
   computed: {
     ...mapGetters({
+      location: 'map/location',
       getImages: 'image/nakamal',
     }),
     hasImages() {
       return this.images.length > 0;
     },
     images() {
-      if (!this.nakamal) return [];
       return this.getImages(this.nakamal.id);
+    },
+    displayDistance() {
+      if (!this.location) return null;
+      const locLatLng = latLng(this.location.latitude, this.location.longitude);
+      let distance = Math.round(locLatLng.distanceTo(this.nakamal.latLng));
+      if (distance < 1000) {
+        distance = `${distance} meters`;
+      } else {
+        distance = (distance / 1000).toFixed(1);
+        distance = `${distance} kilometers`;
+      }
+      return distance;
     },
   },
   methods: {
@@ -69,10 +108,18 @@ export default {
         });
     },
     viewMap(id) {
-      this.$store.dispatch('nakamal/select', id)
-        .then(() => {
-          this.$router.push({ name: 'Map' });
-        });
+      this.$emit('fly-to-nearby', id);
+      // this.$store.dispatch('nakamal/select', id)
+      //   .then(() => {
+      //     this.$router.push({ name: 'Map' });
+      //   });
+    },
+    kavaSource(ks) {
+      let v = ks.province;
+      if (ks.island) {
+        v += `: ${ks.island}`;
+      }
+      return v;
     },
   },
   beforeMount() {

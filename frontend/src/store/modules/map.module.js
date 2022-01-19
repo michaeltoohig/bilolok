@@ -12,6 +12,8 @@ const initialState = () => ({
   showFilters: false,
   showSearch: false,
   showDetails: false,
+
+  showDistance: null,
 });
 
 const state = initialState()
@@ -23,6 +25,39 @@ const getters = {
   showLocationProgress: (state) => {
     return state.showLocationProgress;
   },
+  // showDistance: (state) => {
+  //   return state.showDistance;
+  // },
+  // showDistanceLine: (state) => {
+  //   if (!state.showDistance) return [];
+  //   return [
+  //     [
+  //       state.showDistance.from.lat,
+  //       state.showDistance.from.lng,
+  //     ],
+  //     [
+  //       state.showDistance.to.lat,
+  //       state.showDistance.to.lng,
+  //     ],
+  //   ];
+  // },
+  // displayDistance: (state) => {
+  //   if (!state.showDistance) return null;
+  //   let distance = Math.round(latLng(
+  //     state.showDistance.from.lat,
+  //     state.showDistance.from.lng,
+  //   ).distanceTo(latLng(
+  //     state.showDistance.to.lat,
+  //     state.showDistance.to.lng,
+  //   )));
+  //   if (distance < 1000) {
+  //     distance = `${distance} meters`
+  //   } else {
+  //     distance = (distance / 1000).toFixed(1);
+  //     distance = `${distance} kilometers`
+  //   }
+  //   return distance;
+  // },
   bounds: (state) => {
     return state.bounds;
   },
@@ -56,6 +91,9 @@ const actions = {
   setShowLocationProgress: async ({ commit }, show) => {
     commit('setShowLocationProgress', show);
   },
+  // setShowDistance: async ({ commit }, { from, to }) => {
+  //   commit('setShowDistance', { from, to });
+  // },
   setBounds: async ({ commit }, bounds) => {
     commit('setBounds', bounds);
   },
@@ -92,6 +130,9 @@ const mutations = {
   setShowLocationProgress: (state, show) => {
     state.showLocationProgress = show;
   },
+  // setShowDistance: (state, payload) => {
+  //   state.showDistance = payload;
+  // },
   setBounds: (state, bounds) => {
     state.bounds = bounds;
   },

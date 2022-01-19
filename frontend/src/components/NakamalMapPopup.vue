@@ -11,6 +11,22 @@
       :src="selectedNakamalImage.thumbnail"
     ></v-img>
     <v-list light dense>
+      <v-list-item v-show="selectedNakamal.aliases.length > 0">
+        <v-list-item-content class="py-0">
+          <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
+          <v-list-item-subtitle>
+            {{ aliasNames(selectedNakamal.aliases) }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-show="location">
+        <v-list-item-content class="py-0">
+          <v-list-item-title class="font-weight-bold">Distance</v-list-item-title>
+          <v-list-item-subtitle>
+            {{ displayDistance }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item>
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">Light</v-list-item-title>
@@ -37,14 +53,6 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item>
-        <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
-          <v-list-item-subtitle>
-            {{ aliasNames(selectedNakamal.aliases) }}
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
     </v-list>
     <v-btn
       small
@@ -60,9 +68,11 @@
 
 <script>
 import {
+  mapActions,
   mapGetters,
 } from 'vuex';
 import {
+  latLng,
   point,
 } from 'leaflet';
 import {
@@ -81,10 +91,24 @@ export default {
   },
   computed: {
     ...mapGetters({
+      center: 'map/center',
+      location: 'map/location',
       selectedNakamal: 'nakamal/selected',
       getNakamalImages: 'image/nakamal',
       getNakamalHasImages: 'image/nakamalHasImages',
     }),
+    displayDistance() {
+      if (!this.location) return null;
+      const locLatLng = latLng(this.location.latitude, this.location.longitude);
+      let distance = Math.round(locLatLng.distanceTo(this.selectedNakamal.latLng));
+      if (distance < 1000) {
+        distance = `${distance} meters`;
+      } else {
+        distance = (distance / 1000).toFixed(1);
+        distance = `${distance} kilometers`;
+      }
+      return distance;
+    },
     selectedNakamalImage() {
       if (this.selectedNakamal) {
         if (this.getNakamalHasImages(this.selectedNakamal.id)) {
@@ -95,12 +119,27 @@ export default {
     },
   },
   methods: {
+    ...mapActions('map', [
+      'setShowDistance',
+    ]),
     popupClosed() {
       this.$store.dispatch('nakamal/unselect');
     },
     aliasNames(aliases) {
       if (!aliases) return '-';
       return aliases.join(', ');
+    },
+    selectShowDistanceTo(to) {
+      this.setShowDistance({
+        from: {
+          lat: this.location.latitude,
+          lng: this.location.longitude,
+        },
+        to,
+      });
+      // TODO fly-to-bounds of Polyline created
+      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+      // this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
     },
   },
 };

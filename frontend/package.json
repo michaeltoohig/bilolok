@@ -24,6 +24,7 @@
     "leaflet.markercluster": "^1.4.1",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",
+    "sphere-knn": "^1.4.0",
     "vue": "^2.6.11",
     "vue-pswipe": "^0.15.3",
     "vue-router": "^3.2.0",
