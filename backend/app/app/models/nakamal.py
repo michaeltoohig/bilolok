@@ -21,7 +21,7 @@ class Nakamal(Base):
     __tablename__ = "nakamal"
 
     name = Column(String, nullable=False)
-    aliases = Column(ARRAY(String))
+    aliases = Column(ARRAY(String), nullable=False)
     lat = Column(Float, nullable=False)
     lng = Column(Float, nullable=False)
     light = Column(String)
