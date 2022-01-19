@@ -11,7 +11,7 @@
       :src="selectedNakamalImage.thumbnail"
     ></v-img>
     <v-list light dense>
-      <v-list-item v-show="selectedNakamal.aliases.length > 0">
+      <v-list-item v-if="selectedNakamal.aliases.length">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
           <v-list-item-subtitle>
@@ -19,7 +19,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-show="location">
+      <v-list-item v-if="location">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">Distance</v-list-item-title>
           <v-list-item-subtitle>

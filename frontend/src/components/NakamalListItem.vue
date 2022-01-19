@@ -15,7 +15,7 @@
     <v-card-title class="pb-0">
       {{ nakamal.name }}
     </v-card-title>
-    <v-card-subtitle v-if="nakamal.aliases.length > 0" class="pt-2">
+    <v-card-subtitle v-if="nakamal.aliases.length" class="pt-2">
       {{ nakamal.aliases.join(', ') }}
     </v-card-subtitle>
 
