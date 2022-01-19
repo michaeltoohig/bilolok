@@ -92,10 +92,10 @@ export default {
       const locLatLng = latLng(this.location.latitude, this.location.longitude);
       let distance = Math.round(locLatLng.distanceTo(this.nakamal.latLng));
       if (distance < 1000) {
-        distance = `${distance} meters`;
+        distance = `${distance}m`;
       } else {
         distance = (distance / 1000).toFixed(1);
-        distance = `${distance} kilometers`;
+        distance = `${distance}Km`;
       }
       return distance;
     },
