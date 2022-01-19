@@ -402,14 +402,13 @@ export default {
       this.setShowLocationProgress(true);
 
       // Mock get location
-      this.getLocationSuccess({
-        coords: {
-          latitude: this.center.lat,
-          longitude: this.center.lng,
-        },
-      }, 'success');
-      return;
-      /* eslint-disable */
+      // this.getLocationSuccess({
+      //   coords: {
+      //     latitude: this.center.lat,
+      //     longitude: this.center.lng,
+      //   },
+      // }, 'success');
+      // return;
       navigator.geolocation.getAccurateCurrentPosition(
         this.getLocationSuccess,
         this.getLocationError,
