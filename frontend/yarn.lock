@@ -5664,6 +5664,11 @@ launch-editor@^2.2.1:
     chalk "^2.3.0"
     shell-quote "^1.6.1"
 
+leaflet.heat@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/leaflet.heat/-/leaflet.heat-0.2.0.tgz#109d8cf586f0adee41f05aff031e27a77fecc229"
+  integrity sha1-EJ2M9Ybwre5B8Fr/Ax4np3/swik=
+
 leaflet.markercluster@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npmjs.org/leaflet.markercluster/-/leaflet.markercluster-1.4.1.tgz"
