@@ -59,6 +59,13 @@ function commitAddCheckin(checkin, commit) {
 };
 
 const actions = {
+  getAll: async ({ commit }) => {
+    const response = await checkinsApi.getAll();
+    const checkins = response.data;
+    checkins.forEach((item) => {
+      commitAddCheckin(item, commit);
+    });
+  },
   getRecent: async ({ commit }) => {
     let checkins = [];
     const response = await checkinsApi.getRecent();

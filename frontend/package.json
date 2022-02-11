@@ -21,6 +21,7 @@
     "dayjs": "^1.10.7",
     "dexie": "^3.0.3",
     "leaflet": "^1.7.1",
+    "leaflet.heat": "^0.2.0",
     "leaflet.markercluster": "^1.4.1",
     "register-service-worker": "^1.7.1",
     "roboto-fontface": "*",

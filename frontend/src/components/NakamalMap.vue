@@ -175,6 +175,22 @@
                   dark
                   small
                   color="secondary darken-1"
+                  @click.stop="toggleCheckinHeatmap"
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-map-check</v-icon>
+                </v-btn>
+              </template>
+              <span>Check-in Heatmap</span>
+            </v-tooltip>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="secondary darken-1"
                   @click.stop="setShowFilters(true)"
                   v-bind="attrs"
                   v-on="on"
@@ -203,7 +219,17 @@
           </v-speed-dial>
         </v-fab-transition>
       </l-control>
+
       <Compass></Compass>
+
+      <Vue2LeafletHeatmap
+        :visible="showHeatmap"
+        :lat-lng="checkinHeatmap"
+        :radius="20"
+        :min-opacity=".50"
+        :max-zoom="16"
+        :blur="18"
+      ></Vue2LeafletHeatmap>
     </l-map>
 
     <NakamalSearchDialog></NakamalSearchDialog>
@@ -249,7 +275,6 @@ import {
 import {
   LMap, LTileLayer, LMarker, LControl, LLayerGroup,
 } from 'vue2-leaflet';
-
 import sphereKnn from 'sphere-knn';
 
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
@@ -261,6 +286,9 @@ import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
 import NakamalListItem from '@/components/NakamalListItem.vue';
 import Compass from '@/components/Compass.vue';
 
+import Vue2LeafletHeatmap from '@/components/Vue2LeafletHeatmap.vue';
+
+const { L } = window;
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg');
@@ -282,9 +310,11 @@ export default {
     LMarker,
     LControl,
     LLayerGroup,
+    Vue2LeafletHeatmap,
   },
   data() {
     return {
+      showHeatmap: false,
       showNearbyNakamals: false,
       nearbyNakamals: [],
       fab: false,
@@ -338,10 +368,30 @@ export default {
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
       getNakamalHasImages: 'image/nakamalHasImages',
+      checkins: 'checkin/list',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
       darkMode: 'setting/darkMode',
     }),
+    checkinHeatmap() {
+      // XXX Not as efficient as it could be
+      const counts = {};
+      let maxCheckins = 1;
+      const nakIds = this.nakamals.map((n) => n.id);
+      const checkins = this.checkins.filter((c) => nakIds.includes(c.nakamal.id));
+      checkins.forEach((c) => {
+        const nId = c.nakamal.id;
+        counts[nId] = counts[nId] ? counts[nId] + 1 : 1;
+        if (counts[nId] > maxCheckins) {
+          maxCheckins = counts[nId];
+        }
+      });
+      return checkins.map((c) => {
+        let intensity = 0;
+        intensity = (counts[c.nakamal.id] / maxCheckins);
+        return [c.nakamal.lat, c.nakamal.lng, intensity];
+      });
+    },
     url() {
       if (this.darkMode) {
         return 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
@@ -367,6 +417,14 @@ export default {
     },
   },
   methods: {
+    async toggleCheckinHeatmap() {
+      if (this.showHeatmap) {
+        this.showHeatmap = false;
+      } else {
+        this.showHeatmap = true;
+        await this.$store.dispatch('checkin/getAll');
+      }
+    },
     getLocationSuccess(pos, result) {
       this.setShowLocationProgress(false);
       if (result === 'success') {
