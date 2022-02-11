@@ -203,6 +203,7 @@
           </v-speed-dial>
         </v-fab-transition>
       </l-control>
+      <Compass></Compass>
     </l-map>
 
     <NakamalSearchDialog></NakamalSearchDialog>
@@ -258,6 +259,7 @@ import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
 import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
 import NakamalListItem from '@/components/NakamalListItem.vue';
+import Compass from '@/components/Compass.vue';
 
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
@@ -274,6 +276,7 @@ export default {
     NakamalMapPopup,
     NakamalFilterSidebar,
     NakamalListItem,
+    Compass,
     LMap,
     LTileLayer,
     LMarker,
@@ -325,6 +328,7 @@ export default {
       isUserVerified: 'auth/isUserVerified',
       location: 'map/location',
       showLocationProgress: 'map/showLocationProgress',
+      showCompass: 'map/showCompass',
       bounds: 'map/bounds',
       center: 'map/center',
       zoom: 'map/zoom',
@@ -400,25 +404,14 @@ export default {
       }
       // get position
       this.setShowLocationProgress(true);
-
-      // Mock get location
-      // this.getLocationSuccess({
-      //   coords: {
-      //     latitude: this.center.lat,
-      //     longitude: this.center.lng,
-      //   },
-      // }, 'success');
-      // return;
       navigator.geolocation.getAccurateCurrentPosition(
         this.getLocationSuccess,
         this.getLocationError,
         this.getLocationProgress,
         {
           desiredAccuracy: 20,
-          // minCount: 1,
           desiredAccuracyCountMin: 2,
           maxWait: 15000,
-          // enableLowAccuracyOnTimeout: true,
         },
       );
     },
@@ -439,6 +432,7 @@ export default {
       'map', [
         'setLocation',
         'setShowLocationProgress',
+        'setShowCompass',
         'setBounds',
         'setCenter',
         'setZoom',
@@ -521,6 +515,9 @@ export default {
         this.flyToSelected();
       }, 500);
     }
+  },
+  async beforeDestroy() {
+    await this.$store.dispatch('map/clearWatcher');
   },
 };
 </script>

@@ -63,6 +63,16 @@
     >
       View Page
     </v-btn>
+    <v-btn
+      small
+      block
+      color="primary"
+      class="mt-3"
+      @click="setShowCompass(true)"
+    >
+      <v-icon small class="mr-1">mdi-compass</v-icon>
+      Compass
+    </v-btn>
   </l-popup>
 </template>
 
@@ -120,7 +130,8 @@ export default {
   },
   methods: {
     ...mapActions('map', [
-      'setShowDistance',
+      // 'setShowDistance',
+      'setShowCompass',
     ]),
     popupClosed() {
       this.$store.dispatch('nakamal/unselect');
@@ -129,22 +140,24 @@ export default {
       if (!aliases) return '-';
       return aliases.join(', ');
     },
-    selectShowDistanceTo(to) {
-      this.setShowDistance({
-        from: {
-          lat: this.location.latitude,
-          lng: this.location.longitude,
-        },
-        to,
-      });
-      // TODO fly-to-bounds of Polyline created
-      // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-      // this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
-    },
+    // selectShowDistanceTo(to) {
+    //   this.setShowDistance({
+    //     from: {
+    //       lat: this.location.latitude,
+    //       lng: this.location.longitude,
+    //     },
+    //     to,
+    //   });
+    //   // TODO fly-to-bounds of Polyline created
+    //   // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
+    //   // this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
+    // },
   },
 };
 </script>
 
-<style>
-
+<style scoped>
+.v-list-item {
+  padding: 0;
+}
 </style>
