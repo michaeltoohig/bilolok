@@ -12,9 +12,12 @@ const initialState = () => ({
   showFilters: false,
   showSearch: false,
   showDetails: false,
-  showCompass: false,
+  showHeatmap: false,
+  // showDistance: null,
   watchId: null,
-  showDistance: null,
+  compassMode: false,
+  skipCompassModeIntro: false,
+  compassModePolyline: [],
 });
 
 const state = initialState()
@@ -26,45 +29,21 @@ const getters = {
   showLocationProgress: (state) => {
     return state.showLocationProgress;
   },
-  showCompass: (state) => {
-    return state.showCompass;
+  compassMode: (state) => {
+    return state.compassMode;
+  },
+  skipCompassModeIntro: (state) => {
+    return state.skipCompassModeIntro;
+  },
+  compassModePolyline: (state) => {
+    return state.compassModePolyline;
+  },
+  showHeatmap: (state) => {
+    return state.showHeatmap;
   },
   watchId: (state) => {
     return state.watchId;
   },
-  // showDistance: (state) => {
-  //   return state.showDistance;
-  // },
-  // showDistanceLine: (state) => {
-  //   if (!state.showDistance) return [];
-  //   return [
-  //     [
-  //       state.showDistance.from.lat,
-  //       state.showDistance.from.lng,
-  //     ],
-  //     [
-  //       state.showDistance.to.lat,
-  //       state.showDistance.to.lng,
-  //     ],
-  //   ];
-  // },
-  // displayDistance: (state) => {
-  //   if (!state.showDistance) return null;
-  //   let distance = Math.round(latLng(
-  //     state.showDistance.from.lat,
-  //     state.showDistance.from.lng,
-  //   ).distanceTo(latLng(
-  //     state.showDistance.to.lat,
-  //     state.showDistance.to.lng,
-  //   )));
-  //   if (distance < 1000) {
-  //     distance = `${distance} meters`
-  //   } else {
-  //     distance = (distance / 1000).toFixed(1);
-  //     distance = `${distance} kilometers`
-  //   }
-  //   return distance;
-  // },
   bounds: (state) => {
     return state.bounds;
   },
@@ -98,7 +77,7 @@ const actions = {
   setShowLocationProgress: async ({ commit }, show) => {
     commit('setShowLocationProgress', show);
   },
-  setShowCompass: async ({ commit, dispatch }, show) => {
+  startCompassMode: async ({ commit, dispatch, getters }) => {
     if (!('geolocation' in navigator)) {
       await dispatch('notify/add', {
         title: 'Location Not Available',
@@ -108,42 +87,34 @@ const actions = {
       }, { root: true });
       return;
     }
-    commit('setShowCompass', show);
-    if (show) {
-      await dispatch('clearWatcher');
-      const watchId = navigator.geolocation.watchPosition(position => {
-        console.log('yyy', position.coords);
-        // if (position.coords.heading === null) {
-        //   await dispatch('notify/add', {
-        //     title: 'Heading Not Available',
-        //     text: 'Your device does not provide the direction you are facing; required for us to show a compass.',
-        //     color: 'info',
-        //     duration: 5_000,
-        //   }, { root: true });
-        //   await dispatch('clearWatcher');
-        //   return;
-        // }
-        commit('setLocation', position.coords);
-      }, error => {
-        console.log(error);
-      }, {
-        enableHighAccuracy: true,
-      });
-      commit('setWatchId', watchId);
-    } else {
-      await dispatch('clearWatcher');
-    }
+    commit('skipCompassModeIntro');
+    await dispatch('startWatcher');
+    commit('setCompassMode', true);
   },
-  clearWatcher: async ({ getters }) => {
+  stopCompassMode: async ({ commit, dispatch }) => {
+    commit('setCompassMode', false);
+    await dispatch('clearWatcher');
+  },
+  startWatcher: async ({ commit, dispatch }) => {
+    await dispatch('clearWatcher');
+    const watchId = navigator.geolocation.watchPosition(position => {
+      commit('setLocation', position.coords);
+      commit('appendCompassModePolyline', position.coords);
+    }, error => {
+      console.log(error);
+    }, {
+      enableHighAccuracy: true,
+    });
+    commit('setWatchId', watchId);
+  },
+  clearWatcher: async ({ commit, getters }) => {
     const watchId = getters.watchId;
     if (watchId !== null) {
-      console.log(watchId);
+      console.log("clearing position watcher")
       navigator.geolocation.clearWatch(watchId);
     }
+    commit('clearCompassModePolyline');
   },
-  // setShowDistance: async ({ commit }, { from, to }) => {
-  //   commit('setShowDistance', { from, to });
-  // },
   setBounds: async ({ commit }, bounds) => {
     commit('setBounds', bounds);
   },
@@ -165,6 +136,9 @@ const actions = {
   setShowDetails: async ({ commit }, show) => {
     commit('setShowDetails', show);
   },
+  setShowHeatmap: async ({ commit }, show) => {
+    commit('setShowHeatmap', show);
+  },
 };
 
 const mutations = {
@@ -175,21 +149,26 @@ const mutations = {
     })
   },
   setLocation: (state, location) => {
-    console.log('zzz', location.heading, location);
     state.location = location;
   },
   setShowLocationProgress: (state, show) => {
     state.showLocationProgress = show;
   },
-  setShowCompass: (state, show) => {
-    state.showCompass = show;
+  setCompassMode: (state, value) => {
+    state.compassMode = value;
+  },
+  skipCompassModeIntro: (state) => {
+    state.skipCompassModeIntro = true;
+  },
+  appendCompassModePolyline: (state, location) => {
+    state.compassModePolyline.push([location.latitude, location.longitude]);
+  },
+  clearCompassModePolyline: (state) => {
+    state.compassModePolyline = [];
   },
   setWatchId: (state, id) => {
     state.watchId = id;
   },
-  // setShowDistance: (state, payload) => {
-  //   state.showDistance = payload;
-  // },
   setBounds: (state, bounds) => {
     state.bounds = bounds;
   },
@@ -210,6 +189,9 @@ const mutations = {
   },
   setShowDetails: (state, show) => {
     state.showDetails = show;
+  },
+  setShowHeatmap: (state, show) => {
+    state.showHeatmap = show;
   },
 };
 

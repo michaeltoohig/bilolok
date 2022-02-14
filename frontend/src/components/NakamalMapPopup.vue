@@ -11,7 +11,7 @@
       :src="selectedNakamalImage.thumbnail"
     ></v-img>
     <v-list light dense>
-      <v-list-item v-if="selectedNakamal.aliases.length">
+      <v-list-item v-if="selectedNakamal.aliases">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
           <v-list-item-subtitle>
@@ -68,7 +68,7 @@
       block
       color="primary"
       class="mt-3"
-      @click="setShowCompass(true)"
+      @click="clickCompass"
     >
       <v-icon small class="mr-1">mdi-compass</v-icon>
       Compass
@@ -78,7 +78,6 @@
 
 <script>
 import {
-  mapActions,
   mapGetters,
 } from 'vuex';
 import {
@@ -129,10 +128,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions('map', [
-      // 'setShowDistance',
-      'setShowCompass',
-    ]),
+    clickCompass() {
+      this.$emit('compass');
+    },
     popupClosed() {
       this.$store.dispatch('nakamal/unselect');
     },

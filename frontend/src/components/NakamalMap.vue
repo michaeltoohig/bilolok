@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <v-container
     fluid
@@ -37,52 +35,13 @@
         @load="tileLoadComplete"
       />
 
-      <NewNakamalDialog
-        :show="showNewNakamalMarker"
-      ></NewNakamalDialog>
-
-      <v-dialog
-        v-model="showNearbyNakamals"
-        persistent
-        scrollable
-        width="500"
-      >
-        <v-card>
-          <v-card-title >
-            Nearby Kava Bars
-          </v-card-title>
-          <v-divider></v-divider>
-          <v-card-text v-if="nearbyNakamals.length > 0">
-            <v-row dense>
-              <v-col cols="12" v-for="nakamal in nearbyNakamals" :key="nakamal.id">
-                <NakamalListItem
-                  :nakamal="nakamal"
-                  v-on:fly-to-nearby="flyToNearby"
-                ></NakamalListItem>
-              </v-col>
-            </v-row>
-          </v-card-text>
-          <v-card-text v-else class="text-center mt-5 font-weight-bold h5">
-            No kava bars nearby...
-          </v-card-text>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              @click="showNearbyNakamals = false"
-            >
-              close
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <NewNakamalDialog></NewNakamalDialog>
 
       <l-marker
         v-if="location"
         :icon="iconGeolocation"
         :lat-lng="[location.latitude, location.longitude]"
-        @click="showNearbyNakamals = true;"
+        @click="clickUserLocation"
       ></l-marker>
 
       <l-marker
@@ -94,7 +53,7 @@
       ></l-marker>
 
       <l-layer-group v-if="selectedNakamal" ref="nakamalPopup">
-        <NakamalMapPopup></NakamalMapPopup>
+        <NakamalMapPopup v-on:compass="startCompassModeWithIntro"></NakamalMapPopup>
       </l-layer-group>
 
       <l-control
@@ -106,121 +65,16 @@
       <l-control
         :position="'bottomright'"
       >
-        <v-fab-transition>
-          <v-btn
-            v-if="showNewNakamalMarker"
-            color="accent"
-            dark
-            fab
-            @click="setShowNewNakamalMarker(false)"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-speed-dial
-            v-else
-            v-model="fab"
-            transition="slide-y-reverse-transition"
-          >
-            <template v-slot:activator>
-              <v-btn
-                v-model="fab"
-                color="secondary darken-2"
-                dark
-                fab
-              >
-                <v-icon v-if="fab">
-                  mdi-close
-                </v-icon>
-                <v-icon v-else>
-                  mdi-menu
-                </v-icon>
-              </v-btn>
-            </template>
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="secondary darken-1"
-                  @click.stop="getLocation"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-crosshairs-gps</v-icon>
-                </v-btn>
-              </template>
-              <span>Get Location</span>
-            </v-tooltip>
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="secondary darken-1"
-                  @click.stop="setShowSearch(true)"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-map-search</v-icon>
-                </v-btn>
-              </template>
-              <span>Search</span>
-            </v-tooltip>
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="secondary darken-1"
-                  @click.stop="toggleCheckinHeatmap"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-map-check</v-icon>
-                </v-btn>
-              </template>
-              <span>Check-in Heatmap</span>
-            </v-tooltip>
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="secondary darken-1"
-                  @click.stop="setShowFilters(true)"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-map-minus</v-icon>
-                </v-btn>
-              </template>
-              <span>Filter</span>
-            </v-tooltip>
-            <v-tooltip left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="secondary darken-1"
-                  @click.stop="newNakamalMarker"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-map-marker-plus</v-icon>
-                </v-btn>
-              </template>
-              <span>Add Kava Bar</span>
-            </v-tooltip>
-          </v-speed-dial>
-        </v-fab-transition>
+        <NakamalMapFabButtons></NakamalMapFabButtons>
       </l-control>
 
-      <Compass></Compass>
+      <l-control
+        :position="'topright'"
+      >
+        <Compass v-on:stop="setStopCompassMode"></Compass>
+      </l-control>
+
+      <LPolyline :lat-lngs="compassModePolyline"></LPolyline>
 
       <Vue2LeafletHeatmap
         :visible="showHeatmap"
@@ -238,26 +92,48 @@
 
     <NakamalFilterSidebar></NakamalFilterSidebar>
 
+    <LocationProgressDialog></LocationProgressDialog>
+
+    <CompassModeIntroDialog
+      :show="showCompassModeIntroDialog"
+      v-on:hide="() => { showCompassModeIntroDialog = false; }"
+    ></CompassModeIntroDialog>
+
     <v-dialog
-      v-model="showLocationProgress"
-      max-width="500"
+      v-model="showNearbyNakamals"
       persistent
+      scrollable
+      width="500"
+      color="primary"
     >
       <v-card>
-        <v-progress-linear
-          color="primary"
-          indeterminate
-          absolute
-          top
-          height="6"
-        ></v-progress-linear>
-        <v-card-title>Getting Your Location</v-card-title>
-        <v-card-text>
-          <div class="d-flex flex-row justify-start align-center">
-            <v-icon class="mr-3" size="64">mdi-crosshairs-gps</v-icon>
-            Please wait while we get your device's location. This may take a few seconds.
-          </div>
+        <v-card-title >
+          Nearby Kava Bars
+        </v-card-title>
+        <v-divider></v-divider>
+        <v-card-text class="py-3" v-if="nearbyNakamals.length > 0">
+          <v-row dense>
+            <v-col cols="12" v-for="nakamal in nearbyNakamals" :key="nakamal.id">
+              <NakamalListItem
+                :nakamal="nakamal"
+                v-on:fly-to-nearby="flyToNearby"
+              ></NakamalListItem>
+            </v-col>
+          </v-row>
         </v-card-text>
+        <v-card-text v-else class="text-center mt-5 font-weight-bold h5">
+          No kava bars nearby...
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            @click="showNearbyNakamals = false"
+          >
+            close
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-container>
@@ -273,10 +149,11 @@ import {
   icon, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LControl, LLayerGroup,
+  LMap, LTileLayer, LMarker, LControl, LLayerGroup, LPolyline,
 } from 'vue2-leaflet';
 import sphereKnn from 'sphere-knn';
 
+import NakamalMapFabButtons from '@/components/NakamalMapFabButtons.vue';
 import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
 import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
 import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
@@ -285,10 +162,12 @@ import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
 import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
 import NakamalListItem from '@/components/NakamalListItem.vue';
 import Compass from '@/components/Compass.vue';
+import CompassModeIntroDialog from '@/components/CompassModeIntroDialog.vue';
+import LocationProgressDialog from '@/components/LocationProgressDialog.vue';
 
 import Vue2LeafletHeatmap from '@/components/Vue2LeafletHeatmap.vue';
 
-const { L } = window;
+// const { L } = window;
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg');
@@ -297,6 +176,7 @@ export default {
   name: 'NakamalMap',
   mixins: [OfflineMixin],
   components: {
+    NakamalMapFabButtons,
     NakamalBottomSheet,
     NetworkStatusDialog,
     NakamalSearchDialog,
@@ -305,21 +185,23 @@ export default {
     NakamalFilterSidebar,
     NakamalListItem,
     Compass,
+    CompassModeIntroDialog,
+    LocationProgressDialog,
     LMap,
     LTileLayer,
     LMarker,
     LControl,
     LLayerGroup,
+    LPolyline,
     Vue2LeafletHeatmap,
   },
   data() {
     return {
-      showHeatmap: false,
+      showCompassModeIntroDialog: false,
       showNearbyNakamals: false,
       nearbyNakamals: [],
-      fab: false,
       minZoom: 12,
-      maxBounds: latLngBounds([
+      maxBoundsPortVila: latLngBounds([
         [-17.627, 168.11],
         [-17.830, 168.47],
       ]),
@@ -355,16 +237,15 @@ export default {
       // showDistance: 'map/showDistance', // testing idea - needs refined
       // showDistanceLine: 'map/showDistanceLine',
       // distance: 'map/displayDistance',
-      isUserVerified: 'auth/isUserVerified',
+      showHeatmap: 'map/showHeatmap',
       location: 'map/location',
-      showLocationProgress: 'map/showLocationProgress',
-      showCompass: 'map/showCompass',
+      compassMode: 'map/compassMode',
+      skipCompassModeIntro: 'map/skipCompassModeIntro',
+      compassModePolyline: 'map/compassModePolyline',
       bounds: 'map/bounds',
       center: 'map/center',
       zoom: 'map/zoom',
-      showNewNakamalMarker: 'map/showNewNakamalMarker',
       nakamals: 'nakamal/filteredList',
-      hasFilters: 'nakamal/hasFilters',
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
       getNakamalHasImages: 'image/nakamalHasImages',
@@ -373,6 +254,15 @@ export default {
       recentNakamalIds: 'checkin/recentNakamalIds',
       darkMode: 'setting/darkMode',
     }),
+    maxBounds() {
+      if (this.compassMode && this.location) {
+        return latLngBounds([
+          [this.location.latitude, this.location.longitude],
+          [this.location.latitude, this.location.longitude],
+        ]);
+      }
+      return this.maxBoundsPortVila;
+    },
     checkinHeatmap() {
       // XXX Not as efficient as it could be
       const counts = {};
@@ -417,62 +307,68 @@ export default {
     },
   },
   methods: {
-    async toggleCheckinHeatmap() {
-      if (this.showHeatmap) {
-        this.showHeatmap = false;
-      } else {
-        this.showHeatmap = true;
-        await this.$store.dispatch('checkin/getAll');
-      }
-    },
-    getLocationSuccess(pos, result) {
-      this.setShowLocationProgress(false);
-      if (result === 'success') {
-        this.setLocation(pos.coords);
-        this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
-        // Testing sphere Knn
-        this.findNearestNakamals();
-      } else {
-        this.getLocationError({});
-      }
-    },
-    getLocationError(error) {
-      console.log('Location error:', error);
-      this.setShowLocationProgress(false);
-      this.$store.dispatch('notify/add', {
-        title: 'Location Not Found',
-        text: 'Your device did not provide an accurate location.',
-        color: 'error',
-        duration: 5_000,
-      });
-    },
-    getLocationProgress(pos) {
-      this.setShowLocationProgress(true);
-      console.log('Location progress:', pos);
-    },
-    getLocation() {
-      if (!('geolocation' in navigator)) {
-        this.$store.dispatch('notify/add', {
-          title: 'Location Not Available',
-          text: 'Your device does not provide location or you have blocked location access.',
-          color: 'info',
-          duration: 5_000,
-        });
+    startCompassModeWithIntro() {
+      if (this.skipCompassModeIntro) {
+        this.startCompassMode();
         return;
       }
-      // get position
-      this.setShowLocationProgress(true);
-      navigator.geolocation.getAccurateCurrentPosition(
-        this.getLocationSuccess,
-        this.getLocationError,
-        this.getLocationProgress,
-        {
-          desiredAccuracy: 20,
-          desiredAccuracyCountMin: 2,
-          maxWait: 15000,
-        },
-      );
+      this.showCompassModeIntroDialog = true;
     },
+    async setStopCompassMode() {
+      await this.stopCompassMode();
+      this.flyToSelected();
+    },
+    clickUserLocation() {
+      this.findNearestNakamals();
+      this.showNearbyNakamals = true;
+    },
+    // getLocationSuccess(pos, result) {
+    //   this.setShowLocationProgress(false);
+    //   if (result === 'success') {
+    //     this.setLocation(pos.coords);
+    //     this.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+    //     // // Testing sphere Knn
+    //     // this.findNearestNakamals();
+    //   } else {
+    //     this.getLocationError({});
+    //   }
+    // },
+    // getLocationError(error) {
+    //   console.log('Location error:', error);
+    //   this.setShowLocationProgress(false);
+    //   this.$store.dispatch('notify/add', {
+    //     title: 'Location Not Found',
+    //     text: 'Your device did not provide an accurate location.',
+    //     color: 'error',
+    //     duration: 5_000,
+    //   });
+    // },
+    // getLocationProgress(pos) {
+    //   this.setShowLocationProgress(true);
+    // },
+    // getLocation() {
+    //   if (!('geolocation' in navigator)) {
+    //     this.$store.dispatch('notify/add', {
+    //       title: 'Location Not Available',
+    //       text: 'Your device does not provide location or you have blocked location access.',
+    //       color: 'info',
+    //       duration: 5_000,
+    //     });
+    //     return;
+    //   }
+    //   // get position
+    //   this.setShowLocationProgress(true);
+    //   navigator.geolocation.getAccurateCurrentPosition(
+    //     this.getLocationSuccess,
+    //     this.getLocationError,
+    //     this.getLocationProgress,
+    //     {
+    //       desiredAccuracy: 20,
+    //       desiredAccuracyCountMin: 2,
+    //       maxWait: 15000,
+    //     },
+    //   );
+    // },
     findNearestNakamals() {
       const lookup = sphereKnn(this.nakamals);
       this.nearbyNakamals = lookup(this.location.latitude, this.location.longitude, 10, 1000);
@@ -482,15 +378,11 @@ export default {
       this.markerClick(id);
     },
     ...mapActions(
-      'nakamal', [
-        'removeFilters',
-      ],
-    ),
-    ...mapActions(
       'map', [
         'setLocation',
         'setShowLocationProgress',
-        'setShowCompass',
+        'startCompassMode',
+        'stopCompassMode',
         'setBounds',
         'setCenter',
         'setZoom',
@@ -502,23 +394,6 @@ export default {
     ),
     iconMarker(nakamalId) {
       return this.recentNakamalIds.includes(nakamalId) ? this.iconCheckmark : this.icon;
-    },
-    newNakamalMarker() {
-      this.fab = false;
-      if (this.isUserVerified) {
-        this.setShowNewNakamalMarker(true);
-        if (this.hasFilters) {
-          this.removeFilters();
-          this.$store.dispatch('notify/add', {
-            title: 'Filters Removed',
-            text: 'We removed filters so you do not accidentally add an existing kava bar.',
-            color: 'info',
-            duration: 5_000,
-          });
-        }
-      } else {
-        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
-      }
     },
     flyTo(latlng, zoom = 18) {
       this.$refs.map.mapObject.setView(latlng, zoom);
@@ -562,6 +437,7 @@ export default {
     this.$store.dispatch('map/RESET');
     this.$root.$on('fly-to-selected', this.flyToSelected);
     this.$root.$on('fly-to-bounds', this.flyToBounds);
+    this.$root.$on('fly-to', this.flyTo);
   },
   async mounted() {
     // this.loading = true;

@@ -230,12 +230,6 @@ export default {
     LTooltip,
   },
   mixins: [validationMixin],
-  props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
-  },
   data() {
     return {
       dialog: false,
@@ -285,6 +279,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      show: 'map/showNewNakamalMarker',
       center: 'map/center',
     }),
     form() {

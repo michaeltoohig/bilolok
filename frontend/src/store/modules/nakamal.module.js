@@ -60,12 +60,7 @@ const getters = {
     return state.allIds.length;
   },
   selected: (state, getters) => {
-    if (state.selectedId === null) return {
-      name: '',
-      owner: '',
-      phone: '',
-      image: null,
-    };
+    if (state.selectedId === null) return null;
     return getters.find(state.selectedId);
   },
 };
@@ -74,12 +69,6 @@ function commitAddNakamal(nakamal, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
   commit('add', normalizeRelations(nakamal, []));
-  // Add or update the image.
-  // if (nakamal.image) {
-  //   commit('image/add', nakamal.image, {
-  //     root: true,
-  //   });
-  // }
 };
 
 const actions = {

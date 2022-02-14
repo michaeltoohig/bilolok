@@ -5,7 +5,7 @@
     scrollable
     max-height="70vh"
   >
-    <v-card>
+    <v-card v-if="selectedNakamal">
       <v-card-title>
         <h2 class="display-1">{{ selectedNakamal.name }}</h2>
         <v-spacer></v-spacer>
