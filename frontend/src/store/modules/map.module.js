@@ -9,6 +9,8 @@ const initialState = () => ({
   center: latLng(-17.741526, 168.312024),
   zoom: 15,
   showNewNakamalMarker: false,
+  showHeatmap: false,
+  showHeatmapMenu: false,
   showFilters: false,
   showSearch: false,
   showDetails: false,
@@ -77,6 +79,12 @@ const getters = {
   showNewNakamalMarker: (state) => {
     return state.showNewNakamalMarker;
   },
+  showHeatmap: (state) => {
+    return state.showHeatmap;
+  },
+  showHeatmapMenu: (state) => {
+    return state.showHeatmapMenu;
+  },
   showFilters: (state) => {
     return state.showFilters;
   },
@@ -112,17 +120,6 @@ const actions = {
     if (show) {
       await dispatch('clearWatcher');
       const watchId = navigator.geolocation.watchPosition(position => {
-        console.log('yyy', position.coords);
-        // if (position.coords.heading === null) {
-        //   await dispatch('notify/add', {
-        //     title: 'Heading Not Available',
-        //     text: 'Your device does not provide the direction you are facing; required for us to show a compass.',
-        //     color: 'info',
-        //     duration: 5_000,
-        //   }, { root: true });
-        //   await dispatch('clearWatcher');
-        //   return;
-        // }
         commit('setLocation', position.coords);
       }, error => {
         console.log(error);
@@ -155,6 +152,15 @@ const actions = {
   },
   setShowNewNakamalMarker: async ({ commit }, show) => {
     commit('setShowNewNakamalMarker', show);
+  },
+  setShowHeatmap: async ({ commit, dispatch }, show) => {
+    commit('setShowHeatmap', show);
+    if (show) {
+      await dispatch('checkin/getAll', {}, { root: true });
+    }
+  },
+  setShowHeatmapMenu: async ({ commit }, show) => {
+    commit('setShowHeatmapMenu', show);
   },
   setShowFilters: async ({ commit }, show) => {
     commit('setShowFilters', show);
@@ -201,6 +207,12 @@ const mutations = {
   },
   setShowNewNakamalMarker: (state, show) => {
     state.showNewNakamalMarker = show;
+  },
+  setShowHeatmap: (state, show) => {
+    state.showHeatmap = show;
+  },
+  setShowHeatmapMenu: (state, show) => {
+    state.showHeatmapMenu = show;
   },
   setShowFilters: (state, show) => {
     state.showFilters = show;

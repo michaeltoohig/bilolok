@@ -12,6 +12,7 @@ const initialState = () => ({
   byNakamalId: {},
   recentIds: [],
   allIds: [],
+  filters: {},
 });
 
 const state = initialState();
@@ -25,6 +26,20 @@ const getters = {
   // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
+  },
+  filteredList: (state, getters) => {
+    let checkins = state.allIds.map(id => getters.find(id));
+    if ('user' in state.filters) {
+      console.log(444, state.filters.user, checkins[0]);
+      checkins = checkins.filter((c) => c.user.id === state.filters.user);
+    }
+    return checkins;
+  },
+  filters: (state) => {
+    return state.filters;
+  },
+  hasFilters: (state) => {
+    return Object.keys(state.filters).length > 0;
   },
   // Return a list of recent images.
   recent: (state, getters) => {
@@ -115,6 +130,13 @@ const actions = {
       }, { root: true });
     }
   },
+  setFilter: ({ commit }, { key, value }) => {
+    console.log(555, key, value);
+    commit('setFilter', { key, value });
+  },
+  removeFilters: ({ commit }) => {
+    commit('removeFilters');
+  },
 };
 
 const mutations = {
@@ -140,7 +162,12 @@ const mutations = {
   setRecentIds: (state, ids) => {
     state.recentIds = ids;
   },
-};
+  setFilter: (state, { key, value }) => {
+    Vue.set(state.filters, key, value);
+  },
+  removeFilters: (state) => {
+    Vue.set(state, 'filters', {});
+  }, };
 
 export default {
   actions,

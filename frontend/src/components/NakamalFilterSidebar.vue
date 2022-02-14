@@ -165,6 +165,7 @@ export default {
     },
   },
   async beforeMount() {
+    // TODO move this into the vuex store and when menu is opened then dispatch these
     await this.getAreas();
     await this.getResources();
     await this.getKavaSources();

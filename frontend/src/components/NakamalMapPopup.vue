@@ -64,6 +64,7 @@
       View Page
     </v-btn>
     <v-btn
+      v-show="location"
       small
       block
       color="primary"

@@ -175,14 +175,14 @@
                   dark
                   small
                   color="secondary darken-1"
-                  @click.stop="toggleCheckinHeatmap"
+                  @click.stop="setShowHeatmapMenu(true)"
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon>mdi-map-check</v-icon>
+                  <v-icon>mdi-fire</v-icon>
                 </v-btn>
               </template>
-              <span>Check-in Heatmap</span>
+              <span>Heatmap</span>
             </v-tooltip>
             <v-tooltip left>
               <template v-slot:activator="{ on, attrs }">
@@ -195,10 +195,10 @@
                   v-bind="attrs"
                   v-on="on"
                 >
-                  <v-icon>mdi-map-minus</v-icon>
+                  <v-icon>mdi-menu-open</v-icon>
                 </v-btn>
               </template>
-              <span>Filter</span>
+              <span>Filters</span>
             </v-tooltip>
             <v-tooltip left>
               <template v-slot:activator="{ on, attrs }">
@@ -223,8 +223,8 @@
       <Compass></Compass>
 
       <Vue2LeafletHeatmap
-        :visible="showHeatmap"
-        :lat-lng="checkinHeatmap"
+        :visible="showHeatmapLayer"
+        :lat-lng="heatmapCheckins"
         :radius="20"
         :min-opacity=".50"
         :max-zoom="16"
@@ -237,6 +237,8 @@
     <NakamalBottomSheet></NakamalBottomSheet>
 
     <NakamalFilterSidebar></NakamalFilterSidebar>
+
+    <NakamalHeatmapSidebar></NakamalHeatmapSidebar>
 
     <v-dialog
       v-model="showLocationProgress"
@@ -283,12 +285,13 @@ import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
 import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
 import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
 import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
+import NakamalHeatmapSidebar from '@/components/NakamalHeatmapSidebar.vue';
 import NakamalListItem from '@/components/NakamalListItem.vue';
 import Compass from '@/components/Compass.vue';
 
 import Vue2LeafletHeatmap from '@/components/Vue2LeafletHeatmap.vue';
 
-const { L } = window;
+// const { L } = window;
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg');
@@ -303,6 +306,7 @@ export default {
     NewNakamalDialog,
     NakamalMapPopup,
     NakamalFilterSidebar,
+    NakamalHeatmapSidebar,
     NakamalListItem,
     Compass,
     LMap,
@@ -314,7 +318,6 @@ export default {
   },
   data() {
     return {
-      showHeatmap: false,
       showNearbyNakamals: false,
       nearbyNakamals: [],
       fab: false,
@@ -363,22 +366,27 @@ export default {
       center: 'map/center',
       zoom: 'map/zoom',
       showNewNakamalMarker: 'map/showNewNakamalMarker',
+      showHeatmapLayer: 'map/showHeatmap',
       nakamals: 'nakamal/filteredList',
       hasFilters: 'nakamal/hasFilters',
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
       getNakamalHasImages: 'image/nakamalHasImages',
-      checkins: 'checkin/list',
+      checkins: 'checkin/filteredList',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
       darkMode: 'setting/darkMode',
     }),
-    checkinHeatmap() {
-      // XXX Not as efficient as it could be
+    heatmapCheckins() {
+      let checkins = null;
       const counts = {};
       let maxCheckins = 1;
-      const nakIds = this.nakamals.map((n) => n.id);
-      const checkins = this.checkins.filter((c) => nakIds.includes(c.nakamal.id));
+      if (this.hasFilters) {
+        const nakIds = this.nakamals.map((n) => n.id);
+        checkins = this.checkins.filter((c) => nakIds.includes(c.nakamal.id));
+      } else {
+        checkins = this.checkins;
+      }
       checkins.forEach((c) => {
         const nId = c.nakamal.id;
         counts[nId] = counts[nId] ? counts[nId] + 1 : 1;
@@ -417,14 +425,6 @@ export default {
     },
   },
   methods: {
-    async toggleCheckinHeatmap() {
-      if (this.showHeatmap) {
-        this.showHeatmap = false;
-      } else {
-        this.showHeatmap = true;
-        await this.$store.dispatch('checkin/getAll');
-      }
-    },
     getLocationSuccess(pos, result) {
       this.setShowLocationProgress(false);
       if (result === 'success') {
@@ -495,6 +495,7 @@ export default {
         'setCenter',
         'setZoom',
         'setShowNewNakamalMarker',
+        'setShowHeatmapMenu',
         'setShowFilters',
         'setShowDetails',
         'setShowSearch',
