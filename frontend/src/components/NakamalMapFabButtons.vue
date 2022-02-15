@@ -115,6 +115,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
+import { latLng } from 'leaflet';
 
 export default {
   name: 'NakamalMapFabButtons',
@@ -139,7 +140,7 @@ export default {
       if (result === 'success') {
         this.setLocation(pos.coords);
         // next line may fail when I get to test it on a mobile device
-        this.$root.$emit('fly-to', ([pos.coords.latitude, pos.coords.longitude], 18));
+        this.$root.$emit('fly-to', latLng(pos.coords.latitude, pos.coords.longitude));
       } else {
         this.getLocationError({});
       }
@@ -159,6 +160,7 @@ export default {
       this.setShowLocationProgress(true);
     },
     getLocation() {
+      this.$root.$emit('fly-to', latLng(-17.4, 168.4));
       if (!('geolocation' in navigator)) {
         this.$store.dispatch('notify/add', {
           title: 'Location Not Available',

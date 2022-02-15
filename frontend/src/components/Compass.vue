@@ -15,7 +15,7 @@
       height="6"
     ></v-progress-linear>
     <v-card-text v-if="user" class="py-1 px-3">
-      <v-alert color="warning" v-if="user.heading">
+      <v-alert color="warning" v-if="!user.heading">
         Your device did not provide your heading so we can not
         point you towards the kava bar.
       </v-alert>
