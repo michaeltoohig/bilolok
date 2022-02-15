@@ -51,19 +51,20 @@
     </v-card-text>
 
     <v-card-actions>
-      <v-btn
-        text
-        outlined
-        @click="viewPage(nakamal.id)"
-      >
-        View Page
-      </v-btn>
+      <v-spacer></v-spacer>
       <v-btn
         text
         outlined
         @click="viewMap(nakamal.id)"
       >
         View on Map
+      </v-btn>
+      <v-btn
+        text
+        outlined
+        @click="viewPage(nakamal.id)"
+      >
+        View Page
       </v-btn>
     </v-card-actions>
   </v-card>

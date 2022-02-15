@@ -1,60 +1,65 @@
 <template>
-  <l-control
-    :position="'topright'"
+
+  <v-card
+    v-show="compassMode"
+    max-width="200"
+    outlined
+    style="opacity: 80%;"
   >
-    <v-card
-      v-show="showCompass"
-      max-width="200"
-      outlined
-      style="opacity: 80%;"
-    >
-      <v-progress-linear
-        v-show="!user"
+    <v-progress-linear
+      v-show="!user"
+      color="primary"
+      indeterminate
+      absolute
+      top
+      height="6"
+    ></v-progress-linear>
+    <v-card-text v-if="user">
+      <v-alert color="warning" v-if="!user.heading">
+        Your device did not provide your heading so we can not
+        point you towards the kava bar.
+      </v-alert>
+      <span class="small">Heading To:</span>
+      <h3>{{ nakamal.name }}</h3>
+      <div class="d-flex justify-center align-center">
+        <v-icon size="144">{{ bearingIcon }}</v-icon>
+      </div>
+      <h5>Distance: {{ displayDistance }}</h5>
+      <h5>Trip: {{ displayTrip }}</h5>
+    </v-card-text>
+    <v-divider></v-divider>
+    <v-card-actions>
+      <v-btn
+        v-show="showFinishBtn"
         color="primary"
-        indeterminate
-        absolute
-        top
-        height="6"
-      ></v-progress-linear>
-      <v-card-text v-if="user">
-        <v-alert color="warning" v-if="!user.heading">
-          Your device did not provide the direction you are facing
-          so we can not show you the compass. Usually, mobile devices
-          provide a heading but some devices do not.
-        </v-alert>
-        <span class="small">Heading To:</span>
-        <h3>{{ nakamal.name }}</h3>
-        <div class="d-flex justify-center align-center">
-          <v-icon size="144">{{ bearingIcon }}</v-icon>
-        </div>
-      </v-card-text>
-      <v-divider></v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          text
-          outlined
-          @click="setShowCompass(false)"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </l-control>
+        @click="saveTrip"
+      >
+        Finish!
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        text
+        outlined
+        :disabled="showFinishBtn"
+        @click="stopCompassMode"
+      >
+        Close
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
-import { LControl } from 'vue2-leaflet';
+import { mapGetters } from 'vuex';
+import { latLng } from 'leaflet';
 
 export default {
   name: 'Compass',
-  components: {
-    LControl,
-  },
   computed: {
     ...mapGetters({
-      showCompass: 'map/showCompass',
+      isUserVerified: 'auth/isUserVerified',
+      compassMode: 'map/compassMode',
+      compassModePolyline: 'map/compassModePolyline',
       user: 'map/location',
       nakamal: 'nakamal/selected',
     }),
@@ -98,13 +103,75 @@ export default {
       }
       return icon;
     },
+    showFinishBtn() {
+      return this.distance <= 30; // XXX hardcoded value
+    },
+    distance() {
+      if (!this.user || !this.nakamal) return null;
+      const userLatLng = latLng(this.user.latitude, this.user.longitude);
+      return Math.round(userLatLng.distanceTo(this.nakamal.latLng));
+    },
+    displayDistance() {
+      let dist = this.distance;
+      if (dist < 1000) {
+        dist = `${dist} meters`;
+      } else {
+        dist = (dist / 1000).toFixed(1);
+        dist = `${dist} kilometers`;
+      }
+      return dist;
+    },
+    displayTrip() {
+      if (this.compassModePolyline.length === 0) return 0;
+      let prevPoint = null;
+      let distance = 0;
+      this.compassModePolyline.forEach((p) => {
+        if (prevPoint !== null) {
+          distance += Math.round(latLng(prevPoint).distanceTo(latLng(p)));
+        }
+        prevPoint = p;
+      });
+      if (distance < 1000) {
+        distance = `${distance} meters`;
+      } else {
+        distance = (distance / 1000).toFixed(1);
+        distance = `${distance} kilometers`;
+      }
+      return distance;
+    },
   },
   methods: {
-    ...mapActions(
-      'map', [
-        'setShowCompass',
-      ],
-    ),
+    // ...mapActions(
+    //   'map', [
+    //     'stopCompassMode',
+    //   ],
+    // ),
+    saveTrip() {
+      console.log('TODO save trip info, play sound, etc.');
+      if (this.isUserVerified) {
+        console.log('TODO save trip info');
+        this.$store.dispatch('notify/add', {
+          title: 'Trip Complete',
+          text: 'You have arrived at your destination. You should now check-in to the kava bar.',
+          color: 'primary',
+          duration: 5_000,
+        });
+      } else {
+        this.$store.dispatch('notify/add', {
+          title: 'Trip Not Saved',
+          text: 'You do not have a verified account so we did not save your trip for you.',
+          color: 'warning',
+          duration: 8_000,
+        });
+      }
+      this.stopCompassMode();
+      setTimeout(() => {
+        this.$router.push({ name: 'Nakamal', params: { id: this.nakamal.id } });
+      }, 1000);
+    },
+    stopCompassMode() {
+      this.$emit('stop');
+    },
     toRadians(deg) {
       return (deg * Math.PI) / 180;
     },

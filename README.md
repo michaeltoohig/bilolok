@@ -84,12 +84,6 @@ mostly "Just Work" behind the scenes.
 - [x] Show nearby nakamals to user if user location icon is selected
   - [x] show distance
 - [x] Show distance if location available for NakamalMapPopup
-- [ ] Show Polyline for user to nakamal - currently removed code for these functions
-  - [x] Show Polyline between user location and nakamal when selected
-  - [x] Show distance
-    - [ ] Make easier to read distance
-  - [ ] flyTo bounding box of Polyline
-  - [ ] Remove Polyline or redraw when user location updates
 
  
 ## Future Roadmap Ideas
@@ -109,6 +103,19 @@ For version 2 and beyond we can build upon this foundation such as the following
     - Use check-in and regex `@w[ie](n?)do(w?)(\s?)#(\s?)(\d)+` to find which windows are mentioned
     - Use another regex with special character to mark the window as bad
     - chart shows windows with positve and negative and no reviews then
+
+- [ ] Heatmap layer
+  - [x] Show heatmap for all users
+  - [ ] Filter heatmap to only user's checkins
+  - [ ] Filter heatmap by date ranges
+- [ ] Compass mode
+  - [x] Show heading to selected nakamal
+  - [x] Follow user location marker while watching user location
+  - [x] Draw Polyline of user trip
+  - [x] Show live distance and trip traveled distances
+  - [ ] Save the trip for showing later
+- [ ] User profile upgrade
+  - [ ] show favourite nakamals (maybe ranked top 3) by check-in count
 
 
 ## Development

@@ -19,12 +19,28 @@
       </v-alert>
     </template>
 
-    <v-btn
-      block
-      :outlined="!showHeatmap"
-      @click="toggleShowHeatmap"
-      v-text="showHeatmap ? `Hide Heatmap` : `Show Heatmap`"
-    ></v-btn>
+    <v-container>
+      <v-switch
+        inset
+        v-model="toggleHeatmap"
+        label="Show Heatmap"
+      ></v-switch>
+
+      <v-switch
+        v-if="isLoggedIn"
+        inset
+        v-model="toggleUserOnly"
+        label="Show Only Your Check-ins"
+        :disabled="!toggleHeatmap"
+      ></v-switch>
+
+      <v-switch
+        inset
+        v-model="toggleDt"
+        label="Show Only Last Week Check-ins"
+        :disabled="!toggleHeatmap"
+      ></v-switch>
+    </v-container>
 
     <template v-slot:append>
       <div class="pa-2">
@@ -44,6 +60,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
@@ -52,6 +69,10 @@ export default {
   },
   data() {
     return {
+      toggleHeatmap: false,
+      toggleUserOnly: false,
+      toggleDt: false,
+
       selectedUser: null,
       showUserCheckins: false,
     };
@@ -75,11 +96,25 @@ export default {
         this.showUserCheckins = false;
       }
     },
+    toggleHeatmap(value) {
+      this.setShowHeatmap(value);
+    },
+    toggleUserOnly(value) {
+      if (value) {
+        this.changeUser(this.currentUser.id);
+      } else {
+        this.changeUser(null);
+      }
+    },
+    toggleDt(value) {
+      if (value) {
+        this.changeDt(dayjs().subtract(7, 'd'));
+      } else {
+        this.changeDt(null);
+      }
+    },
   },
   methods: {
-    toggleShowHeatmap() {
-      this.setShowHeatmap(!this.showHeatmap);
-    },
     toggleShowHeatmapMenu(val) {
       this.setShowHeatmapMenu(val);
     },
@@ -92,16 +127,13 @@ export default {
       'removeFilters',
     ]),
     clearFilters() {
-      this.user = null;
       this.removeFilters();
     },
-    changeUser(value) {
-      console.log(333, value, this.currentUser);
-      if (value) {
-        this.setFilter({ key: 'user', user: this.currentUser.id });
-      } else {
-        this.clearFilters();
-      }
+    changeUser(user) {
+      this.setFilter({ key: 'user', value: user });
+    },
+    changeDt(dt) {
+      this.setFilter({ key: 'dt', value: dt });
     },
   },
 };

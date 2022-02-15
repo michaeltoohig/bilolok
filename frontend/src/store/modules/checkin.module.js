@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import Vue from 'vue';
+import dayjs from 'dayjs';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import checkinsApi from '@/api/checkins';
@@ -29,9 +30,14 @@ const getters = {
   },
   filteredList: (state, getters) => {
     let checkins = state.allIds.map(id => getters.find(id));
-    if ('user' in state.filters) {
-      console.log(444, state.filters.user, checkins[0]);
+    if ('user' in state.filters && state.filters.user !== null) {
       checkins = checkins.filter((c) => c.user.id === state.filters.user);
+    }
+    if ('dt' in state.filters && state.filters.dt !== null) {
+      checkins = checkins.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
+    } else {
+      // set default 30 day filter for heatmap
+      checkins = checkins.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
     }
     return checkins;
   },
@@ -131,7 +137,6 @@ const actions = {
     }
   },
   setFilter: ({ commit }, { key, value }) => {
-    console.log(555, key, value);
     commit('setFilter', { key, value });
   },
   removeFilters: ({ commit }) => {
