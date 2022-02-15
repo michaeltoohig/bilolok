@@ -148,7 +148,7 @@ import {
   mapGetters,
 } from 'vuex';
 import {
-  icon, latLngBounds,
+  icon, latLng, latLngBounds,
 } from 'leaflet';
 import {
   LMap, LTileLayer, LMarker, LControl, LLayerGroup, LPolyline,
@@ -262,10 +262,8 @@ export default {
     }),
     maxBounds() {
       if (this.compassMode && this.location) {
-        return latLngBounds([
-          [this.location.latitude, this.location.longitude],
-          [this.location.latitude, this.location.longitude],
-        ]);
+        const targetLatLng = latLng(this.location.latitude, this.location.longitude);
+        return latLngBounds([targetLatLng, targetLatLng]);
       }
       return this.maxBoundsPortVila;
     },

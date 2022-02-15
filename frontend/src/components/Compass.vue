@@ -14,24 +14,25 @@
       top
       height="6"
     ></v-progress-linear>
-    <v-card-text v-if="user">
-      <v-alert color="warning" v-if="!user.heading">
+    <v-card-text v-if="user" class="py-1 px-3">
+      <v-alert color="warning" v-if="user.heading">
         Your device did not provide your heading so we can not
         point you towards the kava bar.
       </v-alert>
       <span class="small">Heading To:</span>
       <h3>{{ nakamal.name }}</h3>
       <div class="d-flex justify-center align-center">
-        <v-icon size="144">{{ bearingIcon }}</v-icon>
+        <v-icon size="100">{{ bearingIcon }}</v-icon>
       </div>
       <h5>Distance: {{ displayDistance }}</h5>
       <h5>Trip: {{ displayTrip }}</h5>
     </v-card-text>
     <v-divider></v-divider>
-    <v-card-actions>
+    <v-card-actions class="pa-1">
       <v-btn
         v-show="showFinishBtn"
         color="primary"
+        small
         @click="saveTrip"
       >
         Finish!
@@ -39,7 +40,7 @@
       <v-spacer></v-spacer>
       <v-btn
         text
-        outlined
+        small
         :disabled="showFinishBtn"
         @click="stopCompassMode"
       >

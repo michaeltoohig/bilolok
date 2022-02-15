@@ -31,7 +31,7 @@
             <v-list-item-content>
               <v-list-item-title>Up Arrow</v-list-item-title>
               <v-list-item-subtitle>
-                The kava bar is ahead of you
+                Kava bar is ahead of you
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -42,7 +42,7 @@
             <v-list-item-content>
               <v-list-item-title>Down Arrow</v-list-item-title>
               <v-list-item-subtitle>
-                Turn around the kava bar is somewhere behind you
+                Kava bar is behind you
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -52,7 +52,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Left Arrow</v-list-item-title>
-              <v-list-item-subtitle>The kava bar is to your left</v-list-item-subtitle>
+              <v-list-item-subtitle>Kava bar is to your left</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-list-item two-line>
@@ -61,7 +61,7 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Right Arrow</v-list-item-title>
-              <v-list-item-subtitle>The kava bar is to your right</v-list-item-subtitle>
+              <v-list-item-subtitle>Kava bar is to your right</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
