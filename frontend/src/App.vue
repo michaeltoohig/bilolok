@@ -5,6 +5,20 @@
       fixed
       height="30"
       color="primary"
+      v-if="deferredPrompt"
+      dark
+    >
+      <span class="mx-auto">
+      <v-icon>mdi-download-cirlce</v-icon>
+        Save App to Home Screen
+      </span>
+    </v-system-bar>
+
+    <v-system-bar
+      app
+      fixed
+      height="30"
+      color="primary"
       v-if="isOffline"
       dark
     >
@@ -31,7 +45,7 @@
       <SideBar></SideBar>
       <v-main>
         <div
-          style="position: absolute; z-index: 3001; width: 100%;"
+          style="position: fixed; z-index: 3001; width: 100%;"
         >
           <v-row class="mt-2 mx-0">
             <v-col justify="center">
@@ -60,7 +74,6 @@
                   web browser.
                 </div>
               </v-alert>
-
               <v-alert
                 v-if="updateExists"
                 class="mx-auto"
@@ -126,12 +139,12 @@
           <v-card-subtitle>You must verify your email to perform that action.</v-card-subtitle>
           <v-card-text>
             <p>
-            To prevent abuse we require a user verify the email address they
-            provided during sign up. Look in your email for a messag from
-            Bilolok and a link to verify your email will be inside that email.
+              To prevent abuse we require a user verify the email address they
+              provided during sign up. Look in your email for a messag from
+              Bilolok and a link to verify your email will be inside that email.
             </p>
             <p>
-            Then, you may try again.
+              Then, you may try again.
             </p>
           </v-card-text>
           <v-card-actions>
@@ -163,6 +176,11 @@ export default {
     Notifications,
   },
   mixins: [UpdateMixin, OfflineMixin],
+  data() {
+    return {
+      deferredPrompt: null,
+    };
+  },
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',
@@ -200,10 +218,17 @@ export default {
     },
   },
   async created() {
-    await this.checkLoggedIn();
     if (process.browser) {
       this.$store.dispatch('setting/checkDarkMode');
     }
+    // Save prompt to allow user to install app to their phone
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('beforeinstallprompt');
+      e.preventDefault();
+      this.deferredPrompt = e;
+    });
+    // Lastly, check user auth status which will remove the loading screen
+    await this.checkLoggedIn();
   },
 };
 </script>

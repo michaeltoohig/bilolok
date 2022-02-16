@@ -1,12 +1,13 @@
 <template>
   <v-container>
-    <v-row v-if="!images.length">
-      <v-col>
-        <h2>No Images Yet</h2>
-      </v-col>
-    </v-row>
+    <div
+      v-if="!images.length"
+      class="text-center"
+    >
+      <h2>No Images Yet</h2>
+    </div>
     <Photoswipe :options="{ history: true }">
-      <v-row>
+      <v-row class="ma-0">
         <v-col
           v-for="(image, i) in images"
           :key="i"

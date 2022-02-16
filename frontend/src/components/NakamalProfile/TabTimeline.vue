@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-alert
       v-show="!checkins.length"
       class="mx-auto elevation-2"
@@ -19,7 +19,7 @@
       <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkUser="true"/>
       <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkUser="true"/>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <script>

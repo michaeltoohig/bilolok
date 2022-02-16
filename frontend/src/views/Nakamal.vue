@@ -5,95 +5,91 @@
     </div>
     <div v-else>
       <v-container>
-        <v-card class="">
-          <div class="pt-3 px-3 d-md-flex pa-sm-4 text-center text-md-start">
-            <div v-if="nakamalProfile" >
-              <v-badge
-                v-if="hasRecentCheckin"
-                avatar
-                bordered
-                :color="darkMode ? 'black' : 'primary darken-2'"
-                overlap
-                offset-x="45"
-                offset-y="45"
-              >
-                <template v-slot:badge>
-                  <v-avatar size="32" icon>
-                    <v-icon>mdi-marker-check</v-icon>
-                  </v-avatar>
-                </template>
-                <v-avatar class="ma-3" size="164">
+        <v-row>
+          <v-col sm="4" cols="12">
+            <v-card class="mb-3">
+              <v-card-title>
+                <v-avatar
+                  v-if="nakamalProfile"
+                  size="164"
+                  class="mx-auto mb-3"
+                >
                   <v-img
                     :src="nakamalProfile.thumbnail"
                   ></v-img>
                 </v-avatar>
-              </v-badge>
-              <v-avatar class="ma-3" size="164" v-else>
-                <v-img
-                  :src="nakamalProfile.thumbnail"
-                ></v-img>
-              </v-avatar>
-            </div>
-
-            <h1 class="align-self-start">{{ nakamal.name }}</h1>
-          </div>
-          <v-card-actions>
-            <v-btn
-              v-show="hasAdminAccess"
-              text
-              color="secondary lighten-2"
-              :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
+                <h1 class="text-center">{{ nakamal.name }}</h1>
+              </v-card-title>
+              <v-card-text class="px-3 pb-3">
+                <v-alert
+                  v-show="hasRecentCheckin"
+                  outlined
+                  icon="mdi-marker-check"
+                  border="left"
+                  class="ma-0 py-2"
+                >
+                  Has recent check-ins.
+                </v-alert>
+              </v-card-text>
+            </v-card>
+            <CardChief :nakamal="nakamal"></CardChief>
+            <v-list
+              dense
+              class="elevation-2"
             >
-              Edit
-            </v-btn>
-            <v-btn
-              v-show="hasAdminAccess"
-              text
-              color="secondary lighten-2"
-              @click="remove"
-            >
-              Remove
-            </v-btn>
-          </v-card-actions>
+              <v-list-item-group
+                color="primary"
+              >
+                <v-list-item @click="$router.push({ name: 'Map' })">
+                  <v-list-item-icon>
+                    <v-icon>mdi-map</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>View on map</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="onShare">
+                  <v-list-item-icon>
+                    <v-icon>mdi-share</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>Share</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+          <v-col sm="8" cols="12">
+            <v-card>
+              <v-tabs
+                v-model="tab"
+                color="primary lighten-2"
+                background-color="transparent"
+                :fixed-tabs="$vuetify.breakpoint.mdAndDown"
+              >
+                <v-tab href="#details">Details</v-tab>
+                <v-tab href="#timeline">Timeline</v-tab>
+                <v-tab href="#images">Images</v-tab>
+              </v-tabs>
 
-          <v-tabs
-            v-model="tab"
-            :fixed-tabs="$vuetify.breakpoint.mdAndDown"
-            color="primary lighten-2"
-            background-color="transparent"
-          >
-            <v-tab href="#details">Details</v-tab>
-            <v-tab href="#timeline">Timeline</v-tab>
-            <v-tab href="#images">Images</v-tab>
-          </v-tabs>
-        </v-card>
+              <v-card-text>
+                <v-tabs-items v-if="!loading" v-model="tab">
+                  <v-tab-item value="details">
+                    <TabDetails :nakamal="nakamal"></TabDetails>
+                  </v-tab-item>
+                  <v-tab-item value="timeline">
+                    <TabTimeline :nakamal="nakamal"/>
+                  </v-tab-item>
+                  <v-tab-item value="images">
+                    <TabImages :nakamal="nakamal"/>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
-
-      <v-tabs-items v-if="!loading" v-model="tab">
-        <v-tab-item value="details">
-          <TabDetails :nakamal="nakamal"/>
-        </v-tab-item>
-        <v-tab-item value="timeline">
-          <TabTimeline :nakamal="nakamal"/>
-        </v-tab-item>
-        <v-tab-item value="images">
-          <TabImages :nakamal="nakamal"/>
-        </v-tab-item>
-      </v-tabs-items>
     </div>
-
-    <v-btn
-      fixed
-      fab
-      small
-      dark
-      bottom
-      left
-      color="primary"
-      @click="$router.push({ name: 'Map' })"
-    >
-      <v-icon>mdi-map</v-icon>
-    </v-btn>
 
     <v-fab-transition>
       <v-btn
@@ -165,6 +161,7 @@ import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.v
 import TabDetails from '@/components/NakamalProfile/TabDetails.vue';
 import TabTimeline from '@/components/NakamalProfile/TabTimeline.vue';
 import TabImages from '@/components/NakamalProfile/TabImages.vue';
+import CardChief from '@/components/NakamalProfile/CardChief.vue';
 
 export default {
   name: 'Nakamal',
@@ -173,6 +170,7 @@ export default {
     TabDetails,
     TabTimeline,
     TabImages,
+    CardChief,
   },
   data() {
     return {
@@ -243,6 +241,32 @@ export default {
         this.checkinDialog = !this.checkinDialog;
       } else {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
+    },
+    async onShare() {
+      if (navigator.share) {
+        // TODO document title via vue-meta or other
+        // const title = document.title;
+        const url = document.querySelector('link[rel=canonical]')
+          ? document.querySelector('link[rel=canonical]').href
+          : document.location.href;
+        navigator.share({
+          url,
+          title: `Bilolok - ${this.nakamal.name}`,
+          text: `Check out ${this.nakamal.name} on Bilolok.com!`,
+        }).then(() => {
+          this.$store.dispatch('notify/add', {
+            title: 'Thanks For Sharing!',
+            text: 'We appreciate you letting others know about Bilolok.',
+            type: 'primary',
+          });
+        });
+      } else {
+        await this.$store.dispatch('notify/add', {
+          title: 'Share Not Available',
+          text: 'Your device does not support sharing.',
+          type: 'error',
+        });
       }
     },
     submitCheckin() {

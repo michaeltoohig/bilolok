@@ -3,6 +3,16 @@
     <v-container>
       <v-responsive max-width="500" class="mx-auto">
         <component :is="$route.params.auth"></component>
+        <div class="mt-5" v-show="false">
+          <v-alert color="info">
+            Testing
+            <v-btn
+              outlined
+            >
+              Install App
+            </v-btn>
+          </v-alert>
+        </div>
       </v-responsive>
     </v-container>
   </div>
