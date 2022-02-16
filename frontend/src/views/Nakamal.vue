@@ -18,7 +18,7 @@
                     :src="nakamalProfile.thumbnail"
                   ></v-img>
                 </v-avatar>
-                <h1 class="text-center">{{ nakamal.name }}</h1>
+                <h1 class="text-center" v-text="nakamal.name"></h1>
               </v-card-title>
               <v-card-text class="px-3 pb-3">
                 <v-alert
@@ -165,6 +165,42 @@ import CardChief from '@/components/NakamalProfile/CardChief.vue';
 
 export default {
   name: 'Nakamal',
+  metaInfo() {
+    return {
+      title: this.nakamal ? this.nakamal.name : undefined,
+      titleTemplate: 'Bilolok - %s',
+      meta: [
+        {
+          property: 'og:title',
+          content: this.nakamal ? this.nakamal.name : undefined,
+          // following template options are identical
+          // template: '%s - My page',
+          template: (chunk) => `Bilolok - ${chunk}`,
+          vmid: 'og:title',
+        },
+        {
+          property: 'og:image',
+          content: this.nakamalProfile ? this.nakamalProfile.src : undefined,
+          vmid: 'og:image',
+        },
+        {
+          property: 'og:image:type',
+          content: this.nakamalProfile ? 'image/jpeg' : undefined,
+          vmid: 'og:image:type',
+        },
+        {
+          property: 'og:image:width',
+          content: this.nakamalProfile ? '1280' : undefined,
+          vmid: 'og:image:width',
+        },
+        {
+          property: 'og:image:height',
+          content: this.nakamalProfile ? '720' : undefined,
+          vmid: 'og:image:height',
+        },
+      ],
+    };
+  },
   components: {
     NakamalImageUpload,
     TabDetails,
@@ -252,8 +288,7 @@ export default {
           : document.location.href;
         navigator.share({
           url,
-          title: `Bilolok - ${this.nakamal.name}`,
-          text: `Check out ${this.nakamal.name} on Bilolok.com!`,
+          text: `Check out ${this.nakamal.name} on Bilolok!`,
         }).then(() => {
           this.$store.dispatch('notify/add', {
             title: 'Thanks For Sharing!',

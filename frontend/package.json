@@ -27,6 +27,7 @@
     "roboto-fontface": "*",
     "sphere-knn": "^1.4.0",
     "vue": "^2.6.11",
+    "vue-meta": "^2.4.0",
     "vue-pswipe": "^0.15.3",
     "vue-router": "^3.2.0",
     "vue2-leaflet": "^2.6.0",
@@ -42,13 +43,14 @@
     "workbox-webpack-plugin": "^6.1.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
+    "@babel/eslint-plugin": "^7.16.5",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/eslint-config-airbnb": "^5.0.2",
-    "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
