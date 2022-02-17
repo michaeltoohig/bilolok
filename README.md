@@ -119,6 +119,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] personalized user profile ? maybe ?
 - [ ] Share API
   - [x] Set default Open Graph tags 
+    - [ ] Fix FB cache with old OG tags from error following 301 redirect
   - [x] Share nakamal
   - [ ] Share user
   - [ ] Share check-in
