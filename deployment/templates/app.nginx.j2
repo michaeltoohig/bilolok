@@ -1,0 +1,158 @@
+server {
+  listen [::]:80;
+  listen 80;
+  server_name {{ domain }} www.{{ domain }};
+
+  include snippets/letsencrypt.conf;
+  return 301 https://{{ domain }}$request_uri;
+}
+
+server {
+  listen [::]:443 ssl http2;
+  listen 443 ssl http2;
+  server_name www.{{ domain }};
+
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{ domain }}/chain.pem;
+  include snippets/ssl.conf;
+  include snippets/letsencrypt.conf;
+
+  return 301 https://{{ domain }}$request_uri;
+}
+
+server {
+  listen [::]:433 ssl http2;
+  listen 443 ssl http2;
+  server_name {{ domain }};
+
+  include snippets/gzip.conf;
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{ domain }}/chain.pem;
+  include snippets/ssl.conf;
+  include snippets/letsencrypt.conf;
+
+  location /.well-known/assetlinks.json {
+    alias /var/www/{{ domain }}/assetlinks.json;
+  }
+
+  root {{ fe_remote_directory }};
+  index index.html;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  error_log /var/log/nginx/{{ domain }}-error.log;
+  access_log /var/log/nginx/{{ domain }}-access.log;
+}
+
+server {
+  listen [::]:80;
+  listen 80;
+  server_name {{ domain_api }};
+
+  include snippets/letsencrypt.conf;
+  return 301 https://{{ domain_api }}$request_uri;
+}
+
+server {
+  listen [::]:443 ssl http2;
+  listen 443 ssl http2;
+  server_name {{ domain_api }};
+
+  gzip on;
+  gzip_vary on;
+  gzip_static on;
+  gzip_proxied any;
+  gzip_comp_level 7;
+  gzip_buffers 16 8k;
+  gzip_min_length 256;
+  gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+  gzip_types
+    text/plain
+    text/css
+    text/xml
+    text/javascript
+    application/json
+    application/x-javascript
+    application/xml
+    application/xml+rss;
+
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{ domain }}/chain.pem;
+  include snippets/ssl.conf;
+  include snippets/letsencrypt.conf;
+
+  error_log /var/log/nginx/{{ domain_api }}-error.log;
+  access_log /var/log/nginx/{{ domain_api }}-access.log;
+
+  location / {
+    include proxy_params;
+    proxy_pass http://127.0.0.1:{{ be_api_service_port }};
+  }
+}
+
+server {
+  listen [::]:80;
+  listen 80;
+  server_name {{ domain_image }};
+
+  include snippets/letsencrypt.conf;
+  return 301 https://{{ domain_image }}$request_uri;
+}
+
+server {
+  listen [::]:433 ssl http2;
+  listen 443 ssl http2;
+  server_name {{ domain_image }};
+
+  include snippets/gzip.conf;
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{ domain }}/chain.pem;
+  include snippets/ssl.conf;
+  include snippets/letsencrypt.conf;
+
+  error_log /var/log/nginx/{{ domain_image }}-error.log;
+  access_log /var/log/nginx/{{ domain_image }}-access.log;
+
+  location / {
+      include proxy_params;
+      proxy_pass http://127.0.0.1:{{ image_service_port }};
+  }
+}
+
+server {
+  listen [::]:80;
+  listen 80;
+  server_name {{ domain_upload }};
+
+  include snippets/letsencrypt.conf;
+  return 301 https://{{ domain_upload }}$request_uri;
+}
+
+server {
+  listen [::]:433 ssl http2;
+  listen 443 ssl http2;
+  server_name {{ domain_upload }};
+
+  client_max_body_size 5M;
+
+  include snippets/gzip.conf;
+  ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{ domain }}/chain.pem;
+  include snippets/ssl.conf;
+  include snippets/letsencrypt.conf;
+
+  error_log /var/log/nginx/{{ domain_upload }}-error.log;
+  access_log /var/log/nginx/{{ domain_upload }}-access.log;
+
+  location / {
+      include proxy_params;
+      proxy_pass http://127.0.0.1:{{ upload_service_port }};
+  }
+}

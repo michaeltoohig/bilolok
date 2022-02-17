@@ -189,11 +189,11 @@ export default {
         content: 'https://bilolok.com',
         vmid: 'og:url',
       },
-      {
-        property: 'og:image:secure_url',
-        content: 'https://bilolok.com/img/BilolokCover.png',
-        vmid: 'og:image:secure_url',
-      },
+      // {
+      //   property: 'og:image:secure_url',
+      //   content: 'https://bilolok.com/img/BilolokCover.png',
+      //   vmid: ''
+      // }
       {
         property: 'og:image',
         content: 'https://bilolok.com/img/BilolokCover.png',

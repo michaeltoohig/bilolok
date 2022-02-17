@@ -104,18 +104,28 @@ For version 2 and beyond we can build upon this foundation such as the following
     - Use another regex with special character to mark the window as bad
     - chart shows windows with positve and negative and no reviews then
 
-- [ ] Heatmap layer
+- [x] Heatmap layer
   - [x] Show heatmap for all users
-  - [ ] Filter heatmap to only user's checkins
-  - [ ] Filter heatmap by date ranges
+  - [x] Filter heatmap to only user's checkins
+  - [x] Filter heatmap by date ranges
 - [ ] Compass mode
   - [x] Show heading to selected nakamal
   - [x] Follow user location marker while watching user location
   - [x] Draw Polyline of user trip
   - [x] Show live distance and trip traveled distances
   - [ ] Save the trip for showing later
-- [ ] User profile upgrade
-  - [ ] show favourite nakamals (maybe ranked top 3) by check-in count
+- [x] User profile upgrade
+  - [x] show favourite nakamals (maybe ranked top 3) by check-in count
+  - [ ] personalized user profile ? maybe ?
+- [ ] Share API
+  - [x] Set default Open Graph tags 
+  - [x] Share nakamal
+  - [ ] Share user
+  - [ ] Share check-in
+- [ ] Automate backup with ansible
+  - [ ] database
+  - [ ] photos
+  - [ ] clear space from abandoned uploads
 
 
 ## Development

@@ -281,13 +281,13 @@ export default {
     },
     async onShare() {
       if (navigator.share) {
-        // TODO document title via vue-meta or other
-        // const title = document.title;
+        const { title } = document;
         const url = document.querySelector('link[rel=canonical]')
           ? document.querySelector('link[rel=canonical]').href
           : document.location.href;
         navigator.share({
           url,
+          title,
           text: `Check out ${this.nakamal.name} on Bilolok!`,
         }).then(() => {
           this.$store.dispatch('notify/add', {

@@ -5,7 +5,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import NakamalMap from '@/components/NakamalMap.vue';
 
 export default {

@@ -9,7 +9,7 @@
     src: templates/snippet-ssl.nginx.j2
     dest: /etc/nginx/snippets/ssl.conf
 
-- name: template systemd service config
+- name: template systemd service config for docker-compose
   template:
     src: templates/docker-compose.service.j2
     dest: "/etc/systemd/system/{{ docker_service_name }}"
@@ -17,7 +17,7 @@
 - name: start systemd app service
   systemd: "name={{ docker_service_name }} state=restarted enabled=yes daemon_reload=yes"
 
-- name: template systemd service config
+- name: template systemd service config for api
   template:
     src: templates/api.service.j2
     dest: "/etc/systemd/system/{{ be_api_service_name }}"
@@ -28,51 +28,15 @@
 - name: remove default nginx site config
   file: path=/etc/nginx/sites-enabled/default state=absent
 
-- name: template backend nginx site config
+- name: template nginx site config
   template:
-    src: templates/api.nginx.j2
-    dest: "/etc/nginx/sites-available/{{ domain_api }}"
-
-- name: enable backend site
-  file:
-    src: "/etc/nginx/sites-available/{{ domain_api }}"
-    dest: "/etc/nginx/sites-enabled/{{ domain_api }}"
-    state: link
-    force: yes
-
-- name: template frontend nginx site config
-  template:
-    src: templates/frontend.nginx.j2
+    src: templates/app.nginx.j2
     dest: "/etc/nginx/sites-available/{{ domain }}"
 
-- name: enable frontend site
+- name: enable nginx site
   file:
     src: "/etc/nginx/sites-available/{{ domain }}"
     dest: "/etc/nginx/sites-enabled/{{ domain }}"
-    state: link
-    force: yes
-
-- name: template upload nginx site config
-  template:
-    src: templates/upload.nginx.j2
-    dest: "/etc/nginx/sites-available/{{ domain_upload }}"
-
-- name: enable upload site
-  file:
-    src: "/etc/nginx/sites-available/{{ domain_upload }}"
-    dest: "/etc/nginx/sites-enabled/{{ domain_upload }}"
-    state: link
-    force: yes
-
-- name: template image nginx site config
-  template:
-    src: templates/image.nginx.j2
-    dest: "/etc/nginx/sites-available/{{ domain_image }}"
-
-- name: enable image site
-  file:
-    src: "/etc/nginx/sites-available/{{ domain_image }}"
-    dest: "/etc/nginx/sites-enabled/{{ domain_image }}"
     state: link
     force: yes
 

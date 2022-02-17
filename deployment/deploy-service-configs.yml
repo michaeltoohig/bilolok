@@ -1,0 +1,15 @@
+---
+- name: Get poetry env full path 
+  hosts: webservers
+  gather_facts: true
+  tasks:
+    - include_tasks: tasks/backend/facts/poetry-cmd.yml
+    - include_tasks: tasks/backend/facts/poetry-env.yml
+
+- name: Setup services and webserver configs
+  hosts: webservers
+  gather_facts: true
+  become: yes
+  tasks:
+    - name: Setup services
+      include_tasks: tasks/setup-services.yml

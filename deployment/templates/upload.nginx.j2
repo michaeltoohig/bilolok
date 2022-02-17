@@ -1,15 +1,15 @@
 server {
-    listen 80;
-    listen [::]:80;
-    server_name {{ domain_upload }};
+  listen [::]:80;
+  listen 80;
+  server_name {{ domain_upload }};
 
-    include snippets/letsencrypt.conf;
-    return 301 https://$host$request_uri;
+  include snippets/letsencrypt.conf;
+  return 301 https://{{ domain_upload }}$request_uri;
 }
 
 server {
-  listen 443 ssl http2;
   listen [::]:433 ssl http2;
+  listen 443 ssl http2;
   server_name {{ domain_upload }};
 
   client_max_body_size 5M;
