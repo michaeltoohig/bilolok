@@ -273,7 +273,7 @@ test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<4.0.0)", "mypy (==0.91
 
 [[package]]
 name = "fastapi-crudrouter"
-version = "0.8.4"
+version = "0.8.5"
 description = "A dynamic FastAPI router that automatically creates CRUD routes for your models"
 category = "main"
 optional = false
@@ -287,7 +287,7 @@ fastapi = "*"
 type = "git"
 url = "https://github.com/il-s/fastapi-crudrouter.git"
 reference = "master"
-resolved_reference = "0930fd16743dfc6016929b1ddfac1cb274f5d4b0"
+resolved_reference = "f204964fea96406c9da25b97af5643f9cf1d35d4"
 
 [[package]]
 name = "fastapi-mail"
@@ -316,7 +316,7 @@ testing = ["pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
 
 [[package]]
 name = "fastapi-users"
-version = "8.1.2"
+version = "8.1.5"
 description = "Ready-to-use and customizable users management for FastAPI."
 category = "main"
 optional = false
@@ -1004,8 +1004,8 @@ fastapi-mail = [
     {file = "fastapi_mail-0.4.1-py3-none-any.whl", hash = "sha256:46ea8d622bf0a1fe7563249706f6600017a28a43a22809ba96e7129b1e0fc31d"},
 ]
 fastapi-users = [
-    {file = "fastapi-users-8.1.2.tar.gz", hash = "sha256:8ddbaccb7ab0df73cf89693ff1a47d876c98a902bdddb96e67a5f41574463152"},
-    {file = "fastapi_users-8.1.2-py3-none-any.whl", hash = "sha256:3fc8d7e547d60969cac9d269b14dc1d80f3eaa670d5984b2b6eb072eac3ed55b"},
+    {file = "fastapi-users-8.1.5.tar.gz", hash = "sha256:18e0762857297273e83fa3273c39ecb6159cadd64592895de4b77013d80e13f3"},
+    {file = "fastapi_users-8.1.5-py3-none-any.whl", hash = "sha256:e89bbb30abf0c9007dec86cb0b60bb3bc6f2c9f8ed641ea363754cfdc5b27f13"},
 ]
 fastapi-users-db-sqlalchemy = [
     {file = "fastapi-users-db-sqlalchemy-1.0.0.tar.gz", hash = "sha256:e6105181af1855e21ba31dfb8ae31b90e506cd2ac29f5f37998de66cefed2440"},
