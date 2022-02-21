@@ -196,10 +196,15 @@ export default {
           icon: 'mdi-facebook',
         },
         {
-          title: 'Report A Bug',
-          href: 'https://github.com/michaeltoohig/bilolok/issues',
-          icon: 'mdi-bug',
+          title: 'Join our FB Group',
+          href: 'https://www.facebook.com/groups/573807847105108',
+          icon: 'mdi-facebook',
         },
+        // {
+        //   title: 'Report A Bug',
+        //   href: 'https://github.com/michaeltoohig/bilolok/issues',
+        //   icon: 'mdi-bug',
+        // },
       ],
     };
   },

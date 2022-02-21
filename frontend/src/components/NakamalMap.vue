@@ -50,7 +50,11 @@
         :icon="iconMarker(nakamal.id)"
         :lat-lng="nakamal.latLng"
         @click="markerClick(nakamal.id)"
-      ></l-marker>
+      >
+        <l-tooltip :options="{
+          direction: 'bottom',
+        }">{{ nakamal.name }}</l-tooltip>
+      </l-marker>
 
       <l-layer-group v-if="selectedNakamal" ref="nakamalPopup">
         <NakamalMapPopup v-on:compass="startCompassModeWithIntro"></NakamalMapPopup>
@@ -151,7 +155,7 @@ import {
   icon, latLng, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LControl, LLayerGroup, LPolyline,
+  LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline,
 } from 'vue2-leaflet';
 import sphereKnn from 'sphere-knn';
 
@@ -194,6 +198,7 @@ export default {
     LMap,
     LTileLayer,
     LMarker,
+    LTooltip,
     LControl,
     LLayerGroup,
     LPolyline,
