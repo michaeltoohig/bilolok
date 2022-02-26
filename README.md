@@ -114,9 +114,10 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Draw Polyline of user trip
   - [x] Show live distance and trip traveled distances
   - [ ] Save the trip for showing later
+  - [ ] Fix edge cases and odd behavior
 - [x] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
-  - [ ] personalized user profile ? maybe ?
+  - [ ] personalized user profile picture ? maybe ?
 - [ ] Share API
   - [x] Set default Open Graph tags 
     - [ ] Fix facebook bot handling of OG tags

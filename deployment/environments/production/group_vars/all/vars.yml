@@ -7,6 +7,11 @@ domain_api: api.bilolok.com
 domain_upload: upload.bilolok.com
 domain_image: image.bilolok.com
 
+mj_relayhost: in-v3.mailjet.com
+mj_relayhost_port: 587
+mj_apikey_public: "{{ vault_mj_apikey_public }}"
+mj_apikey_private: "{{ vault_mj_apikey_private }}"
+
 docker_service_name: docker-compose@bilolok.service
 
 root_directory: /var/www/bilolok.com

@@ -30,13 +30,16 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             subject="Welcome to Bilolok!",
             recipients=[user.email],
             body="""
-                Thanks for joining the Bilolok Beta!
-                The app is not completely ready for public use you may run into
-                bugs and errors periodically but I will address them if you let
-                me know you found the error.
-                You can find our Facebook page to contact us. Also, until you
-                verify your email you will not be able to perform some actions
-                on the app.
+                Thanks for joining Bilolok!
+                
+                Join our Facebook group here https://www.facebook.com/groups/573807847105108
+                to talk about the app with other users.
+
+                Join our Facebook page here https://www.facebook.com/bilolokapp
+                to hear about updates to the app.
+
+                Please be sure to verify your email. Until you do so you will not be able
+                to perform some actions on the app.
             """
         )
         await mail.send_message(message)
@@ -78,7 +81,7 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
 
 jwt_authentication = JWTAuthentication(
     secret=settings.SECRET_KEY,
-    lifetime_seconds=3600,
+    lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS,
     tokenUrl="/api/v1/auth/jwt/login",
     token_audience=[f"{settings.PROJECT_SLUG}:auth"]
 )
