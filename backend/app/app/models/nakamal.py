@@ -7,6 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
+from app.db.mixins import TimeMixin
 
 
 nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,

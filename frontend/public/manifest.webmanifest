@@ -1,7 +1,7 @@
 {
   "name": "Bilolok",
   "short_name": "Bilolok",
-  "description": "An app of Port Vila's kava bars.",
+  "description": "An app for kava bars and kava drinkers in Port Vila, Vanuatu.",
   "theme_color": "#936639",
   "background_color": "#0A0A0A",
   "display": "standalone",
@@ -40,8 +40,8 @@
       "url": "/about",
       "icons": [
         {
-          "src": "/img/notification.jpg",
-          "sizes": "192x192"
+          "src": "/img/AppImages/Maskable.png",
+          "sizes": "512x512"
         }
       ]
     }

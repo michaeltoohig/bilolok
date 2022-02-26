@@ -73,7 +73,6 @@ const matchTileReqFunction = ({ url, request, e }) => {
   }
 }
 
-
 // cache tiles; works but fills cache quickly since storage is limited in cache
 workbox.routing.registerRoute(
   matchTileReqFunction,

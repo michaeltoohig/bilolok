@@ -26,10 +26,12 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
 import { ExpirationPlugin } from 'workbox-expiration';
 
+import { apiDomain } from '@/env';
+
 const precacheUrls = [
-  { revision: null, url: '/api/v1/nakamal-areas' },
-  { revision: null, url: '/api/v1/nakamal-kava-resources' },
-  { revision: null, url: '/api/v1/nakamal-resources' },
+  { revision: null, url: `${apiDomain}/api/v1/nakamal-areas` },
+  { revision: null, url: `${apiDomain}/api/v1/nakamal-kava-sources` },
+  { revision: null, url: `${apiDomain}/api/v1/nakamal-resources` },
   ...self.__WB_MANIFEST,
 ];
 
@@ -332,10 +334,10 @@ registerRoute(
       new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      // Don't cache more than 60 items, and expire them after 30 days
+      // Don't cache more than 60 items, and expire them after 7 days
       new ExpirationPlugin({
         maxEntries: 200,
-        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
       }),
     ],
   }),
@@ -354,10 +356,10 @@ registerRoute(
       new CacheableResponsePlugin({
         statuses: [0, 200],
       }),
-      // Don't cache more than 60 items, and expire them after 30 days
+      // Don't cache more than 60 items, and expire them after 7 days
       new ExpirationPlugin({
         maxEntries: 60,
-        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
       }),
     ],
   }),

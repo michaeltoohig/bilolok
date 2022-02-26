@@ -128,6 +128,11 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] database
   - [ ] photos
   - [ ] clear space from abandoned uploads
+- [ ] Fix browser quota limit error - handle by clearing cache and starting again?
+- [x] Add nakamal created_at and updated_at columns
+  - [ ] User edit history of nakamals
+  - [ ] Handle possibly dead nakamals by looking for nakamals without recent updates or recent check-ins. A `confirmed_at` value or table with user and result of confirmation visit?
+- [ ] User login history and track IP and other details to help prepare against bad actors
 
 
 ## Development

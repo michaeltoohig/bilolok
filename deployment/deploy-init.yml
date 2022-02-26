@@ -1,23 +1,5 @@
 ---
-- name: Build Frontend Locally
-  gather_facts: false
-  hosts: localhost
-  tasks:
-    - name: Build project
-      command: yarn build --mode {{ env_name }}
-      args:
-        chdir: "{{ fe_local_directory }}"
-
-- name: Deploy Frontend
-  connection: ssh
-  gather_facts: false
-  hosts: webservers
-  tasks:
-    - name: Copy built app to remote live directory
-      synchronize:
-        src: "{{ fe_local_directory }}/dist/"
-        dest: "{{ fe_remote_directory }}"
-        recursive: yes
+- import_playbook: deploy-frontend.yml
 
 - name: Deploy Backend 
   hosts: webservers

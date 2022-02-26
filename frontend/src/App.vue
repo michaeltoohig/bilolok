@@ -5,20 +5,6 @@
       fixed
       height="30"
       color="primary"
-      v-if="deferredPrompt"
-      dark
-    >
-      <span class="mx-auto">
-      <v-icon>mdi-download-cirlce</v-icon>
-        Save App to Home Screen
-      </span>
-    </v-system-bar>
-
-    <v-system-bar
-      app
-      fixed
-      height="30"
-      color="primary"
       v-if="isOffline"
       dark
     >
@@ -158,6 +144,41 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog
+        v-model="showInstallPrompt"
+        persistent
+        max-width="400"
+        transition="dialog-top-transition"
+      >
+        <v-card>
+          <v-card-title>Install Bilolok App</v-card-title>
+          <v-card-subtitle>Open Bilolok directly from your homescreen or desktop</v-card-subtitle>
+          <v-card-text>
+            <p>
+              It only takes a few seconds and makes it easier to return to Bilolok
+              in the future since you can access Bilolok directly from your homescreen.
+            </p>
+            <p>
+              Plus, it removes the annoying browser URL bar at the top of the screen
+              so you can view the app as intended.
+            </p>
+          </v-card-text>
+          <v-card-actions class="justify-end">
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              @click="showInstallPrompt = false"
+            >Cancel</v-btn>
+            <v-btn
+              text
+              outlined
+              color="primary"
+              @click="installApp"
+            >Install App</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </v-app>
 </template>
@@ -189,11 +210,6 @@ export default {
         content: 'https://bilolok.com',
         vmid: 'og:url',
       },
-      // {
-      //   property: 'og:image:secure_url',
-      //   content: 'https://bilolok.com/img/BilolokCover.png',
-      //   vmid: ''
-      // }
       {
         property: 'og:image',
         content: 'https://bilolok.com/img/BilolokCover.png',
@@ -224,6 +240,8 @@ export default {
   data() {
     return {
       deferredPrompt: null,
+      showInstallPrompt: false,
+      blockInstallPrompt: false,
     };
   },
   computed: {
@@ -261,6 +279,18 @@ export default {
     sendVerificationEmail() {
       this.$store.dispatch('auth/requestVerification');
     },
+    async installApp() {
+      // hide our install prompt
+      this.showInstallPrompt = false;
+      // show device's install prompt
+      this.deferredPrompt.prompt();
+      const { outcome } = await this.deferredPrompt.userChoice;
+      console.log('install outcome:', outcome);
+      // prevent install prompt from activating again for at least this session
+      this.blockInstallPrompt = true;
+      // TODO act on user outcome
+      this.deferredPrompt = null;
+    },
   },
   async created() {
     if (process.browser) {
@@ -269,8 +299,29 @@ export default {
     // Save prompt to allow user to install app to their phone
     window.addEventListener('beforeinstallprompt', (e) => {
       console.log('beforeinstallprompt');
+      // prevent browser from showing the prompt and hold it for later
       e.preventDefault();
       this.deferredPrompt = e;
+      // show the prompt if user remains on site for extended period
+      if (!this.blockInstallPrompt) {
+        setTimeout(() => {
+          this.showInstallPrompt = true;
+        }, 1000 * 60);
+      }
+      return false;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      // TODO show always persistent install now option in UI
+      //   then we can remove that if this event occurs.
+      // Possibly, only show to mobile devices in browsers.
+      this.showInstallPrompt = false;
+      this.blockInstallPrompt = true;
+
+      // Clear the deferredPrompt so it can be garbage collected
+      this.deferredPrompt = null;
+      // Optionally, send analytics event to indicate successful install
+      console.log('PWA was installed');
     });
     // Lastly, check user auth status which will remove the loading screen
     await this.checkLoggedIn();
