@@ -1,5 +1,3 @@
-"""FastAPI Users database adapter for SQLAlchemy + encode/databases."""
-
 """
 Taken from https://github.com/BPL-Development-Team/fastapi-users-db-sqlalchemy-asyncpg
 The official FastAPI-Users project still depends on `encode/databases` for

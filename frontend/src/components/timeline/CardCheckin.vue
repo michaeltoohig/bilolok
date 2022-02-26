@@ -1,6 +1,6 @@
 <template>
   <v-card class="elevation-2 mb-3">
-    <v-card-title>
+    <v-card-title class="d-flex flex-row justify-space-between">
       <h2 :class="`headline font-weight-light ${this.color}--text`">
         Check-in
       </h2>
@@ -112,6 +112,35 @@ export default {
       }
       return null;
     },
+    // async onShare() {
+    //   return;
+    //   // TODO below
+    //   if (navigator.share) {
+    //     // const { title } = document;
+    //     const title = `Check out this ${this.item.nakamal.name}`;
+    //     const text = this.item.message ? this.item.message : `Check`
+    //     const url = document.querySelector('link[rel=canonical]')
+    //       ? document.querySelector('link[rel=canonical]').href
+    //       : document.location.href;
+    //     navigator.share({
+    //       url,
+    //       title,
+    //       text: ,
+    //     }).then(() => {
+    //       this.$store.dispatch('notify/add', {
+    //         title: 'Thanks For Sharing!',
+    //         text: 'We appreciate you letting others know about Bilolok.',
+    //         type: 'primary',
+    //       });
+    //     });
+    //   } else {
+    //     await this.$store.dispatch('notify/add', {
+    //       title: 'Share Not Available',
+    //       text: 'Your device does not support sharing.',
+    //       type: 'error',
+    //     });
+    //   }
+    // },
   },
 };
 </script>
