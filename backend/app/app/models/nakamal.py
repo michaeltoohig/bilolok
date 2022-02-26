@@ -3,10 +3,10 @@ from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum as SQLAE
 from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Table
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
+from app.db.mixins import TimeMixin
 
 
 nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,
@@ -15,7 +15,7 @@ nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadat
 )
 
 
-class Nakamal(Base):
+class Nakamal(Base, TimeMixin):
     """SQLAlchemy nakamals table definition."""
 
     __tablename__ = "nakamal"

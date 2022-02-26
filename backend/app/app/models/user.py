@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import UUID
 
-from sqlalchemy import Column, String
+# from sqlalchemy import Column, String
 from .fastapi_users_db_sqlalchemy_asyncpg import SQLAlchemyBaseUserTable
 
 from app.core.config import settings

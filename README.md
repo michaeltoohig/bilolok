@@ -31,8 +31,8 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Add auth check to open auth modal for existing features
 
  - [x] Set map bounds after each filter is applied
- - [ ] SQLAlchemy-Continuum integration
-   - [ ] Admin view to un-do unwanted edits
+ - [ ] Archive / Log tables for important user-editable tables
+   - [ ] Nakamal table
 
 The following were recommended additions
 
@@ -119,7 +119,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] personalized user profile ? maybe ?
 - [ ] Share API
   - [x] Set default Open Graph tags 
-    - [ ] Fix FB cache with old OG tags from error following 301 redirect
+    - [ ] Fix facebook bot handling of OG tags
   - [x] Share nakamal
   - [ ] Share user
   - [ ] Share check-in

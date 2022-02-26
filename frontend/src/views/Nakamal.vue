@@ -31,6 +31,18 @@
                   Has recent check-ins.
                 </v-alert>
               </v-card-text>
+              <v-card-actions v-show="hasAdminAccess">
+                <v-btn
+                  text
+                  color="secondary lighten-2"
+                  :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
+                >Edit</v-btn>
+                <v-btn
+                  text
+                  color="secondary lighten-2"
+                  @click="remove"
+                >Delete</v-btn>
+              </v-card-actions>
             </v-card>
             <CardChief :nakamal="nakamal"></CardChief>
             <v-list
@@ -50,7 +62,7 @@
                 </v-list-item>
                 <v-list-item @click="onShare">
                   <v-list-item-icon>
-                    <v-icon>mdi-share</v-icon>
+                    <v-icon>mdi-share-variant</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>Share</v-list-item-title>

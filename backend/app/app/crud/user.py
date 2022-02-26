@@ -4,7 +4,6 @@ from uuid import UUID
 from sqlalchemy import desc
 
 from app.crud.base import CRUDBase
-from app.db.session import database
 from app.models.user import User
 from app.schemas.user import UserCreate, UserSchema
 
