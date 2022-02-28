@@ -120,7 +120,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] personalized user profile picture ? maybe ?
 - [ ] Share API
   - [x] Set default Open Graph tags 
-    - [ ] Fix facebook bot handling of OG tags
+    - [ ] Fix facebook bot handling of OG tags / currently only for root domain sharing
   - [x] Share nakamal
   - [ ] Share user
   - [ ] Share check-in
@@ -133,6 +133,9 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] User edit history of nakamals
   - [ ] Handle possibly dead nakamals by looking for nakamals without recent updates or recent check-ins. A `confirmed_at` value or table with user and result of confirmation visit?
 - [ ] User login history and track IP and other details to help prepare against bad actors
+- [ ] Current user chat (websockets or something) KISS so no history or logging
+  - [ ] Alerts users to new messages or @user messages
+  - [ ] Must be able to listen to incoming messages in background while user has joined chat for the day or something like this? Or it becomes a always running chat app at the same time???
 
 
 ## Development
@@ -160,7 +163,7 @@ SQLAlchemy
 FastAPI Users
 FastAPI CRUDrouter
 FastAPI paginate
-SQLAlchemy-Continuum
+SQLAlchemy-Continuum or other asyncpg compatiable package
 
 
 ### Frontend

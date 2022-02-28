@@ -15,3 +15,5 @@ node_modules/
 
 # deployment
 .vault_pass
+
+backup/

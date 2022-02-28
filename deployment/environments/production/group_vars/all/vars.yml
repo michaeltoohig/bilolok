@@ -14,6 +14,10 @@ mj_apikey_private: "{{ vault_mj_apikey_private }}"
 
 docker_service_name: docker-compose@bilolok.service
 
+db_container_name: "{{ vault_db_container_name }}"
+db_user: "{{ vault_db_user }}"
+db_name: "{{ vault_db_name }}"
+
 root_directory: /var/www/bilolok.com
 repo_directory: "{{ root_directory }}/app"
 

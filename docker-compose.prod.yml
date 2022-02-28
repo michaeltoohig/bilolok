@@ -39,6 +39,7 @@ services:
     image: postgres:13
     volumes:
       - bilolok-db-data-prod:/var/lib/postgresql/data/pgdata
+      - /tmp/backups/db:/backups
     env_file:
       - .env
     environment:
