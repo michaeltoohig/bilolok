@@ -1,41 +1,6 @@
 ---
 - import_playbook: deploy-frontend.yml
-
-- name: Deploy Backend 
-  hosts: webservers
-  gather_facts: true
-  tasks:
-    - name: Pull backend repo
-      git:
-        repo: ssh://git@github.com/{{ repo_name }}.git
-        dest: "{{ repo_directory }}"
-        update: yes
-        version: master
-      register: be_clone
-
-    # role vvv
-    - name: Check if poetry is installed
-      stat:
-        path: '$HOME/.poetry/env'
-      register: is_poetry_exist
-
-    - name: download poetry python setup script
-      get_url: url=https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py dest="$HOME" mode=755
-      when: not is_poetry_exist.stat.exists
-      
-    - name: setup poetry
-      command: "python3 $HOME/get-poetry.py -y"
-      when: not is_poetry_exist.stat.exists
-
-    - include_tasks: tasks/backend/facts/poetry-cmd.yml
-    # role ^^^
-
-    - name: install python dependencies
-      shell: "{{ poetry_cmd_path }} install"
-      args:
-        chdir: "{{ be_remote_directory }}"
-
-    - include_tasks: tasks/backend/facts/poetry-env.yml
+- import_playbook: deploy-backend.yml
 
 - name: Setup services and webserver configs
   hosts: webservers
@@ -45,6 +10,7 @@
     - name: Setup services
       include_tasks: tasks/setup-services.yml
 
+    # Please confirm: appears above task `setup-services` restarts api service already. Consider removing this and just `include_playbook` for above task
     - name: Restart API service
       systemd:
         state: restarted

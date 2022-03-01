@@ -1,3 +1,4 @@
+# This set of tasks could be a playbook on its own in its current config. Please confirm next time.
 ---
 - name: template nginx snippet for letsencrypt
   template:
@@ -14,7 +15,7 @@
     src: templates/docker-compose.service.j2
     dest: "/etc/systemd/system/{{ docker_service_name }}"
 
-- name: start systemd app service
+- name: start systemd docker-compose service
   systemd: "name={{ docker_service_name }} state=restarted enabled=yes daemon_reload=yes"
 
 - name: template systemd service config for api
@@ -22,7 +23,7 @@
     src: templates/api.service.j2
     dest: "/etc/systemd/system/{{ be_api_service_name }}"
 
-- name: start systemd app service
+- name: start systemd api service
   systemd: "name={{ be_api_service_name }} state=restarted enabled=yes daemon_reload=yes"
 
 - name: remove default nginx site config

@@ -43,6 +43,8 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             """
         )
         await mail.send_message(message)
+        # Send email verification email
+        await self.request_verify(user, request)
         # Render user's default avatar image
         relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
         fullAvatarPath = Path(settings.IMAGES_LOCAL_DIR) / relativeAvatarPath

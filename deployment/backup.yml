@@ -1,0 +1,65 @@
+# Do not neglect to test the backup periodically!
+---
+- name: Backup image files
+  gather_facts: false
+  hosts: webservers
+  tasks:
+    - name: Create a local backup directory
+      delegate_to: localhost
+      file:
+        path: ../backup/images/users
+        mode: 0755
+        state: directory
+    - name: Copy user images
+      synchronize:
+        mode: pull
+        src: "{{ root_directory }}/images/users"
+        dest: ../backup/images/
+        recursive: yes
+    - name: Create a local backup directory
+      delegate_to: localhost
+      file:
+        path: ../backup/images/nakamals
+        mode: 0755
+        state: directory
+    - name: Copy nakamal images
+      synchronize:
+        mode: pull
+        src: "{{ root_directory }}/images/nakamals"
+        dest: ../backup/images/
+        recursive: yes
+
+- name: Backup database
+  gather_facts: false
+  hosts: webservers
+  tasks:
+    - name: Set timestamp of the backup
+      set_fact:
+        now: "{{ lookup('pipe', 'date +%d-%m-%Y-%H-%M-%S') }}"
+        remote_backup_dir: "/tmp/backups/db"
+    - name: Create a backup directory
+      become: yes
+      file:
+        path: "{{ remote_backup_dir }}"
+        mode: 0777
+        state: directory
+    - name: Back up the database
+      command: "docker exec -t {{ db_container_name }} bash -c 'pg_dump -c -U {{ db_user }} {{ db_name }} | gzip > backups/dump_{{ now }}.sql.gz'"
+    - name: Create a local backup directory
+      delegate_to: localhost
+      file:
+        path: ../backup/db
+        mode: 0755
+        state: directory
+    - name: "Fetch backup from the server"
+      fetch:
+        src: "{{ remote_backup_dir }}/dump_{{ now }}.sql.gz"
+        dest: "../backup/db/dump_{{ now }}.sql.gz"
+        flat: yes
+
+# To restore the database
+# - upload sql dump to server
+# - setup empty database by creating empty database and role and grant all privileges
+# - run following command
+# cat your_dump.sql | docker exec -i your-db-container psql -U postgres
+# with appropriate modifications to match our database
