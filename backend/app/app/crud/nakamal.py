@@ -30,7 +30,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
             .where(self._table.id == item_id)
         )
         try:
-            (item,) = (await self._db_session.execute(query)).one()
+            item = (await self._db_session.execute(query)).scalar_one()
         except NoResultFound:
             item = None
         return item
@@ -39,3 +39,15 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = select(self._table).options(selectinload(self._table.resources))
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
+
+    async def add_resource(self, item_id: UUID, resource):
+        nakamal = await self._get_one(item_id)
+        nakamal.resources.append(resource)
+        # await self._db_session.add(nakamal)
+        await self._db_session.commit()
+
+    async def remove_resource(self, item_id: UUID, resource):
+        nakamal = await self._get_one(item_id)
+        nakamal.resources.remove(resource)
+        # await self._db_session.add(nakamal)
+        await self._db_session.commit()

@@ -43,7 +43,7 @@ export default {
   },
 
   async putResource(token, id, resourceId) {
-    return http.put(`${resource}/${id}/resources/${resourceId}`, authHeaders(token));
+    return http.put(`${resource}/${id}/resources/${resourceId}`, {}, authHeaders(token));
   },
 
   async deleteResource(token, id, resourceId) {

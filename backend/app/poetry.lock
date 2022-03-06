@@ -192,23 +192,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
-name = "databases"
-version = "0.5.3"
-description = "Async database support for Python."
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-sqlalchemy = ">=1.4,<1.5"
-
-[package.extras]
-mysql = ["aiomysql"]
-postgresql = ["asyncpg"]
-postgresql_aiopg = ["aiopg"]
-sqlite = ["aiosqlite"]
-
-[[package]]
 name = "dnspython"
 version = "2.1.0"
 description = "DNS toolkit"
@@ -255,7 +238,7 @@ lua = ["lupa"]
 
 [[package]]
 name = "fastapi"
-version = "0.69.0"
+version = "0.70.1"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 category = "main"
 optional = false
@@ -263,13 +246,13 @@ python-versions = ">=3.6.1"
 
 [package.dependencies]
 pydantic = ">=1.6.2,<1.7 || >1.7,<1.7.1 || >1.7.1,<1.7.2 || >1.7.2,<1.7.3 || >1.7.3,<1.8 || >1.8,<1.8.1 || >1.8.1,<2.0.0"
-starlette = "0.15.0"
+starlette = "0.16.0"
 
 [package.extras]
-all = ["requests (>=2.24.0,<3.0.0)", "jinja2 (>=2.11.2,<3.0.0)", "python-multipart (>=0.0.5,<0.0.6)", "itsdangerous (>=1.1.0,<2.0.0)", "pyyaml (>=5.3.1,<6.0.0)", "ujson (>=4.0.1,<5.0.0)", "orjson (>=3.2.1,<4.0.0)", "email_validator (>=1.1.1,<2.0.0)", "uvicorn[standard] (>=0.12.0,<0.16.0)"]
+all = ["requests (>=2.24.0,<3.0.0)", "jinja2 (>=2.11.2,<4.0.0)", "python-multipart (>=0.0.5,<0.0.6)", "itsdangerous (>=1.1.0,<3.0.0)", "pyyaml (>=5.3.1,<6.0.0)", "ujson (>=4.0.1,<5.0.0)", "orjson (>=3.2.1,<4.0.0)", "email_validator (>=1.1.1,<2.0.0)", "uvicorn[standard] (>=0.12.0,<0.16.0)"]
 dev = ["python-jose[cryptography] (>=3.3.0,<4.0.0)", "passlib[bcrypt] (>=1.7.2,<2.0.0)", "autoflake (>=1.4.0,<2.0.0)", "flake8 (>=3.8.3,<4.0.0)", "uvicorn[standard] (>=0.12.0,<0.16.0)"]
 doc = ["mkdocs (>=1.1.2,<2.0.0)", "mkdocs-material (>=7.1.9,<8.0.0)", "mdx-include (>=1.4.1,<2.0.0)", "mkdocs-markdownextradata-plugin (>=0.1.7,<0.3.0)", "typer-cli (>=0.0.12,<0.0.13)", "pyyaml (>=5.3.1,<6.0.0)"]
-test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<4.0.0)", "mypy (==0.910)", "flake8 (>=3.8.3,<4.0.0)", "black (==21.9b0)", "isort (>=5.0.6,<6.0.0)", "requests (>=2.24.0,<3.0.0)", "httpx (>=0.14.0,<0.19.0)", "email_validator (>=1.1.1,<2.0.0)", "sqlalchemy (>=1.3.18,<1.5.0)", "peewee (>=3.13.3,<4.0.0)", "databases[sqlite] (>=0.3.2,<0.6.0)", "orjson (>=3.2.1,<4.0.0)", "ujson (>=4.0.1,<5.0.0)", "python-multipart (>=0.0.5,<0.0.6)", "flask (>=1.1.2,<2.0.0)", "anyio[trio] (>=3.2.1,<4.0.0)", "types-ujson (==0.1.1)", "types-orjson (==3.6.0)", "types-dataclasses (==0.1.7)"]
+test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<4.0.0)", "mypy (==0.910)", "flake8 (>=3.8.3,<4.0.0)", "black (==21.9b0)", "isort (>=5.0.6,<6.0.0)", "requests (>=2.24.0,<3.0.0)", "httpx (>=0.14.0,<0.19.0)", "email_validator (>=1.1.1,<2.0.0)", "sqlalchemy (>=1.3.18,<1.5.0)", "peewee (>=3.13.3,<4.0.0)", "databases[sqlite] (>=0.3.2,<0.6.0)", "orjson (>=3.2.1,<4.0.0)", "ujson (>=4.0.1,<5.0.0)", "python-multipart (>=0.0.5,<0.0.6)", "flask (>=1.1.2,<3.0.0)", "anyio[trio] (>=3.2.1,<4.0.0)", "types-ujson (==0.1.1)", "types-orjson (==3.6.0)", "types-dataclasses (==0.1.7)"]
 
 [[package]]
 name = "fastapi-crudrouter"
@@ -316,39 +299,40 @@ testing = ["pytest", "pytest-asyncio", "pytest-mock", "pytest-cov"]
 
 [[package]]
 name = "fastapi-users"
-version = "8.1.5"
-description = "Ready-to-use and customizable users management for FastAPI."
+version = "9.2.5"
+description = "Ready-to-use and customizable users management for FastAPI"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
 email-validator = ">=1.1.0,<1.2"
-fastapi = ">=0.65.2,<0.71.0"
-fastapi-users-db-sqlalchemy = {version = ">=1.0.0", optional = true, markers = "extra == \"sqlalchemy\""}
-makefun = ">=1.9.2,<1.13"
+fastapi = ">=0.65.2,<0.75.0"
+fastapi-users-db-sqlalchemy = {version = ">=2.0.0", optional = true, markers = "extra == \"sqlalchemy2\""}
+makefun = ">=1.11.2,<1.14"
 passlib = {version = "1.7.4", extras = ["bcrypt"]}
 pyjwt = "2.3.0"
 python-multipart = "0.0.5"
 
 [package.extras]
-mongodb = ["fastapi-users-db-mongodb (>=1.0.0)"]
+mongodb = ["fastapi-users-db-mongodb (>=1.1.0)"]
 oauth = ["httpx-oauth (>=0.4,<0.5)"]
 ormar = ["fastapi-users-db-ormar (>=1.0.0)"]
-sqlalchemy = ["fastapi-users-db-sqlalchemy (>=1.0.0)"]
-tortoise-orm = ["fastapi-users-db-tortoise (>=1.0.0)"]
+redis = ["aioredis (>=2.0.1,<2.1.0)", "hiredis (>=2.0.0,<2.1.0)"]
+sqlalchemy = ["fastapi-users-db-sqlalchemy (>=1.1.0,<2.0.0)"]
+sqlalchemy2 = ["fastapi-users-db-sqlalchemy (>=2.0.0)"]
+tortoise-orm = ["fastapi-users-db-tortoise (>=1.1.0)"]
 
 [[package]]
 name = "fastapi-users-db-sqlalchemy"
-version = "1.0.0"
-description = "FastAPI Users database adapter for SQLAlchemy + encode/databases."
+version = "2.0.4"
+description = "FastAPI Users database adapter for SQLAlchemy."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-databases = ">=0.5"
-fastapi-users = ">=6.1.2"
+fastapi-users = ">=9.1.0"
 sqlalchemy = ">=1.4"
 
 [[package]]
@@ -495,7 +479,7 @@ six = ">=1.14.0,<2.0.0"
 
 [[package]]
 name = "makefun"
-version = "1.12.1"
+version = "1.13.1"
 description = "Small library to dynamically create python functions."
 category = "main"
 optional = false
@@ -721,7 +705,7 @@ sqlcipher = ["sqlcipher3-binary"]
 
 [[package]]
 name = "SQLAlchemy-Continuum"
-version = "1.3.11"
+version = "1.3.12"
 description = "Versioning and auditing extension for SQLAlchemy."
 category = "main"
 optional = false
@@ -733,19 +717,18 @@ SQLAlchemy = ">=1.0.8"
 SQLAlchemy-Utils = ">=0.30.12"
 
 [package.extras]
-anyjson = ["anyjson (>=0.3.3)"]
 flask = ["Flask (>=0.9)"]
 flask-login = ["Flask-Login (>=0.2.9)"]
 flask-sqlalchemy = ["Flask-SQLAlchemy (>=1.0)"]
 flexmock = ["flexmock (>=0.9.7)"]
-i18n = ["SQLAlchemy-i18n (>=0.8.4)"]
-test = ["pytest (>=2.3.5)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "PyMySQL (==0.6.1)", "six (>=1.4.0)", "anyjson (>=0.3.3)", "Flask (>=0.9)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "SQLAlchemy-i18n (>=0.8.4)"]
+i18n = ["SQLAlchemy-i18n (>=0.8.4,!=1.1.0)"]
+test = ["pytest (>=2.3.5)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "PyMySQL (>=0.8.0)", "six (>=1.4.0)", "Flask (>=0.9)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "SQLAlchemy-i18n (>=0.8.4,!=1.1.0)"]
 
 [package.source]
 type = "git"
-url = "https://github.com/meksor/sqlalchemy-continuum.git"
+url = "https://github.com/kvesteri/sqlalchemy-continuum.git"
 reference = "master"
-resolved_reference = "1bb99c7b2d7b081c2588370d279df37525a6a1ae"
+resolved_reference = "f1b0faa593134b28d5a68c35fb4b0e17b92376b5"
 
 [[package]]
 name = "sqlalchemy-utc"
@@ -760,7 +743,7 @@ SQLAlchemy = ">=0.9.0"
 
 [[package]]
 name = "sqlalchemy-utils"
-version = "0.37.9"
+version = "0.38.2"
 description = "Various utility functions for SQLAlchemy."
 category = "main"
 optional = false
@@ -786,7 +769,7 @@ url = ["furl (>=0.4.1)"]
 
 [[package]]
 name = "starlette"
-version = "0.15.0"
+version = "0.16.0"
 description = "The little ASGI library that shines."
 category = "main"
 optional = false
@@ -797,6 +780,17 @@ anyio = ">=3.0.0,<4"
 
 [package.extras]
 full = ["itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "graphene"]
+
+[[package]]
+name = "starlette-context"
+version = "0.3.3"
+description = "Access context in Starlette"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+starlette = "*"
 
 [[package]]
 name = "tenacity"
@@ -848,7 +842,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "e6ded7d0e4a5e19d73a9eedc4ae88334b3647660582be890cc674ec2da3a9d85"
+content-hash = "af855207d60f8c4b6f59c96dbac4eca07826d1df10d56f794f40c45e50aac98d"
 
 [metadata.files]
 aioredis = [
@@ -978,10 +972,6 @@ colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
 ]
-databases = [
-    {file = "databases-0.5.3-py3-none-any.whl", hash = "sha256:23862bd96241d8fcbf97eea82995ccb3baa8415c3cb106832b7509f296322f86"},
-    {file = "databases-0.5.3.tar.gz", hash = "sha256:b69d74ee0b47fa30bb6e76db0c58da998e973393259d29215d8fb29352162bd6"},
-]
 dnspython = [
     {file = "dnspython-2.1.0-py3-none-any.whl", hash = "sha256:95d12f6ef0317118d2a1a6fc49aac65ffec7eb8087474158f42f26a639135216"},
     {file = "dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4"},
@@ -995,8 +985,8 @@ fakeredis = [
     {file = "fakeredis-1.7.0.tar.gz", hash = "sha256:c9bd12e430336cbd3e189fae0e91eb99997b93e76dbfdd6ed67fa352dc684c71"},
 ]
 fastapi = [
-    {file = "fastapi-0.69.0-py3-none-any.whl", hash = "sha256:b302119066fd17e6065ebc3c1496a2870d3b8dde17074fdee3f20c5347f0fc77"},
-    {file = "fastapi-0.69.0.tar.gz", hash = "sha256:c5ebec13185878094d09e12508be5e8e1e002791dca716e20b5888bd95b25496"},
+    {file = "fastapi-0.70.1-py3-none-any.whl", hash = "sha256:5367226c7bcd7bfb2e17edaf225fd9a983095b1372281e9a3eb661336fb93748"},
+    {file = "fastapi-0.70.1.tar.gz", hash = "sha256:21d03979b5336375c66fa5d1f3126c6beca650d5d2166fbb78345a30d33c8d06"},
 ]
 fastapi-crudrouter = []
 fastapi-mail = [
@@ -1004,12 +994,12 @@ fastapi-mail = [
     {file = "fastapi_mail-0.4.1-py3-none-any.whl", hash = "sha256:46ea8d622bf0a1fe7563249706f6600017a28a43a22809ba96e7129b1e0fc31d"},
 ]
 fastapi-users = [
-    {file = "fastapi-users-8.1.5.tar.gz", hash = "sha256:18e0762857297273e83fa3273c39ecb6159cadd64592895de4b77013d80e13f3"},
-    {file = "fastapi_users-8.1.5-py3-none-any.whl", hash = "sha256:e89bbb30abf0c9007dec86cb0b60bb3bc6f2c9f8ed641ea363754cfdc5b27f13"},
+    {file = "fastapi-users-9.2.5.tar.gz", hash = "sha256:543e8bf98e5415a5b96fb5e73c2f389472c7b2f1475cf94dbb1c4e627b31a663"},
+    {file = "fastapi_users-9.2.5-py3-none-any.whl", hash = "sha256:39808e91d463d1ef55a84c77bd9c3fdbf2aac48802f7d5ce304ca0ddf087968f"},
 ]
 fastapi-users-db-sqlalchemy = [
-    {file = "fastapi-users-db-sqlalchemy-1.0.0.tar.gz", hash = "sha256:e6105181af1855e21ba31dfb8ae31b90e506cd2ac29f5f37998de66cefed2440"},
-    {file = "fastapi_users_db_sqlalchemy-1.0.0-py3-none-any.whl", hash = "sha256:ac58dc3041ef9ea08c71512c4bb908050b1bae3ebcae2ecad33c47b114b13f12"},
+    {file = "fastapi-users-db-sqlalchemy-2.0.4.tar.gz", hash = "sha256:93bd5ba48f7a7e9fe43b62a48ad7c5ec5993c8230c6dafb61c341ceee811ebf1"},
+    {file = "fastapi_users_db_sqlalchemy-2.0.4-py3-none-any.whl", hash = "sha256:4d246157c18335353111bfdf47dca081a6663a337e2f7e9670eb9606730399bb"},
 ]
 greenlet = [
     {file = "greenlet-1.1.2-cp27-cp27m-macosx_10_14_x86_64.whl", hash = "sha256:58df5c2a0e293bf665a51f8a100d3e9956febfbf1d9aaf8c0677cf70218910c6"},
@@ -1143,8 +1133,8 @@ libthumbor = [
     {file = "libthumbor-2.0.1.tar.gz", hash = "sha256:ed4fe5f27f8f90e7285b7e6dce99c1b67d43a140bf370e989080b43d80ce25f0"},
 ]
 makefun = [
-    {file = "makefun-1.12.1-py2.py3-none-any.whl", hash = "sha256:639ac01a68ddd76ab156ca435bcd89dab25c717fb09af23f1563dc26362b4dcc"},
-    {file = "makefun-1.12.1.tar.gz", hash = "sha256:4d0e90ca3fdbdeb6a4a0891e2da7d4b8e80386e19e6db91ce29b8aa5c876ecfe"},
+    {file = "makefun-1.13.1-py2.py3-none-any.whl", hash = "sha256:f10ea6e570d06e84d5488dd109cc09a3127ebbdc0696ddb7bfc234263ab2ac26"},
+    {file = "makefun-1.13.1.tar.gz", hash = "sha256:985bb8b670ffbbb95d2a8aa996d318e6e9a3f26fc6f3ef2da93ebdf8f9c616bf"},
 ]
 mako = [
     {file = "Mako-1.1.6-py2.py3-none-any.whl", hash = "sha256:afaf8e515d075b22fad7d7b8b30e4a1c90624ff2f3733a06ec125f5a5f043a57"},
@@ -1401,12 +1391,16 @@ sqlalchemy-utc = [
     {file = "SQLAlchemy_Utc-0.14.0-py2.py3-none-any.whl", hash = "sha256:d2379eed5cce372128b5e744ce382decd262b2c742ab31f7f22ca11c6647f60b"},
 ]
 sqlalchemy-utils = [
-    {file = "SQLAlchemy-Utils-0.37.9.tar.gz", hash = "sha256:4667edbdcb1ece011076b69772ef524bfbb17cc97e03f11ee6b85d98e7741d61"},
-    {file = "SQLAlchemy_Utils-0.37.9-py3-none-any.whl", hash = "sha256:bb6f4da8ac044cb0dd4d0278b1fb434141a5ee9d1881c757a076830ddbb04160"},
+    {file = "SQLAlchemy-Utils-0.38.2.tar.gz", hash = "sha256:9e01d6d3fb52d3926fcd4ea4a13f3540701b751aced0316bff78264402c2ceb4"},
+    {file = "SQLAlchemy_Utils-0.38.2-py3-none-any.whl", hash = "sha256:622235b1598f97300e4d08820ab024f5219c9a6309937a8b908093f487b4ba54"},
 ]
 starlette = [
-    {file = "starlette-0.15.0-py3-none-any.whl", hash = "sha256:66dc8464dc4380f591f33248d23913830f501027ac26839329c99177cf119128"},
-    {file = "starlette-0.15.0.tar.gz", hash = "sha256:5c6e71fe8a11f690f78ab13363b0993eb7e5446986d3549902a81505afdaa08b"},
+    {file = "starlette-0.16.0-py3-none-any.whl", hash = "sha256:38eb24bf705a2c317e15868e384c1b8a12ca396e5a3c3a003db7e667c43f939f"},
+    {file = "starlette-0.16.0.tar.gz", hash = "sha256:e1904b5d0007aee24bdd3c43994be9b3b729f4f58e740200de1d623f8c3a8870"},
+]
+starlette-context = [
+    {file = "starlette_context-0.3.3-py37-none-any.whl", hash = "sha256:7090b613d24b5ebd5d07682a503d883af40347076f466603a6493f3d0ce67f25"},
+    {file = "starlette_context-0.3.3.tar.gz", hash = "sha256:1c900380d08c872461aa76e9ae4d7b454bf53724ac2355104f191845a3c9947d"},
 ]
 tenacity = [
     {file = "tenacity-8.0.1-py3-none-any.whl", hash = "sha256:f78f4ea81b0fabc06728c11dc2a8c01277bfc5181b321a4770471902e3eb844a"},

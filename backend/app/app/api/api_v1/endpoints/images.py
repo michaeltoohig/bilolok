@@ -13,7 +13,7 @@ from app.crud.image import CRUDImage
 from app.crud.user import CRUDUser
 from app.api.deps.user import current_superuser
 from app.core.config import settings
-from app.core.users import UserManager, get_user_manager, jwt_authentication
+from app.core.users import UserManager, get_user_manager, get_jwt_strategy
 from app.models.image import Image
 from app.models.user import User
 from app.schemas.image import ImageSchemaIn, ImageSchema, ImageSchemaOut
@@ -86,12 +86,14 @@ async def tus_hook(
     crud_image = CRUDImage(db)
     crud_nakamal = CRUDNakamal(db)
     # Check JWT is valid    
-    _, token = tusdIn.get("HTTPRequest").get("Header").get("Authorization")[0].split(" ")
+    scheme, _, token = tusdIn.get("HTTPRequest").get("Header").get("Authorization")[0].partition(" ")
+    assert scheme == "Bearer"
     try:
+        jwt_strategy = get_jwt_strategy()
         data = jwt.decode(
             token,
-            jwt_authentication.secret,
-            audience=jwt_authentication.token_audience,
+            jwt_strategy.secret,
+            audience=jwt_strategy.token_audience,
             algorithms=[JWT_ALGORITHM],
         )
         user_id = data.get("user_id")

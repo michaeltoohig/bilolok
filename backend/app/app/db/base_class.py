@@ -5,6 +5,19 @@ from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
 
 
+# Setup sqlalchemy-continuum
+from sqlalchemy_continuum import make_versioned
+from sqlalchemy_continuum.plugins import PropertyModTrackerPlugin
+from app.db.plugins import FastAPIUsersPlugin
+make_versioned(
+    plugins=[
+        PropertyModTrackerPlugin(),
+        FastAPIUsersPlugin(),
+    ],
+    user_cls="User",
+)
+
+
 @as_declarative()
 class Base:
     id: uuid.UUID = Column(GUID, primary_key=True, default=uuid.uuid4)

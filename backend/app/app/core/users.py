@@ -1,12 +1,19 @@
 from pathlib import Path
 from typing import List, Optional
 
+import jwt
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, FastAPIUsers
-from fastapi_users.authentication import JWTAuthentication
+from fastapi_users import BaseUserManager, FastAPIUsers, models as FUModels
+from fastapi_users.authentication import (
+    AuthenticationBackend,
+    BearerTransport,
+    JWTStrategy,
+)
+from fastapi_users.jwt import decode_jwt
+from fastapi_users.manager import BaseUserManager, UserNotExists
+from pydantic import UUID4
 import pydenticon
 from sqlalchemy import select
-
 from app.core.config import settings
 from app.core.mail import mail, MessageSchema
 from app.db.session import async_session
@@ -40,6 +47,8 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
 
                 Please be sure to verify your email. Until you do so you will not be able
                 to perform some actions on the app.
+
+                - The Bilolok Team
             """
         )
         await mail.send_message(message)
@@ -80,15 +89,6 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         )
         await mail.send_message(message)
 
-
-jwt_authentication = JWTAuthentication(
-    secret=settings.SECRET_KEY,
-    lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS,
-    tokenUrl="/api/v1/auth/jwt/login",
-    token_audience=[f"{settings.PROJECT_SLUG}:auth"]
-)
-
-
 class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
     async def get_multi(self) -> List[UserDB]:
         async with self.session.begin() as session:
@@ -98,18 +98,61 @@ class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
 
         return [await self._make_user(user) for user in users] if users else None
 
-
 async def get_user_db():
     yield MySQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
-
 
 async def get_user_manager(user_db: MySQLAlchemyUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
 
+bearer_transport = BearerTransport(tokenUrl="/api/v1/auth/jwt/login")
+
+class MyJWTStrategy(JWTStrategy):
+    """Split `read_token` method into two methods so we can
+    use the `get_user_id` outside of FastAPI endpoint for our
+    middleware.
+    """
+    async def get_user_id(self, token: Optional[str]):
+        try:
+            data = decode_jwt(token, self.secret, self.token_audience)
+            user_id = data.get("user_id")
+            return user_id
+        except jwt.PyJWTError:
+            return None
+
+    async def read_token(
+        self, token: Optional[str], user_manager: BaseUserManager[FUModels.UC, FUModels.UD]
+    ) -> Optional[FUModels.UD]:
+        if token is None:
+            return None
+
+        user_id = await self.get_user_id(token)
+        if user_id is None:
+            return None
+        
+        try:
+            user_uiid = UUID4(user_id)
+            return await user_manager.get(user_uiid)
+        except ValueError:
+            return None
+        except UserNotExists:
+            return None 
+
+def get_jwt_strategy() -> MyJWTStrategy:
+    return MyJWTStrategy(
+        secret=settings.SECRET_KEY,
+        lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS,
+        token_audience=[f"{settings.PROJECT_SLUG}:auth"]
+    )
+
+auth_backend = AuthenticationBackend(
+    name="jwt",
+    transport=bearer_transport,
+    get_strategy=get_jwt_strategy,
+)
 
 fastapi_users = FastAPIUsers(
     get_user_manager,
-    [jwt_authentication],
+    [auth_backend],
     User,
     UserCreate,
     UserUpdate,

@@ -112,7 +112,7 @@ const actions = {
   },
   updateResources: async ({ commit, rootState }, { nakamalId, oldResources, resources }) => {
     try {
-      let token = rootState.auth.token;
+      const token = rootState.auth.token;
       const deleteList = oldResources.filter(id => resources.indexOf(id) === -1);
       const putlist = resources.filter(id => oldResources.indexOf(id) === -1);
       deleteList.forEach(id => {

@@ -19,6 +19,7 @@ class Nakamal(Base, TimeMixin):
     """SQLAlchemy nakamals table definition."""
 
     __tablename__ = "nakamal"
+    __versioned__ = {}
 
     name = Column(String, nullable=False)
     aliases = Column(ARRAY(String), nullable=False)

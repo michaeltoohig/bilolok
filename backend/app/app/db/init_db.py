@@ -16,6 +16,7 @@ from app.models.user import User as UserTable
 # for more details: https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/28
 
 
+# TODO move this to a module that makes sense...
 def build_user_avatar(user):
     relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
     fullAvatarPath = Path(settings.IMAGES_LOCAL_DIR) / relativeAvatarPath
@@ -29,9 +30,8 @@ def build_user_avatar(user):
 async def init_db(db: Session) -> None:
     async with async_engine.begin() as connection:
         async with async_session(bind=connection) as session:
-
             try:
-                superuser = await fastapi_users.create_user(
+                await fastapi_users.create_user(
                     UserCreate(
                         email=settings.FIRST_SUPERUSER,
                         password=settings.FIRST_SUPERUSER_PASSWORD,
@@ -43,7 +43,8 @@ async def init_db(db: Session) -> None:
             except:
                 pass  # user already exists
 
-
+            # TODO remove this since it should now be done when user registers
+            # This was here to build avatars for existing users
             crud_user = CRUDUser(db)
             users = await crud_user.get_multi()
             for user in users:

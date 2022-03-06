@@ -123,6 +123,7 @@ async def get_all_images(
 @router.put("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
 async def put_one_resource(
     db: AsyncSession = Depends(get_db),
+    user = Depends(current_active_verified_user),
     *,
     item_id: UUID,
     resource_id: UUID,
@@ -135,11 +136,8 @@ async def put_one_resource(
     resource = await crud_resource.get_by_id(resource_id)
     if not resource:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal Resource not found.")
-    try:
-        query = nakamal_resource_association.insert().values(nakamal_id=item.id, resource_id=resource.id)
-        await db.execute(query)
-    except IntegrityError as exc:
-        await db.rollback()
+    r = await crud_resource._get_one(resource.id)
+    await crud_nakamal.add_resource(item.id, r)
     item = await crud_nakamal.get_by_id(item.id)
     return NakamalSchemaOut(**item.dict())
 
@@ -147,6 +145,7 @@ async def put_one_resource(
 @router.delete("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
 async def delete_one_resource(
     db: AsyncSession = Depends(get_db),
+    user = Depends(current_active_verified_user),
     *,
     item_id: UUID,
     resource_id: UUID,
@@ -159,7 +158,7 @@ async def delete_one_resource(
     resource = await crud_resource.get_by_id(resource_id)
     if not resource:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal Resource not found.")
-    query = delete(nakamal_resource_association).where(nakamal_resource_association.c.nakamal_id == item.id, nakamal_resource_association.c.resource_id == resource.id)
-    await db.execute(query)
+    r = await crud_resource._get_one(resource.id)
+    await crud_nakamal.remove_resource(item.id, r)
     item = await crud_nakamal.get_by_id(item.id)
     return NakamalSchemaOut(**item.dict())
