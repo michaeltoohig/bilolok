@@ -38,13 +38,7 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     PROJECT_SLUG: str
-    SENTRY_DSN: Optional[HttpUrl] = None
-
-    @validator("SENTRY_DSN", pre=True)
-    def sentry_dsn_can_be_blank(cls, v: str) -> Optional[str]:
-        if len(v) == 0:
-            return None
-        return v
+    SENTRY_DSN: Optional[HttpUrl]
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
