@@ -478,6 +478,21 @@ python-versions = ">=3.6,<4.0"
 six = ">=1.14.0,<2.0.0"
 
 [[package]]
+name = "loguru"
+version = "0.6.0"
+description = "Python logging made (stupidly) simple"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.dependencies]
+colorama = {version = ">=0.3.4", markers = "sys_platform == \"win32\""}
+win32-setctime = {version = ">=1.0.0", markers = "sys_platform == \"win32\""}
+
+[package.extras]
+dev = ["colorama (>=0.3.4)", "docutils (==0.16)", "flake8 (>=3.7.7)", "tox (>=3.9.0)", "pytest (>=4.6.2)", "pytest-cov (>=2.7.1)", "black (>=19.10b0)", "isort (>=5.1.1)", "Sphinx (>=4.1.1)", "sphinx-autobuild (>=0.7.1)", "sphinx-rtd-theme (>=0.4.3)"]
+
+[[package]]
 name = "makefun"
 version = "1.13.1"
 description = "Small library to dynamically create python functions."
@@ -871,6 +886,17 @@ h11 = ">=0.8"
 standard = ["websockets (>=9.1)", "httptools (>=0.2.0,<0.3.0)", "watchgod (>=0.6)", "python-dotenv (>=0.13)", "PyYAML (>=5.1)", "uvloop (>=0.14.0,!=0.15.0,!=0.15.1)", "colorama (>=0.4)"]
 
 [[package]]
+name = "win32-setctime"
+version = "1.1.0"
+description = "A small Python utility to set file creation time on Windows"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["pytest (>=4.6.2)", "black (>=19.3b0)"]
+
+[[package]]
 name = "zipp"
 version = "3.6.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -885,7 +911,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a64277562fb82d96fba338cb1bc4127064804c7c7497ea98ff6403043749e854"
+content-hash = "b0bdd77ac83ce2cae9145556269de4b0b5f6ae06f68bdaeebbbd274ff56f2df1"
 
 [metadata.files]
 aioredis = [
@@ -1174,6 +1200,10 @@ jinja2 = [
 libthumbor = [
     {file = "libthumbor-2.0.1-py3-none-any.whl", hash = "sha256:3c4e1a59c019d22f868d225315c06f97fad30fb5e78112d6a230b978e7d24e38"},
     {file = "libthumbor-2.0.1.tar.gz", hash = "sha256:ed4fe5f27f8f90e7285b7e6dce99c1b67d43a140bf370e989080b43d80ce25f0"},
+]
+loguru = [
+    {file = "loguru-0.6.0-py3-none-any.whl", hash = "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"},
+    {file = "loguru-0.6.0.tar.gz", hash = "sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c"},
 ]
 makefun = [
     {file = "makefun-1.13.1-py2.py3-none-any.whl", hash = "sha256:f10ea6e570d06e84d5488dd109cc09a3127ebbdc0696ddb7bfc234263ab2ac26"},
@@ -1464,6 +1494,10 @@ urllib3 = [
 uvicorn = [
     {file = "uvicorn-0.15.0-py3-none-any.whl", hash = "sha256:17f898c64c71a2640514d4089da2689e5db1ce5d4086c2d53699bf99513421c1"},
     {file = "uvicorn-0.15.0.tar.gz", hash = "sha256:d9a3c0dd1ca86728d3e235182683b4cf94cd53a867c288eaeca80ee781b2caff"},
+]
+win32-setctime = [
+    {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
+    {file = "win32_setctime-1.1.0.tar.gz", hash = "sha256:15cf5750465118d6929ae4de4eb46e8edae9a5634350c01ba582df868e932cb2"},
 ]
 zipp = [
     {file = "zipp-3.6.0-py3-none-any.whl", hash = "sha256:9fe5ea21568a0a70e50f273397638d39b03353731e6cbbb3fd8502a33fec40bc"},

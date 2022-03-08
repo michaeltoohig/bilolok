@@ -31,8 +31,8 @@ Bilolok is an open-source application that allows users to browse the hundreds o
    - [x] Add auth check to open auth modal for existing features
 
  - [x] Set map bounds after each filter is applied
- - [ ] Archive / Log tables for important user-editable tables
-   - [ ] Nakamal table
+ - [x] Archive / Log tables for important user-editable tables
+   - [x] Nakamal table
 
 The following were recommended additions
 
@@ -104,7 +104,26 @@ For version 2 and beyond we can build upon this foundation such as the following
     - Use another regex with special character to mark the window as bad
     - chart shows windows with positve and negative and no reviews then
 
+- [ ] More Logging
+  - [x] Use Loguru / replace default logger
+  - [x] Add middleware to log requests (timeit?)
+    - [x] Log to file
+  - [x] Log request-id
+- [ ] Sentry
+  - [x] backend
+    - [x] include context such as user id and request id
+  - [ ] frontend
+    - [ ] generate request on frontend
+    - [ ] include context such as user id and request id
+  - [ ] look into sentry feature to join frontend and backend errors into one continuous timeline
+- [ ] Refresh Access Token
+  - [ ] Blacklist tokens
+  - [ ] Add iat to JWT
 - [ ] Update emails to more professional standard (maybe use mjml)
+- [ ] On map zoomed out show areas instead of markers
+  - [ ] Show chief of area based on check-ins
+- [ ] User actions table
+  - [ ] Add `last_seen` or similar to users table
 - [x] Heatmap layer
   - [x] Show heatmap for all users
   - [x] Filter heatmap to only user's checkins
@@ -130,13 +149,14 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] photos
 - [ ] Fix browser quota limit error - handle by clearing cache and starting again?
 - [x] Add nakamal created_at and updated_at columns
-  - [ ] User edit history of nakamals
+  - [x] User edit history of nakamals
 - [ ] Handle possibly dead nakamals by looking for nakamals without recent updates or recent check-ins. A `confirmed_at` value or table with user and result of confirmation visit?
 - [ ] User view for public - rank users or show their badges and order by different criteria (last check-in, most this week/month, etc)
 - [ ] User login history and track IP and other details to help prepare against bad actors
 - [ ] Current user chat (websockets or something) KISS so no history or logging
   - [ ] Alerts users to new messages or @user messages
   - [ ] Must be able to listen to incoming messages in background while user has joined chat for the day or something like this? Or it becomes a always running chat app at the same time???
+  - [ ] Current active users list on frontend? - may be best if implemented when new auth token is generated since if we have refresh tokens we can set the auth tokens to a short lifespan - or when if chat is an available feature then use the websocket to set a more precise value based on last message sent or other event
 
 
 ## Development

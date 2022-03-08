@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List
 from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, status, Query
@@ -23,6 +23,7 @@ router = SQLAlchemyCRUDRouter(
     db=get_db,
     get_all_route=False,
     create_route=False,
+    update_route=False,
     delete_all_route=False,
     delete_one_route=[Depends(current_superuser)],
 )

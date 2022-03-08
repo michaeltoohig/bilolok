@@ -18,8 +18,9 @@ def list_parse_fallback(v):
         return v.split(",")
 
 class Settings(BaseSettings):
+    DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str  # secrets.token_urlsafe(32)
+    SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60 * 60 * 24 * 8  # 8 days
     SERVER_HOST: AnyHttpUrl
     FRONTEND_HOST: AnyHttpUrl

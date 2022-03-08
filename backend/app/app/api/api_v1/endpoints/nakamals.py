@@ -8,16 +8,17 @@ from app.schemas.checkin import CheckinSchemaOut
 from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
-from sqlalchemy import delete
 
 from app.crud.nakamal import CRUDNakamal
 from app.crud.image import CRUDImage
-from app.models.nakamal import Nakamal, nakamal_resource_association
+from app.models.nakamal import Nakamal
 from app.api.deps.user import current_active_verified_user, current_superuser
-from app.schemas.nakamal import NakamalResourceSchemaIn, NakamalResourceSchemaOut, NakamalSchemaIn, NakamalSchema, NakamalSchemaOut, NakamalSchemaUpdate
+from app.schemas.nakamal import NakamalSchemaIn, NakamalSchema, NakamalSchemaOut, NakamalSchemaUpdate
 from app.schemas.image import ImageSchemaOut
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio.session import AsyncSession
+
+import loguru
+logger = loguru.logger
 
 
 router = SQLAlchemyCRUDRouter(
@@ -73,6 +74,7 @@ async def update_one(
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
 
+    # logger.bind(payload=update_schema.dict()).debug("nakamal update")
     item = await crud_nakamal.update(item_id, update_schema)
     return NakamalSchemaOut(**item.dict())
 
