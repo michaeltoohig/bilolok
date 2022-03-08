@@ -13,6 +13,7 @@ _local_images/
 
 # frontend
 node_modules/
+.env.local
 
 # deployment
 .vault_pass

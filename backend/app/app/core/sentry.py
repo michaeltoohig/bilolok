@@ -4,13 +4,15 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from app.core.config import settings
 
 
-def traces_sampler(sampling_context):
-    if settings.DEBUG:
-        # Drop this transaction
-        return 0
-    else:
-        # Send 100% of all events
-        return 1
+# def traces_sampler(sampling_context):
+#     if settings.DEBUG:
+#         # Drop this transaction
+#         return 0
+#     else:
+#         # Set to 1.0 to capture 100%
+#         # of transactions for performance monitoring.
+#         # We recommend adjusting this value in production
+#         return 1
 
 
 def init_sentry():
@@ -22,7 +24,11 @@ def init_sentry():
             integrations=[
                 SqlalchemyIntegration(),
             ],
-            traces_sampler=traces_sampler,
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production
+            traces_sample_rate=1.0,
+            # traces_sampler=traces_sampler,
         )
 
 # So this nonsense here is due to an error in uvicorn
