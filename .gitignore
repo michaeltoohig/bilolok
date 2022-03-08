@@ -9,6 +9,7 @@ app.egg-info
 .mypy_cache
 _local_images/
 .venv/
+*.log
 
 # frontend
 node_modules/
@@ -16,4 +17,5 @@ node_modules/
 # deployment
 .vault_pass
 
+# backup
 backup/

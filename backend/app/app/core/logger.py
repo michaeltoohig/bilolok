@@ -1,7 +1,10 @@
 """Configure handlers and formats for application loggers."""
 import logging
 import sys
+from pathlib import Path
 from pprint import pformat
+
+from app.core.config import settings
 
 from loguru import logger
 
@@ -99,11 +102,12 @@ def init_logging():
         handlers=[{"sink": sys.stdout, "level": logging.DEBUG, "format": format_record}]
     )
     logger.add(
-            "./test.log",
-            rotation="1 week",
-            retention="1 month",
+            Path(settings.LOG_FILE_PATH) / f"{settings.PROJECT_SLUG}.log",
+            rotation=settings.LOG_FILE_ROTATION,
+            retention=settings.LOG_FILE_RETENTION,
+            compression=settings.LOG_FILE_COMPRESSION,
             enqueue=True,
             backtrace=True,
-            level=logging.INFO,
+            level=settings.LOG_FILE_LEVEL,
             format=format_record,
         )

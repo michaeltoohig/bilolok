@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import (
@@ -40,6 +41,12 @@ class Settings(BaseSettings):
     PROJECT_NAME: str
     PROJECT_SLUG: str
     SENTRY_DSN: Optional[HttpUrl]
+
+    LOG_FILE_PATH: str = "."
+    LOG_FILE_ROTATION: str = "monday at 12:00"
+    LOG_FILE_RETENTION: Union[int, str] = 8
+    LOG_FILE_COMPRESSION: str = "gz"
+    LOG_FILE_LEVEL: str = logging.INFO
 
     POSTGRES_SERVER: str
     POSTGRES_USER: str
