@@ -1,6 +1,7 @@
 import json
 import logging
 from typing import Any, Dict, List, Optional, Union
+from urllib.parse import urlparse
 
 from pydantic import (
     AnyHttpUrl,
@@ -40,7 +41,25 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     PROJECT_SLUG: str
-    SENTRY_DSN: Optional[HttpUrl]
+    SENTRY_DSN: HttpUrl
+    SENTRY_HOST: Optional[str] = None
+    SENTRY_PROJECT_IDS: Optional[List[int]] = None
+
+    @validator("SENTRY_HOST", pre=True)
+    def extract_sentry_host(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+        return urlparse(values.get("SENTRY_DSN")).hostname
+
+    @validator("SENTRY_PROJECT_IDS", pre=True)
+    def extract_sentry_project_id(cls, v: Optional[List[int]], values: Dict[str, Any]) -> Any:
+        if isinstance(v, list):
+            return v
+        return [int(urlparse(values.get("SENTRY_DSN")).path.strip("/"))]
+
+    VAPID_PRIVATE_KEY: str
+    VAPID_PUBLIC_KEY: str
+    VAPID_MAILTO: EmailStr
 
     LOG_FILE_PATH: str = "."
     LOG_FILE_ROTATION: str = "monday at 12:00"
@@ -78,22 +97,22 @@ class Settings(BaseSettings):
     REDIS_SERVER: str
     REDIS_PORT: int = 6379
 
-    REDIS_CELERY_BROKER_DB: int = 0
+    # XXX not using celery; using arq so we can remove this soon
+    # REDIS_CELERY_BROKER_DB: int = 0
+    # CELERY_BROKER_URI: Optional[RedisDsn] = None
 
-    CELERY_BROKER_URI: Optional[RedisDsn] = None
-
-    @validator("CELERY_BROKER_URI", pre=True)
-    def assemble_celery_connection(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Any:
-        if isinstance(v, str):
-            return v
-        return RedisDsn.build(
-            scheme="redis",
-            host=values.get("REDIS_SERVER"),
-            port=str(values.get("REDIS_PORT")),
-            path=f"/{values.get('REDIS_CELERY_BROKER_DB')}",
-        )
+    # @validator("CELERY_BROKER_URI", pre=True)
+    # def assemble_celery_connection(
+    #     cls, v: Optional[str], values: Dict[str, Any]
+    # ) -> Any:
+    #     if isinstance(v, str):
+    #         return v
+    #     return RedisDsn.build(
+    #         scheme="redis",
+    #         host=values.get("REDIS_SERVER"),
+    #         port=str(values.get("REDIS_PORT")),
+    #         path=f"/{values.get('REDIS_CELERY_BROKER_DB')}",
+    #     )
 
     MAIL_TLS: bool = True
     MAIL_SSL: bool = True

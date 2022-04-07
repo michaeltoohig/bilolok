@@ -20,7 +20,7 @@
               </v-card-title>
             </v-card>
 
-            <v-list subheader class="elevation-3">
+            <v-list subheader class="elevation-3 mb-3">
               <v-subheader>Favorite Kava Bars This Month</v-subheader>
               <v-list-item v-if="topNakamalsByCheckins.length === 0">
                 <v-list-item-icon class="mr-3">
@@ -55,7 +55,7 @@
 
             <v-alert
               v-if="isMe && !isUserVerified"
-              class="my-3"
+              class="mb-3"
               type="info"
               prominent
               text
@@ -83,6 +83,8 @@
                 </v-btn>
               </div>
             </v-alert>
+
+            <PushNotificationCard v-if="isMe"></PushNotificationCard>
           </v-col>
           <v-col sm="8" cols="12">
             <div
@@ -106,6 +108,7 @@ import timeline from '@/mixins/timeline';
 import formatDatetime from '@/mixins/formatDatetime';
 import CardCheckin from '@/components/timeline/CardCheckin.vue';
 import CardImage from '@/components/timeline/CardImage.vue';
+import PushNotificationCard from '@/components/user/PushNotificationCard.vue';
 
 export default {
   name: 'User',
@@ -113,10 +116,12 @@ export default {
   components: {
     CardCheckin,
     CardImage,
+    PushNotificationCard,
   },
   data() {
     return {
       loading: true,
+      notificationsSupported: false,
     };
   },
   computed: {

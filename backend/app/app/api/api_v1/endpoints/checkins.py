@@ -51,7 +51,7 @@ async def create_one(
     db: AsyncSession = Depends(get_db),
     *,
     in_schema: CheckinSchemaIn,
-    user: User = Depends(current_active_verified_user)
+    user: User = Depends(current_active_verified_user),
 ) -> Any:
     """Checkin to a nakamal.
 

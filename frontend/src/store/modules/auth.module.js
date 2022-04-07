@@ -1,7 +1,8 @@
 /* eslint-disable */
 import router from '@/router';
-import { getLocalToken, saveLocalToken, removeLocalToken } from '@/utils.js';
+import { getLocalToken, saveLocalToken, removeLocalToken, getDeviceId } from '@/utils.js';
 import authApi from '@/api/auth.js';
+import subscriptionsApi from '@/api/subscriptions.js';
 import usersApi from '@/api/users.js';
 
 const initialState = function () {
@@ -133,7 +134,12 @@ const actions = {
       }
     }
   },
-  removeLogIn: async ({ commit }) => {
+  removeLogIn: async ({ commit, getters }) => {
+    const deviceId = getDeviceId();
+    const token = getters.token;
+    if (token && deviceId) {
+      await subscriptionsApi.remove(token, deviceId);
+    }
     removeLocalToken();
     commit('setToken', '');
     commit('setLoggedIn', false);

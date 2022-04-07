@@ -486,26 +486,75 @@ registerRoute(
 /* Web Push Notifications */
 
 self.addEventListener('push', (e) => {
+  console.log('got push!', e.data);
+
   if (!(self.Notification && self.Notification.permission === 'granted')) {
+    console.log('push not available :(');
     return;
   };
-  let push_data = e.data.json();
+
+  const push_data = e.data.json();
+  const title = push_data.title || 'Bilolok'
   const options = {
-    actions: push_data.actions,
+    // actions: push_data.actions,
+    // image: './img/BilolokCover.png',
     body: push_data.body,
-    icon: './img/icon.png',
-    image: './img/notification.jpg',
+    icon: './img/AppImages/192x192.png',
+    tag: 'tag-1',
+    vibrate: [500, 100, 100, 100],
+    data: {
+      id: push_data.id,
+    },
   };
   e.waitUntil(
-    self.registration.showNotification(push_data.title, options)
-  )
-})
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Hard to test since can't seem to manually trigger this event in dev
+// self.addEventListener('pushsubscriptionchange', function (e) {
+//   console.log('Subscription expired');
+//   e.waitUntil(
+//     self.registration.pushManager.subscribe({ userVisibleOnly: true })
+//       .then(function (subscription) {
+//         console.log('Subscribed after expiration', subscription.endpoint, subscription);
+//         // return fetch('register', {
+//         //   method: 'post',
+//         //   headers: {
+//         //     'Content-type': 'application/json'
+//         //   },
+//         //   body: JSON.stringify({
+//         //     endpoint: subscription.endpoint
+//         //   })
+//         // });
+//       })
+//   );
+// });
 
 // Could make click on the notification open our app
 self.addEventListener('notificationclick', (e) => {
-  if (e.action === 'some_action') {
-    // Do something...
-  } else {
-    self.clients.openWindow('/');
-  };
-})
+  console.log('notificationclick', e.notification);
+  // Close notification.
+  e.notification.close();
+  
+  self.clients.matchAll().then(function (clis) {
+    var client = clis.find(function (c) {
+      c.visibilityState === 'visible';
+    });
+    if (client !== undefined) {
+      client.navigate('/map');
+      client.focus();
+    } else {
+      // there are no visible windows. Open one.
+      self.clients.openWindow('/map');
+    }
+  });
+  
+  // close all notifications with tag of 'id1'
+  // var options = { tag: e.notification.tag };
+  // self.registration.getNotifications(options).then(function (notifications) {
+  //   notifications.forEach(function (notification) {
+  //     notification.close();
+  //   });
+  // });
+});

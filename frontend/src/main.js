@@ -1,4 +1,8 @@
 import Vue from 'vue';
+import * as Sentry from '@sentry/vue';
+import { BrowserTracing } from '@sentry/tracing';
+import { sentryDsn, sentryTunnel } from '@/env';
+
 import App from './App.vue';
 import './registerServiceWorker';
 import router from './router';
@@ -11,6 +15,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css'; // eslint-ignore import/no-extraneous-dependencies
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'; // eslint-ignore
 import './geo';
+import './deviceId';
 
 // Testing the following
 function getPWADisplayMode() {
@@ -26,6 +31,23 @@ function getPWADisplayMode() {
 console.log('PWA Display Mode:', getPWADisplayMode());
 
 Vue.config.productionTip = false;
+
+Sentry.init({
+  Vue,
+  dsn: sentryDsn,
+  tunnel: sentryTunnel,
+  logErrors: true,
+  integrations: [
+    new BrowserTracing({
+      routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+      tracingOrigins: ['localhost', 'bilolok.com', /^\//],
+    }),
+  ],
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 0.05,
+});
 
 new Vue({
   router,

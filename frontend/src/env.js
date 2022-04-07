@@ -24,3 +24,6 @@ if (env === 'production') {
 
 export const uploadDomain = envUploadDomain;
 export const appName = process.env.VUE_APP_NAME;
+
+export const sentryDsn = process.env.VUE_APP_SENTRY_DSN;
+export const sentryTunnel = `${envApiDomain}/sentry`;

@@ -125,7 +125,7 @@ self.addEventListener('push', (e) => {
 
   click_open_url = 'https://google.com';
   const options = {
-    body: push_message.body,
+    body: push_message,
     icon: './img/icon.png',
     image: './img/notification.jpg',
     vibrate: [200, 100, 200, 50, 50, 50, 50],

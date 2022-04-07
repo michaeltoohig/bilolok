@@ -16,6 +16,13 @@ from app.core.config import settings
 
 
 def init_sentry():
+    # So this here is due to an error in uvicorn
+    # asyncio.exceptions.CancelledError is thrown whenever the app
+    # is stopped `ctrl+c` which is sending the error to sentry from
+    # development constantly. `traces_sampler` hook does not catch
+    # this exception because it is happening outside of FastAPI in uvicorn. 
+    # https://github.com/encode/uvicorn/issues/1160
+    # https://github.com/encode/starlette/issues/486
     if settings.DEBUG:
         return None
     else:
@@ -27,15 +34,6 @@ def init_sentry():
             # Set traces_sample_rate to 1.0 to capture 100%
             # of transactions for performance monitoring.
             # We recommend adjusting this value in production
-            traces_sample_rate=1.0,
+            traces_sample_rate=0.05,
             # traces_sampler=traces_sampler,
         )
-
-# So this nonsense here is due to an error in uvicorn
-# asyncio.exceptions.CancelledError is thrown whenever the app
-# is stopped `ctrl+c` which is sending the error to sentry from
-# development constantly. `traces_sampler` hook does not catch
-# this exception because it is happening outside of FastAPI in uvicorn. 
-# https://github.com/encode/uvicorn/issues/1160
-# https://github.com/encode/starlette/issues/486
-init_sentry()

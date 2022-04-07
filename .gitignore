@@ -10,6 +10,7 @@ app.egg-info
 _local_images/
 .venv/
 *.log
+*.log.gz
 
 # frontend
 node_modules/
@@ -20,3 +21,8 @@ node_modules/
 
 # backup
 backup/
+
+# vapid
+vapid_private.pem
+private_key.txt
+public_key.txt

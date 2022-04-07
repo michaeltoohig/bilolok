@@ -105,7 +105,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def remove(self, item_id: UUID) -> ImageSchema:
+    async def delete(self, item_id: UUID) -> ImageSchema:
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()

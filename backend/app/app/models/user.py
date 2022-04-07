@@ -1,8 +1,8 @@
 from pathlib import Path
 from uuid import UUID
 
-# from sqlalchemy import Column, String
-from .fastapi_users_db_sqlalchemy_asyncpg import SQLAlchemyBaseUserTable
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
+# from .fastapi_users_db_sqlalchemy_asyncpg import SQLAlchemyBaseUserTable
 
 from app.core.config import settings
 from app.core.image import img_crypto_url
@@ -28,5 +28,3 @@ class User(Base, SQLAlchemyBaseUserTable):
             subdir=str(user_id)[:2],
             u_id=str(user_id),
         ))
-
-    

@@ -68,7 +68,7 @@ async def delete_one(
     item_id: str
 ) -> Any:
     crud_image = CRUDImage(db)
-    image = await crud_image.remove(item_id)
+    image = await crud_image.delete(item_id)
     return ImageSchemaOut(**image.dict())
 
 

@@ -124,6 +124,10 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] Show chief of area based on check-ins
 - [ ] User actions table
   - [ ] Add `last_seen` or similar to users table
+- [ ] Push Notifications - Experimental setup
+  - [x] Allow users to subscribe / unsubscribe
+  - [x] Remove subscriptions for device when user logs out
+  - [ ] Handle `pushsubscriptionchange` event - seems impossible cannot trigger manually
 - [x] Heatmap layer
   - [x] Show heatmap for all users
   - [x] Filter heatmap to only user's checkins

@@ -8,6 +8,7 @@ from app.api.api_v1.endpoints import (
     nakamalAreas,
     nakamalKavaSources,
     nakamalResources,
+    subscriptions,
     users,
     utils,
 )
@@ -27,4 +28,5 @@ api_router.include_router(nakamals.router, tags=["nakamals"])
 api_router.include_router(nakamalAreas.router, tags=["nakamals"])
 api_router.include_router(nakamalKavaSources.router, tags=["nakamals"])
 api_router.include_router(nakamalResources.router, tags=["nakamals"])
+api_router.include_router(subscriptions.router, tags=["subscriptions"])
 api_router.include_router(utils.router, tags=["utils"])

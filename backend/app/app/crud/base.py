@@ -13,6 +13,9 @@ IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 SCHEMA = TypeVar("SCHEMA", bound=BaseSchema)
 TABLE = TypeVar("TABLE")
 
+import loguru 
+logger = loguru.logger
+
 
 class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
     def __init__(self, db_session: AsyncSession, *args, **kwargs) -> None:
@@ -74,6 +77,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return (self._schema.from_orm(item) for item in results.scalars())
 
     async def remove(self, item_id: UUID) -> SCHEMA:
+        logger.warning("Deprecate Waring: use `delete` method instead")
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()
