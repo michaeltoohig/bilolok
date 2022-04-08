@@ -22,7 +22,7 @@ import Tus from '@uppy/tus';
 
 export default {
   name: 'NakamalImageUpload',
-  props: ['nakamal', 'open'],
+  props: ['open'],
   components: {
     DashboardModal,
   },
@@ -34,8 +34,7 @@ export default {
     uppy() {
       return new Uppy({
         meta: {
-          Target: 'NAKAMAL',
-          NakamalID: this.nakamal.id,
+          Target: 'USER_PROFILE',
         },
       })
         .use(Tus, {
@@ -50,9 +49,9 @@ export default {
         })
         .on('complete', () => {
           this.$emit('close-modal');
-          setTimeout(() => {
-            this.$store.dispatch('image/getNakamal', this.nakamal.id);
-          }, 500);
+          // setTimeout(() => {
+          //   this.$store.dispatch('auth/getMe', this.token);
+          // }, 500);
         })
         .on('upload-error', (_, error) => {
           this.$emit('close-modal');

@@ -40,7 +40,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         
     def save_file(self, sfp: Path, *, nakamal_id: str, file_id: str, filename: str):
         """Save the given file to it's storage path defined by `filepath`."""
-        ffp = Path(settings.IMAGES_LOCAL_DIR) / Image.build_filepath(nakamal_id, file_id, filename)
+        ffp = Path(settings.IMAGES_LOCAL_DIR) / self._table.build_filepath(nakamal_id, file_id, filename)
         ffp.parent.mkdir(parents=True, exist_ok=True)
         sfp.replace(str(ffp))  # removes original and assumes both are on same filesystem
 

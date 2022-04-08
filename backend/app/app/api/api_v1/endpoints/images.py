@@ -1,7 +1,9 @@
+from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional
 from app.api.deps.db import get_db
 from app.crud.nakamal import CRUDNakamal
+from app.schemas.user import UserSchema, UserUpdate
 
 import jwt
 from fastapi import Depends
@@ -72,6 +74,11 @@ async def delete_one(
     return ImageSchemaOut(**image.dict())
 
 
+class UploadTarget(Enum):
+    NAKAMAL = "NAKAMAL"
+    USER_PROFILE = "USER_PROFILE"
+
+
 @router.post("/tus-hook", include_in_schema=False,)
 async def tus_hook(
     db: AsyncSession = Depends(get_db),
@@ -82,9 +89,14 @@ async def tus_hook(
 ) -> Any:
     """
     Hook for tusd.
+
+    Now that I've added multiple targets for uploaded images this endpoint has become
+    less than ideal. Could use some duplicate code reduced and maybe even functions
+    to handle each individual target rather than if -> elif -> elif pattern.
     """
     crud_image = CRUDImage(db)
     crud_nakamal = CRUDNakamal(db)
+    crud_user = CRUDUser(db)
     # Check JWT is valid    
     scheme, _, token = tusdIn.get("HTTPRequest").get("Header").get("Authorization")[0].partition(" ")
     assert scheme == "Bearer"
@@ -114,11 +126,19 @@ async def tus_hook(
     except jwt.PyJWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
-    # Check Nakamal exists
-    nakamal_id = tusdIn.get("Upload").get("MetaData").get("NakamalID")
-    nakamal = await crud_nakamal.get_by_id(nakamal_id)
-    if not nakamal:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
+    # Check upload target
+    try:
+        target = tusdIn.get("Upload").get("MetaData").get("Target")
+        target = UploadTarget(target)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Target is not valid")
+    
+    if target == UploadTarget.NAKAMAL:    
+        # Check Nakamal exists
+        nakamal_id = tusdIn.get("Upload").get("MetaData").get("NakamalID")
+        nakamal = await crud_nakamal.get_by_id(nakamal_id)
+        if not nakamal:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.")
 
     if hook_name == "post-finish":
         # Below could be some sort of task that handles image storage 
@@ -126,27 +146,41 @@ async def tus_hook(
         file_id = tusdIn.get("Upload").get("ID")
         filename = tusdIn.get("Upload").get("MetaData").get("filename")
         filetype = tusdIn.get("Upload").get("MetaData").get("filetype")
-        try:
-            # TODO a envvar should set the tusUpload directory for docker-compose file and in our settings the same
-            #  For now this is a dirty hard-coded path
-            tusUpload = Path(settings.IMAGES_LOCAL_DIR) / "uploads" / file_id
-            assert tusUpload.exists()
-            crud_image.save_file(tusUpload, nakamal_id=nakamal_id, file_id=file_id, filename=filename)
-            # Remove Tus `.info` file
-            tusInfo = Path(str(tusUpload) + ".info")
-            tusInfo.unlink()
-        except Exception as exc:
-            print(exc)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        try:
-            in_schema = ImageSchemaIn(
-                file_id=file_id,
-                filename=filename,
-                filetype=filetype,
-                user_id=user_id,
-                nakamal_id=nakamal_id,
-            )
-            image = await crud_image.create(in_schema=in_schema)
-        except Exception as exc:
-            print(exc)
-            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if target == UploadTarget.NAKAMAL:
+            try:
+                # TODO a envvar should set the tusUpload directory for docker-compose file and in our settings the same
+                #  For now this is a dirty hard-coded path
+                tusUpload = Path(settings.IMAGES_LOCAL_DIR) / "uploads" / file_id
+                assert tusUpload.exists()
+                crud_image.save_file(tusUpload, nakamal_id=nakamal_id, file_id=file_id, filename=filename)
+                # Remove Tus `.info` file
+                tusInfo = Path(str(tusUpload) + ".info")
+                tusInfo.unlink()
+            except Exception as exc:
+                # TODO log
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                in_schema = ImageSchemaIn(
+                    file_id=file_id,
+                    filename=filename,
+                    filetype=filetype,
+                    user_id=user_id,
+                    nakamal_id=nakamal_id,
+                )
+                image = await crud_image.create(in_schema=in_schema)
+            except Exception as exc:
+                # TODO log
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        elif target == UploadTarget.USER_PROFILE:
+            try:
+                # TODO a envvar should set the tusUpload directory for docker-compose file and in our settings the same
+                #  For now this is a dirty hard-coded path
+                tusUpload = Path(settings.IMAGES_LOCAL_DIR) / "uploads" / file_id
+                assert tusUpload.exists()
+                await crud_user.save_avatar(tusUpload, user=user, file_id=file_id, filename=filename)
+                # Remove Tus `.info` file
+                tusInfo = Path(str(tusUpload) + ".info")
+                tusInfo.unlink()
+            except Exception as exc:
+                # TODO log
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)

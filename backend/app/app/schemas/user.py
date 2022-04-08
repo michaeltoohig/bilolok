@@ -18,11 +18,12 @@ class UserCreate(models.BaseUserCreate):
 
 
 class UserUpdate(models.BaseUserUpdate):
-    pass
+    avatar_filename: Optional[str] = None
 
 
 class UserDB(User, models.BaseUserDB):
     pass
+    # avatar: Optional[AnyHttpUrl] = None
 
 
 # Additional schema for public facing API

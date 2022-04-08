@@ -30,6 +30,10 @@ export default {
     return http.post(`${resource}`, payload, authHeaders(token));
   },
 
+  async deleteProfile(id, token) {
+    return http.delete(`${resource}/${id}/profile`, authHeaders(token));
+  },
+
   async getImages(id, skip = 0, limit = 100) {
     return http.get(`${resource}/${id}/images`, {
       params: {

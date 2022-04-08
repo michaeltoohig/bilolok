@@ -75,6 +75,19 @@ const actions = {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },
+  removeProfile: async ({ commit, dispatch, rootState }) => {
+    try {
+      let user = rootState.auth.user;
+      let token = rootState.auth.token;
+      const response = await usersApi.deleteProfile(user.id, token);
+      user = response.data;
+      commit('setUser', user);
+    }
+    catch (error) {
+      console.log('in removeProfile', error);
+      await dispatch('auth/checkApiError', error, { root: true });
+    }
+  },
 };
 
 const mutations = {

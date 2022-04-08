@@ -20,6 +20,22 @@
               </v-card-title>
               <v-list dense>
                 <v-list-item-group color="primary">
+                  <v-list-item @click="uploadImageDialog = !uploadImageDialog">
+                    <v-list-item-icon v-if="isMe">
+                      <v-icon>mdi-camera-plus</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Change Profile</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item v-if="isMe && !isDefaultProfile" @click="removeUserProfile">
+                    <v-list-item-icon>
+                      <v-icon>mdi-camera-off</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Remove Profile</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                   <v-list-item @click="onShare">
                     <v-list-item-icon>
                       <v-icon>mdi-share-variant</v-icon>
@@ -110,6 +126,12 @@
         </v-row>
       </v-container>
     </div>
+
+    <ProfileImageUpload
+      v-if="!loading"
+      :open="uploadImageDialog"
+      @close-modal="closeUploadDialog"
+    ></ProfileImageUpload>
   </div>
 </template>
 
@@ -121,6 +143,7 @@ import formatDatetime from '@/mixins/formatDatetime';
 import CardCheckin from '@/components/timeline/CardCheckin.vue';
 import CardImage from '@/components/timeline/CardImage.vue';
 import PushNotificationCard from '@/components/user/PushNotificationCard.vue';
+import ProfileImageUpload from '@/components/user/ProfileImageUpload.vue';
 
 export default {
   name: 'User',
@@ -129,11 +152,13 @@ export default {
     CardCheckin,
     CardImage,
     PushNotificationCard,
+    ProfileImageUpload,
   },
   data() {
     return {
       loading: true,
       notificationsSupported: false,
+      uploadImageDialog: false,
     };
   },
   computed: {
@@ -145,9 +170,14 @@ export default {
       if (!this.isLoggedIn) return false;
       return this.me.id === this.user.id;
     },
+    isDefaultProfile() {
+      // XXX hardcoded value
+      return this.user.avatar.endsWith('default.png');
+    },
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
       me: 'auth/user',
+      token: 'auth/token',
       isUserVerified: 'auth/isUserVerified',
       hasAdminAccess: 'auth/hasAdminAccess',
       getUserCheckins: 'checkin/user',
@@ -208,6 +238,13 @@ export default {
       await this.$store.dispatch('checkin/getUser', id);
       await this.$store.dispatch('image/getUser', id);
       this.loading = false;
+    },
+    async removeUserProfile() {
+      await this.$store.dispatch('user/removeProfile');
+    },
+    async closeUploadDialog() {
+      this.uploadImageDialog = false;
+      await this.fetchData();
     },
     nakamalAvatar(nakamalId) {
       const images = this.getNakamalImages(nakamalId);

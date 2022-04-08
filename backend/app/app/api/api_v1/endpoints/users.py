@@ -12,7 +12,7 @@ from app.api.deps.db import get_db
 from app.api.deps.user import optional_current_superuser
 from app.core.users import fastapi_users, get_user_manager, UserManager
 from app.models.user import User
-from app.schemas.user import UserSchema, UserDB
+from app.schemas.user import UserSchema, UserDB, UserUpdate
 
 router = fastapi_users.get_users_router()
 
@@ -35,6 +35,22 @@ async def get_all(
         crud_user = CRUDUser(db)
         items = await crud_user.get_multi()
         return [UserSchema(**item.dict()) for item in items]
+
+
+@router.delete("/{item_id}/profile", response_model=UserSchema)
+async def delete_profile(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item_id: str,
+) -> Any:
+    crud_user = CRUDUser(db)
+    item = await crud_user.get_by_id(item_id)
+    if not item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    update_schema = UserUpdate(**item.dict())
+    update_schema.avatar_filename = None
+    item = await crud_user.update(item.id, update_schema=update_schema)
+    return UserSchema(**item.dict())
 
 
 @router.get("/{item_id}/images", response_model=List[ImageSchemaOut])
