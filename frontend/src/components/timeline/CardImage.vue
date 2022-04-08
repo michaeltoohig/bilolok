@@ -30,6 +30,9 @@
       <v-list-item-avatar
         v-if="nakamalAvatar(item.nakamal.id)"
         color="grey darken-3"
+        class="nakamal-avatar"
+        v-ripple="{ center: true }"
+        @click="$router.push({ name: 'Nakamal', params: { id: item.nakamal.id } })"
       >
         <v-img :src="nakamalAvatar(item.nakamal.id).thumbnail"></v-img>
       </v-list-item-avatar>
@@ -52,8 +55,9 @@
     </v-list-item>
     <v-list-item v-if="linkUser">
       <v-list-item-avatar
-        color="grey darken-3 elevation-2"
+        color="grey darken-3 elevation-2 user-avatar"
         tile
+        v-ripple="{ center: true }"
         @click="$router.push({ name: 'User', params: { id: item.user.id } })"
       >
         <v-img :src="item.user.avatar"></v-img>
@@ -122,5 +126,8 @@ export default {
 </script>
 
 <style>
-
+.nakamal-avatar,
+.user-avatar {
+  cursor: pointer;
+}
 </style>

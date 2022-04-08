@@ -4,7 +4,7 @@
     @input="toggleShowFilters"
     app
     right
-    :temporary="$vuetify.breakpoint.mdAndDown"
+    :temporary="true || $vuetify.breakpoint.mdAndDown"
     touchless
     class="pa-2"
   >

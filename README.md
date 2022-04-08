@@ -120,8 +120,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] Blacklist tokens
   - [ ] Add iat to JWT
 - [ ] Update emails to more professional standard (maybe use mjml)
-- [ ] On map zoomed out show areas instead of markers
-  - [ ] Show chief of area based on check-ins
+- [x] On map zoomed out show areas instead of markers
 - [ ] User actions table
   - [ ] Add `last_seen` or similar to users table
 - [ ] Push Notifications - Experimental setup
@@ -146,8 +145,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Set default Open Graph tags 
     - [ ] Fix facebook bot handling of OG tags / currently only for root domain sharing
   - [x] Share nakamal
-  - [ ] Share user
-  - [ ] Share check-in
+  - [x] Share user
 - [x] Automate backup with ansible
   - [x] database
   - [x] photos
@@ -161,7 +159,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] Alerts users to new messages or @user messages
   - [ ] Must be able to listen to incoming messages in background while user has joined chat for the day or something like this? Or it becomes a always running chat app at the same time???
   - [ ] Current active users list on frontend? - may be best if implemented when new auth token is generated since if we have refresh tokens we can set the auth tokens to a short lifespan - or when if chat is an available feature then use the websocket to set a more precise value based on last message sent or other event
-
+- [x] Fix right side bars not collapsing on desktop
 
 ## Development
 

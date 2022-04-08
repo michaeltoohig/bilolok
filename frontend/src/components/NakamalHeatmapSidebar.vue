@@ -4,7 +4,7 @@
     @input="toggleShowHeatmapMenu"
     app
     right
-    :temporary="$vuetify.breakpoint.mdAndDown"
+    temporary
     touchless
     class="pa-2"
   >
@@ -41,21 +41,6 @@
         :disabled="!toggleHeatmap"
       ></v-switch>
     </v-container>
-
-    <template v-slot:append>
-      <div class="pa-2">
-        <v-btn
-          v-show="false"
-          block
-          outlined
-          color="primary"
-          :disabled="!hasFilters"
-          @click="clearFilters"
-        >
-          Clear Filters
-        </v-btn>
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 

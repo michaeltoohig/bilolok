@@ -1,46 +1,55 @@
 <template>
   <v-container>
     <h2>Recent Check-ins</h2>
-    <v-list>
-      <v-list-item
-        v-for="checkin in checkins"
-        :key="checkin.id"
-        class="elevation-2 mb-3"
-      >
-        <v-list-item-avatar tile link class="elevation-2">
-          <v-img
-            :alt="`${checkin.user.id} avatar`"
-            :src="checkin.user.avatar"
-            @click="goToUser(checkin.user.id)"
-          ></v-img>
-        </v-list-item-avatar>
 
-        <v-list-item-content>
-          <v-list-item-title v-text="checkin.nakamal.name"></v-list-item-title>
-          <v-list-item-subtitle>
+    <v-card
+      v-for="checkin in checkins"
+      :key="checkin.id"
+      class="elevation-2 mb-3"
+    >
+      <div class="d-flex flex-no-wrap justify-start">
+        <v-avatar
+          v-ripple="{ center: true }"
+          class="ma-3 elevation-2 user-avatar"
+          size="100"
+          tile
+          link
+          @click="$router.push({ name: 'User', params: { id: checkin.user.id } })"
+        >
+          <v-img :src="checkin.user.avatar"></v-img>
+        </v-avatar>
+        <div class="flex-grow-1 d-flex flex-column justify-space-between">
+          <v-card-text class="pb-0 pt-2">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <span
                   v-bind="attrs"
                   v-on="on"
-                >{{ formatTimeAgo(checkin.created_at) }}</span>
+                >
+                  <span class="font-weight-normal text--secondary">Checked-in: </span>
+                  <strong>{{ formatTimeAgo(checkin.created_at) }}</strong>
+                </span>
               </template>
               <span>{{ formatTime(checkin.created_at) }}</span>
             </v-tooltip>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-btn
-            outlined
-            small
-            @click="goToNakamal(checkin.nakamal.id)"
-            icon
-          >
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
-        </v-list-item-action>
-      </v-list-item>
-    </v-list>
+          </v-card-text>
+          <v-card-text v-if="checkin.message" class="pt-0 text-h6 font-weight-normal">
+            {{ checkin.message }}
+          </v-card-text>
+          <v-card-title class="text-h5 pt-0 d-flex justify-space-between">
+            <h4 class="mr-3">{{ checkin.nakamal.name }}</h4>
+            <v-btn
+              outlined
+              small
+              @click="goToNakamal(checkin.nakamal.id)"
+            >
+              Go To Kava Bar
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-card-title>
+        </div>
+      </div>
+    </v-card>
   </v-container>
 </template>
 
@@ -75,5 +84,7 @@ export default {
 </script>
 
 <style>
-
+.user-avatar {
+  cursor: pointer;
+}
 </style>

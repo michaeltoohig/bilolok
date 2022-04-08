@@ -3,7 +3,7 @@
     <v-container>
       <v-row>
         <v-col>
-          <h1 class="text-h1 text-center">Bilolok</h1>
+          <h1 class="text-h1 font-weight-bold text-center">Bilolok</h1>
 
           <p class="text-center">
             Bilolok means <strong>Kava</strong> in the local language of a small
@@ -32,18 +32,21 @@
             </h1>
             <v-btn
               x-large
-              outlined
+              tile
               color="primary"
               :to="{ name: 'Map' }"
             >
-              View the Map
+              Go to the Map
+              <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </v-col>
         </v-row>
       </v-parallax>
     </v-container>
-    <SectionRecentCheckins />
-    <SectionRecentImages />
+    <v-responsive class="mx-auto" max-width="600">
+      <SectionRecentCheckins />
+      <SectionRecentImages />
+    </v-responsive>
 
     <hr class="mt-5"/>
     <div class="my-5 d-flex justify-center">

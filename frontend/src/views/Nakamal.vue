@@ -292,15 +292,16 @@ export default {
       }
     },
     async onShare() {
+      const text = `Check out ${this.nakamal.name} on Bilolok!`;
+      const url = document.querySelector('link[rel=canonical]')
+        ? document.querySelector('link[rel=canonical]').href
+        : document.location.href;
       if (navigator.share) {
         const { title } = document;
-        const url = document.querySelector('link[rel=canonical]')
-          ? document.querySelector('link[rel=canonical]').href
-          : document.location.href;
         navigator.share({
           url,
           title,
-          text: `Check out ${this.nakamal.name} on Bilolok!`,
+          text,
         }).then(() => {
           this.$store.dispatch('notify/add', {
             title: 'Thanks For Sharing!',
@@ -309,10 +310,19 @@ export default {
           });
         });
       } else {
+        if (!navigator.clipboard) {
+          await this.$store.dispatch('notify/add', {
+            title: 'Share Not Available',
+            text: 'Your device does not support sharing.',
+            type: 'error',
+          });
+          return;
+        }
+        await navigator.clipboard.writeText(`${text} ${url}`);
         await this.$store.dispatch('notify/add', {
-          title: 'Share Not Available',
-          text: 'Your device does not support sharing.',
-          type: 'error',
+          title: 'Copied to Clipboard!',
+          text: 'We appreciate you letting others know about Bilolok.',
+          type: 'primary',
         });
       }
     },

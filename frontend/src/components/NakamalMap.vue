@@ -44,17 +44,37 @@
         @click="clickUserLocation"
       ></l-marker>
 
-      <l-marker
-        v-for="nakamal in nakamals"
-        :key="nakamal.id"
-        :icon="iconMarker(nakamal.id)"
-        :lat-lng="nakamal.latLng"
-        @click="markerClick(nakamal.id)"
-      >
-        <l-tooltip :options="{
-          direction: 'bottom',
-        }">{{ nakamal.name }}</l-tooltip>
-      </l-marker>
+      <div v-if="showMarkers">
+        <l-marker
+          v-for="nakamal in nakamals"
+          :key="nakamal.id"
+          :icon="iconMarker(nakamal.id)"
+          :lat-lng="nakamal.latLng"
+          @click="markerClick(nakamal.id)"
+        >
+          <l-tooltip :options="{
+            direction: 'bottom',
+          }">{{ nakamal.name }}</l-tooltip>
+        </l-marker>
+      </div>
+      <div v-else>
+        <l-circle
+          v-for="area in mapAreas"
+          :key="area.name"
+          :lat-lng="area.latLng"
+          :radius="area.radius"
+          :color="areaColor"
+        >
+          <l-tooltip :options="{
+            permanent: true,
+            interactive: true,
+            direction: 'center',
+            opacity: 0.85,
+          }">
+            <h2 @click="areaClick(area.name)">{{ area.name }}</h2>
+          </l-tooltip>
+        </l-circle>
+      </div>
 
       <l-layer-group v-if="selectedNakamal" ref="nakamalPopup">
         <NakamalMapPopup v-on:compass="startCompassModeWithIntro"></NakamalMapPopup>
@@ -155,7 +175,7 @@ import {
   icon, latLng, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline,
+  LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline, LCircle,
 } from 'vue2-leaflet';
 import sphereKnn from 'sphere-knn';
 
@@ -202,6 +222,7 @@ export default {
     LControl,
     LLayerGroup,
     LPolyline,
+    LCircle,
     Vue2LeafletHeatmap,
   },
   data() {
@@ -239,6 +260,8 @@ export default {
       // Bottom sheet
       bottomSheet: false,
       bottomSheetFull: false,
+
+      showMarkers: false,
     };
   },
   computed: {
@@ -271,6 +294,27 @@ export default {
         return latLngBounds([targetLatLng, targetLatLng]);
       }
       return this.maxBoundsPortVila;
+    },
+    mapAreas() {
+      const areas = [];
+      const filteredNakamals = this.nakamals.filter((n) => n.area.name !== 'UNDEFINED');
+      const naks = filteredNakamals.reduce((groups, n) => ({
+        ...groups,
+        [n.area.name]: [...(groups[n.area.name] || []), n],
+      }), {});
+      Object.keys(naks).forEach((area) => {
+        const center = latLngBounds(naks[area].map((n) => n.latLng)).getCenter();
+        const radius = naks[area].reduce((maxDist, n) => {
+          const dist = center.distanceTo(n.latLng);
+          return dist > maxDist ? dist : maxDist;
+        }, 250);
+        areas.push({
+          name: area,
+          latLng: center,
+          radius,
+        });
+      });
+      return areas;
     },
     heatmapCheckins() {
       // XXX Not as efficient as it could be
@@ -308,6 +352,12 @@ export default {
       }
       return '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
     },
+    areaColor() {
+      if (this.darkMode) {
+        return 'grey';
+      }
+      return 'blue';
+    },
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
       return Math.round((this.mapTileLoaded / this.mapTileLoading) * 100);
@@ -318,6 +368,15 @@ export default {
       if (!this.getNakamalHasImages(n.id)) {
         this.$store.dispatch('image/getNakamal', n.id);
       }
+    },
+    zoom(val) {
+      if (val > 16) {
+        this.showMarkers = true;
+      }
+      if (val <= 13) {
+        this.showMarkers = false;
+      }
+      return val;
     },
   },
   methods: {
@@ -438,6 +497,12 @@ export default {
       // .then(() => {
       //   this.setShowDetails(true);
       // });
+    },
+    areaClick(area) {
+      const naks = this.nakamals.filter((n) => n.area.name === area);
+      const bounds = latLngBounds(naks.map((n) => n.latLng));
+      this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
+      this.showMarkers = true;
     },
     tileLoadComplete() {
       setTimeout(() => {

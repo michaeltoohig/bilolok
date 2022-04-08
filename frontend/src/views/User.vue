@@ -18,6 +18,18 @@
                   <v-img :src="user.avatar"></v-img>
                 </v-avatar>
               </v-card-title>
+              <v-list dense>
+                <v-list-item-group color="primary">
+                  <v-list-item @click="onShare">
+                    <v-list-item-icon>
+                      <v-icon>mdi-share-variant</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>Share</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>
             </v-card>
 
             <v-list subheader class="elevation-3 mb-3">
@@ -210,6 +222,46 @@ export default {
     //     this.$store.dispatch('image/remove', this.selectedImageId);
     //   }
     // },
+    async onShare() {
+      let text;
+      if (this.isMe) {
+        text = 'Check out my profile on Bilolok!';
+      } else {
+        text = 'Check out this user on Bilolok!';
+      }
+      const url = document.querySelector('link[rel=canonical]')
+        ? document.querySelector('link[rel=canonical]').href
+        : document.location.href;
+      if (navigator.share) {
+        const { title } = document;
+        navigator.share({
+          url,
+          title,
+          text,
+        }).then(() => {
+          this.$store.dispatch('notify/add', {
+            title: 'Thanks For Sharing!',
+            text: 'We appreciate you letting others know about Bilolok.',
+            type: 'primary',
+          });
+        });
+      } else {
+        if (!navigator.clipboard) {
+          await this.$store.dispatch('notify/add', {
+            title: 'Share Not Available',
+            text: 'Your device does not support sharing.',
+            type: 'error',
+          });
+          return;
+        }
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        await this.$store.dispatch('notify/add', {
+          title: 'Copied to Clipboard!',
+          text: 'We appreciate you letting others know about Bilolok.',
+          type: 'primary',
+        });
+      }
+    },
   },
   async mounted() {
     // XXX single user get endpoint not available publicly

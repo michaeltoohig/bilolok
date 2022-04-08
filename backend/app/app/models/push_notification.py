@@ -25,7 +25,6 @@ class PushNotification(Base, TimeMixin):
     device_id = Column(String, nullable=False)
     status = Column(SQLAEnum(PushNotificationStatus), nullable=False, default=PushNotificationStatus.PENDING)
     error_data = Column(JSONB)
-    # created_at = Column(UtcDateTime, default=utcnow())
     # seen_at = Column(UtcDateTime)
     # clicked_at = Column(UtcDateTime)
     # Relationships
