@@ -24,10 +24,11 @@
         </v-card-actions>
       </div>
       <v-avatar
-        class="ma-3 elevation-2"
+        class="ma-3 elevation-2 user-avatar"
         size="100"
         tile
         link
+        v-ripple="{ center: true }"
         @click="$router.push({ name: 'User', params: { id: chief.id } })"
       >
         <v-img :src="chief.avatar"></v-img>

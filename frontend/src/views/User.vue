@@ -20,8 +20,8 @@
               </v-card-title>
               <v-list dense>
                 <v-list-item-group color="primary">
-                  <v-list-item @click="uploadImageDialog = !uploadImageDialog">
-                    <v-list-item-icon v-if="isMe">
+                  <v-list-item v-if="isMe" @click="uploadImageDialog = !uploadImageDialog">
+                    <v-list-item-icon>
                       <v-icon>mdi-camera-plus</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
@@ -244,7 +244,9 @@ export default {
     },
     async closeUploadDialog() {
       this.uploadImageDialog = false;
-      await this.fetchData();
+      setTimeout(() => {
+        this.fetchData();
+      }, 500);
     },
     nakamalAvatar(nakamalId) {
       const images = this.getNakamalImages(nakamalId);
