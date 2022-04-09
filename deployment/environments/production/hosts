@@ -1,5 +1,8 @@
 [webservers]
 172.105.178.245 ansible_user=michael ansible_ssh_extra_args='-o StrictHostKeyChecking=no' ansible_python_interpreter=/usr/bin/python3
 
+[workerservers]
+172.105.178.245 ansible_user=michael ansible_ssh_extra_args='-o StrictHostKeyChecking=no' ansible_python_interpreter=/usr/bin/python3
+
 [dbservers]
 172.105.178.245 ansible_user=michael ansible_ssh_extra_args='-o StrictHostKeyChecking=no' ansible_python_interpreter=/usr/bin/python3

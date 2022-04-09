@@ -113,17 +113,19 @@ services:
   #     args:
   #       INSTALL_DEV: ${INSTALL_DEV-false}
 
-  # worker:
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   build:
-  #     context: ./backend
-  #     dockerfile: worker.dockerfile
-  #     args:
-  #       INSTALL_DEV: ${INSTALL_DEV-false}
+  worker:
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    environment:
+      - BACKEND_CORS_ORIGINS=http://localhost:8080,http://localhost:8000
+    build:
+      context: ./backend
+      dockerfile: worker.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
   
 volumes:
   bilolok-db-data:

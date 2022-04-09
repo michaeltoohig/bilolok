@@ -18,6 +18,14 @@
 - name: start systemd docker-compose service
   systemd: "name={{ docker_service_name }} state=restarted enabled=yes daemon_reload=yes"
 
+- name: template systemd service config for worker
+  template:
+    src: templates/worker.service.j2
+    dest: "/etc/systemd/system/{{ be_worker_service_name }}"
+
+- name: start systemd worker service
+  systemd: "name={{ be_worker_service_name }} state=restarted enabled=yes daemon_reload=yes"
+
 - name: template systemd service config for api
   template:
     src: templates/api.service.j2

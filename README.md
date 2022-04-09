@@ -9,7 +9,7 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 
  - [x] Profile page
    - [x] User Avatar
-   - [ ] Custom Avatar
+   - [x] Custom Avatar
    - [x] User Timeline
  - [x] Search filters
    - [x] Search filters on map
@@ -112,10 +112,10 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [ ] Sentry
   - [x] backend
     - [x] include context such as user id and request id
-  - [ ] frontend
-    - [ ] generate request on frontend
+  - [x] frontend
+    - [x] generate request on frontend
     - [ ] include context such as user id and request id
-  - [ ] look into sentry feature to join frontend and backend errors into one continuous timeline
+  - [x] look into sentry feature to join frontend and backend errors into one continuous timeline
 - [ ] Refresh Access Token
   - [ ] Blacklist tokens
   - [ ] Add iat to JWT
@@ -140,10 +140,10 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] Fix edge cases and odd behavior
 - [x] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
-  - [ ] personalized user profile picture ? maybe ?
+  - [x] personalized user profile picture
 - [ ] Share API
   - [x] Set default Open Graph tags 
-    - [ ] Fix facebook bot handling of OG tags / currently only for root domain sharing
+    - [ ] Fix facebook bot handling of OG tags / only works for root domain sharing
   - [x] Share nakamal
   - [x] Share user
 - [x] Automate backup with ansible

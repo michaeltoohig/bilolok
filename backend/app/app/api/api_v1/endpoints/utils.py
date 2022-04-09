@@ -1,39 +1,39 @@
 import json
 from typing import Any
-from app.crud.push_notification import CRUDPushNotification
-from app.models.push_notification import PushNotificationStatus
-from app.schemas.push_notification import PushNotificationSchemaIn, PushNotificationSchemaUpdate
 
 from fastapi import APIRouter, Depends, status
 from pydantic.networks import EmailStr
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from pywebpush import webpush, WebPushException
 
+from app.api.deps.db import get_db
 from app.api.deps.user import current_superuser
 from app.core.arq_app import get_arq_app
 from app.core.config import settings
-from app.api.deps.db import get_db
-from app.crud.subscription import CRUDSubscription
 from app.core.mail import mail, MessageSchema
+from app.crud.subscription import CRUDSubscription
+from app.crud.push_notification import CRUDPushNotification
+from app.models.push_notification import PushNotificationStatus
+from app.models.user import User
+from app.schemas.push_notification import PushNotificationSchemaIn, PushNotificationSchemaUpdate
 
 router = APIRouter()
 
 
-# @router.post(
-#     "/test-arq", status_code=status.HTTP_201_CREATED
-# )
-# async def test_arq(
-#     msg: schemas.Msg,
-#     superuser: models.User = Depends(current_superuser),
-# ) -> Any:
-#     """
-#     Test Arq worker.
-#     """
-#     arq_app = await get_arq_app()
-#     await arq_app.enqueue_job(
-#         "test_arq", msg.msg,
-#     )
-#     return {"msg": "Word received"}
+@router.post(
+    "/test-arq", status_code=status.HTTP_201_CREATED
+)
+async def test_arq(
+    superuser: User = Depends(current_superuser),
+) -> Any:
+    """
+    Test Arq worker.
+    """
+    arq_app = await get_arq_app()
+    await arq_app.enqueue_job(
+        "test_arq", "test-word",
+    )
+    return {"msg": "Word received"}
 
 
 # @router.post(
@@ -52,7 +52,6 @@ router = APIRouter()
 #     )
 #     return {"msg": "Test email sent"}
 
-from app.models.user import User
 
 @router.post(
     "/test-email", status_code=status.HTTP_201_CREATED,

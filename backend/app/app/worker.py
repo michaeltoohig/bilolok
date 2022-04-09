@@ -15,6 +15,8 @@ from app.core.arq_app import redis_settings
 
 ARQ_BACKGROUND_FUNCTIONS = [
     "app.tasks.utils.test_arq",
+    "app.tasks.utils.test_arq_subtask",
+    "app.tasks.utils.send_daily_push_notification",
 ]
 
 
@@ -43,10 +45,9 @@ class WorkerSettings:
     Settings for the ARQ worker.
     """
 
-    # cron_jobs = [
-    #     cron("app.tasks.", second=30),
-    #     cron("app.tasks."),
-    # ]
+    cron_jobs = [
+        cron("app.tasks.utils.send_daily_push_notification", weekday={0, 1, 2, 3, 4, 5}, hour=17, minute=0),
+    ]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = redis_settings

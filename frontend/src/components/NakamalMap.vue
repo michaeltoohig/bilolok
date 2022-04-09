@@ -65,13 +65,19 @@
           :radius="area.radius"
           :color="areaColor"
         >
-          <l-tooltip :options="{
-            permanent: true,
-            interactive: true,
-            direction: 'center',
-            opacity: 0.85,
-          }">
+          <l-tooltip
+            class="area-tooltip text-center"
+            :options="{
+              permanent: true,
+              interactive: true,
+              direction: 'center',
+              opacity: 0.85,
+            }"
+          >
             <h2 @click="areaClick(area.name)">{{ area.name }}</h2>
+            <p class="mb-0">
+              <strong>{{ area.nakamals }}</strong> Kava Bars
+            </p>
           </l-tooltip>
         </l-circle>
       </div>
@@ -312,6 +318,7 @@ export default {
           name: area,
           latLng: center,
           radius,
+          nakamals: naks[area].length,
         });
       });
       return areas;
@@ -547,5 +554,9 @@ export default {
 }
 #map-wrapper > .v-progress {
   z-index: 2000;
+}
+
+.area-tooltip > p {
+  font-size: 9px;
 }
 </style>

@@ -21,6 +21,7 @@ db_name: "{{ vault_db_name }}"
 root_directory: /var/www/bilolok.com
 repo_directory: "{{ root_directory }}/app"
 
+be_worker_service_name: bilolok-worker.service
 be_api_service_name: api.bilolok.service
 be_api_service_port: 5000
 be_remote_directory: "{{ repo_directory }}/backend/app"

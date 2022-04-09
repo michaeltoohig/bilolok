@@ -1,0 +1,16 @@
+[Unit]
+Description=Start Bilolok Worker Service
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory={{ be_remote_directory }}
+Environment="PATH={{ poetry_env_path }}"
+EnvironmentFile={{ repo_directory }}/.env
+# Run the `prestart.sh` scripts manually here
+ExecStartPre={{ poetry_env_path }}/bin/python {{ be_remote_directory }}/app/worker_pre_start.py
+ExecStart={{ poetry_env_path }}/bin/arq app.worker.WorkerSettings
+
+[Install]
+WantedBy=multi-user.target

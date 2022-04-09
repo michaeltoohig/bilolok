@@ -13,7 +13,7 @@
                   color="dark"
                   size="144"
                   tile
-                  class="mx-auto"
+                  class="mx-auto elevation-2"
                 >
                   <v-img :src="user.avatar"></v-img>
                 </v-avatar>

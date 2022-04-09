@@ -10,7 +10,7 @@
       <div class="d-flex flex-no-wrap justify-start">
         <v-avatar
           v-ripple="{ center: true }"
-          class="ma-3 elevation-2 user-avatar"
+          class="ma-3 mr-0 elevation-2 user-avatar"
           size="100"
           tile
           link

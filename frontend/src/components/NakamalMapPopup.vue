@@ -11,7 +11,7 @@
       :src="selectedNakamalImage.thumbnail"
     ></v-img>
     <v-list light dense>
-      <v-list-item v-if="selectedNakamal.aliases">
+      <v-list-item v-if="selectedNakamal.aliases.length">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
           <v-list-item-subtitle>
