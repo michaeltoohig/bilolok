@@ -3,7 +3,6 @@ from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
 from app.core.config import settings
 
-
 # def traces_sampler(sampling_context):
 #     if settings.DEBUG:
 #         # Drop this transaction
@@ -20,7 +19,7 @@ def init_sentry():
     # asyncio.exceptions.CancelledError is thrown whenever the app
     # is stopped `ctrl+c` which is sending the error to sentry from
     # development constantly. `traces_sampler` hook does not catch
-    # this exception because it is happening outside of FastAPI in uvicorn. 
+    # this exception because it is happening outside of FastAPI in uvicorn.
     # https://github.com/encode/uvicorn/issues/1160
     # https://github.com/encode/starlette/issues/486
     if settings.DEBUG:

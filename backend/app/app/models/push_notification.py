@@ -1,12 +1,10 @@
 from enum import Enum
-from typing import Any, Dict
-import uuid
 
 from fastapi_users_db_sqlalchemy import GUID
-from sqlalchemy import Column, ForeignKey, String, Enum as SQLAEnum
+from sqlalchemy import Column
+from sqlalchemy import Enum as SQLAEnum
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy_utc import UtcDateTime, utcnow
 
 from app.db.base_class import Base
 from app.db.mixins import TimeMixin
@@ -23,7 +21,11 @@ class PushNotification(Base, TimeMixin):
 
     data = Column("data", JSONB, nullable=False)
     device_id = Column(String, nullable=False)
-    status = Column(SQLAEnum(PushNotificationStatus), nullable=False, default=PushNotificationStatus.PENDING)
+    status = Column(
+        SQLAEnum(PushNotificationStatus),
+        nullable=False,
+        default=PushNotificationStatus.PENDING,
+    )
     error_data = Column(JSONB)
     # seen_at = Column(UtcDateTime)
     # clicked_at = Column(UtcDateTime)
@@ -49,7 +51,7 @@ class PushNotification(Base, TimeMixin):
     #     """Return push notification data with extra attributes."""
     #     d = self._data
     #     import pdb; pdb.set_trace()
-        
+
     #     d["id"] = str(self.id)
     #     return d
 

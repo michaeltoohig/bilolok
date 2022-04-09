@@ -1,10 +1,10 @@
 import logging
 from pathlib import Path
 
-from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
-
 from core.config import settings
 from db.session import SessionLocal
+from tenacity import (after_log, before_log, retry, stop_after_attempt,
+                      wait_fixed)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

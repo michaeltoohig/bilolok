@@ -1,5 +1,5 @@
-from starlette_context import context
 from sqlalchemy_continuum.plugins import Plugin
+from starlette_context import context
 
 
 def fetch_current_user_id():
@@ -12,7 +12,4 @@ def fetch_remote_addr():
 
 class FastAPIUsersPlugin(Plugin):
     def transaction_args(self, uow, session):
-        return {
-            "user_id": fetch_current_user_id(),
-            "remote_addr": fetch_remote_addr()
-        }
+        return {"user_id": fetch_current_user_id(), "remote_addr": fetch_remote_addr()}

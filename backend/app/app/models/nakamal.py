@@ -1,15 +1,18 @@
 from enum import Enum
-from sqlalchemy import Column, String, Float, Integer, ForeignKey, Enum as SQLAEnum
+
 from fastapi_users_db_sqlalchemy import GUID
-from sqlalchemy import Table
+from sqlalchemy import Column
+from sqlalchemy import Enum as SQLAEnum
+from sqlalchemy import Float, ForeignKey, Integer, String, Table
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 
 from app.db.base_class import Base
 from app.db.mixins import TimeMixin
 
-
-nakamal_resource_association = Table('nakamal_resource_assocation', Base.metadata,
+nakamal_resource_association = Table(
+    "nakamal_resource_assocation",
+    Base.metadata,
     Column("nakamal_id", GUID, ForeignKey("nakamal.id"), primary_key=True),
     Column("resource_id", GUID, ForeignKey("nakamal_resource.id"), primary_key=True),
 )
@@ -32,14 +35,16 @@ class Nakamal(Base, TimeMixin):
     # checkins = relationship("Checkin", cascade="save-update, merge, delete")
     kava_source_id = Column(GUID, ForeignKey("nakamal_kava_source.id"), nullable=False)
     kava_source = relationship("NakamalKavaSource", lazy="joined")
-    resources = relationship("NakamalResource", secondary=nakamal_resource_association, lazy="joined")
+    resources = relationship(
+        "NakamalResource", secondary=nakamal_resource_association, lazy="joined"
+    )
     area_id = Column(GUID, ForeignKey("nakamal_area.id"), nullable=False)
     area = relationship("NakamalArea", lazy="joined")
 
 
 class NakamalResource(Base):
     """SQLAlchemy nakamal resource table definition.
-    
+
     Where a resource is amenity or feature of the nakamal.
     Examples:
       - Nakamal has food for sale
@@ -83,9 +88,9 @@ class NakamalArea(Base):
 
 
 # class KavaPrice(Base):
-#     volume = 
-#     price = 
-#     nakamal_id = 
+#     volume =
+#     price =
+#     nakamal_id =
 
 
 # class NakamalMessage(Base):

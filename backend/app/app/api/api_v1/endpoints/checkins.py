@@ -1,18 +1,18 @@
-from typing import Any, List
 from datetime import datetime, timedelta, timezone
+from typing import Any, List
 
-from fastapi import Depends, status, Query
+from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from app.api.deps.db import get_db
-from app.api.deps.user import current_superuser, current_active_verified_user, current_active_user
+from app.api.deps.user import current_active_verified_user, current_superuser
 from app.crud.checkin import CRUDCheckin
 from app.models.checkin import Checkin
 from app.models.user import User
-from app.schemas.checkin import CheckinSchemaIn, CheckinSchema, CheckinSchemaOut
-
+from app.schemas.checkin import (CheckinSchema, CheckinSchemaIn,
+                                 CheckinSchemaOut)
 
 router = SQLAlchemyCRUDRouter(
     prefix="checkins",
@@ -65,13 +65,13 @@ async def create_one(
           - feature: if phone GPS is on automatically query to continue checkin
      - Allow user to checkin to same nakamal in succession if enough time elapses
          i.e. checkin to same nakamal each day and no other checkins inbetween
-    
+
     I believe a single check-in per visit is easiest and user-friendly design, just look out
     for bunny hoppers and things should be okay.
     """
     now = datetime.now(tz=timezone.utc)
     # TODO check user has not hit some checkin count threshold for the day - no bots or automated checkin spam
-    # Check user's latest checkin is not the same nakamal - no double checkins 
+    # Check user's latest checkin is not the same nakamal - no double checkins
     crud_checkin = CRUDCheckin(db)
     last_checkin = await crud_checkin.get_last_by_user(user.id, exclude_private=False)
     if last_checkin:
@@ -81,26 +81,37 @@ async def create_one(
         if same_nakamal and within_threshold:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="You already checked-in to this nakamal."
+                detail="You already checked-in to this nakamal.",
             )
     # Check user's latest checkin at this nakamal was atleast X minutes ago - no double checkins by hopping between two nakamals
-    last_nakamal_checkin = await crud_checkin.get_last_by_user(user.id, nakamal_id=in_schema.nakamal_id, exclude_private=False)
+    last_nakamal_checkin = await crud_checkin.get_last_by_user(
+        user.id, nakamal_id=in_schema.nakamal_id, exclude_private=False
+    )
     if last_nakamal_checkin:
-        threshold = last_nakamal_checkin.created_at + timedelta(minutes=15)  # XXX hardcoded value
+        threshold = last_nakamal_checkin.created_at + timedelta(
+            minutes=15
+        )  # XXX hardcoded value
         if now < threshold:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="You already checked-in to this nakamal recently."
+                detail="You already checked-in to this nakamal recently.",
             )
     # Check user has not checked in more than the threshold for a single day
     checkin_threshold = 3  # XXX hardcoded value
-    recent_nakamal_checkins = await crud_checkin.get_multi_by_user(user.id, limit=checkin_threshold, nakamal_id=in_schema.nakamal_id, exclude_private=False)
+    recent_nakamal_checkins = await crud_checkin.get_multi_by_user(
+        user.id,
+        limit=checkin_threshold,
+        nakamal_id=in_schema.nakamal_id,
+        exclude_private=False,
+    )
     threshold = datetime.now(tz=timezone.utc) - timedelta(hours=12)
-    count = len(list(filter(lambda c: c.created_at >= threshold, recent_nakamal_checkins)))
+    count = len(
+        list(filter(lambda c: c.created_at >= threshold, recent_nakamal_checkins))
+    )
     if count > checkin_threshold:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You already checked-in to this nakamal too many times today."
+            detail="You already checked-in to this nakamal too many times today.",
         )
     # Create checkin
     checkin = await crud_checkin.create(in_schema, user_id=user.id)

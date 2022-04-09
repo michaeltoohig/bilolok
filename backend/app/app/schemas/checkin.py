@@ -1,6 +1,6 @@
-from typing import Optional
-from datetime import datetime
 import uuid
+from datetime import datetime
+from typing import Optional
 
 from .base import BaseSchema
 from .nakamal import NakamalSchema

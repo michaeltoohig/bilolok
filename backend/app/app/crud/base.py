@@ -1,6 +1,6 @@
 import abc
-from typing import Generic, List, TypeVar, Type
-from uuid import uuid4, UUID
+from typing import Generic, List, Type, TypeVar
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
@@ -13,7 +13,8 @@ IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 SCHEMA = TypeVar("SCHEMA", bound=BaseSchema)
 TABLE = TypeVar("TABLE")
 
-import loguru 
+import loguru
+
 logger = loguru.logger
 
 
@@ -52,10 +53,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return self._schema.from_orm(item)
 
     async def _get_one(self, item_id: UUID):
-        query = (
-            select(self._table)
-            .filter(self._table.id == item_id)
-        )
+        query = select(self._table).filter(self._table.id == item_id)
         try:
             item = (await self._db_session.execute(query)).scalar_one()
         except NoResultFound:
@@ -73,8 +71,8 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
 
     async def get_multi(self) -> List[SCHEMA]:
         query = select(self._table)
-        results = await self._db_session.execute(query)
-        return (self._schema.from_orm(item) for item in results.scalars())
+        results = (await self._db_session.execute(query)).scalars()
+        return (self._schema.from_orm(item) for item in results)
 
     async def remove(self, item_id: UUID) -> SCHEMA:
         logger.warning("Deprecate Waring: use `delete` method instead")
@@ -140,7 +138,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
 #         if isinstance(obj_in, dict):
 #             update_data = obj_in
 #         else:
-#             update_data = obj_in.dict(exclude_unset=True, exclude={"id"})        
+#             update_data = obj_in.dict(exclude_unset=True, exclude={"id"})
 #         query = self.model.update().where(self.model.c.id == id)
 #         try:
 #             await database.fetch_one(
@@ -150,7 +148,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
 #         except Exception as e:
 #             # TODO raise NOT_FOUND
 #             raise
-        
+
 #     async def remove(self, *, id: int) -> ModelType:
 #         query = self.model.delete().where(self.model.c.id == id)
 #         try:

@@ -10,9 +10,7 @@ class Subscription(Base, TimeMixin):
     """SQLAlchemy push notification subscriptions table definition."""
 
     __tablename__ = "subscription"
-    __table_args__ = (
-        UniqueConstraint("device_id", "user_id"),
-    )
+    __table_args__ = (UniqueConstraint("device_id", "user_id"),)
 
     subscription_info = Column("data", JSONB, nullable=False)
     device_id = Column(String, nullable=False)

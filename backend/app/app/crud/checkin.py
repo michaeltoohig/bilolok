@@ -1,14 +1,13 @@
-
-from datetime import datetime, timezone, timedelta, tzinfo
-from typing import Optional, List, Type
+from datetime import datetime, timedelta, timezone
+from typing import List, Optional, Type
 from uuid import UUID, uuid4
 
-from sqlalchemy import desc, select, and_
+from sqlalchemy import and_, desc, select
+from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
 from app.models.checkin import Checkin
-from app.schemas.checkin import CheckinSchemaIn, CheckinSchema
-from sqlalchemy.orm import selectinload
+from app.schemas.checkin import CheckinSchema, CheckinSchemaIn
 
 
 class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
@@ -24,7 +23,9 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
     def _table(self) -> Type[Checkin]:
         return Checkin
 
-    async def create(self, in_schema: CheckinSchemaIn, *, user_id: UUID) -> CheckinSchema:
+    async def create(
+        self, in_schema: CheckinSchemaIn, *, user_id: UUID
+    ) -> CheckinSchema:
         item_id = uuid4()
         item = self._table(id=item_id, **in_schema.dict(), user_id=user_id)
         self._db_session.add(item)
@@ -46,18 +47,23 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         (item,) = result.one()
         return self._schema.from_orm(item)
 
-    async def get_multi(self, *, skip: int = 0, limit: int = 100) -> List[CheckinSchema]:
+    async def get_multi(
+        self, *, skip: int = 0, limit: int = 100
+    ) -> List[CheckinSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))
             .order_by(desc(self._table.created_at))
-            .offset(skip).limit(limit)
+            .offset(skip)
+            .limit(limit)
         )
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
     async def get_recent(self) -> List[CheckinSchema]:
-        threshold = datetime.now(tz=timezone.utc) - timedelta(hours=3)  # XXX hardcoded value
+        threshold = datetime.now(tz=timezone.utc) - timedelta(
+            hours=3
+        )  # XXX hardcoded value
         query = (
             select(self._table)
             .where(self._table.created_at >= threshold)
@@ -68,7 +74,9 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
-    async def get_multi_by_nakamal(self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100) -> List[CheckinSchema]:
+    async def get_multi_by_nakamal(
+        self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100
+    ) -> List[CheckinSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))
@@ -83,7 +91,15 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
-    async def get_multi_by_user(self, user_id: UUID, *, skip: int = 0, limit: int = 100, nakamal_id: Optional[UUID] = None, exclude_private: bool = True) -> List[CheckinSchema]:
+    async def get_multi_by_user(
+        self,
+        user_id: UUID,
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        nakamal_id: Optional[UUID] = None,
+        exclude_private: bool = True
+    ) -> List[CheckinSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))
@@ -97,7 +113,13 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
-    async def get_last_by_user(self, user_id: UUID, *, nakamal_id: Optional[UUID] = None, exclude_private: bool = True) -> Optional[CheckinSchema]:
+    async def get_last_by_user(
+        self,
+        user_id: UUID,
+        *,
+        nakamal_id: Optional[UUID] = None,
+        exclude_private: bool = True
+    ) -> Optional[CheckinSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))

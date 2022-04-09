@@ -3,6 +3,7 @@ import logging
 
 from app.db.init_db import init_db
 from app.db.session import async_engine, async_session
+
 # from app.db.session import SessionLocal
 
 logging.basicConfig(level=logging.INFO)
@@ -17,6 +18,7 @@ async def init() -> None:
             await init_db(session)
             await session.flush()
             await session.rollback()
+
 
 async def main() -> None:
     logger.info("Creating initial data")

@@ -2,24 +2,24 @@ from pathlib import Path
 from typing import List, Optional
 
 import jwt
+import pydenticon
 from fastapi import Depends, Request
-from fastapi_users import BaseUserManager, FastAPIUsers, models as FUModels
-from fastapi_users.authentication import (
-    AuthenticationBackend,
-    BearerTransport,
-    JWTStrategy,
-)
+from fastapi_users import BaseUserManager, FastAPIUsers
+from fastapi_users import models as FUModels
+from fastapi_users.authentication import (AuthenticationBackend,
+                                          BearerTransport, JWTStrategy)
 from fastapi_users.jwt import decode_jwt
 from fastapi_users.manager import BaseUserManager, UserNotExists
 from pydantic import UUID4
-import pydenticon
 from sqlalchemy import select
+
 from app.core.config import settings
-from app.core.mail import mail, MessageSchema
+from app.core.mail import MessageSchema, mail
 from app.db.session import async_session
-from app.models.fastapi_users_db_sqlalchemy_asyncpg import SQLAlchemyUserDatabase
+from app.models.fastapi_users_db_sqlalchemy_asyncpg import \
+    SQLAlchemyUserDatabase
 from app.models.user import User as UserTable
-from app.schemas.user import User, UserCreate, UserUpdate, UserDB
+from app.schemas.user import User, UserCreate, UserDB, UserUpdate
 
 
 class UserManager(BaseUserManager[UserCreate, UserDB]):
@@ -31,7 +31,9 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         users = await self.user_db.get_multi()
         return users
 
-    async def on_after_register(self, user: UserDB, request: Optional[Request] = None) -> None:
+    async def on_after_register(
+        self, user: UserDB, request: Optional[Request] = None
+    ) -> None:
         print(f"User {user.id} has registered.")
         message = MessageSchema(
             subject="Welcome to Bilolok!",
@@ -49,7 +51,7 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
                 to perform some actions on the app.
 
                 - The Bilolok Team
-            """
+            """,
         )
         await mail.send_message(message)
         # Send email verification email
@@ -63,7 +65,9 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         with fullAvatarPath.open("wb") as f:
             f.write(identicon)
 
-    async def on_after_forgot_password(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
+    async def on_after_forgot_password(
+        self, user: UserDB, token: str, request: Optional[Request] = None
+    ) -> None:
         print(f"User {user.id} has forgot their password. Reset token: {token}")
         link = "{}/auth/resetPassword?token={}".format(settings.FRONTEND_HOST, token)
         message = MessageSchema(
@@ -72,11 +76,15 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             body="""
                 Reset your password by copying the following link into your URL bar:
                 {link}
-            """.format(link=link)
+            """.format(
+                link=link
+            ),
         )
         await mail.send_message(message)
 
-    async def on_after_request_verify(self, user: UserDB, token: str, request: Optional[Request] = None) -> None:
+    async def on_after_request_verify(
+        self, user: UserDB, token: str, request: Optional[Request] = None
+    ) -> None:
         print(f"Verification requested for user {user.id}. Verification token: {token}")
         link = "{}/auth/verify?token={}".format(settings.FRONTEND_HOST, token)
         message = MessageSchema(
@@ -85,9 +93,12 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
             body="""
                 Copy the following link into your browser to verify your email:
                 {link}
-            """.format(link=link)
+            """.format(
+                link=link
+            ),
         )
         await mail.send_message(message)
+
 
 class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
     async def get_multi(self) -> List[UserDB]:
@@ -98,19 +109,24 @@ class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
 
         return [await self._make_user(user) for user in users] if users else None
 
+
 async def get_user_db():
     yield MySQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
+
 
 async def get_user_manager(user_db: MySQLAlchemyUserDatabase = Depends(get_user_db)):
     yield UserManager(user_db)
 
+
 bearer_transport = BearerTransport(tokenUrl="/api/v1/auth/jwt/login")
+
 
 class MyJWTStrategy(JWTStrategy):
     """Split `read_token` method into two methods so we can
     use the `get_user_id` outside of FastAPI endpoint for our
     middleware.
     """
+
     async def get_user_id(self, token: Optional[str]):
         try:
             data = decode_jwt(token, self.secret, self.token_audience)
@@ -120,7 +136,9 @@ class MyJWTStrategy(JWTStrategy):
             return None
 
     async def read_token(
-        self, token: Optional[str], user_manager: BaseUserManager[FUModels.UC, FUModels.UD]
+        self,
+        token: Optional[str],
+        user_manager: BaseUserManager[FUModels.UC, FUModels.UD],
     ) -> Optional[FUModels.UD]:
         if token is None:
             return None
@@ -128,21 +146,23 @@ class MyJWTStrategy(JWTStrategy):
         user_id = await self.get_user_id(token)
         if user_id is None:
             return None
-        
+
         try:
             user_uiid = UUID4(user_id)
             return await user_manager.get(user_uiid)
         except ValueError:
             return None
         except UserNotExists:
-            return None 
+            return None
+
 
 def get_jwt_strategy() -> MyJWTStrategy:
     return MyJWTStrategy(
         secret=settings.SECRET_KEY,
         lifetime_seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS,
-        token_audience=[f"{settings.PROJECT_SLUG}:auth"]
+        token_audience=[f"{settings.PROJECT_SLUG}:auth"],
     )
+
 
 auth_backend = AuthenticationBackend(
     name="jwt",

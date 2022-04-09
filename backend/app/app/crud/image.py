@@ -1,19 +1,19 @@
-from typing import List, Optional, Type
 from pathlib import Path
+from typing import List, Optional, Type
 from uuid import UUID
 
 from sqlalchemy import desc, select
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.orm import selectinload
 
 from app.core.config import settings
 from app.core.image import img_crypto_url
 from app.crud.base import CRUDBase
 from app.models.image import Image
-from app.schemas.image import ImageSchemaIn, ImageSchema
-from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import selectinload
+from app.schemas.image import ImageSchema, ImageSchemaIn
 
 
-class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):    
+class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
     @property
     def _in_schema(self) -> Type[ImageSchemaIn]:
         return ImageSchemaIn
@@ -37,19 +37,25 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         except NoResultFound:
             item = None
         return item
-        
+
     def save_file(self, sfp: Path, *, nakamal_id: str, file_id: str, filename: str):
         """Save the given file to it's storage path defined by `filepath`."""
-        ffp = Path(settings.IMAGES_LOCAL_DIR) / self._table.build_filepath(nakamal_id, file_id, filename)
+        ffp = Path(settings.IMAGES_LOCAL_DIR) / self._table.build_filepath(
+            nakamal_id, file_id, filename
+        )
         ffp.parent.mkdir(parents=True, exist_ok=True)
-        sfp.replace(str(ffp))  # removes original and assumes both are on same filesystem
+        sfp.replace(
+            str(ffp)
+        )  # removes original and assumes both are on same filesystem
 
     def make_src_url(self, image: Image, width: int, height: int, **kwargs) -> str:
         uri = img_crypto_url.generate(
             width=width,
             height=height,
             smart=True,
-            image_url=str(Image.build_filepath(image.nakamal.id, image.file_id, image.filename)),
+            image_url=str(
+                Image.build_filepath(image.nakamal.id, image.file_id, image.filename)
+            ),
             **kwargs,
         )
         return "{}{}".format(settings.THUMBOR_SERVER, uri)
@@ -75,13 +81,16 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             select(self._table)
             .options(selectinload(self._table.nakamal))
             .order_by(desc(self._table.created_at))
-            .offset(skip).limit(limit)
+            .offset(skip)
+            .limit(limit)
         )
         results = await self._db_session.execute(query)
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def get_multi_by_nakamal(self, nakamal_id: str, *, skip: int = 0, limit: int = 100) -> List[ImageSchema]:
+    async def get_multi_by_nakamal(
+        self, nakamal_id: str, *, skip: int = 0, limit: int = 100
+    ) -> List[ImageSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))
@@ -92,7 +101,14 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def get_multi_by_user(self, user_id: UUID, *, skip: int = 0, limit: int = 100, nakamal_id: Optional[UUID] = None) -> List[ImageSchema]:
+    async def get_multi_by_user(
+        self,
+        user_id: UUID,
+        *,
+        skip: int = 0,
+        limit: int = 100,
+        nakamal_id: Optional[UUID] = None
+    ) -> List[ImageSchema]:
         query = (
             select(self._table)
             .options(selectinload(self._table.nakamal))

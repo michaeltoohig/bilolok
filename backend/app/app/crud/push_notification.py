@@ -1,15 +1,14 @@
-from typing import Any, Dict, List, Type
-from uuid import uuid4, UUID
-
-from sqlalchemy import and_, select
-from sqlalchemy.exc import NoResultFound
+from typing import Type
 
 from app.crud.base import CRUDBase
-from app.models.push_notification import PushNotification, PushNotificationStatus
-from app.schemas.push_notification import PushNotificationSchemaIn, PushNotificationSchema
+from app.models.push_notification import PushNotification
+from app.schemas.push_notification import (PushNotificationSchema,
+                                           PushNotificationSchemaIn)
 
 
-class CRUDPushNotification(CRUDBase[PushNotification, PushNotificationSchemaIn, PushNotificationSchema]):    
+class CRUDPushNotification(
+    CRUDBase[PushNotification, PushNotificationSchemaIn, PushNotificationSchema]
+):
     @property
     def _in_schema(self) -> Type[PushNotificationSchemaIn]:
         return PushNotificationSchemaIn

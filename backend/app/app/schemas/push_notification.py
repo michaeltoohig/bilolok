@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 from typing import Any, Dict, Optional
 
 from app.models.push_notification import PushNotificationStatus
@@ -34,4 +33,3 @@ class PushNotificationSchema(PushNotificationSchemaBase):
 
 class PushNotificationSchemaOut(PushNotificationSchema):
     pass
-

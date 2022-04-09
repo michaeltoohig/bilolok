@@ -1,12 +1,12 @@
 import json
 from urllib.parse import urlparse
 
-from fastapi import APIRouter, Request, Response, status
 import httpx
+import loguru
+from fastapi import APIRouter, Request, Response, status
 
 from app.core.config import settings
 
-import loguru
 logger = loguru.logger
 
 sentry_router = APIRouter()
@@ -25,9 +25,15 @@ async def sentry_tunnel_endpoint(request: Request):
         header = json.loads(pieces[0])
         dsn = urlparse(header["dsn"])
         project_id = int(dsn.path.strip("/"))
-        if project_id in settings.SENTRY_PROJECT_IDS and dsn.hostname == settings.SENTRY_HOST:
+        if (
+            project_id in settings.SENTRY_PROJECT_IDS
+            and dsn.hostname == settings.SENTRY_HOST
+        ):
             logger.debug("Sending to Sentry...")
-            httpx.post(f"https://{settings.SENTRY_HOST}/api/{project_id}/envelope/", data=envelope)
+            httpx.post(
+                f"https://{settings.SENTRY_HOST}/api/{project_id}/envelope/",
+                data=envelope,
+            )
         else:
             logger.warning("Sentry DSN does not match expected values")
     except Exception as exc:

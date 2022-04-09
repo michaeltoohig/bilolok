@@ -1,14 +1,15 @@
+import time
 from typing import Any, Optional
 
+import loguru
 from fastapi import Request, Response
-from fastapi.security.http import HTTPBearer
 from fastapi.middleware import Middleware
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from fastapi.security.http import HTTPBearer
+from starlette.middleware.base import (BaseHTTPMiddleware,
+                                       RequestResponseEndpoint)
 from starlette_context import context, plugins
 from starlette_context.middleware import ContextMiddleware
-import time
-import loguru 
 
 from app.core.config import settings
 from app.core.sentry import sentry_sdk
@@ -18,7 +19,9 @@ logger = loguru.logger
 
 
 class RequestLogMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         with logger.contextualize(request_id=context.data.get("X-Request-ID")):
             start_time = time.time()
             response = await call_next(request)
@@ -40,7 +43,10 @@ class RequestLogMiddleware(BaseHTTPMiddleware):
 
 class SentryExceptionMiddleware(BaseHTTPMiddleware):
     """Middleware to handle exceptions and pass them to Sentry"""
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         with logger.contextualize(request_id=context.data.get("X-Request-ID")):
             try:
                 response = await call_next(request)
@@ -60,13 +66,12 @@ class SentryExceptionMiddleware(BaseHTTPMiddleware):
 
 class FastAPIUsersJWTPlugin(plugins.base.Plugin):
     """Starlette-Context middleware to collect user_id from JWT token"""
+
     key = "user_id"
     jwt_strategy = get_jwt_strategy()
     jwt_bearer_authorization = HTTPBearer(auto_error=False)
 
-    async def process_request(
-        self, request: Request
-    ) -> Optional[Any]:
+    async def process_request(self, request: Request) -> Optional[Any]:
         auth = await self.jwt_bearer_authorization(request)
         if not auth:
             return None
@@ -80,8 +85,8 @@ middleware = [
         plugins=[
             plugins.RequestIdPlugin(),
             plugins.ForwardedForPlugin(),
-            FastAPIUsersJWTPlugin()
-        ]
+            FastAPIUsersJWTPlugin(),
+        ],
     ),
     Middleware(SentryExceptionMiddleware),
 ]

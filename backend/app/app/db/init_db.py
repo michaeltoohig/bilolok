@@ -5,11 +5,11 @@ from sqlalchemy.orm import Session
 
 # from app import crud
 from app.core.config import settings
-from app.db.session import async_engine, async_session
 from app.core.users import fastapi_users
-from app.schemas.user import UserCreate
 from app.crud.user import CRUDUser
+from app.db.session import async_engine, async_session
 from app.models.user import User as UserTable
+from app.schemas.user import UserCreate
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQLAlchemy might fail to initialize relationships properly

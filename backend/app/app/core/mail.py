@@ -1,7 +1,6 @@
+from fastapi_mail import ConnectionConfig, FastMail, MessageSchema
+
 from app.core.config import settings
-
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
-
 
 conf = ConnectionConfig(
     MAIL_USERNAME=settings.MAIL_USERNAME,

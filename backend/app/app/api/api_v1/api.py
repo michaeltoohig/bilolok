@@ -1,17 +1,8 @@
 from fastapi import APIRouter
 
-from app.api.api_v1.endpoints import (
-    auth,
-    checkins,
-    images,
-    nakamals,
-    nakamalAreas,
-    nakamalKavaSources,
-    nakamalResources,
-    subscriptions,
-    users,
-    utils,
-)
+from app.api.api_v1.endpoints import (auth, checkins, images, nakamalAreas,
+                                      nakamalKavaSources, nakamalResources,
+                                      nakamals, subscriptions, users, utils)
 
 api_router = APIRouter()
 

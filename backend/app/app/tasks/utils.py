@@ -1,12 +1,13 @@
 import json
-from app.models.push_notification import PushNotificationStatus
 
-from pywebpush import webpush, WebPushException
+from pywebpush import WebPushException, webpush
 
 from app.core.config import settings
 from app.crud.push_notification import CRUDPushNotification
 from app.crud.subscription import CRUDSubscription
-from app.schemas.push_notification import PushNotificationSchemaIn, PushNotificationSchemaUpdate
+from app.models.push_notification import PushNotificationStatus
+from app.schemas.push_notification import (PushNotificationSchemaIn,
+                                           PushNotificationSchemaUpdate)
 
 
 async def test_arq_subtask(ctx: dict, letter: str):
@@ -27,11 +28,13 @@ async def send_daily_push_notification(ctx: dict):
     data = dict(body="It's kava time; try finding a kava bar on Bilolok and check-in.")
     subs = await crud_subscription.get_multi()
     for sub in subs:
-        push_notification = await crud_pn.create(PushNotificationSchemaIn(
-            user_id=sub.user_id,
-            device_id=sub.device_id,
-            data=data,
-        ))
+        push_notification = await crud_pn.create(
+            PushNotificationSchemaIn(
+                user_id=sub.user_id,
+                device_id=sub.device_id,
+                data=data,
+            )
+        )
         try:
             data = push_notification.data
             data["id"] = str(push_notification.id)
@@ -43,9 +46,12 @@ async def send_daily_push_notification(ctx: dict):
                     "sub": f"mailto:{settings.VAPID_MAILTO}",
                 },
             )
-            await crud_pn.update(push_notification.id, PushNotificationSchemaUpdate(
-                status=PushNotificationStatus.SENT,
-            ))
+            await crud_pn.update(
+                push_notification.id,
+                PushNotificationSchemaUpdate(
+                    status=PushNotificationStatus.SENT,
+                ),
+            )
         except WebPushException as exc:
             error_data = dict(exc=repr(exc))
             # Mozilla returns additional information in the body of the response.
@@ -54,7 +60,10 @@ async def send_daily_push_notification(ctx: dict):
                 error_data["code"] = extra.code
                 error_data["errno"] = extra.errno
                 error_data["message"] = extra.message
-            await crud_pn.update(push_notification.id, PushNotificationSchemaUpdate(
-                status=PushNotificationStatus.ERROR,
-                error_data=error_data,
-            ))
+            await crud_pn.update(
+                push_notification.id,
+                PushNotificationSchemaUpdate(
+                    status=PushNotificationStatus.ERROR,
+                    error_data=error_data,
+                ),
+            )

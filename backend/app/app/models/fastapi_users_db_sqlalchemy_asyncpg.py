@@ -15,10 +15,11 @@ from typing import Mapping, Optional, Type
 from fastapi_users.db.base import BaseUserDatabase
 from fastapi_users.models import UD
 from pydantic import UUID4
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table, func, select
+from sqlalchemy import (Boolean, Column, ForeignKey, Integer, String, Table,
+                        func, select)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.types import CHAR, TypeDecorator
 
 __version__ = "1.0.0"
@@ -99,8 +100,6 @@ class NotSetOAuthAccountTableError(Exception):
     but no table were specified in the DB adapter.
     """
 
-    pass
-
 
 class SQLAlchemyUserDatabase(BaseUserDatabase[UD]):
     """
@@ -157,13 +156,14 @@ class SQLAlchemyUserDatabase(BaseUserDatabase[UD]):
                 user = result.first()
                 return await self._make_user(user) if user else None
         raise NotSetOAuthAccountTableError()
-    
-    
+
     async def get_by_id(self, id: str) -> Optional[UD]:
         if self.oauth_accounts is not None:
             async with self.session.begin() as session:
                 query = (
-                    select([self.users]).select_from(self.users.join(self.oauth_accounts)).where(self.users.c.id == id)
+                    select([self.users])
+                    .select_from(self.users.join(self.oauth_accounts))
+                    .where(self.users.c.id == id)
                 )
                 result = await session.execute(query)
                 user = result.first()

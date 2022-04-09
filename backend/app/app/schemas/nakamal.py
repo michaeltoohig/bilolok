@@ -1,9 +1,9 @@
 import uuid
 from typing import List, Optional
 
-from .base import BaseSchema
 from app.models.nakamal import Province
 
+from .base import BaseSchema
 
 #
 # Nakamal Kava Source

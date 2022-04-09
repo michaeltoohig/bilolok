@@ -1,14 +1,16 @@
 from typing import Any
-from app.api.deps.db import get_db
-from app.crud.subscription import CRUDSubscription
 
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
+from app.api.deps.db import get_db
 from app.api.deps.user import current_active_user
 from app.core.config import settings
+from app.crud.subscription import CRUDSubscription
 from app.models.user import User
-from app.schemas.subscription import SubscriptionSchemaIn, SubscriptionPublicKeySchemaOut, SubscriptionSchemaOut
+from app.schemas.subscription import (SubscriptionPublicKeySchemaOut,
+                                      SubscriptionSchemaIn,
+                                      SubscriptionSchemaOut)
 
 router = APIRouter(prefix="/subscriptions")
 
@@ -36,9 +38,11 @@ async def post_subscription(
 ) -> Any:
     """Create subscription for user"""
     crud_subscription = CRUDSubscription(db)
-    sub = await crud_subscription.find_by_device_id(in_schema.device_id, user_id=user.id)
+    sub = await crud_subscription.find_by_device_id(
+        in_schema.device_id, user_id=user.id
+    )
     if sub:
-        sub = await crud_subscription.update(sub.id,  update_schema=in_schema)
+        sub = await crud_subscription.update(sub.id, update_schema=in_schema)
     else:
         sub = await crud_subscription.create(in_schema=in_schema, user_id=user.id)
     return sub

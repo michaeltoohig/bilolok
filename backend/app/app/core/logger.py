@@ -4,9 +4,9 @@ import sys
 from pathlib import Path
 from pprint import pformat
 
-from app.core.config import settings
-
 from loguru import logger
+
+from app.core.config import settings
 
 
 class InterceptHandler(logging.Handler):
@@ -49,7 +49,9 @@ def format_record(record: dict) -> str:
 
     format_string = "<level>{level: <8}</level> "
     format_string += "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
-    format_string += "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+    format_string += (
+        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+    )
 
     if record["extra"].get("request_id") is not None:
         format_string += "reqId:{extra[request_id]}"
@@ -68,9 +70,9 @@ def format_record(record: dict) -> str:
 def init_logging():
     """
     Replaces logging handlers with a handler for using the custom handler.
-        
+
     WARNING!
-    if you call the init_logging in startup event function, 
+    if you call the init_logging in startup event function,
     then the first logs before the application start will be in the old format
     >>> app.add_event_handler("startup", init_logging)
     stdout:
@@ -79,7 +81,7 @@ def init_logging():
     INFO:     Started server process [6036]
     INFO:     Waiting for application startup.
     2020-07-25 02:19:21.357 | INFO     | uvicorn.lifespan.on:startup:34 - Application startup complete.
-    
+
     """
 
     # disable handlers for specific uvicorn loggers
@@ -102,12 +104,12 @@ def init_logging():
         handlers=[{"sink": sys.stdout, "level": logging.DEBUG, "format": format_record}]
     )
     logger.add(
-            Path(settings.LOG_FILE_PATH) / f"{settings.PROJECT_SLUG}.log",
-            rotation=settings.LOG_FILE_ROTATION,
-            retention=settings.LOG_FILE_RETENTION,
-            compression=settings.LOG_FILE_COMPRESSION,
-            enqueue=True,
-            backtrace=True,
-            level=settings.LOG_FILE_LEVEL,
-            format=format_record,
-        )
+        Path(settings.LOG_FILE_PATH) / f"{settings.PROJECT_SLUG}.log",
+        rotation=settings.LOG_FILE_ROTATION,
+        retention=settings.LOG_FILE_RETENTION,
+        compression=settings.LOG_FILE_COMPRESSION,
+        enqueue=True,
+        backtrace=True,
+        level=settings.LOG_FILE_LEVEL,
+        format=format_record,
+    )

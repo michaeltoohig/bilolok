@@ -3,26 +3,25 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, status
 from pydantic.networks import EmailStr
+from pywebpush import WebPushException, webpush
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from pywebpush import webpush, WebPushException
 
 from app.api.deps.db import get_db
 from app.api.deps.user import current_superuser
 from app.core.arq_app import get_arq_app
 from app.core.config import settings
-from app.core.mail import mail, MessageSchema
-from app.crud.subscription import CRUDSubscription
+from app.core.mail import MessageSchema, mail
 from app.crud.push_notification import CRUDPushNotification
+from app.crud.subscription import CRUDSubscription
 from app.models.push_notification import PushNotificationStatus
 from app.models.user import User
-from app.schemas.push_notification import PushNotificationSchemaIn, PushNotificationSchemaUpdate
+from app.schemas.push_notification import (PushNotificationSchemaIn,
+                                           PushNotificationSchemaUpdate)
 
 router = APIRouter()
 
 
-@router.post(
-    "/test-arq", status_code=status.HTTP_201_CREATED
-)
+@router.post("/test-arq", status_code=status.HTTP_201_CREATED)
 async def test_arq(
     superuser: User = Depends(current_superuser),
 ) -> Any:
@@ -31,8 +30,9 @@ async def test_arq(
     """
     arq_app = await get_arq_app()
     await arq_app.enqueue_job(
-        "test_arq", "test-word",
+        "send_daily_push_notification",
     )
+    # "test_arq", "test-word",
     return {"msg": "Word received"}
 
 
@@ -54,7 +54,8 @@ async def test_arq(
 
 
 @router.post(
-    "/test-email", status_code=status.HTTP_201_CREATED,
+    "/test-email",
+    status_code=status.HTTP_201_CREATED,
 )
 async def test_email(
     email_to: EmailStr,
@@ -64,16 +65,15 @@ async def test_email(
     Test emails.
     """
     message = MessageSchema(
-        subject="Test Email",
-        recipients=[email_to],
-        body="This email is a test."
+        subject="Test Email", recipients=[email_to], body="This email is a test."
     )
     await mail.send_message(message)
     return {"msg": "Test email sent"}
 
 
 @router.post(
-    "/test-push-notification", status_code=status.HTTP_201_CREATED,
+    "/test-push-notification",
+    status_code=status.HTTP_201_CREATED,
 )
 async def test_push_notification(
     db: AsyncSession = Depends(get_db),
@@ -87,11 +87,13 @@ async def test_push_notification(
     data = dict(body="Testing web push notification from Bilolok.")
     subs = await crud_subscription.find_multi_by_user_id(superuser.id)
     for sub in subs:
-        push_notification = await crud_pn.create(PushNotificationSchemaIn(
-            user_id=sub.user_id,
-            device_id=sub.device_id,
-            data=data,
-        ))
+        push_notification = await crud_pn.create(
+            PushNotificationSchemaIn(
+                user_id=sub.user_id,
+                device_id=sub.device_id,
+                data=data,
+            )
+        )
         try:
             data = push_notification.data
             data["id"] = str(push_notification.id)
@@ -103,9 +105,12 @@ async def test_push_notification(
                     "sub": f"mailto:{settings.VAPID_MAILTO}",
                 },
             )
-            await crud_pn.update(push_notification.id, PushNotificationSchemaUpdate(
-                status=PushNotificationStatus.SENT,
-            ))
+            await crud_pn.update(
+                push_notification.id,
+                PushNotificationSchemaUpdate(
+                    status=PushNotificationStatus.SENT,
+                ),
+            )
         except WebPushException as exc:
             error_data = dict(exc=repr(exc))
             # Mozilla returns additional information in the body of the response.
@@ -114,8 +119,11 @@ async def test_push_notification(
                 error_data["code"] = extra.code
                 error_data["errno"] = extra.errno
                 error_data["message"] = extra.message
-            await crud_pn.update(push_notification.id, PushNotificationSchemaUpdate(
-                status=PushNotificationStatus.ERROR,
-                error_data=error_data,
-            ))
+            await crud_pn.update(
+                push_notification.id,
+                PushNotificationSchemaUpdate(
+                    status=PushNotificationStatus.ERROR,
+                    error_data=error_data,
+                ),
+            )
     return {"msg": "okay"}

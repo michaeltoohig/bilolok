@@ -1,16 +1,16 @@
-from typing import Type, List
+from typing import List, Type
 from uuid import UUID
 
 from sqlalchemy import select
-
-from app.crud.base import CRUDBase
-from app.models.nakamal import Nakamal
-from app.schemas.nakamal import NakamalSchemaIn, NakamalSchema
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
+from app.crud.base import CRUDBase
+from app.models.nakamal import Nakamal
+from app.schemas.nakamal import NakamalSchema, NakamalSchemaIn
 
-class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):    
+
+class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
     @property
     def _in_schema(self) -> Type[NakamalSchemaIn]:
         return NakamalSchemaIn

@@ -3,21 +3,16 @@ import logging
 from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urlparse
 
-from pydantic import (
-    AnyHttpUrl,
-    BaseSettings,
-    EmailStr,
-    HttpUrl,
-    PostgresDsn,
-    RedisDsn,
-    validator,
-)
+from pydantic import (AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn,
+                      validator)
+
 
 def list_parse_fallback(v):
     try:
         return json.loads(v)
-    except Exception as e:
+    except Exception:
         return v.split(",")
+
 
 class Settings(BaseSettings):
     DEBUG: bool = False
@@ -52,7 +47,9 @@ class Settings(BaseSettings):
         return urlparse(values.get("SENTRY_DSN")).hostname
 
     @validator("SENTRY_PROJECT_IDS", pre=True)
-    def extract_sentry_project_id(cls, v: Optional[List[int]], values: Dict[str, Any]) -> Any:
+    def extract_sentry_project_id(
+        cls, v: Optional[List[int]], values: Dict[str, Any]
+    ) -> Any:
         if isinstance(v, list):
             return v
         return [int(urlparse(values.get("SENTRY_DSN")).path.strip("/"))]
@@ -89,7 +86,9 @@ class Settings(BaseSettings):
     @property
     def ASYNC_SQLALCHEMY_DATABASE_URI(self) -> Optional[str]:
         return (
-            self.SQLALCHEMY_DATABASE_URI.replace("postgresql://", "postgresql+asyncpg://")
+            self.SQLALCHEMY_DATABASE_URI.replace(
+                "postgresql://", "postgresql+asyncpg://"
+            )
             if self.SQLALCHEMY_DATABASE_URI
             else self.SQLALCHEMY_DATABASE_URI
         )

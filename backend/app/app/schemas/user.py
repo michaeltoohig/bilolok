@@ -1,10 +1,10 @@
-from typing import Optional
 import uuid
+from typing import Optional
 
 from fastapi_users import models
-from app.schemas.base import BaseSchema
 from pydantic import AnyHttpUrl
 
+from app.schemas.base import BaseSchema
 
 # TODO update schema class names to match other schemas naming convention
 

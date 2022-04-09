@@ -1,8 +1,8 @@
 from pathlib import Path
 from uuid import UUID
 
-from sqlalchemy import Column, String, ForeignKey
 from fastapi_users_db_sqlalchemy import GUID
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from app.core.config import settings
@@ -12,7 +12,7 @@ from app.db.mixins import TimeMixin
 
 class Image(Base, TimeMixin):
     """SQLAlchemy images table definition."""
-    
+
     __tablename__ = "image"
 
     file_id = Column(String, unique=True, nullable=False)
@@ -27,12 +27,14 @@ class Image(Base, TimeMixin):
     @staticmethod
     def build_filepath(nakamal_id: UUID, file_id: str, filename: str):
         IMAGE_PATH_FMT = "nakamals/{subdir}/{n_id}/{f_id}{ext}"
-        return Path(IMAGE_PATH_FMT.format(
-            subdir=str(nakamal_id)[:2],
-            n_id=str(nakamal_id),
-            f_id=file_id,
-            ext=Path(filename).suffix,
-        ))
+        return Path(
+            IMAGE_PATH_FMT.format(
+                subdir=str(nakamal_id)[:2],
+                n_id=str(nakamal_id),
+                f_id=file_id,
+                ext=Path(filename).suffix,
+            )
+        )
 
     @property
     def filepath(self):
