@@ -4,10 +4,6 @@ import http from './http-common';
 const resource = 'users';
 
 export default {
-  async get(id) {
-    return http.get(`${resource}/${id}`);
-  },
-
   async getMe(token) {
     return http.get(`${resource}/me`, authHeaders(token));
   },
@@ -16,8 +12,25 @@ export default {
     return http.patch(`${resource}/me`, data, authHeaders(token));
   },
 
-  async getUsers(token) {
-    return http.get(`${resource}`, authHeaders(token));
+  async get(id, token, auth = false) {
+    const options = authHeaders(token);
+    if (auth) {
+      options.params = { auth };
+    }
+    console.log('getting user', id);
+    return http.get(`${resource}/${id}`, options);
+  },
+
+  async getUsers(token, includeDetails = false, auth = false) {
+    const options = authHeaders(token);
+    console.log('xxx');
+    if (auth) {
+      options.params = { auth };
+    }
+    if (includeDetails) {
+      options.params = { includeDetails };
+    }
+    return http.get(`${resource}`, options);
   },
 
   async updateUser(token, userId, payload) {

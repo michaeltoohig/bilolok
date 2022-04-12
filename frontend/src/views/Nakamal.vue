@@ -1,7 +1,16 @@
 <template>
   <div class="nakamal">
     <div v-if="loading">
-      Loading...
+      <v-container fill-height>
+        <v-layout align-center justify-center>
+          <v-flex>
+            <div class="text-center">
+              <div class="headline my-5">Loading Kava Bar...</div>
+              <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-container>
     </div>
     <div v-else>
       <v-container>

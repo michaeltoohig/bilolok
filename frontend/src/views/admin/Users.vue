@@ -73,7 +73,7 @@ export default {
     }),
   },
   async mounted() {
-    await this.$store.dispatch('user/getUsers');
+    await this.$store.dispatch('user/getUsers', true);
   },
 };
 </script>

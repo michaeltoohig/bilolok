@@ -184,6 +184,11 @@ export default {
           icon: 'mdi-map',
         },
         {
+          title: 'Users',
+          link: { name: 'UserList' },
+          icon: 'mdi-account-box-multiple',
+        },
+        {
           title: 'About',
           link: { name: 'About' },
           icon: 'mdi-information-variant',

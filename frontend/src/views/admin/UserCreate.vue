@@ -139,7 +139,7 @@ export default {
     },
   },
   async mounted() {
-    this.$store.dispatch('user/getUsers');
+    this.$store.dispatch('user/getUsers', true);
     this.reset();
   },
 };

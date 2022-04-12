@@ -1,5 +1,6 @@
 import uuid
-from typing import Optional
+from typing import ForwardRef, List, Optional
+# from app.schemas.checkin import CheckinSchema
 
 from fastapi_users import models
 from pydantic import AnyHttpUrl
@@ -30,3 +31,14 @@ class UserDB(User, models.BaseUserDB):
 class UserSchema(BaseSchema):
     id: uuid.UUID
     avatar: Optional[AnyHttpUrl] = None
+
+
+CheckinSchema = ForwardRef("CheckinSchema")
+
+
+class UserSchemaDetails(UserSchema):
+    latest_checkin: Optional[CheckinSchema]
+
+
+from app.schemas.checkin import CheckinSchema
+UserSchemaDetails.update_forward_refs()

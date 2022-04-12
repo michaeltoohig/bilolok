@@ -17,7 +17,7 @@ const responseHandler = (response) => response;
 
 const errorHandler = (error) => {
   console.log('API Error Handler:', error.response);
-  if (error.response.status === 401) {
+  if (error.response && error.response.status === 401) {
     // TODO this pattern fails for logged in users
     //  eg. an unverified user trying to add a nakamal
     console.log('!! Unauthorized');

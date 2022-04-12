@@ -22,6 +22,11 @@ const routes = [
     // beforeUpdate: authRouteGuard,
   },
   {
+    path: '/user',
+    name: 'UserList',
+    component: () => import(/* webpackChunkName: "public" */ '@/views/UserList.vue'),
+  },
+  {
     path: '/user/:id',
     name: 'User',
     component: () => import(/* webpackChunkName: "public" */ '@/views/User.vue'),
