@@ -46,7 +46,11 @@ async def get_all(
         return [CheckinSchemaOut(**item.dict()) for item in items]
 
 
-@router.post("", response_model=CheckinSchemaOut)
+@router.post(
+    "",
+    response_model=CheckinSchemaOut,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_one(
     db: AsyncSession = Depends(get_db),
     *,

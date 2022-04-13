@@ -1,7 +1,7 @@
 import authHeaders from './utils';
 import http from './http-common';
 
-const resource = 'checkins';
+const resource = 'trips';
 
 export default {
   async getAll(params) {

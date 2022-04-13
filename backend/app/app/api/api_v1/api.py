@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (auth, checkins, images, nakamalAreas,
                                       nakamalKavaSources, nakamalResources,
-                                      nakamals, subscriptions, users, utils)
+                                      nakamals, subscriptions, trips, users, utils)
 
 api_router = APIRouter()
 
@@ -20,4 +20,5 @@ api_router.include_router(nakamalAreas.router, tags=["nakamals"])
 api_router.include_router(nakamalKavaSources.router, tags=["nakamals"])
 api_router.include_router(nakamalResources.router, tags=["nakamals"])
 api_router.include_router(subscriptions.router, tags=["subscriptions"])
+api_router.include_router(trips.router, tags=["trips"])
 api_router.include_router(utils.router, tags=["utils"])

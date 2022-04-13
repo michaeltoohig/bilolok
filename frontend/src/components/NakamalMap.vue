@@ -104,7 +104,42 @@
         <Compass v-on:stop="setStopCompassMode"></Compass>
       </l-control>
 
-      <LPolyline :lat-lngs="compassModePolyline"></LPolyline>
+      <LPolyline :lat-lngs="compassModePolylineLocations"></LPolyline>
+
+      <LPolyline v-for="trip in recentTrips" :key="trip.id" :lat-lngs="trip.data">
+        <LPopup>
+          <div class="d-flex flex-column align-center justify-center text-center">
+            <v-avatar
+              class="mb-2"
+              v-ripple="{ center: true }"
+              @click="goToUser(trip.user.id)"
+            >
+              <v-img :src="trip.user.avatar"></v-img>
+            </v-avatar>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <span
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <strong>{{ formatTimeAgo(trip.start_at) }}</strong>
+                </span>
+              </template>
+              <span>{{ formatTime(trip.start_at) }}</span>
+            </v-tooltip>
+            <span class="font-weight-normal">Headed to:</span>
+            <h3 class="text-h6 font-weight-bold mb-2">{{ trip.nakamal.name }}</h3>
+            <v-btn
+              outlined
+              small
+              color="primary"
+              @click="markerClick(trip.nakamal.id)"
+            >
+              View Kava Bar
+            </v-btn>
+          </div>
+        </LPopup>
+      </LPolyline>
 
       <Vue2LeafletHeatmap
         :visible="showHeatmapLayer"
@@ -168,11 +203,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+      persistent
+      v-model="loading"
+      max-width="360"
+    >
+      <v-card
+        min-height="250"
+      >
+        <v-container fill-height>
+          <v-layout align-center justify-center>
+            <v-flex>
+              <div class="text-center">
+                <div class="headline my-5">Loading Kava Bars...</div>
+                <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
+              </div>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import OfflineMixin from '@/mixins/offline';
+import FormatDatetime from '@/mixins/formatDatetime';
 import {
   mapActions,
   mapGetters,
@@ -181,7 +238,7 @@ import {
   icon, latLng, latLngBounds,
 } from 'leaflet';
 import {
-  LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline, LCircle,
+  LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline, LCircle, LPopup,
 } from 'vue2-leaflet';
 import sphereKnn from 'sphere-knn';
 
@@ -207,7 +264,7 @@ const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg'
 
 export default {
   name: 'NakamalMap',
-  mixins: [OfflineMixin],
+  mixins: [FormatDatetime, OfflineMixin],
   components: {
     NakamalMapFabButtons,
     NakamalBottomSheet,
@@ -229,10 +286,12 @@ export default {
     LLayerGroup,
     LPolyline,
     LCircle,
+    LPopup,
     Vue2LeafletHeatmap,
   },
   data() {
     return {
+      loading: true,
       showCompassModeIntroDialog: false,
       showNearbyNakamals: false,
       nearbyNakamals: [],
@@ -292,6 +351,7 @@ export default {
       checkins: 'checkin/filteredList',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
+      recentTrips: 'trip/recent',
       darkMode: 'setting/darkMode',
     }),
     maxBounds() {
@@ -322,6 +382,9 @@ export default {
         });
       });
       return areas;
+    },
+    compassModePolylineLocations() {
+      return this.compassModePolyline.map((i) => [i.lat, i.lng]);
     },
     heatmapCheckins() {
       // XXX Not as efficient as it could be
@@ -387,6 +450,9 @@ export default {
     },
   },
   methods: {
+    goToUser(id) {
+      this.$router.push({ name: 'User', params: { id } });
+    },
     startCompassModeWithIntro() {
       if (this.skipCompassModeIntro) {
         this.startCompassMode();
@@ -520,16 +586,22 @@ export default {
     },
   },
   async created() {
+    // I want to remove this RESET and return to previous state
+    // TODO:
+    //  - Heatmap sidebar state does not match heatmap layer on page refresh
+    //  - Need to test handling during compass mode
     this.$store.dispatch('map/RESET');
     this.$root.$on('fly-to-selected', this.flyToSelected);
     this.$root.$on('fly-to-bounds', this.flyToBounds);
     this.$root.$on('fly-to', this.flyTo);
   },
   async mounted() {
-    // this.loading = true;
+    this.showMarkers = true;
+    this.loading = true;
     await this.$store.dispatch('nakamal/load');
     await this.$store.dispatch('checkin/getRecent');
-    // this.loading = false;
+    await this.$store.dispatch('trip/getRecent');
+    this.loading = false;
     if (this.selectedNakamal) {
       setTimeout(() => {
         this.flyToSelected();

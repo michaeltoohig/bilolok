@@ -18,10 +18,10 @@ const getters = {
 };
 
 const actions = {
-  getUsers: async ({ commit, dispatch, rootState }, auth = false) => {
+  getUsers: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      const response = await usersApi.getUsers(token, auth);
+      const response = await usersApi.getUsers(token, payload);
       if (response) {
         const users = response.data;
         commit('setUsers', users);
@@ -32,7 +32,6 @@ const actions = {
     }
   },
   getOne: async ({ commit }, id) => {
-    console.log('getOne');
     try {
       const response = await usersApi.get(id);
       const user = response.data;

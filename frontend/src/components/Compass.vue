@@ -1,5 +1,4 @@
 <template>
-
   <v-card
     v-show="compassMode"
     max-width="200"
@@ -128,9 +127,9 @@ export default {
       let distance = 0;
       this.compassModePolyline.forEach((p) => {
         if (prevPoint !== null) {
-          distance += Math.round(latLng(prevPoint).distanceTo(latLng(p)));
+          distance += Math.round(latLng(prevPoint).distanceTo(latLng([p.lat, p.lng])));
         }
-        prevPoint = p;
+        prevPoint = [p.lat, p.lng];
       });
       if (distance < 1000) {
         distance = `${distance} meters`;
@@ -147,15 +146,11 @@ export default {
     //     'stopCompassMode',
     //   ],
     // ),
-    saveTrip() {
-      console.log('TODO save trip info, play sound, etc.');
+    async saveTrip() {
       if (this.isUserVerified) {
-        console.log('TODO save trip info');
-        this.$store.dispatch('notify/add', {
-          title: 'Trip Complete',
-          text: 'You have arrived at your destination. You should now check-in to the kava bar.',
-          color: 'primary',
-          duration: 5_000,
+        await this.$store.dispatch('trip/add', {
+          data: this.compassModePolyline,
+          nakamal_id: this.nakamal.id,
         });
       } else {
         this.$store.dispatch('notify/add', {

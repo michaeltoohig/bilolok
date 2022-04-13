@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs';
 import usersApi from '@/api/users';
 import CardUser from '@/components/UserList/CardUser.vue';
 
@@ -39,9 +40,9 @@ export default {
     };
   },
   async mounted() {
-    // const resp = await usersApi.getUsers({ includeDetails: true });
-    const resp = await usersApi.getUsers(null, true);
-    this.users = resp.data.filter((u) => u.latest_checkin !== null);
+    const resp = await usersApi.getUsers(null, { includeDetails: true });
+    this.users = resp.data.filter((u) => u.latest_checkin !== null)
+      .sort((a, b) => dayjs(a.latest_checkin.created_at).isBefore(b.latest_checkin.created_at));
   },
 };
 </script>

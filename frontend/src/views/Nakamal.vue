@@ -22,12 +22,13 @@
                   v-if="nakamalProfile"
                   size="164"
                   class="mx-auto mb-3"
+                  @click="tab = 'images'"
                 >
                   <v-img
                     :src="nakamalProfile.thumbnail"
                   ></v-img>
                 </v-avatar>
-                <h1 class="text-center" v-text="nakamal.name"></h1>
+                <h1 class="mx-auto" v-text="nakamal.name"></h1>
               </v-card-title>
               <v-card-text class="px-3 pb-3">
                 <v-alert

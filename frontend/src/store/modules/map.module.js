@@ -174,7 +174,11 @@ const mutations = {
     state.skipCompassModeIntro = true;
   },
   appendCompassModePolyline: (state, location) => {
-    state.compassModePolyline.push([location.latitude, location.longitude]);
+    state.compassModePolyline.push({
+      lat: location.latitude,
+      lng: location.longitude,
+      at: new Date().getTime(),
+    });
   },
   clearCompassModePolyline: (state) => {
     state.compassModePolyline = [];

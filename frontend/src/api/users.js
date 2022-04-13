@@ -12,24 +12,15 @@ export default {
     return http.patch(`${resource}/me`, data, authHeaders(token));
   },
 
-  async get(id, token, auth = false) {
+  async get(id, token, params) {
     const options = authHeaders(token);
-    if (auth) {
-      options.params = { auth };
-    }
-    console.log('getting user', id);
+    options.params = params;
     return http.get(`${resource}/${id}`, options);
   },
 
-  async getUsers(token, includeDetails = false, auth = false) {
+  async getUsers(token, params) {
     const options = authHeaders(token);
-    console.log('xxx');
-    if (auth) {
-      options.params = { auth };
-    }
-    if (includeDetails) {
-      options.params = { includeDetails };
-    }
+    options.params = params;
     return http.get(`${resource}`, options);
   },
 

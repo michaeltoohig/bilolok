@@ -4,7 +4,7 @@ import Vue from 'vue';
 import dayjs from 'dayjs';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
-import checkinsApi from '@/api/checkins';
+import tripsApi from '@/api/trips';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
 
@@ -13,41 +13,41 @@ const initialState = () => ({
   byNakamalId: {},
   recentIds: [],
   allIds: [],
-  filters: {},
+  // filters: {},
 });
 
 const state = initialState();
 
 const getters = {
-  // Return a single checkin with the given id.
+  // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
     // Swap ID references with the resolved nakamal objects.
     return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
   },
-  // Return a list of checkins in the order of `allIds`.
+  // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
   },
-  filteredList: (state, getters) => {
-    let checkins = state.allIds.map(id => getters.find(id));
-    if ('user' in state.filters && state.filters.user !== null) {
-      checkins = checkins.filter((c) => c.user.id === state.filters.user);
-    }
-    if ('dt' in state.filters && state.filters.dt !== null) {
-      checkins = checkins.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
-    } else {
-      // set default 30 day filter for heatmap
-      checkins = checkins.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
-    }
-    return checkins;
-  },
-  filters: (state) => {
-    return state.filters;
-  },
-  hasFilters: (state) => {
-    return Object.keys(state.filters).length > 0;
-  },
-  // Return a list of recent checkins.
+  // filteredList: (state, getters) => {
+  //   let checkins = state.allIds.map(id => getters.find(id));
+  //   if ('user' in state.filters && state.filters.user !== null) {
+  //     checkins = checkins.filter((c) => c.user.id === state.filters.user);
+  //   }
+  //   if ('dt' in state.filters && state.filters.dt !== null) {
+  //     checkins = checkins.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
+  //   } else {
+  //     // set default 30 day filter for heatmap
+  //     checkins = checkins.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
+  //   }
+  //   return checkins;
+  // },
+  // filters: (state) => {
+  //   return state.filters;
+  // },
+  // hasFilters: (state) => {
+  //   return Object.keys(state.filters).length > 0;
+  // },
+  // Return a list of recent images.
   recent: (state, getters) => {
     // return state.allIds.map(id => getters.find(id)).filter(c => c.created_at)
     return state.recentIds.map(id => getters.find(id));
@@ -55,7 +55,7 @@ const getters = {
   recentNakamalIds: (state, getters) => {
     return [...new Set(getters.recent.map((c) => c.nakamal.id))];
   },
-  // Return a list of checkins of a nakamal.
+  // Return a list of images of a nakamal.
   nakamal: (state, getters) => nakamalId => {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
@@ -66,65 +66,67 @@ const getters = {
   },
 };
 
-function commitAddCheckin(checkin, commit) {
+function commitAddTrip(trip, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(checkin, ['nakamal', 'user']));
+  commit('add', normalizeRelations(trip, ['nakamal', 'user']));
   // // Add or update the nakamal.
-  commit('nakamal/add', checkin.nakamal, {
+  commit('nakamal/add', trip.nakamal, {
     root: true,
   });
-  commit('user/setUser', checkin.user, {
+  commit('user/setUser', trip.user, {
     root: true,
   });
 };
 
 const actions = {
   getAll: async ({ commit }) => {
-    const response = await checkinsApi.getAll();
+    const response = await tripsApi.getAll();
     const checkins = response.data;
     checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
+      commitAddTrip(item, commit);
     });
   },
   getRecent: async ({ commit }) => {
     let checkins = [];
-    const response = await checkinsApi.getRecent();
+    const response = await tripsApi.getRecent();
     checkins = response.data;
     const threshold = 3  // XXX hardcoded value
     if (!checkins.length < threshold) {
-      const response = await checkinsApi.getAll({ limit: threshold })
+      const response = await tripsApi.getAll({ limit: threshold })
       checkins = response.data;
     }
     checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
+      commitAddTrip(item, commit);
     });
     commit('setRecentIds', checkins.map(i => i.id));
   },
-  getNakamal: async ({ commit }, nakamalId) => {
-    const response = await nakamalsApi.getCheckins(nakamalId);
-    const checkins = response.data;
-    checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
-  },
-  getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getCheckins(userId);
-    const checkins = response.data;
-    checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
-  },
+  // getNakamal: async ({ commit }, nakamalId) => {
+  //   const response = await nakamalsApi.getCheckins(nakamalId);
+  //   const checkins = response.data;
+  //   checkins.forEach((item) => {
+  //     commitAddTrip(item, commit);
+  //   });
+  // },
+  // getUser: async ({ commit }, userId) => {
+  //   const response = await usersApi.getCheckins(userId);
+  //   const checkins = response.data;
+  //   checkins.forEach((item) => {
+  //     commitAddTrip(item, commit);
+  //   });
+  // },
+  // TODO replace notify/add from Compass.vue
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      let response = await checkinsApi.create(token, payload);
-      const checkin = response.data;
-      commitAddCheckin(checkin, commit);
+      let response = await tripsApi.create(token, payload);
+      const trip = response.data;
+      commitAddTrip(trip, commit);
       dispatch('notify/add', {
-        title: 'Checked-In!',
-        text: `You are checked-in to this kava bar.`,
-        type: 'primary',
+        title: 'Trip Complete',
+        text: 'You have arrived at your destination. You should now check-in to the kava bar.',
+        color: 'primary',
+        duration: 5_000,
       }, { root: true });
     }
     catch (error) {
@@ -136,12 +138,12 @@ const actions = {
       }, { root: true });
     }
   },
-  setFilter: ({ commit }, { key, value }) => {
-    commit('setFilter', { key, value });
-  },
-  removeFilters: ({ commit }) => {
-    commit('removeFilters');
-  },
+  // setFilter: ({ commit }, { key, value }) => {
+  //   commit('setFilter', { key, value });
+  // },
+  // removeFilters: ({ commit }) => {
+  //   commit('removeFilters');
+  // },
 };
 
 const mutations = {
@@ -167,12 +169,13 @@ const mutations = {
   setRecentIds: (state, ids) => {
     state.recentIds = ids;
   },
-  setFilter: (state, { key, value }) => {
-    Vue.set(state.filters, key, value);
-  },
-  removeFilters: (state) => {
-    Vue.set(state, 'filters', {});
-  }, };
+  // setFilter: (state, { key, value }) => {
+  //   Vue.set(state.filters, key, value);
+  // },
+  // removeFilters: (state) => {
+  //   Vue.set(state, 'filters', {});
+  // },
+};
 
 export default {
   actions,

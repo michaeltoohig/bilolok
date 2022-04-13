@@ -33,20 +33,20 @@
               <span>{{ formatTime(checkin.created_at) }}</span>
             </v-tooltip>
           </v-card-text>
-          <v-card-text v-if="checkin.message" class="pt-0 text-h6 font-weight-normal">
-            {{ checkin.message }}
-          </v-card-text>
-          <v-card-title class="text-h5 pt-0 d-flex justify-space-between">
+          <v-card-title class="text-h5 pt-0 d-flex justify-start">
             <h4 class="mr-3">{{ checkin.nakamal.name }}</h4>
             <v-btn
               outlined
               small
+              icon
               @click="goToNakamal(checkin.nakamal.id)"
             >
-              Go To Kava Bar
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </v-card-title>
+          <v-card-text v-if="checkin.message" class="pt-0 text-h6 font-weight-normal">
+            {{ checkin.message }}
+          </v-card-text>
         </div>
       </div>
     </v-card>

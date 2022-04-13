@@ -136,7 +136,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Follow user location marker while watching user location
   - [x] Draw Polyline of user trip
   - [x] Show live distance and trip traveled distances
-  - [ ] Save the trip for showing later
+  - [x] Save the trip for showing later
   - [ ] Fix edge cases and odd behavior
 - [x] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
@@ -153,13 +153,17 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [x] Add nakamal created_at and updated_at columns
   - [x] User edit history of nakamals
 - [ ] Handle possibly dead nakamals by looking for nakamals without recent updates or recent check-ins. A `confirmed_at` value or table with user and result of confirmation visit?
-- [ ] User view for public - rank users or show their badges and order by different criteria (last check-in, most this week/month, etc)
+- [x] User view for public - rank users or show their badges and order by different criteria (last check-in, most this week/month, etc)
 - [ ] User login history and track IP and other details to help prepare against bad actors
 - [ ] Current user chat (websockets or something) KISS so no history or logging
   - [ ] Alerts users to new messages or @user messages
   - [ ] Must be able to listen to incoming messages in background while user has joined chat for the day or something like this? Or it becomes a always running chat app at the same time???
   - [ ] Current active users list on frontend? - may be best if implemented when new auth token is generated since if we have refresh tokens we can set the auth tokens to a short lifespan - or when if chat is an available feature then use the websocket to set a more precise value based on last message sent or other event
 - [x] Fix right side bars not collapsing on desktop
+- [ ] Cheif stored in DB
+  - [ ] notification when cheif position is lost
+  - [ ] user view can show number of cheif titles held by user
+
 
 ## Development
 
