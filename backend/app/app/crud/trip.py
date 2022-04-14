@@ -3,6 +3,7 @@ from typing import List, Optional, Type
 from uuid import UUID, uuid4
 
 from sqlalchemy import and_, desc, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
@@ -22,6 +23,19 @@ class CRUDTrip(CRUDBase[Trip, TripSchemaIn, TripSchema]):
     @property
     def _table(self) -> Type[Trip]:
         return Trip
+
+    async def _get_one(self, item_id: UUID):
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .options(selectinload(self._table.user))
+            .where(self._table.id == item_id)
+        )
+        try:
+            (item,) = (await self._db_session.execute(query)).one()
+        except NoResultFound:
+            item = None
+        return item
 
     async def create(
         self, in_schema: TripSchemaIn, *, user_id: UUID
@@ -45,19 +59,6 @@ class CRUDTrip(CRUDBase[Trip, TripSchemaIn, TripSchema]):
         self._db_session.add(item)
         await self._db_session.commit()
         return await self.get_by_id(item_id)
-
-    async def get_by_id(self, item_id: UUID) -> TripSchema:
-        query = (
-            select(self._table)
-            .options(selectinload(self._table.nakamal))
-            .options(selectinload(self._table.user))
-            .where(self._table.id == item_id)
-        )
-        result = await self._db_session.execute(query)
-        if not result:
-            raise Exception("make NotFound error")
-        (item,) = result.one()
-        return self._schema.from_orm(item)
 
     async def get_multi(
         self, *, skip: int = 0, limit: int = 100

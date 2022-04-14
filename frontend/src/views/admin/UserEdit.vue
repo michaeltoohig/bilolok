@@ -179,7 +179,7 @@ export default {
     },
   },
   async mounted() {
-    this.$store.dispatch('user/getUsers', true);
+    this.$store.dispatch('user/getOne', this.$router.currentRoute.params.id, { auth: true });
     this.reset();
   },
 };

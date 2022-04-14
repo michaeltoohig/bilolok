@@ -31,9 +31,10 @@ const actions = {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },
-  getOne: async ({ commit }, id) => {
+  getOne: async ({ commit }, id, payload) => {
     try {
-      const response = await usersApi.get(id);
+      let token = rootState.auth.token;
+      const response = await usersApi.get(id, token, payload);
       const user = response.data;
       commit('setUser', user);
     }

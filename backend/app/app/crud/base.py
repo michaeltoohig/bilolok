@@ -70,7 +70,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:
-        query = select(self._table)
+        query = select(self._table).where(self._table.is_active == True)
         results = (await self._db_session.execute(query)).scalars()
         return (self._schema.from_orm(item) for item in results)
 

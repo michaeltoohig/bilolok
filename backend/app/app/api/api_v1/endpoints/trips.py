@@ -27,9 +27,8 @@ router = SQLAlchemyCRUDRouter(
     create_route=False,
     update_route=False,
     delete_all_route=False,
-    delete_one_route=[Depends(current_superuser)],
+    delete_one_route=False,
 )
-
 
 
 @router.get("", response_model=List[TripSchemaOut])
@@ -49,7 +48,6 @@ async def get_all(
         return [TripSchemaOut(**item.dict()) for item in items]
 
 
-
 @router.post(
     "",
     response_model=TripSchema,
@@ -67,7 +65,7 @@ async def create_one(
     return trip
 
 
-@router.get("{item_id:uuid}", response_model=TripSchema)
+@router.get("/{item_id:uuid}", response_model=TripSchema)
 async def get_one(
     db: AsyncSession = Depends(get_db),
     *,
@@ -76,4 +74,17 @@ async def get_one(
     """Trip to a nakamal"""
     crud_trip = CRUDTrip(db)
     trip = await crud_trip.get_by_id(item_id)
+    return trip
+
+
+@router.delete("/{item_id:uuid}", response_model=TripSchema)
+async def delete_one(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item_id: UUID4,
+    user: User = Depends(current_superuser),
+) -> Any:
+    """Delete a trip to a nakamal"""
+    crud_trip = CRUDTrip(db)
+    trip = await crud_trip.delete(item_id)
     return trip

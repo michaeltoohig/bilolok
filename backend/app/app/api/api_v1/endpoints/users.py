@@ -242,8 +242,14 @@ async def delete_profile_picture(
     db: AsyncSession = Depends(get_db),
     *,
     item_id: UUID4,
+    user: User = Depends(current_active_user),
 ) -> Any:
     crud_user = CRUDUser(db)
+    if user.id != item_id:
+        if not user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="You may only delete your own profile picture."
+            )
     item = await crud_user.get_by_id(item_id)
     if not item:
         raise HTTPException(

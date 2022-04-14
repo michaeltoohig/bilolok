@@ -33,6 +33,7 @@
         color="primary"
         small
         @click="saveTrip"
+        :disabled="saving"
       >
         Finish!
       </v-btn>
@@ -55,6 +56,11 @@ import { latLng } from 'leaflet';
 
 export default {
   name: 'Compass',
+  data() {
+    return {
+      saving: false,
+    };
+  },
   computed: {
     ...mapGetters({
       isUserVerified: 'auth/isUserVerified',
@@ -148,6 +154,7 @@ export default {
     // ),
     async saveTrip() {
       if (this.isUserVerified) {
+        this.saving = true;
         await this.$store.dispatch('trip/add', {
           data: this.compassModePolyline,
           nakamal_id: this.nakamal.id,
@@ -161,6 +168,7 @@ export default {
         });
       }
       this.stopCompassMode();
+      this.saving = false;
       setTimeout(() => {
         this.$router.push({ name: 'Nakamal', params: { id: this.nakamal.id } });
       }, 1000);

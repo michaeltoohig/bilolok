@@ -63,7 +63,7 @@
           :key="area.name"
           :lat-lng="area.latLng"
           :radius="area.radius"
-          :color="areaColor"
+          :color="color"
         >
           <l-tooltip
             class="area-tooltip text-center"
@@ -106,7 +106,13 @@
 
       <LPolyline :lat-lngs="compassModePolylineLocations"></LPolyline>
 
-      <LPolyline v-for="trip in recentTrips" :key="trip.id" :lat-lngs="trip.data">
+      <LPolyline
+        v-for="trip in recentTrips"
+        :key="trip.id"
+        :lat-lngs="trip.data"
+        :color="color"
+        :weight="5"
+      >
         <LPopup>
           <div class="d-flex flex-column align-center justify-center text-center">
             <v-avatar
@@ -140,6 +146,12 @@
           </div>
         </LPopup>
       </LPolyline>
+      <Vue2LeafletPolylinedecorator
+        v-for="trip in recentTrips"
+        :key="`polyline-decorator-${trip.id}`"
+        :paths="getTripLatLngs(trip.data)"
+        :patterns="patterns"
+      ></Vue2LeafletPolylinedecorator>
 
       <Vue2LeafletHeatmap
         :visible="showHeatmapLayer"
@@ -235,11 +247,13 @@ import {
   mapGetters,
 } from 'vuex';
 import {
-  icon, latLng, latLngBounds,
+  icon, latLng, latLngBounds, Symbol,
 } from 'leaflet';
 import {
   LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline, LCircle, LPopup,
 } from 'vue2-leaflet';
+import Vue2LeafletPolylinedecorator from 'vue2-leaflet-polylinedecorator';
+// import { AntPath } from 'leaflet-ant-path';
 import sphereKnn from 'sphere-knn';
 
 import NakamalMapFabButtons from '@/components/NakamalMapFabButtons.vue';
@@ -288,6 +302,7 @@ export default {
     LCircle,
     LPopup,
     Vue2LeafletHeatmap,
+    Vue2LeafletPolylinedecorator,
   },
   data() {
     return {
@@ -422,11 +437,27 @@ export default {
       }
       return '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
     },
-    areaColor() {
+    color() {
       if (this.darkMode) {
         return 'grey';
       }
       return 'blue';
+    },
+    patterns() {
+      return [
+        {
+          offset: 25,
+          repeat: 100,
+          symbol: Symbol.arrowHead({
+            pixelSize: 12,
+            pathOptions: {
+              fillOpacity: 1,
+              weight: 0,
+              color: this.color,
+            },
+          }),
+        },
+      ];
     },
     tilesLoadingPercent() {
       if (!this.mapLoading) return 100;
@@ -467,6 +498,9 @@ export default {
     clickUserLocation() {
       this.findNearestNakamals();
       this.showNearbyNakamals = true;
+    },
+    getTripLatLngs(data) {
+      return data.map((i) => latLng(i.lat, i.lng));
     },
     // getLocationSuccess(pos, result) {
     //   this.setShowLocationProgress(false);
