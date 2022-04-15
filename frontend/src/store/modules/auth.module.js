@@ -138,7 +138,13 @@ const actions = {
     const deviceId = getDeviceId();
     const token = getters.token;
     if (token && deviceId) {
-      await subscriptionsApi.remove(token, deviceId);
+      // May not need try/catch - testing because of errors reported point here
+      try {
+        await subscriptionsApi.remove(token, deviceId);
+      }
+      catch (error) {
+        console.log('Error removing subscription');
+      }
     }
     removeLocalToken();
     commit('setToken', '');

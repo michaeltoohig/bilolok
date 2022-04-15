@@ -51,8 +51,8 @@ async def post_subscription(
 @router.delete("")
 async def delete_subscription(
     db: AsyncSession = Depends(get_db),
-    user: User = Depends(current_active_user),
     *,
+    user: User = Depends(current_active_user),
     device_id: str = Query(None, alias="deviceId"),
 ) -> Any:
     crud_subscription = CRUDSubscription(db)

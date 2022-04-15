@@ -31,7 +31,7 @@ const actions = {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },
-  getOne: async ({ commit }, id, payload) => {
+  getOne: async ({ commit, dispatch, rootState }, id, payload) => {
     try {
       let token = rootState.auth.token;
       const response = await usersApi.get(id, token, payload);
@@ -40,6 +40,7 @@ const actions = {
     }
     catch (error) {
       console.log('error in get one user', error);
+      await dispatch('auth/checkApiError', error, { root: true });
     }
   },
   updateUser: async ({ commit, dispatch, rootState }, { userId, payload }) => {

@@ -30,9 +30,9 @@ async def test_arq(
     """
     arq_app = await get_arq_app()
     await arq_app.enqueue_job(
-        "send_daily_push_notification",
+        # "send_daily_push_notification",
+        "test_arq", "test-word",
     )
-    # "test_arq", "test-word",
     return {"msg": "Word received"}
 
 
