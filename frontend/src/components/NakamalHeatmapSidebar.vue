@@ -121,6 +121,11 @@ export default {
       this.setFilter({ key: 'dt', value: dt });
     },
   },
+  // mounted() {
+  //   if (this.showHeatmap) {
+  //     this.toggleHeatmap = true;
+  //   }
+  // },
 };
 </script>
 

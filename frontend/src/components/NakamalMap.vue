@@ -154,6 +154,7 @@
       ></Vue2LeafletPolylinedecorator>
 
       <Vue2LeafletHeatmap
+        v-if="heatmapCheckins && showHeatmapLayer"
         :visible="showHeatmapLayer"
         :lat-lng="heatmapCheckins"
         :radius="20"
@@ -449,7 +450,7 @@ export default {
           offset: 25,
           repeat: 100,
           symbol: Symbol.arrowHead({
-            pixelSize: 12,
+            pixelSize: 14,
             pathOptions: {
               fillOpacity: 1,
               weight: 0,
@@ -633,9 +634,9 @@ export default {
     this.showMarkers = true;
     this.loading = true;
     await this.$store.dispatch('nakamal/load');
+    this.loading = false;
     await this.$store.dispatch('checkin/getRecent');
     await this.$store.dispatch('trip/getRecent');
-    this.loading = false;
     if (this.selectedNakamal) {
       setTimeout(() => {
         this.flyToSelected();
@@ -643,6 +644,7 @@ export default {
     }
   },
   async beforeDestroy() {
+    // Find out if we can keep watching until explicitly cancelled
     await this.$store.dispatch('map/clearWatcher');
   },
 };

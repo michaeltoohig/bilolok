@@ -137,10 +137,12 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Draw Polyline of user trip
   - [x] Show live distance and trip traveled distances
   - [x] Save the trip for showing later
+  - [ ] Auto submit when proximity threshold reached
   - [ ] Fix edge cases and odd behavior
-- [x] User profile upgrade
+- [ ] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
   - [x] personalized user profile picture
+  - [ ] add trips to profile timeline
 - [ ] Share API
   - [x] Set default Open Graph tags 
     - [ ] Fix facebook bot handling of OG tags / only works for root domain sharing
@@ -164,6 +166,12 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] notification when cheif position is lost
   - [ ] user view can show number of cheif titles held by user
 
+- [x] Fix arq to use async db session
+- [ ] Stop loading all nakamals each time map view is mounted
+- [ ] Add endpoint param or other cue to flyToSelected on map view mounted; otherwise map should still be on last point and not necessary to flyToSelected interfere with UX
+- [ ] featured nakamal
+- [ ] nakamal reviews
+  - [ ] 0 - 100 rating scale / calculated to 5 star rating system
 
 ## Development
 

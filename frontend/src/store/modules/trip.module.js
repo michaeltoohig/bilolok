@@ -115,7 +115,6 @@ const actions = {
   //     commitAddTrip(item, commit);
   //   });
   // },
-  // TODO replace notify/add from Compass.vue
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;

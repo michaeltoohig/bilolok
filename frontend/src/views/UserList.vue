@@ -42,7 +42,7 @@ export default {
   async mounted() {
     const resp = await usersApi.getUsers(null, { includeDetails: true });
     this.users = resp.data.filter((u) => u.latest_checkin !== null)
-      .sort((a, b) => dayjs(a.latest_checkin.created_at).isBefore(b.latest_checkin.created_at));
+      .sort((a, b) => dayjs(b.latest_checkin.created_at).isBefore(a.latest_checkin.created_at));
   },
 };
 </script>

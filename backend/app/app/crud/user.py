@@ -1,5 +1,7 @@
 from pathlib import Path
-from typing import Type
+from typing import List, Type
+
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.crud.base import CRUDBase
@@ -36,3 +38,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserSchema]):
         update_schema = UserUpdate(**user.dict())
         update_schema.avatar_filename = new_filename
         await self.update(user.id, update_schema=update_schema)
+
+    async def get_multi(self) -> List[UserSchema]:
+        query = select(self._table).where(self._table.is_active == True)
+        results = (await self._db_session.execute(query)).scalars()
+        return (self._schema.from_orm(item) for item in results)

@@ -7,9 +7,11 @@
 # TODO debug this issue we are seeing https://github.com/aio-libs/aioredis-py/issues/878
 
 from pydantic.utils import import_string
+from arq import cron
 
-from app.db.session import SessionLocal
+from app.db.session import async_session
 from app.core.arq_app import redis_settings
+from app.models.user import User  # noqa
 
 
 ARQ_BACKGROUND_FUNCTIONS = [
@@ -33,14 +35,14 @@ async def startup(ctx):
     """
     Binds a connection set to the db object.
     """
-    ctx["db"] = SessionLocal()
+    ctx["db_session"] = async_session
 
 
 async def shutdown(ctx):
     """
     Pops the bind on the db object.
     """
-    ctx["db"].close()
+    pass
 
 
 class WorkerSettings:
@@ -50,14 +52,14 @@ class WorkerSettings:
 
     # NOTE cron times must be in UTC (hour=6 == 6:00 UTC == 17:00 VUT)
     # XXX https://github.com/samuelcolvin/arq/issues/304 before uncommenting cron_jobs
-    # cron_jobs = [
-    #     cron(
-    #         "app.tasks.utils.send_daily_push_notification",
-    #         weekday={0, 1, 2, 3, 4, 5},
-    #         hour=6,
-    #         minute=0,
-    #     ),
-    # ]
+    cron_jobs = [
+        cron(
+            "app.tasks.utils.send_daily_push_notification",
+            weekday={0, 1, 2, 3, 4, 5},
+            hour=6,
+            minute=0,
+        ),
+    ]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = redis_settings

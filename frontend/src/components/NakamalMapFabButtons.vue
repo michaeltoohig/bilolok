@@ -68,6 +68,7 @@
             dark
             small
             color="secondary darken-1"
+            :disabled="true"
             @click.stop="setShowHeatmapMenu(true)"
             v-bind="attrs"
             v-on="on"
@@ -75,7 +76,7 @@
             <v-icon>mdi-fire</v-icon>
           </v-btn>
         </template>
-        <span>Check-in Heatmap</span>
+        <span>Check-in Heatmap (Needs Repair)</span>
       </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
