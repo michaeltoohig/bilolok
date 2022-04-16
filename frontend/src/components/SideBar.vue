@@ -125,7 +125,7 @@
           </v-badge>
         </template>
 
-        <v-list v-if="isLoggedIn">
+        <v-list v-if="isLoggedIn && me">
           <v-list-item :to="{ name: 'User', params: { id: me.id } }">
             <v-list-item-icon>
               <v-icon>mdi-account</v-icon>

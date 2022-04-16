@@ -156,8 +156,6 @@ async def get_user(
     superuser: Optional[User] = Depends(optional_current_superuser),
     user_manager: UserManager = Depends(get_user_manager),
 ) -> Any:
-    print("get user")
-    print(item_id)
     if superuser and auth:
         item = await user_manager.get(item_id)
         return UserDB(**item.dict())

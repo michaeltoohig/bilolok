@@ -28,7 +28,7 @@ const getters = {
   user: (state) => state.user,
   token: (state) => state.token,
   isLoggedIn: (state) => state.isLoggedIn,
-  isUserVerified: (state) => state.isLoggedIn && state.user.is_verified,
+  isUserVerified: (state) => state.isLoggedIn && state.user && state.user.is_verified,
   showAuthModal: (state) => state.showAuthModal,
   showUserVerifiedModal: (state) => state.showUserVerifiedModal,
 }
