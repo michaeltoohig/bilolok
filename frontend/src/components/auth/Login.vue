@@ -5,7 +5,7 @@
     <v-btn @click="forgotPassword">Forgot Password</v-btn>
 
     <v-text-field
-      v-model="username"
+      v-model.trim="username"
       label="Email"
     ></v-text-field>
     <v-text-field

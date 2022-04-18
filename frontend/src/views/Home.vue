@@ -44,6 +44,7 @@
       </v-parallax>
     </v-container>
     <v-responsive class="mx-auto" max-width="600">
+      <SectionFeaturedNakamal />
       <SectionRecentCheckins />
       <SectionRecentImages />
     </v-responsive>
@@ -67,6 +68,7 @@
 import { mapGetters } from 'vuex';
 import SectionRecentImages from '@/components/home/SectionRecentImages.vue';
 import SectionRecentCheckins from '@/components/home/SectionRecentCheckins.vue';
+import SectionFeaturedNakamal from '@/components/home/SectionFeaturedNakamal.vue';
 
 const lightMapImage = require('../assets/PortVilaMap-light.jpg');
 const darkMapImage = require('../assets/PortVilaMap-dark.jpg');
@@ -76,6 +78,7 @@ export default {
   components: {
     SectionRecentImages,
     SectionRecentCheckins,
+    SectionFeaturedNakamal,
   },
   data() {
     return {

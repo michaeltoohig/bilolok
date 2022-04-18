@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, AsyncIterator, List
 from uuid import UUID
 
 import loguru
@@ -7,7 +7,7 @@ from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
+from app.api.deps.db import get_db, get_redis
 from app.api.deps.user import current_active_verified_user, current_superuser
 from app.crud.checkin import CRUDCheckin
 from app.crud.image import CRUDImage
@@ -46,6 +46,25 @@ async def get_all(
     crud_nakamal = CRUDNakamal(db)
     items = await crud_nakamal.get_multi()
     return [NakamalSchemaOut(**item.dict()) for item in items]
+
+
+@router.get("/featured", response_model=NakamalSchemaOut)
+async def get_featured(
+    db: AsyncSession = Depends(get_db),
+    redis: AsyncIterator = Depends(get_redis),
+) -> Any:
+    item_id = await redis.get("featured-nakamal")
+    if not item_id:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Featured nakamal not found.",
+        )
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item_id.decode())
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.",
+        )
+    return item
 
 
 @router.get("/{item_id}", response_model=NakamalSchemaOut)
@@ -91,6 +110,23 @@ async def delete_one(
     crud_nakamal = CRUDNakamal(db)
     item = await crud_nakamal.delete(item_id)
     return NakamalSchemaOut(**item.dict())
+
+
+@router.put("/{item_id}/featured", response_model=NakamalSchemaOut)
+async def update_featured(
+    db: AsyncSession = Depends(get_db),
+    redis: AsyncIterator = Depends(get_redis),
+    *,
+    item_id: UUID,
+) -> Any:
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.",
+        )
+    await redis.set("featured-nakamal", str(item.id))
+    return item
 
 
 @router.get("/{item_id}/images", response_model=List[ImageSchemaOut])

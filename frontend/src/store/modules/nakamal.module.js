@@ -13,6 +13,7 @@ const initialState = () => ({
   byId: {},
   allIds: [],
   selectedId: null,
+  featuredId: null,
   filters: {},
 });
 
@@ -63,6 +64,10 @@ const getters = {
     if (state.selectedId === null) return null;
     return getters.find(state.selectedId);
   },
+  featured: (state, getters) => {
+    if (state.featuredId === null) return null;
+    return getters.find(state.featuredId);
+  }
 };
 
 function commitAddNakamal(nakamal, commit) {
@@ -161,6 +166,16 @@ const actions = {
       }, { root: true });
     }
   },
+  loadFeatured: async ({ commit }) => {
+    const response = await nakamalsApi.getFeatured();
+    const nakamal = response.data;
+    commitAddNakamal(nakamal, commit);
+    commit('setFeatured', nakamal.id);
+  },
+  setFeatured: async ({ commit }, id) => {
+    await nakamalsApi.putFeatured(id);
+    commit('setFeatured', id);
+  },
   select: async ({ commit }, id) => {
     commit('select', id);
   },
@@ -217,6 +232,9 @@ const mutations = {
   unselect: (state) => {
     state.selectedId = null;
   },
+  setFeatured: (state, id) => {
+    state.featuredId = id;
+  },
   setFilter: (state, { key, value }) => {
     if (value === []) {
       Vue.delete(state.filters, 'resources');
@@ -231,7 +249,7 @@ const mutations = {
   remove: (state, id) => {
     state.allIds.splice(state.allIds.indexOf(id), 1);
     Vue.delete(state.byId, id);
-    state.selectedId = null;
+    state.selectedId = null;  // XXX why do this?
   }
 };
 

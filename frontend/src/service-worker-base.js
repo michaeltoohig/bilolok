@@ -18,6 +18,7 @@ import {
 } from 'workbox-strategies';
 import {
   precacheAndRoute,
+  cleanupOutdatedCaches,
 } from 'workbox-precaching';
 import { BackgroundSyncPlugin } from 'workbox-background-sync';
 import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
@@ -37,6 +38,9 @@ const precacheUrls = [
 
 // Use with precache injection
 precacheAndRoute(precacheUrls);
+
+// Remove outdated pre-caches - not sure this does what I expect yet
+cleanupOutdatedCaches();
 
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type);
@@ -66,19 +70,45 @@ const saveTile = async ({ url, tile }) => {
   let cached;
   cached = await db.tiles.where('coords').equals(key).first();
   if (cached) {
-    db.tiles.where('coords').equals(key).modify(t => {
-      t.accessed = new Date();
+    db.tiles.where('coords').equals(key).modify((t) => {
+      t.accessed = new Date().getTime();
       t.tile = tile;
     })
+      .then((result) => {
+        return true;
+      })
+      .catch((error) => {
+        if ((e.name === 'QuotaExceededError') ||
+          (e.inner && e.inner.name === 'QuotaExceededError')) {
+          // QuotaExceededError may occur as the inner error of an AbortError
+          console.error('?!# QuotaExceeded error!');
+          clearTileStore();
+        } else {
+          // Any other error
+          console.error('?!##', error);
+        }
+      });
   }
   else {
-    db.tiles.put({ coords: key, accessed: new Date(), tile: tile });
+    db.tiles.put({ coords: key, accessed: new Date(), tile: tile }).then(result => {
+      return true;
+    }).catch((error) => {
+      if ((e.name === 'QuotaExceededError') ||
+        (e.inner && e.inner.name === 'QuotaExceededError')) {
+        // QuotaExceededError may occur as the inner error of an AbortError
+        console.error('!# QuotaExceeded error!');
+        clearTileStore();
+      } else {
+        // Any other error
+        console.error('!##', error);
+      }
+    });
   }
 };
 
 const updateTileAccessedDate = async (key) => {
   db.tiles.where('coords').equals(key).modify(tile => {
-    tile.accessed = new Date();
+    tile.accessed = new Date().getTime();
   });
 };
 
@@ -86,7 +116,14 @@ const updateTileAccessedDate = async (key) => {
 const removeExpiredTiles = async () => {
   let threshold = new Date();
   threshold = threshold.setTime(threshold.getTime() - (1000 * tileValidSeconds));
-  db.tiles.where('accessed').below(threshold).delete();
+  await db.tiles.where('accessed').below(threshold).delete();
+};
+
+const clearTileStore = async () => {
+  let now = new Date().getTime();
+  const deleteCount = await db.tiles.where('accessed').below(now).delete();
+  console.log("Deleted " + deleteCount + " objects");
+  return true;
 };
 
 const urlToCacheKey = (url) => {
@@ -161,14 +198,15 @@ const cachePut = async ({ url, response }) => {
     await saveTile({ url: url, tile: responseToCache });
   }
   catch (error) {
+    console.log('###', error);
     if ((error.name === 'QuotaExceededError') ||
       (error.inner && error.inner.name === 'QuotaExceededError')) {
       // QuotaExceededError may occur as the inner error of an AbortError
-      console.error("QuotaExceeded error!");
+      console.error("###!! QuotaExceeded error!");
       // TODO run quota exceeded callback
     } else {
       // Any other error
-      console.error(error);
+      console.error('###!', error);
     }
     throw error;
   }
@@ -309,35 +347,27 @@ registerRoute(
 
 // Nakamal API cache
 registerRoute(
-  ({ request }) => request.url.includes('/api/v1/'),
+  ({ request }) => request.url.includes('/api/v1/nakamals'),
   new NetworkFirst({
     cacheName: 'bilolok-api-nakamals',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
-        statuses: [0, 200],
+        statuses: [200],
       }),
     ],
   }),
 );
 
-// Nakamal thumbnail cache
+// User API cache
 registerRoute(
-  // Check to see if the request's destination is for an image
-  ({ request }) => request.destination === 'image' && request.url.includes('/nakamals/') && request.url.includes('/200x200/'),
-  // Use a Cache First caching strategy
-  new CacheFirst({
-    // Put all cached files in a cache named 'images'
-    cacheName: 'bilolok-thumbnails',
+  ({ request }) => request.url.includes('/api/v1/users'),
+  new NetworkFirst({
+    cacheName: 'bilolok-api-users',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-      // Don't cache more than 60 items, and expire them after 7 days
-      new ExpirationPlugin({
-        maxEntries: 200,
-        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
+        statuses: [200],
       }),
     ],
   }),
@@ -346,7 +376,7 @@ registerRoute(
 // Nakamal image cache
 registerRoute(
   // Check to see if the request's destination is for an image
-  ({ request }) => request.destination === 'image' && request.url.includes('/nakamals/') && request.url.includes('/full-fit-in/'),
+  ({ request }) => request.destination === 'image' && request.url.includes('/nakamals/'),
   // Use a Cache First caching strategy
   new CacheFirst({
     // Put all cached files in a cache named 'images'
@@ -354,12 +384,14 @@ registerRoute(
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
-        statuses: [0, 200],
+        statuses: [200],
       }),
-      // Don't cache more than 60 items, and expire them after 7 days
+      // Don't cache more than 50 items, and expire them after 7 days
       new ExpirationPlugin({
-        maxEntries: 60,
+        maxEntries: 50,
         maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
+        // Automatically cleanup if quota is exceeded.
+        purgeOnQuotaError: true,
       }),
     ],
   }),
@@ -376,12 +408,14 @@ registerRoute(
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
       new CacheableResponsePlugin({
-        statuses: [0, 200],
+        statuses: [200],
       }),
-      // Don't cache more than 60 items, and expire them after 30 days
+      // Don't cache more than 50 items, and expire them after 1 days
       new ExpirationPlugin({
-        maxEntries: 60,
-        maxAgeSeconds: 60 * 60 * 24, // 1 Days
+        maxEntries: 50,
+        maxAgeSeconds: 60 * 60 * 24 * 1, // 1 Days
+        // Automatically cleanup if quota is exceeded.
+        purgeOnQuotaError: true,
       }),
     ],
   }),
@@ -389,6 +423,29 @@ registerRoute(
 
 // Use a stale-while-revalidate strategy for all other requests.
 setDefaultHandler(new StaleWhileRevalidate());
+
+// https://stackoverflow.com/questions/60036010/keep-the-precache-while-deleting-other-cache-in-workbox-service-worker
+// Clear old caches
+var clearOldCaches = function (event) {
+  event.waitUntil(
+    caches.keys().then(function (cacheNames) {
+      let validCacheSet = new Set(Object.values(workbox.core.cacheNames));
+      return Promise.all(
+        cacheNames
+          .filter(function (cacheName) {
+            return !validCacheSet.has(cacheName);
+          })
+          .map(function (cacheName) {
+            return caches.delete(cacheName);
+          })
+      );
+    })
+  );
+};
+
+self.addEventListener("activate", function (event) {
+  clearOldCaches(event);
+});
 
 // This "catch" handler is triggered when any of the other routes fail to
 // generate a response.
@@ -426,6 +483,18 @@ registerRoute(
   ({ request }) => request.url.includes('/api/v1/checkins'),
   new NetworkOnly({
     plugins: [bgSyncCheckinPlugin],
+  }),
+  'POST',
+);
+
+const bgSyncTripPlugin = new BackgroundSyncPlugin('api-trip-queue', {
+  maxRetentionTime: 60 * 60 * 24, // Retry for 24 hours
+});
+
+registerRoute(
+  ({ request }) => request.url.includes('/api/v1/trips'),
+  new NetworkOnly({
+    plugins: [bgSyncTripPlugin],
   }),
   'POST',
 );

@@ -18,6 +18,7 @@ ARQ_BACKGROUND_FUNCTIONS = [
     "app.tasks.utils.test_arq",
     "app.tasks.utils.test_arq_subtask",
     "app.tasks.utils.send_daily_push_notification",
+    "app.tasks.nakamal.select_featured_nakamal",
 ]
 
 
@@ -58,6 +59,12 @@ class WorkerSettings:
             weekday={0, 1, 2, 3, 4, 5},
             hour=6,
             minute=0,
+        ),
+        cron(
+            "app.tasks.nakamal.select_featured_nakamal",
+            hour=0,
+            minute=0,
+            run_at_startup=True,  # remove after first use
         ),
     ]
     on_startup = startup

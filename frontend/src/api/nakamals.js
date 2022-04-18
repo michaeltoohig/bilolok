@@ -24,6 +24,14 @@ export default {
     return http.delete(`${resource}/${id}`, authHeaders(token));
   },
 
+  async getFeatured() {
+    return http.get(`${resource}/featured`);
+  },
+
+  async putFeatured(id) {
+    return http.put(`${resource}/${id}/featured`);
+  },
+
   async getImages(id, skip = 0, limit = 100) {
     return http.get(`${resource}/${id}/images`, {
       params: {

@@ -90,6 +90,9 @@
               </v-list-item>
             </v-list>
 
+            <PushNotificationCard v-if="isMe"></PushNotificationCard>
+          </v-col>
+          <v-col sm="8" cols="12">
             <v-alert
               v-if="isMe && !isUserVerified"
               class="mb-3"
@@ -105,12 +108,10 @@
                 able to perform some actions until you verify your email
                 account.
               </div>
-
               <v-divider
                 class="my-4 info"
                 style="opacity: 0.22"
               ></v-divider>
-
               <div>
                 <v-btn
                   color="info"
@@ -120,10 +121,6 @@
                 </v-btn>
               </div>
             </v-alert>
-
-            <PushNotificationCard v-if="isMe"></PushNotificationCard>
-          </v-col>
-          <v-col sm="8" cols="12">
             <div
               v-for="item in timelineItems"
               :key="item.id"

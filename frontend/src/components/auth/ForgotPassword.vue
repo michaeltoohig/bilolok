@@ -4,7 +4,7 @@
     <v-btn @click="login">Login</v-btn>
 
     <v-text-field
-      v-model="email"
+      v-model.trim="email"
       label="Email"
       :disabled="sent"
     ></v-text-field>

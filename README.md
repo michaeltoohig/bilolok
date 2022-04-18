@@ -170,8 +170,13 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [ ] Stop loading all nakamals each time map view is mounted
 - [ ] Add endpoint param or other cue to flyToSelected on map view mounted; otherwise map should still be on last point and not necessary to flyToSelected interfere with UX
 - [ ] featured nakamal
+  - [ ] when cheif is added to nakamal table then add cheif to featured nakamal table
 - [ ] nakamal reviews
   - [ ] 0 - 100 rating scale / calculated to 5 star rating system
+
+- [x] Handle DOM Exception Quota Exceeded
+- [x] Fine-tune SW api endpoint caches
+- [x] Make login easier. Trim for any erroneous spaces on input fields
 
 ## Development
 

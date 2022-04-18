@@ -4,7 +4,7 @@
     <v-btn @click="login">Log In</v-btn>
 
     <v-text-field
-      v-model="email"
+      v-model.trim="email"
       label="Email"
     ></v-text-field>
     <v-text-field

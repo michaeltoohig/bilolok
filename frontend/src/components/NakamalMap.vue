@@ -113,6 +113,16 @@
         :color="color"
         :weight="5"
       >
+        <LTooltip
+          :options="{
+            sticky: true,
+            direction: 'bottom',
+          }"
+        >
+          <v-avatar>
+            <v-img :src="trip.user.avatar"></v-img>
+          </v-avatar>
+        </LTooltip>
         <LPopup>
           <div class="d-flex flex-column align-center justify-center text-center">
             <v-avatar
@@ -342,7 +352,7 @@ export default {
       bottomSheet: false,
       bottomSheetFull: false,
 
-      showMarkers: false,
+      showMarkers: true,
     };
   },
   computed: {
@@ -621,7 +631,7 @@ export default {
     },
   },
   async created() {
-    // I want to remove this RESET and return to previous state
+    // I want to remove this RESET and return to previous state when returning to this view
     // TODO:
     //  - Heatmap sidebar state does not match heatmap layer on page refresh
     //  - Need to test handling during compass mode
@@ -631,7 +641,6 @@ export default {
     this.$root.$on('fly-to', this.flyTo);
   },
   async mounted() {
-    this.showMarkers = true;
     this.loading = true;
     await this.$store.dispatch('nakamal/load');
     this.loading = false;
@@ -645,6 +654,7 @@ export default {
   },
   async beforeDestroy() {
     // Find out if we can keep watching until explicitly cancelled
+    // Maybe add a route block to ask if user wants to leave map view while watcher is active
     await this.$store.dispatch('map/clearWatcher');
   },
 };
