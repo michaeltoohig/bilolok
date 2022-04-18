@@ -1,0 +1,15 @@
+<<mjml>
+  <mj-head>
+    <mj-title>Welcome to Bilolok</mj-title>
+    <mj-attributes>
+      
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column width="600px">
+        Test - waiting for MJML to be built for current platform...
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

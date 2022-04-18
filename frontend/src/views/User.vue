@@ -29,7 +29,7 @@
               </v-card-title>
               <v-list dense>
                 <v-list-item-group color="primary">
-                  <v-list-item v-if="isMe" @click="uploadImageDialog = !uploadImageDialog">
+                  <v-list-item v-if="isMe" @click="changeProfilePicture">
                     <v-list-item-icon>
                       <v-icon>mdi-camera-plus</v-icon>
                     </v-list-item-icon>
@@ -268,6 +268,13 @@ export default {
       await this.$store.dispatch('image/getUser', id);
       await this.$store.dispatch('trip/getUser', id);
       this.loading = false;
+    },
+    async changeProfilePicture() {
+      if (this.isUserVerified) {
+        this.uploadImageDialog = true;
+      } else {
+        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
     },
     async removeUserProfile() {
       await this.$store.dispatch('user/removeProfile');

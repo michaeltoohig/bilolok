@@ -139,10 +139,10 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Save the trip for showing later
   - [x] Auto submit when proximity threshold reached
   - [ ] Fix edge cases and odd behavior
-- [ ] User profile upgrade
+- [x] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
   - [x] personalized user profile picture
-  - [ ] add trips to profile timeline
+  - [x] add trips to profile timeline
 - [ ] Share API
   - [x] Set default Open Graph tags 
     - [ ] Fix facebook bot handling of OG tags / only works for root domain sharing
@@ -151,7 +151,7 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [x] Automate backup with ansible
   - [x] database
   - [x] photos
-- [ ] Fix browser quota limit error - handle by clearing cache and starting again?
+- [x] Fix browser quota limit error - handle by clearing cache and starting again?
 - [x] Add nakamal created_at and updated_at columns
   - [x] User edit history of nakamals
 - [ ] Handle possibly dead nakamals by looking for nakamals without recent updates or recent check-ins. A `confirmed_at` value or table with user and result of confirmation visit?

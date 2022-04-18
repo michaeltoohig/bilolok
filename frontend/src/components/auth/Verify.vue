@@ -1,7 +1,14 @@
 <template>
-  <div>
-    <v-btn class="ma-3" large @click="verify">Verify My Email</v-btn>
-  </div>
+  <v-container>
+    <div class="d-flex flex-column justify-start">
+      <h3 class="text-h5">Verify My Email</h3>
+      <p>
+        Please click the following button to complete verification of your email address.
+        Once complete, you will be able to upload images, check-in to kava bars and more.
+      </p>
+      <v-btn class="ma-3" large @click="verify">Verify My Email</v-btn>
+    </div>
+  </v-container>
 </template>
 
 <script>
