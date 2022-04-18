@@ -127,6 +127,7 @@
             >
               <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkNakamal="true"/>
               <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkNakamal="true"/>
+              <CardTrip v-if="getItemType(item) === 'trip'" :item="item" :linkNakamal="true"/>
             </div>
             <div v-if="timelineItems.length === 0">
               <v-alert
@@ -163,6 +164,7 @@ import timeline from '@/mixins/timeline';
 import formatDatetime from '@/mixins/formatDatetime';
 import CardCheckin from '@/components/timeline/CardCheckin.vue';
 import CardImage from '@/components/timeline/CardImage.vue';
+import CardTrip from '@/components/timeline/CardTrip.vue';
 import PushNotificationCard from '@/components/user/PushNotificationCard.vue';
 import ProfileImageUpload from '@/components/user/ProfileImageUpload.vue';
 
@@ -172,6 +174,7 @@ export default {
   components: {
     CardCheckin,
     CardImage,
+    CardTrip,
     PushNotificationCard,
     ProfileImageUpload,
   },
@@ -203,6 +206,7 @@ export default {
       hasAdminAccess: 'auth/hasAdminAccess',
       getUserCheckins: 'checkin/user',
       getUserImages: 'image/user',
+      getUserTrips: 'trip/user',
       getNakamalImages: 'image/nakamal',
     }),
     checkins() {
@@ -212,6 +216,10 @@ export default {
     images() {
       const { id } = this.user;
       return this.getUserImages(id);
+    },
+    trips() {
+      const { id } = this.user;
+      return this.getUserTrips(id);
     },
     topNakamalsByCheckins() {
       if (!this.checkins) return null;
@@ -258,6 +266,7 @@ export default {
       const { id } = this.user;
       await this.$store.dispatch('checkin/getUser', id);
       await this.$store.dispatch('image/getUser', id);
+      await this.$store.dispatch('trip/getUser', id);
       this.loading = false;
     },
     async removeUserProfile() {

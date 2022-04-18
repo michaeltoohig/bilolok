@@ -12,9 +12,11 @@ from app.core.users import UserManager, get_user_manager
 from app.crud.checkin import CRUDCheckin
 from app.crud.image import CRUDImage
 from app.crud.user import CRUDUser
+from app.crud.trip import CRUDTrip
 from app.models.user import User
-from app.schemas.checkin import CheckinSchema, CheckinSchemaOut
+from app.schemas.checkin import CheckinSchemaOut
 from app.schemas.image import ImageSchemaOut
+from app.schemas.trip import TripSchemaOut
 from app.schemas.user import UserDB, UserSchema, UserSchemaDetails, UserUpdate
 
 # NOTE in this router we approximate the endpoints provided by the
@@ -285,3 +287,17 @@ async def get_all_checkins(db: AsyncSession = Depends(get_db), *, item_id: UUID4
     crud_checkin = CRUDCheckin(db)
     checkins = await crud_checkin.get_multi_by_user(item.id)
     return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]
+
+
+@router.get("/{item_id:uuid}/trips", response_model=List[TripSchemaOut])
+async def get_all_trips(db: AsyncSession = Depends(get_db), *, item_id: UUID4) -> Any:
+    # TODO user dependency
+    crud_user = CRUDUser(db)
+    item = await crud_user.get_by_id(item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+        )
+    crud_trip = CRUDTrip(db)
+    trips = await crud_trip.get_multi_by_user(item.id)
+    return [TripSchemaOut(**trip.dict()) for trip in trips]

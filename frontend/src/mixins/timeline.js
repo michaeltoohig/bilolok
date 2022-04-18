@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 export default {
   computed: {
     timelineItems() {
-      const newList = this.images.concat(this.checkins);
+      const newList = this.images.concat(this.checkins).concat(this.trips);
       return newList.sort((a, b) => (dayjs(b.created_at).isAfter(a.created_at) ? 1 : -1));
     },
   },
@@ -12,6 +12,7 @@ export default {
       // TODO Hacky way to find object type - should be improved
       if ('private' in item) return 'checkin';
       if ('src' in item) return 'image';
+      if ('data' in item) return 'trip';
       return 'other';
     },
   },

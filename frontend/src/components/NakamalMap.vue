@@ -54,7 +54,9 @@
         >
           <l-tooltip :options="{
             direction: 'bottom',
-          }">{{ nakamal.name }}</l-tooltip>
+          }">
+            {{ nakamal.name }}
+          </l-tooltip>
         </l-marker>
       </div>
       <div v-else>

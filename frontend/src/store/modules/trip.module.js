@@ -108,13 +108,13 @@ const actions = {
   //     commitAddTrip(item, commit);
   //   });
   // },
-  // getUser: async ({ commit }, userId) => {
-  //   const response = await usersApi.getCheckins(userId);
-  //   const checkins = response.data;
-  //   checkins.forEach((item) => {
-  //     commitAddTrip(item, commit);
-  //   });
-  // },
+  getUser: async ({ commit }, userId) => {
+    const response = await usersApi.getTrips(userId);
+    const trips = response.data;
+    trips.forEach((item) => {
+      commitAddTrip(item, commit);
+    });
+  },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;

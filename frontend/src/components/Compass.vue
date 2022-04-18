@@ -146,6 +146,14 @@ export default {
       return distance;
     },
   },
+  watch: {
+    distance(val) {
+      // XXX hardcoded value
+      if (val <= 10) {
+        this.saveTrip();
+      }
+    },
+  },
   methods: {
     // ...mapActions(
     //   'map', [
