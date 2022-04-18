@@ -24,6 +24,7 @@ class TripSchemaIn(TripSchemaBase):
 
 class TripSchema(TripSchemaBase):
     id: uuid.UUID
+    created_at: datetime
     start_at: datetime
     end_at: datetime
     data: List[TripDataPoint]
