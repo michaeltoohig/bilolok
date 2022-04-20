@@ -37,6 +37,12 @@ export default {
     CardCheckin,
     CardImage,
   },
+  data() {
+    return {
+      // XXX HACK my `timeline` mixin expects a `trips` array.
+      trips: [],
+    };
+  },
   computed: {
     ...mapGetters({
       getImages: 'image/nakamal',

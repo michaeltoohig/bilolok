@@ -161,6 +161,7 @@ export default {
     //   ],
     // ),
     async saveTrip() {
+      if (this.saving) return;
       if (this.isUserVerified) {
         this.saving = true;
         await this.$store.dispatch('trip/add', {

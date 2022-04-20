@@ -1,30 +1,14 @@
-from pathlib import Path
-
-import pydenticon
 from sqlalchemy.orm import Session
 
 # from app import crud
 from app.core.config import settings
 from app.core.users import fastapi_users
-from app.crud.user import CRUDUser
 from app.db.session import async_engine, async_session
-from app.models.user import User as UserTable
 from app.schemas.user import UserCreate
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQLAlchemy might fail to initialize relationships properly
 # for more details: https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/28
-
-
-# TODO move this to a module that makes sense...
-def build_user_avatar(user):
-    relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
-    fullAvatarPath = Path(settings.IMAGES_LOCAL_DIR) / relativeAvatarPath
-    fullAvatarPath.parent.mkdir(parents=True, exist_ok=True)
-    icon = pydenticon.Generator(5, 5)
-    identicon = icon.generate(str(user.id), 200, 200)
-    with fullAvatarPath.open("wb") as f:
-        f.write(identicon)
 
 
 async def init_db(db: Session) -> None:
@@ -42,10 +26,3 @@ async def init_db(db: Session) -> None:
                 )
             except:
                 pass  # user already exists
-
-            # TODO remove this since it should now be done when user registers
-            # This was here to build avatars for existing users
-            crud_user = CRUDUser(db)
-            users = await crud_user.get_multi()
-            for user in users:
-                build_user_avatar(user)

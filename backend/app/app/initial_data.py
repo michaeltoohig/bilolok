@@ -4,15 +4,12 @@ import logging
 from app.db.init_db import init_db
 from app.db.session import async_engine, async_session
 
-# from app.db.session import SessionLocal
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 async def init() -> None:
-    # db = SessionLocal()
-    # await init_db(db)
     async with async_engine.begin() as connection:
         async with async_session(bind=connection) as session:
             await init_db(session)
