@@ -26,7 +26,7 @@ class Image(Base, TimeMixin):
 
     @staticmethod
     def build_filepath(nakamal_id: UUID, file_id: str, filename: str):
-        IMAGE_PATH_FMT = "nakamals/{subdir}/{n_id}/{f_id}{ext}"
+        IMAGE_PATH_FMT = "images/nakamals/{subdir}/{n_id}/{f_id}{ext}"
         return Path(
             IMAGE_PATH_FMT.format(
                 subdir=str(nakamal_id)[:2],
@@ -35,17 +35,17 @@ class Image(Base, TimeMixin):
                 ext=Path(filename).suffix,
             )
         )
+    
+    # @property
+    # def filepath(self):
+    #     """Relative path to file."""
+    #     return self.build_filepath(
+    #         nakamal_id=self.nakamal_id,
+    #         file_id=self.file_id,
+    #         filename=self.filename,
+    #     )
 
-    @property
-    def filepath(self):
-        """Relative path to file."""
-        return self.build_filepath(
-            nakamal_id=self.nakamal_id,
-            file_id=self.file_id,
-            filename=self.filename,
-        )
-
-    @property
-    def full_filepath(self):
-        """Full path to file."""
-        return Path(settings.IMAGES_LOCAL_DIR) / self.filepath
+    # @property
+    # def full_filepath(self):
+    #     """Full path to file."""
+    #     return Path(settings.DATA_LOCAL_DIR) / self.filepath

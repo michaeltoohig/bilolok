@@ -7,7 +7,7 @@ app.egg-info
 .python-version
 .vscode
 .mypy_cache
-_local_images/
+_local_data/
 .venv/
 *.log
 *.log.gz

@@ -181,6 +181,32 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [x] Fine-tune SW api endpoint caches
 - [x] Make login easier. Trim for any erroneous spaces on input fields
 
+
+### Verison 3
+
+I would have to say adding video and some other features I'm working on is pushing towards a more social platform and less data driven platform. It would then be appropriate to label the following features as the roadmap to version 3.
+
+- [ ] User videos
+  - [x] Refactor local media data storage 
+  - [x] Show appropriate buttons based on state of video
+  - [x] tear down everything when modal is closed
+  - [x] support vertical and horizontal video formats / or only 1:1
+  - [ ] backend saving / storing / processing of videos TBD
+    - [x] Save file with PENDING
+    - [x] Run task from tus-hook
+    - [x] test task
+    - [ ] debug static video endpoint / nginx endpoint for production
+    - [ ] endpoints for videos
+    - [ ] frontend timeline card for videos
+    - [ ] home page recent videos
+
+
+- [ ] Admin features
+  - [ ] Review status of push notifications
+  - [ ] User activity (login failures etc.)
+  - [ ] Nakamal modifications / activity
+
+
 ## Development
 
 I welcome contributions and discussions for development. Below is some explanations of the current architecture and plans for future development.

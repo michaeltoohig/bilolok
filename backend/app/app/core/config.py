@@ -146,9 +146,10 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
+    DATA_LOCAL_DIR: str = "_local_images"
     THUMBOR_SERVER: str
     THUMBOR_SECURITY_KEY: str
-    IMAGES_LOCAL_DIR: str = "_local_images"
+    VIDEO_SERVER: str
 
     class Config:
         case_sensitive = True

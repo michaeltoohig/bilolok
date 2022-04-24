@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, List
+from app.api.deps.trip import get_trip_or_404
 
 from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
@@ -50,41 +51,55 @@ async def get_all(
 
 @router.post(
     "",
-    response_model=TripSchema,
+    response_model=TripSchemaOut,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_one(
     db: AsyncSession = Depends(get_db),
     *,
-    in_schema: TripSchemaIn,
+    payload: TripSchemaIn,
     user: User = Depends(current_active_verified_user),
-) -> Any:
+) -> TripSchemaOut:
     """Trip to a nakamal"""
     crud_trip = CRUDTrip(db)
-    trip = await crud_trip.create(in_schema, user_id=user.id)
-    return trip
+    item = await crud_trip.create(payload, user_id=user.id)
+    return TripSchemaOut(**item.dict())
 
 
-@router.get("/{item_id:uuid}", response_model=TripSchema)
+@router.get(
+    "/{item_id:uuid}",
+    response_model=TripSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Trip not found.",
+        },
+    },
+)
 async def get_one(
     db: AsyncSession = Depends(get_db),
     *,
-    item_id: UUID4
-) -> Any:
+    item: TripSchema = Depends(get_trip_or_404),
+) -> TripSchemaOut:
     """Trip to a nakamal"""
-    crud_trip = CRUDTrip(db)
-    trip = await crud_trip.get_by_id(item_id)
-    return trip
+    return TripSchemaOut(**item.dict())
 
 
-@router.delete("/{item_id:uuid}", response_model=TripSchema)
+@router.delete(
+    "/{item_id:uuid}",
+    response_model=TripSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Trip not found.",
+        },
+    },
+)
 async def delete_one(
     db: AsyncSession = Depends(get_db),
+    superuser: User = Depends(current_superuser),
     *,
-    item_id: UUID4,
-    user: User = Depends(current_superuser),
+    item: TripSchema = Depends(get_trip_or_404),
 ) -> Any:
     """Delete a trip to a nakamal"""
     crud_trip = CRUDTrip(db)
-    trip = await crud_trip.delete(item_id)
-    return trip
+    item = await crud_trip.delete(item.id)
+    return TripSchemaOut(**item.dict())

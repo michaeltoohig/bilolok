@@ -8,6 +8,7 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from app.api.deps.db import get_db, get_redis
+from app.api.deps.nakamal import get_nakamal_or_404
 from app.api.deps.user import current_active_verified_user, current_superuser
 from app.crud.checkin import CRUDCheckin
 from app.crud.image import CRUDImage
@@ -67,108 +68,137 @@ async def get_featured(
     return item
 
 
-@router.get("/{item_id}", response_model=NakamalSchemaOut)
-async def get_one(db: AsyncSession = Depends(get_db), *, item_id: UUID) -> Any:
-    crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
-    return item
+@router.get(
+    "/{item_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
+async def get_one(
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> NakamalSchemaOut:
+    return NakamalSchemaOut(**item.dict())
 
 
-# TODO sort out handling eager loading
-@router.put("/{item_id}", response_model=NakamalSchemaOut)
+@router.put(
+    "/{item_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
 async def update_one(
     db: AsyncSession = Depends(get_db),
-    user=Depends(current_active_verified_user),
+    user = Depends(current_active_verified_user),
     *,
-    item_id: UUID,
-    update_schema: NakamalSchemaUpdate,
-) -> Any:
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+    payload: NakamalSchemaUpdate,
+) -> NakamalSchemaOut:
     crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
-
-    # logger.bind(payload=update_schema.dict()).debug("nakamal update")
-    item = await crud_nakamal.update(item_id, update_schema)
+    # logger.bind(payload=payload.dict()).debug("nakamal update")  # XXX take a look at this again and consider using to trigger alert for me
+    item = await crud_nakamal.update(item.id, payload)
     return NakamalSchemaOut(**item.dict())
 
 
-@router.delete("/{item_id}", response_model=NakamalSchemaOut)
+@router.delete(
+    "/{item_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
 async def delete_one(
     db: AsyncSession = Depends(get_db),
-    user=Depends(current_superuser),
+    superuser = Depends(current_superuser),
     *,
-    item_id: UUID,
-) -> Any:
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> NakamalSchemaOut:
     # XXX fails when checkins or images or resources exist on the relationships
     crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.delete(item_id)
+    item = await crud_nakamal.delete(item.id)
     return NakamalSchemaOut(**item.dict())
 
 
-@router.put("/{item_id}/featured", response_model=NakamalSchemaOut)
+@router.put(
+    "/{item_id:uuid}/featured",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
 async def update_featured(
-    db: AsyncSession = Depends(get_db),
     redis: AsyncIterator = Depends(get_redis),
     *,
-    item_id: UUID,
-) -> Any:
-    crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.",
-        )
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> NakamalSchemaOut:
     await redis.set("featured-nakamal", str(item.id))
-    return item
+    return NakamalSchemaOut(**item.dict())
 
 
-@router.get("/{item_id}/images", response_model=List[ImageSchemaOut])
-async def get_all_images(db: AsyncSession = Depends(get_db), *, item_id: UUID) -> Any:
-    crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
+@router.get(
+    "/{item_id:uuid}/images",
+    response_model=List[ImageSchemaOut],
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
+async def get_all_images(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> List[ImageSchemaOut]:
     crud_image = CRUDImage(db)
     images = await crud_image.get_multi_by_nakamal(item.id)
     return [ImageSchemaOut(**image.dict()) for image in images]
 
 
-@router.get("/{item_id}/checkins", response_model=List[CheckinSchemaOut])
-async def get_all_images(db: AsyncSession = Depends(get_db), *, item_id: UUID) -> Any:
-    crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
+@router.get(
+    "/{item_id:uuid}/checkins",
+    response_model=List[CheckinSchemaOut],
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
+async def get_all_images(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> List[CheckinSchemaOut]:
     crud_checkin = CRUDCheckin(db)
     checkins = await crud_checkin.get_multi_by_nakamal(item.id)
     return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]
 
 
-@router.put("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
+@router.put(
+    "/{item_id:uuid}/resources/{resource_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
 async def put_one_resource(
     db: AsyncSession = Depends(get_db),
-    user=Depends(current_active_verified_user),
+    user = Depends(current_active_verified_user),
     *,
-    item_id: UUID,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
     resource_id: UUID,
-) -> Any:
+) -> NakamalSchemaOut:
     crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
     crud_resource = CRUDNakamalResource(db)
     resource = await crud_resource.get_by_id(resource_id)
     if not resource:
@@ -181,20 +211,23 @@ async def put_one_resource(
     return NakamalSchemaOut(**item.dict())
 
 
-@router.delete("/{item_id}/resources/{resource_id}", response_model=NakamalSchemaOut)
+@router.delete(
+    "/{item_id:uuid}/resources/{resource_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
 async def delete_one_resource(
     db: AsyncSession = Depends(get_db),
-    user=Depends(current_active_verified_user),
+    user = Depends(current_active_verified_user),
     *,
-    item_id: UUID,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
     resource_id: UUID,
-) -> Any:
+) -> NakamalSchemaOut:
     crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.get_by_id(item_id)
-    if not item:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found."
-        )
     crud_resource = CRUDNakamalResource(db)
     resource = await crud_resource.get_by_id(resource_id)
     if not resource:

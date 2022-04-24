@@ -4,7 +4,7 @@
       :uppy="uppy"
       :open="open"
       :plugins="[]"
-      :props="{theme: 'light'}"
+      :props="{ theme }"
     />
   </div>
 </template>
@@ -30,7 +30,11 @@ export default {
     ...mapGetters({
       user: 'auth/user',
       token: 'auth/token',
+      darkMode: 'setting/darkMode',
     }),
+    theme() {
+      return this.darkMode ? 'dark' : 'light';
+    },
     uppy() {
       return new Uppy({
         meta: {

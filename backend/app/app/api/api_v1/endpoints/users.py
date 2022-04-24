@@ -1,4 +1,6 @@
 from typing import Any, List, Optional, Union
+from app.crud.video import CRUDVideo
+from app.schemas.video import VideoSchemaOut
 
 from pydantic import UUID4
 from fastapi import Depends, HTTPException, Request, status, APIRouter, Query
@@ -301,3 +303,17 @@ async def get_all_trips(db: AsyncSession = Depends(get_db), *, item_id: UUID4) -
     crud_trip = CRUDTrip(db)
     trips = await crud_trip.get_multi_by_user(item.id)
     return [TripSchemaOut(**trip.dict()) for trip in trips]
+
+
+@router.get("/{item_id:uuid}/videos", response_model=List[VideoSchemaOut])
+async def get_all_videos(db: AsyncSession = Depends(get_db), *, item_id: UUID4) -> Any:
+    # TODO user dependency
+    crud_user = CRUDUser(db)
+    item = await crud_user.get_by_id(item_id)
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+        )
+    crud_video = CRUDVideo(db)
+    videos = await crud_video.get_multi_by_user(item.id)
+    return [VideoSchemaOut(**video.dict()) for video in videos]

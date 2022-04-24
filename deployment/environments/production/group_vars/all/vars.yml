@@ -6,6 +6,7 @@ domain: bilolok.com
 domain_api: api.bilolok.com
 domain_upload: upload.bilolok.com
 domain_image: image.bilolok.com
+domain_video: video.bilolok.com
 
 mj_relayhost: in-v3.mailjet.com
 mj_relayhost_port: 587
@@ -20,6 +21,7 @@ db_name: "{{ vault_db_name }}"
 
 root_directory: /var/www/bilolok.com
 repo_directory: "{{ root_directory }}/app"
+data_directory: "{{ root_directory }}/data"
 
 be_worker_service_name: bilolok-worker.service
 be_api_service_name: api.bilolok.service
@@ -31,3 +33,5 @@ fe_remote_directory: "{{ root_directory }}/www"
 
 upload_service_port: 8070
 image_service_port: 8888
+
+video_remote_directory: "{{ data_directory }}/videos"

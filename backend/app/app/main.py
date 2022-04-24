@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.api.api_v1.api import api_router
 from app.api.sentry_endpoint import sentry_router
@@ -12,6 +13,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     middleware=middleware,
 )
+
+if settings.DEBUG:
+    app.mount("/videos", StaticFiles(directory=f"{settings.DATA_LOCAL_DIR}/videos"), name="videos")
 
 init_sentry()
 init_logging()

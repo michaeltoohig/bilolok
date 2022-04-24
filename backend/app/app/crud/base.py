@@ -1,6 +1,7 @@
 import abc
 from typing import Generic, List, Type, TypeVar
 from uuid import UUID, uuid4
+from app.db.errors import DoesNotExist
 
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
@@ -36,7 +37,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         item = self._table(id=uuid4(), **in_schema.dict())
         self._db_session.add(item)
         await self._db_session.commit()
-        return self._schema.from_orm(item)
+        return self._schema.from_orm(item)  # NOTE will fail when schema has relationships that are expected to be loaded.
 
     async def update(self, item_id: UUID, update_schema) -> SCHEMA:
         item = await self._get_one(item_id)
@@ -63,10 +64,9 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
     async def get_by_id(self, item_id: UUID) -> SCHEMA:
         item = await self._get_one(item_id)
         if not item:
-            raise Exception("make NotFound error")
-            # raise DoesNotExist(
-            #     f"{self._table.__name__}<id:{item_id}> does not exist"
-            # )
+            raise DoesNotExist(
+                f"{self._table.__name__}<id:{item_id}> does not exist"
+            )
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:

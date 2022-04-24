@@ -48,11 +48,11 @@ def init_redis() -> None:
 
 
 def init_directories() -> None:
-    images = Path(settings.IMAGES_LOCAL_DIR)
+    data = Path(settings.DATA_LOCAL_DIR)
     try:
         # Try to check and create directory
-        if not images.exists():
-            images.mkdir()
+        if not data.exists():
+            data.mkdir()
     except Exception as e:
         logger.error(e)
         raise e

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import AsyncGenerator, List, Optional
 
 import jwt
 import pydenticon
@@ -10,14 +10,14 @@ from fastapi_users.authentication import (AuthenticationBackend,
                                           BearerTransport, JWTStrategy)
 from fastapi_users.jwt import decode_jwt
 from fastapi_users.manager import BaseUserManager, UserNotExists
+from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from pydantic import UUID4
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from app.core.mail import MessageSchema, mail
 from app.db.session import async_session
-from app.models.fastapi_users_db_sqlalchemy_asyncpg import \
-    SQLAlchemyUserDatabase
 from app.models.user import User as UserTable
 from app.schemas.user import User, UserCreate, UserDB, UserUpdate
 
@@ -58,7 +58,7 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         await self.request_verify(user, request)
         # Render user's default avatar image
         relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
-        fullAvatarPath = Path(settings.IMAGES_LOCAL_DIR) / relativeAvatarPath
+        fullAvatarPath = Path(settings.DATA_LOCAL_DIR) / relativeAvatarPath
         fullAvatarPath.parent.mkdir(parents=True, exist_ok=True)
         icon = pydenticon.Generator(5, 5)
         identicon = icon.generate(str(user.id), 200, 200)
@@ -110,8 +110,14 @@ class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
         return [await self._make_user(user) for user in users] if users else None
 
 
-async def get_user_db():
-    yield MySQLAlchemyUserDatabase(UserDB, async_session, UserTable.__table__)
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
+        yield session
+        await session.commit()
+
+
+async def get_user_db(session: AsyncSession = Depends(get_async_session)):
+    yield MySQLAlchemyUserDatabase(UserDB, session, UserTable)
 
 
 async def get_user_manager(user_db: MySQLAlchemyUserDatabase = Depends(get_user_db)):

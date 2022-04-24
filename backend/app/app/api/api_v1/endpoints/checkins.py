@@ -53,9 +53,9 @@ async def get_all(
 )
 async def create_one(
     db: AsyncSession = Depends(get_db),
-    *,
-    in_schema: CheckinSchemaIn,
     user: User = Depends(current_active_verified_user),
+    *,
+    payload: CheckinSchemaIn,
 ) -> Any:
     """Checkin to a nakamal.
 
@@ -79,7 +79,7 @@ async def create_one(
     crud_checkin = CRUDCheckin(db)
     last_checkin = await crud_checkin.get_last_by_user(user.id, exclude_private=False)
     if last_checkin:
-        same_nakamal = last_checkin.nakamal.id == in_schema.nakamal_id
+        same_nakamal = last_checkin.nakamal.id == payload.nakamal_id
         threshold = last_checkin.created_at + timedelta(hours=12)  # XXX hardcoded value
         within_threshold = now < threshold
         if same_nakamal and within_threshold:
@@ -89,7 +89,7 @@ async def create_one(
             )
     # Check user's latest checkin at this nakamal was atleast X minutes ago - no double checkins by hopping between two nakamals
     last_nakamal_checkin = await crud_checkin.get_last_by_user(
-        user.id, nakamal_id=in_schema.nakamal_id, exclude_private=False
+        user.id, nakamal_id=payload.nakamal_id, exclude_private=False
     )
     if last_nakamal_checkin:
         threshold = last_nakamal_checkin.created_at + timedelta(
@@ -105,7 +105,7 @@ async def create_one(
     recent_nakamal_checkins = await crud_checkin.get_multi_by_user(
         user.id,
         limit=checkin_threshold,
-        nakamal_id=in_schema.nakamal_id,
+        nakamal_id=payload.nakamal_id,
         exclude_private=False,
     )
     threshold = datetime.now(tz=timezone.utc) - timedelta(hours=12)
@@ -118,5 +118,5 @@ async def create_one(
             detail="You already checked-in to this nakamal too many times today.",
         )
     # Create checkin
-    checkin = await crud_checkin.create(in_schema, user_id=user.id)
+    checkin = await crud_checkin.create(payload, user_id=user.id)
     return CheckinSchemaOut(**checkin.dict())

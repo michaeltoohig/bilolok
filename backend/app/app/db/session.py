@@ -11,7 +11,7 @@ async_engine = create_async_engine(
 async_session = sessionmaker(async_engine, class_=AsyncSession, expire_on_commit=False)
 
 
-# NOTE sync engine/session for pre-start scripts
+# NOTE sync engine/session for pre-start scripts and alembic
 sync_engine = create_engine(
     settings.SQLALCHEMY_DATABASE_URI,
     echo=settings.SQLALCHEMY_DATABASE_ECHO,

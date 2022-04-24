@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional, Type
 from uuid import UUID, uuid4
+from app.db.errors import DoesNotExist
 
 from sqlalchemy import and_, desc, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
 from app.crud.base import CRUDBase
@@ -23,6 +25,18 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
     def _table(self) -> Type[Checkin]:
         return Checkin
 
+    async def _get_one(self, item_id: UUID):
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .where(self._table.id == item_id)
+        )
+        try:
+            (item,) = (await self._db_session.execute(query)).one()
+        except NoResultFound:
+            item = None
+        return item
+
     async def create(
         self, in_schema: CheckinSchemaIn, *, user_id: UUID
     ) -> CheckinSchema:
@@ -31,21 +45,6 @@ class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):
         self._db_session.add(item)
         await self._db_session.commit()
         return await self.get_by_id(item_id)
-
-    async def get_by_id(self, item_id: UUID) -> CheckinSchema:
-        query = (
-            select(self._table)
-            .options(selectinload(self._table.nakamal))
-            .where(self._table.id == item_id)
-        )
-        result = await self._db_session.execute(query)
-        if not result:
-            raise Exception("make NotFound error")
-            # raise DoesNotExist(
-            #     f"{self._table.__name__}<id:{item_id}> does not exist"
-            # )
-        (item,) = result.one()
-        return self._schema.from_orm(item)
 
     async def get_multi(
         self, *, skip: int = 0, limit: int = 100

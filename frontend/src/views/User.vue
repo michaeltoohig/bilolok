@@ -149,6 +149,8 @@
       </v-container>
     </div>
 
+    <UserVideoUpload v-if="isMe && hasAdminAccess"></UserVideoUpload>
+
     <ProfileImageUpload
       v-if="!loading"
       :open="uploadImageDialog"
@@ -167,6 +169,7 @@ import CardImage from '@/components/timeline/CardImage.vue';
 import CardTrip from '@/components/timeline/CardTrip.vue';
 import PushNotificationCard from '@/components/user/PushNotificationCard.vue';
 import ProfileImageUpload from '@/components/user/ProfileImageUpload.vue';
+import UserVideoUpload from '@/components/user/UserVideoUpload.vue';
 
 export default {
   name: 'User',
@@ -177,6 +180,7 @@ export default {
     CardTrip,
     PushNotificationCard,
     ProfileImageUpload,
+    UserVideoUpload,
   },
   data() {
     return {
@@ -277,7 +281,10 @@ export default {
       }
     },
     async removeUserProfile() {
-      await this.$store.dispatch('user/removeProfile');
+      /* eslint-disable no-alert, no-restricted-globals */
+      if (confirm('Are you sure you want to remove your profile picture?')) {
+        await this.$store.dispatch('user/removeProfile');
+      }
     },
     async closeUploadDialog() {
       this.uploadImageDialog = false;

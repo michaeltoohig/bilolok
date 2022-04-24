@@ -23,11 +23,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserSchema]):
         return User
 
     async def save_avatar(
-        self, sfp: Path, *, user: UserSchema, file_id: str, filename: str
+        self, sfp: Path, *, user: UserSchema, file_id: str, filename: str,
     ):
         """Save the given file to it's storage path defined by `filepath`."""
         new_filename = "{f_id}{ext}".format(f_id=file_id, ext=Path(filename).suffix)
-        ffp = Path(settings.IMAGES_LOCAL_DIR) / self._table.build_avatar_filepath(
+        ffp = Path(settings.DATA_LOCAL_DIR) / self._table.build_avatar_filepath(
             user.id, new_filename
         )
         ffp.parent.mkdir(parents=True, exist_ok=True)

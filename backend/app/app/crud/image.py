@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import List, Optional, Type
-from uuid import UUID
+from uuid import uuid4, UUID
+from app.db.errors import DoesNotExist
 
 from sqlalchemy import desc, select
 from sqlalchemy.exc import NoResultFound
@@ -38,9 +39,15 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             item = None
         return item
 
+    async def create(self, in_schema: ImageSchemaIn) -> ImageSchema:
+        item = self._table(id=uuid4(), **in_schema.dict())
+        self._db_session.add(item)
+        await self._db_session.commit()
+        return await self.get_by_id(item.id)
+
     def save_file(self, sfp: Path, *, nakamal_id: str, file_id: str, filename: str):
         """Save the given file to it's storage path defined by `filepath`."""
-        ffp = Path(settings.IMAGES_LOCAL_DIR) / self._table.build_filepath(
+        ffp = Path(settings.DATA_LOCAL_DIR) / self._table.build_filepath(
             nakamal_id, file_id, filename
         )
         ffp.parent.mkdir(parents=True, exist_ok=True)
@@ -69,10 +76,9 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
     async def get_by_id(self, item_id: UUID) -> ImageSchema:
         item = await self._get_one(item_id)
         if not item:
-            raise Exception("make NotFound error")
-            # raise DoesNotExist(
-            #     f"{self._table.__name__}<id:{item_id}> does not exist"
-            # )
+            raise DoesNotExist(
+                f"{self._table.__name__}<id:{item_id}> does not exist"
+            )
         item = self.make_src_urls(item)
         return self._schema.from_orm(item)
 

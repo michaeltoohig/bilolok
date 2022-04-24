@@ -59,15 +59,15 @@ services:
     ports:
       - "8070:8070"
     volumes:
-      - "${IMAGES_LOCAL_DIR}/uploads/:/data/"
+      - "${DATA_LOCAL_DIR}/uploads/:/data/"
     env_file:
       - .env
-    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http https://api.bilolok.com/api/v1/images/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
+    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http https://api.bilolok.com/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
 
   thumbor:
     image: minimalcompact/thumbor
     volumes:
-      - "${IMAGES_LOCAL_DIR}/:/data/uploads/"
+      - "${DATA_LOCAL_DIR}/:/data/uploads/"
     env_file:
       - .env
     environment:

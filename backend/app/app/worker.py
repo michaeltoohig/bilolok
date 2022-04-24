@@ -19,6 +19,7 @@ ARQ_BACKGROUND_FUNCTIONS = [
     "app.tasks.utils.test_arq_subtask",
     "app.tasks.utils.send_daily_push_notification",
     "app.tasks.nakamal.select_featured_nakamal",
+    "app.tasks.video.process_video",
 ]
 
 
@@ -64,7 +65,6 @@ class WorkerSettings:
             "app.tasks.nakamal.select_featured_nakamal",
             hour=0,
             minute=0,
-            run_at_startup=True,  # remove after first use
         ),
     ]
     on_startup = startup
