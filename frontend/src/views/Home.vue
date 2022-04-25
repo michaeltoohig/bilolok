@@ -3,7 +3,12 @@
     <v-container>
       <v-row>
         <v-col>
-          <h1 class="text-h1 font-weight-bold text-center">Bilolok</h1>
+          <div class="d-flex flex-sm-row flex-column align-center justify-center">
+            <v-responsive max-width="140" class="flex-shrink-1">
+              <v-img :src="logo"/>
+            </v-responsive>
+            <h1 class="text-h1 font-weight-bold">Bilolok</h1>
+          </div>
 
           <p class="text-center">
             Bilolok means <strong>Kava</strong> in the local language of a small
@@ -45,8 +50,34 @@
     </v-container>
     <v-responsive class="mx-auto" max-width="600">
       <SectionFeaturedNakamal />
-      <SectionRecentCheckins />
-      <SectionRecentImages />
+      <SectionRecentTimeline />
+      <div class="text-center">
+        <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
+        <h2 class="headline text-h2">End of Today's News Feed.</h2>
+        <p>Browse our map and see what else is on Bilolok.</p>
+        <v-btn
+          x-large
+          tile
+          color="primary"
+          :to="{ name: 'Map' }"
+        >
+          Go to the Map
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </div>
+      <div v-if="!isLoggedIn" class="text-center">
+        <hr class="my-5"/>
+        <h2 class="headline text-h4">Join Bilolok</h2>
+        <v-btn
+          text
+          outlined
+          color="primary"
+          @click="goToSignup"
+        >
+          Create an Account
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </div>
     </v-responsive>
 
     <hr class="mt-5"/>
@@ -66,28 +97,29 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import SectionRecentImages from '@/components/home/SectionRecentImages.vue';
-import SectionRecentCheckins from '@/components/home/SectionRecentCheckins.vue';
 import SectionFeaturedNakamal from '@/components/home/SectionFeaturedNakamal.vue';
+import SectionRecentTimeline from '@/components/home/SectionRecentTimeline.vue';
 
 const lightMapImage = require('../assets/PortVilaMap-light.jpg');
 const darkMapImage = require('../assets/PortVilaMap-dark.jpg');
+const logo = require('../assets/logo.png');
 
 export default {
   name: 'Home',
   components: {
-    SectionRecentImages,
-    SectionRecentCheckins,
     SectionFeaturedNakamal,
+    SectionRecentTimeline,
   },
   data() {
     return {
       darkMapImage,
       lightMapImage,
+      logo,
     };
   },
   computed: {
     ...mapGetters({
+      isLoggedIn: 'auth/isLoggedIn',
       darkMode: 'setting/darkMode',
     }),
     mapImagePath() {
@@ -95,6 +127,11 @@ export default {
         return darkMapImage;
       }
       return lightMapImage;
+    },
+  },
+  methods: {
+    goToSignup() {
+      this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
     },
   },
 };

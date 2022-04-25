@@ -45,12 +45,6 @@ export default {
       images: 'image/recent',
     }),
   },
-  methods: {
-    // async getRecentImages() {
-    //   const response = await imagesApi.getRecent();
-    //   this.images = response.data;
-    // },
-  },
   beforeMount() {
     this.$store.dispatch('image/getRecent');
   },

@@ -1,10 +1,9 @@
 /* eslint-disable */
 
 import Vue from 'vue';
-import dayjs from 'dayjs';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
-import tripsApi from '@/api/trips';
+import videosApi from '@/api/videos';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
 
@@ -24,22 +23,22 @@ const getters = {
     // Swap ID references with the resolved nakamal objects.
     return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
   },
-  // Return a list of images in the order of `allIds`.
+  // Return a list of videos in the order of `allIds`.
   list: (state, getters) => {
     return state.allIds.map(id => getters.find(id));
   },
   // filteredList: (state, getters) => {
-  //   let trips = state.allIds.map(id => getters.find(id));
+  //   let videos = state.allIds.map(id => getters.find(id));
   //   if ('user' in state.filters && state.filters.user !== null) {
-  //     trips = trips.filter((c) => c.user.id === state.filters.user);
+  //     videos = videos.filter((c) => c.user.id === state.filters.user);
   //   }
   //   if ('dt' in state.filters && state.filters.dt !== null) {
-  //     trips = trips.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
+  //     videos = videos.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
   //   } else {
   //     // set default 30 day filter for heatmap
-  //     trips = trips.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
+  //     videos = videos.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
   //   }
-  //   return trips;
+  //   return videos;
   // },
   // filters: (state) => {
   //   return state.filters;
@@ -47,7 +46,7 @@ const getters = {
   // hasFilters: (state) => {
   //   return Object.keys(state.filters).length > 0;
   // },
-  // Return a list of recent images.
+  // Return a list of recent videos.
   recent: (state, getters) => {
     // return state.allIds.map(id => getters.find(id)).filter(c => c.created_at)
     return state.recentIds.map(id => getters.find(id));
@@ -55,75 +54,77 @@ const getters = {
   recentNakamalIds: (state, getters) => {
     return [...new Set(getters.recent.map((c) => c.nakamal.id))];
   },
-  // Return a list of images of a nakamal.
+  // Return a list of videos of a nakamal.
   nakamal: (state, getters) => nakamalId => {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
   },
-  // Return a list of trips of a user.
+  // Return a list of videos of a user.
   user: (state, getters) => userId => {
     return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
   },
 };
 
-function commitAddTrip(trip, commit) {
+function commitAddVideo(video, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(trip, ['nakamal', 'user']));
+  commit('add', normalizeRelations(video, ['nakamal', 'user']));
   // // Add or update the nakamal.
-  commit('nakamal/add', trip.nakamal, {
-    root: true,
-  });
-  commit('user/setUser', trip.user, {
+  if (video.nakamal) {
+    commit('nakamal/add', video.nakamal, {
+      root: true,
+    });
+  }
+  commit('user/setUser', video.user, {
     root: true,
   });
 };
 
 const actions = {
   getAll: async ({ commit }) => {
-    const response = await tripsApi.getAll();
-    const trips = response.data;
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
+    const response = await videosApi.getAll();
+    const videos = response.data;
+    videos.forEach((item) => {
+      commitAddVideo(item, commit);
     });
   },
   getRecent: async ({ commit }) => {
-    let trips = [];
-    const response = await tripsApi.getRecent();
-    trips = response.data;
+    let videos = [];
+    const response = await videosApi.getRecent();
+    videos = response.data;
     const threshold = 3  // XXX hardcoded value
-    if (!trips.length < threshold) {
-      const response = await tripsApi.getAll({ limit: threshold })
-      trips = response.data;
+    if (!videos.length < threshold) {
+      const response = await videosApi.getAll({ limit: threshold })
+      videos = response.data;
     }
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
+    videos.forEach((item) => {
+      commitAddVideo(item, commit);
     });
-    commit('setRecentIds', trips.map(i => i.id));
+    commit('setRecentIds', videos.map(i => i.id));
   },
   // getNakamal: async ({ commit }, nakamalId) => {
   //   const response = await nakamalsApi.getCheckins(nakamalId);
-  //   const trips = response.data;
-  //   trips.forEach((item) => {
-  //     commitAddTrip(item, commit);
+  //   const videos = response.data;
+  //   videos.forEach((item) => {
+  //     commitAddVideo(item, commit);
   //   });
   // },
   getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getTrips(userId);
-    const trips = response.data;
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
+    const response = await usersApi.getVideos(userId);
+    const videos = response.data;
+    videos.forEach((item) => {
+      commitAddVideo(item, commit);
     });
   },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      let response = await tripsApi.create(token, payload);
+      let response = await videosApi.create(token, payload);
       const trip = response.data;
-      commitAddTrip(trip, commit);
+      commitAddVideo(trip, commit);
       dispatch('notify/add', {
-        title: 'Trip Complete',
-        text: 'You have arrived at your destination. You should now check-in to the kava bar.',
+        title: 'Video Uploaded',
+        text: 'Your video will be ready to view soon; we have to process it first.',
         color: 'primary',
         duration: 5_000,
       }, { root: true });

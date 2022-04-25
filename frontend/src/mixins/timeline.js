@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 export default {
   computed: {
     timelineItems() {
-      const newList = this.images.concat(this.checkins).concat(this.trips);
+      const newList = this.images.concat(this.checkins).concat(this.trips).concat(this.videos);
       return newList.sort((a, b) => (dayjs(b.created_at).isAfter(a.created_at) ? 1 : -1));
     },
   },
@@ -13,6 +13,7 @@ export default {
       if ('private' in item) return 'checkin';
       if ('src' in item) return 'image';
       if ('data' in item) return 'trip';
+      if ('cover' in item) return 'video';
       return 'other';
     },
   },

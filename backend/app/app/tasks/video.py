@@ -24,12 +24,14 @@ async def process_video(ctx: dict, item_id: UUID):
             )
             logger.info(f"Got video {str(video.id)}")
             # transcoded file
+            watermark = Path(settings.DATA_LOCAL_DIR) / "images" / "watermark.png"
+            assert watermark.exists()
             sfp = Path(settings.DATA_LOCAL_DIR) / crud_video._original_filepath(video)
             logger.debug(f"Got video {str(video.id)} original path {str(sfp)}")
             # sfp = crud_video.build_full_filepath(ofp)
             ffp = Path(settings.DATA_LOCAL_DIR) / crud_video._video_filepath(video)
             logger.debug(f"Got video {str(video.id)} final path {str(ffp)}")
-            os.system(f"ffmpeg -i {str(sfp)} -c:v libvpx -qmin 0 -qmax 25 -crf 4 -b:v 500k -vf scale=540:-2 -an {str(ffp)}")
+            os.system(f"ffmpeg -i {str(sfp)} -i {str(watermark)} -filter_complex '[1:v]scale=180:-2[z];[0:v][z]overlay[out]' -map '[out]' -map '0:a' -c:v libvpx -qmin 0 -qmax 25 -crf 4 -b:v 500k -acodec libvorbis {str(ffp)}")
             logger.info(f"Complete transcode video {str(video.id)}")
             # cover image
             ffp = Path(settings.DATA_LOCAL_DIR) / crud_video._cover_filepath(video)

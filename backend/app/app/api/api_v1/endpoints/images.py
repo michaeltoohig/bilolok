@@ -53,7 +53,7 @@ async def get_all(
 ) -> List[ImageSchemaOut]:
     crud_image = CRUDImage(db)
     items = await crud_image.get_multi(skip=skip, limit=limit)
-    return [ImageSchemaOut(**image.dict()) for image in items]
+    return [ImageSchemaOut(**item.dict()) for item in items]
 
 
 @router.get(

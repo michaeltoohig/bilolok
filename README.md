@@ -191,16 +191,29 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] Show appropriate buttons based on state of video
   - [x] tear down everything when modal is closed
   - [x] support vertical and horizontal video formats / or only 1:1
-  - [ ] backend saving / storing / processing of videos TBD
+  - [x] backend saving / storing / processing of videos TBD
     - [x] Save file with PENDING
     - [x] Run task from tus-hook
     - [x] test task
-    - [ ] debug static video endpoint / nginx endpoint for production
-    - [ ] endpoints for videos
-    - [ ] frontend timeline card for videos
-    - [ ] home page recent videos
+    - [x] watermark
+  - [ ] debug static video endpoint / nginx endpoint for production
+  - [x] endpoints for videos
+  - [x] frontend timeline card for videos
+  - [x] home page recent videos
+  - [x] sw cache for videos
+  - [ ] delete videos UI
 
+- [ ] Chief of Nakamal
+  - [ ] List
+  - [ ] isCheif special card styling
+  - [ ] event when cheif title is changed
+    - [ ] user notification
+    - [ ] news feed card
 
+- [x] Timeline endpoint? Or { type: 'checkin', data: {...} } handling of timelines
+
+- [ ] Rectify `recent` endpoints; either limit: 3 recent or calculate recent on frontend when fetching all
+ 
 - [ ] Admin features
   - [ ] Review status of push notifications
   - [ ] User activity (login failures etc.)

@@ -123,11 +123,28 @@
             </v-alert>
             <div
               v-for="item in timelineItems"
-              :key="item.id"
+              :key="item.data.id"
             >
-              <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkNakamal="true"/>
-              <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkNakamal="true"/>
-              <CardTrip v-if="getItemType(item) === 'trip'" :item="item" :linkNakamal="true"/>
+              <CheckinTimelineCard
+                v-if="item.type === 'checkin'"
+                :item="item.data"
+                :linkNakamal="true"
+              />
+              <ImageTimelineCard
+                v-if="item.type === 'image'"
+                :item="item.data"
+                :linkNakamal="true"
+              />
+              <TripTimelineCard
+                v-if="item.type === 'trip'"
+                :item="item.data"
+                :linkNakamal="true"
+              />
+              <VideoTimelineCard
+                v-if="item.type === 'video'"
+                :item="item.data"
+                :linkNakamal="true"
+              />
             </div>
             <div v-if="timelineItems.length === 0">
               <v-alert
@@ -147,9 +164,9 @@
           </v-col>
         </v-row>
       </v-container>
-    </div>
 
-    <UserVideoUpload v-if="isMe && hasAdminAccess"></UserVideoUpload>
+      <UserVideoUpload v-if="isMe"></UserVideoUpload>
+    </div>
 
     <ProfileImageUpload
       v-if="!loading"
@@ -162,25 +179,28 @@
 <script>
 import dayjs from 'dayjs';
 import { mapGetters } from 'vuex';
-import timeline from '@/mixins/timeline';
 import formatDatetime from '@/mixins/formatDatetime';
-import CardCheckin from '@/components/timeline/CardCheckin.vue';
-import CardImage from '@/components/timeline/CardImage.vue';
-import CardTrip from '@/components/timeline/CardTrip.vue';
 import PushNotificationCard from '@/components/user/PushNotificationCard.vue';
 import ProfileImageUpload from '@/components/user/ProfileImageUpload.vue';
 import UserVideoUpload from '@/components/user/UserVideoUpload.vue';
 
+import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
+import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
+import TripTimelineCard from '@/components/timeline/TripTimelineCard.vue';
+import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
+
 export default {
   name: 'User',
-  mixins: [formatDatetime, timeline],
+  mixins: [formatDatetime],
   components: {
-    CardCheckin,
-    CardImage,
-    CardTrip,
     PushNotificationCard,
     ProfileImageUpload,
     UserVideoUpload,
+
+    CheckinTimelineCard,
+    ImageTimelineCard,
+    TripTimelineCard,
+    VideoTimelineCard,
   },
   data() {
     return {
@@ -211,6 +231,7 @@ export default {
       getUserCheckins: 'checkin/user',
       getUserImages: 'image/user',
       getUserTrips: 'trip/user',
+      getUserVideos: 'video/user',
       getNakamalImages: 'image/nakamal',
     }),
     checkins() {
@@ -224,6 +245,17 @@ export default {
     trips() {
       const { id } = this.user;
       return this.getUserTrips(id);
+    },
+    videos() {
+      const { id } = this.user;
+      return this.getUserVideos(id);
+    },
+    timelineItems() {
+      let items = this.checkins.map((i) => ({ type: 'checkin', data: i }));
+      items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
+      items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
+      items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
+      return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
     },
     topNakamalsByCheckins() {
       if (!this.checkins) return null;
@@ -267,10 +299,11 @@ export default {
     },
     async fetchData() {
       this.loading = true;
-      const { id } = this.user;
+      const { id } = this.$route.params;
       await this.$store.dispatch('checkin/getUser', id);
       await this.$store.dispatch('image/getUser', id);
       await this.$store.dispatch('trip/getUser', id);
+      await this.$store.dispatch('video/getUser', id);
       this.loading = false;
     },
     async changeProfilePicture() {

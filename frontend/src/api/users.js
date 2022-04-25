@@ -64,4 +64,13 @@ export default {
       },
     });
   },
+
+  async getVideos(id, skip = 0, limit = 0) {
+    return http.get(`${resource}/${id}/videos`, {
+      params: {
+        skip,
+        limit,
+      },
+    });
+  },
 };

@@ -86,10 +86,10 @@ export default {
         })
         .on('complete', () => {
           console.log('complete upload');
-          // this.$emit('close-modal');
-          // setTimeout(() => {
-          //   this.$store.dispatch('image/getNakamal', this.nakamal.id);
-          // }, 500);
+          // Short timeout delay to allow video to process before fetching
+          setTimeout(() => {
+            this.$store.dispatch('video/getUser', this.user.id);
+          }, 1000);
         })
         .on('upload-error', (_, error) => {
           // this.$emit('close-modal');

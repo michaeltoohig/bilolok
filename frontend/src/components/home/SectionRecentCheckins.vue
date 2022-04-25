@@ -60,6 +60,8 @@ import formatDatetime from '@/mixins/formatDatetime';
 export default {
   name: 'SectionRecentCheckins',
   mixins: [formatDatetime],
+  components: {
+  },
   computed: {
     ...mapGetters({
       recentCheckins: 'checkin/recent',

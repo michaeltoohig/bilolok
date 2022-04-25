@@ -16,8 +16,14 @@
       v-for="item in timelineItems"
       :key="item.id"
     >
-      <CardCheckin v-if="getItemType(item) === 'checkin'" :item="item" :linkUser="true"/>
-      <CardImage v-if="getItemType(item) === 'image'" :item="item" :linkUser="true"/>
+      <CheckinTimelineCard
+        v-if="getItemType(item) === 'checkin'"
+        :item="item"
+      />
+      <ImageTimelineCard
+        v-if="getItemType(item) === 'image'"
+        :item="item"
+      />
     </div>
   </div>
 </template>
@@ -26,21 +32,22 @@
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 import timeline from '@/mixins/timeline';
-import CardCheckin from '@/components/timeline/CardCheckin.vue';
-import CardImage from '@/components/timeline/CardImage.vue';
+import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
+import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 
 export default {
   name: 'TabTimeline',
   mixins: [timeline],
   props: ['nakamal'],
   components: {
-    CardCheckin,
-    CardImage,
+    CheckinTimelineCard,
+    ImageTimelineCard,
   },
   data() {
     return {
-      // XXX HACK my `timeline` mixin expects a `trips` array.
+      // XXX HACK my `timeline` mixin expects a `trips` and `videos` array.
       trips: [],
+      videos: [],
     };
   },
   computed: {
