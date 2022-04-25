@@ -66,8 +66,8 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
             video.src = "{}/{}".format(settings.SERVER_HOST, self._video_filepath(video))
             video.cover = "{}/{}".format(settings.SERVER_HOST, self._cover_filepath(video))
         else:
-            video.src = "{}{}".format(settings.VIDEO_SERVER, self._video_filepath(video))
-            video.cover = "{}{}".format(settings.VIDEO_SERVER, self._cover_filepath(video))
+            video.src = "{}/{}".format(settings.VIDEO_SERVER, self._video_filepath(video))
+            video.cover = "{}/{}".format(settings.VIDEO_SERVER, self._cover_filepath(video))
         return video
 
     async def _get_one(self, item_id: UUID):

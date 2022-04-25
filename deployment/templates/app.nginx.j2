@@ -202,7 +202,7 @@ server {
   access_log /var/log/nginx/{{ domain_video }}-access.log;
 
   location / {
-    alias {{ video_remove_directory }}/;
+    alias {{ video_remote_directory }}/;
   }
 }
 
