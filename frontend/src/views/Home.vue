@@ -51,20 +51,6 @@
     <v-responsive class="mx-auto" max-width="600">
       <SectionFeaturedNakamal />
       <SectionRecentTimeline />
-      <div class="text-center">
-        <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
-        <h2 class="headline text-h2">End of Today's News Feed.</h2>
-        <p>Browse our map and see what else is on Bilolok.</p>
-        <v-btn
-          x-large
-          tile
-          color="primary"
-          :to="{ name: 'Map' }"
-        >
-          Go to the Map
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </div>
       <div v-if="!isLoggedIn" class="text-center">
         <hr class="my-5"/>
         <h2 class="headline text-h4">Join Bilolok</h2>

@@ -186,7 +186,7 @@ For version 2 and beyond we can build upon this foundation such as the following
 
 I would have to say adding video and some other features I'm working on is pushing towards a more social platform and less data driven platform. It would then be appropriate to label the following features as the roadmap to version 3.
 
-- [ ] User videos
+- [x] User videos
   - [x] Refactor local media data storage 
   - [x] Show appropriate buttons based on state of video
   - [x] tear down everything when modal is closed
@@ -196,12 +196,13 @@ I would have to say adding video and some other features I'm working on is pushi
     - [x] Run task from tus-hook
     - [x] test task
     - [x] watermark
-  - [ ] debug static video endpoint / nginx endpoint for production
+  - [x] debug static video endpoint / nginx endpoint for production
   - [x] endpoints for videos
   - [x] frontend timeline card for videos
   - [x] home page recent videos
   - [x] sw cache for videos
-  - [ ] delete videos UI
+  - [x] delete videos UI
+  - [x] restrict upload to verified users only
 
 - [ ] Chief of Nakamal
   - [ ] List
@@ -210,10 +211,6 @@ I would have to say adding video and some other features I'm working on is pushi
     - [ ] user notification
     - [ ] news feed card
 
-- [x] Timeline endpoint? Or { type: 'checkin', data: {...} } handling of timelines
-
-- [ ] Rectify `recent` endpoints; either limit: 3 recent or calculate recent on frontend when fetching all
- 
 - [ ] Admin features
   - [ ] Review status of push notifications
   - [ ] User activity (login failures etc.)
@@ -245,7 +242,7 @@ SQLAlchemy
 FastAPI Users
 FastAPI CRUDrouter
 FastAPI paginate
-SQLAlchemy-Continuum or other asyncpg compatiable package
+SQLAlchemy-Continuum
 
 
 ### Frontend

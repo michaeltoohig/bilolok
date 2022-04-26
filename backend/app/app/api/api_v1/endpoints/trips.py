@@ -43,10 +43,9 @@ async def get_all(
     crud_trip = CRUDTrip(db)
     if recent:
         items = await crud_trip.get_recent()
-        return [TripSchemaOut(**item.dict()) for item in items]
     else:
         items = await crud_trip.get_multi(skip=skip, limit=limit)
-        return [TripSchemaOut(**item.dict()) for item in items]
+    return [TripSchemaOut(**item.dict()) for item in items]
 
 
 @router.post(
@@ -88,6 +87,9 @@ async def get_one(
     "/{item_id:uuid}",
     response_model=TripSchemaOut,
     responses={
+        status.HTTP_403_FORBIDDEN: {
+            "detail": "User does not have permission to delete this trip."
+        },
         status.HTTP_404_NOT_FOUND: {
             "detail": "Trip not found.",
         },
@@ -95,11 +97,14 @@ async def get_one(
 )
 async def delete_one(
     db: AsyncSession = Depends(get_db),
-    superuser: User = Depends(current_superuser),
+    user: User = Depends(current_active_verified_user),
     *,
     item: TripSchema = Depends(get_trip_or_404),
 ) -> Any:
     """Delete a trip to a nakamal"""
+    if not user.is_superuser:
+        if user.id != item.user.id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     crud_trip = CRUDTrip(db)
     item = await crud_trip.delete(item.id)
     return TripSchemaOut(**item.dict())

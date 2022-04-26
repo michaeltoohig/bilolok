@@ -151,6 +151,8 @@ class Settings(BaseSettings):
     THUMBOR_SECURITY_KEY: str
     VIDEO_SERVER: str
 
+    RECENT_THRESHOLD_HOURS: int = 4
+
     class Config:
         case_sensitive = True
         json_loads = list_parse_fallback

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Optional, Type
 from uuid import uuid4, UUID
@@ -110,6 +111,21 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
             .order_by(desc(self._table.created_at))
             .offset(skip)
             .limit(limit)
+        )
+        results = await self._db_session.execute(query)
+        items = (self.make_src_urls(item) for item in results.scalars())
+        return (self._schema.from_orm(item) for item in items)
+
+    async def get_recent(self) -> List[VideoSchema]:
+        threshold = datetime.now(tz=timezone.utc) - timedelta(
+            hours=settings.RECENT_THRESHOLD_HOURS
+        )
+        query = (
+            select(self._table)
+            .where(self._table.created_at >= threshold)
+            .options(selectinload(self._table.nakamal))
+            .options(selectinload(self._table.user))
+            .order_by(desc(self._table.created_at))
         )
         results = await self._db_session.execute(query)
         items = (self.make_src_urls(item) for item in results.scalars())

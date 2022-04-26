@@ -123,24 +123,30 @@
         <v-card>
           <v-card-title>Email Verification Required</v-card-title>
           <v-card-subtitle>You must verify your email to perform that action.</v-card-subtitle>
+          <div class="d-flex justify-center">
+            <v-icon size="100">mdi-email-alert</v-icon>
+          </div>
           <v-card-text>
             <p>
               To prevent abuse we require a user verify the email address they
-              provided during sign up. Look in your email for a messag from
-              Bilolok and a link to verify your email will be inside that email.
+              provided during sign up. Check your email for a message from
+              Bilolok with instructions to verify your email.
             </p>
             <p>
               Then, you may try again.
             </p>
           </v-card-text>
           <v-card-actions>
+            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
+            <v-spacer></v-spacer>
             <v-btn
               text
               outlined
+              color="primary"
               @click="sendVerificationEmail"
-            >Send Email Verification</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
+            >
+              Send Email Verification
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

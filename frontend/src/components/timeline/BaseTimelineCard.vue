@@ -30,7 +30,9 @@
       </div>
       <v-spacer></v-spacer>
       <v-list-item-action>
-        <!-- TODO delete option for owner or superuser, share, etc. in menu -->
+        <slot name="card-action">
+          <!-- Place for putting a button or dropdown menu of options -->
+        </slot>
       </v-list-item-action>
     </v-list-item>
     <!-- Content Slot! -->

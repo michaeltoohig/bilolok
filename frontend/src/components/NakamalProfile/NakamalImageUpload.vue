@@ -41,6 +41,9 @@ export default {
           Target: 'NAKAMAL',
           NakamalID: this.nakamal.id,
         },
+        restrictions: {
+          allowedFileTypes: ['.jpg', '.jpeg', '.png'],
+        },
       })
         .use(Tus, {
           endpoint: `${uploadDomain}/files/`,

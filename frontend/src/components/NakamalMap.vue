@@ -158,12 +158,6 @@
           </div>
         </LPopup>
       </LPolyline>
-      <Vue2LeafletPolylinedecorator
-        v-for="trip in recentTrips"
-        :key="`polyline-decorator-${trip.id}`"
-        :paths="getTripLatLngs(trip.data)"
-        :patterns="patterns"
-      ></Vue2LeafletPolylinedecorator>
 
       <Vue2LeafletHeatmap
         v-if="heatmapCheckins && showHeatmapLayer"
@@ -265,7 +259,6 @@ import {
 import {
   LMap, LTileLayer, LMarker, LTooltip, LControl, LLayerGroup, LPolyline, LCircle, LPopup,
 } from 'vue2-leaflet';
-import Vue2LeafletPolylinedecorator from 'vue2-leaflet-polylinedecorator';
 // import { AntPath } from 'leaflet-ant-path';
 import sphereKnn from 'sphere-knn';
 
@@ -315,7 +308,6 @@ export default {
     LCircle,
     LPopup,
     Vue2LeafletHeatmap,
-    Vue2LeafletPolylinedecorator,
   },
   data() {
     return {

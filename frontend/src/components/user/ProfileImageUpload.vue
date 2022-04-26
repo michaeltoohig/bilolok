@@ -40,6 +40,9 @@ export default {
         meta: {
           Target: 'USER_PROFILE',
         },
+        restrictions: {
+          allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif'],
+        },
       })
         .use(Tus, {
           endpoint: `${uploadDomain}/files/`,

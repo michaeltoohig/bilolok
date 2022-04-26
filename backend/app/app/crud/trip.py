@@ -6,6 +6,7 @@ from sqlalchemy import and_, desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
+from app.core.config import settings
 from app.crud.base import CRUDBase
 from app.models.trip import Trip
 from app.schemas.trip import TripSchema, TripSchemaIn
@@ -75,7 +76,7 @@ class CRUDTrip(CRUDBase[Trip, TripSchemaIn, TripSchema]):
         return (self._schema.from_orm(item) for item in results.scalars())
 
     async def get_recent(self) -> TripSchema:
-        threshold = datetime.now(tz=timezone.utc) - timedelta(hours=3)  # XXX hardcoded value
+        threshold = datetime.now(tz=timezone.utc) - timedelta(hours=settings.RECENT_THRESHOLD_HOURS)
         query = (
             select(self._table)
             .where(self._table.created_at >= threshold)

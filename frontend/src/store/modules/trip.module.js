@@ -88,18 +88,17 @@ const actions = {
     });
   },
   getRecent: async ({ commit }) => {
-    let trips = [];
+    const threshold = 3; // XXX hardcoded value
     const response = await tripsApi.getRecent();
-    trips = response.data;
-    const threshold = 3  // XXX hardcoded value
-    if (!trips.length < threshold) {
+    let items = response.data;
+    if (!items.length < threshold) {
       const response = await tripsApi.getAll({ limit: threshold })
-      trips = response.data;
+      items = response.data;
     }
-    trips.forEach((item) => {
+    items.forEach((item) => {
       commitAddTrip(item, commit);
     });
-    commit('setRecentIds', trips.map(i => i.id));
+    commit('setRecentIds', items.map((i) => i.id));
   },
   // getNakamal: async ({ commit }, nakamalId) => {
   //   const response = await nakamalsApi.getCheckins(nakamalId);
@@ -137,6 +136,27 @@ const actions = {
       }, { root: true });
     }
   },
+  remove: async ({ commit, dispatch, rootState }, id) => {
+    try {
+      let token = rootState.auth.token;
+      await tripsApi.remove(token, id);
+      commit('remove', id);
+      dispatch('notify/add', {
+        title: 'Trip Removed',
+        text: 'Trip removed from the system.',
+        type: 'warning',
+      }, { root: true });
+    }
+    catch (error) {
+      console.log('Trip remove error');
+      await dispatch('auth/checkApiError', error, { root: true });
+      dispatch('notify/add', {
+        title: 'Not Allowed',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
+    }
+  },
   // setFilter: ({ commit }, { key, value }) => {
   //   commit('setFilter', { key, value });
   // },
@@ -164,6 +184,20 @@ const mutations = {
     else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
       state.byNakamalId[item.nakamal].push(item.id);
     }
+  },
+  remove: (state, id) => {
+    let index;
+    const nId = state.byId[id].nakamal;
+    index = state.byNakamalId[nId].indexOf(id);
+    if (index !== -1) {
+      state.byNakamalId[nId].splice(index, 1);
+    }
+    index = state.recentIds.indexOf(id);
+    if (index !== -1) {
+      state.recentIds.splice(index, 1);
+    }
+    state.allIds.splice(state.allIds.indexOf(id), 1);
+    Vue.delete(state.byId, id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

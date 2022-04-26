@@ -4,10 +4,18 @@ import http from './http-common';
 const resource = 'images';
 
 export default {
+  async getAll(params) {
+    return http.get(`${resource}`, {
+      params: {
+        ...params,
+      },
+    });
+  },
+
   async getRecent() {
     return http.get(`${resource}`, {
       params: {
-        limit: 3,
+        recent: true,
       },
     });
   },

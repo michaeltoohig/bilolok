@@ -102,12 +102,10 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
 
 class MySQLAlchemyUserDatabase(SQLAlchemyUserDatabase):
     async def get_multi(self) -> List[UserDB]:
-        async with self.session.begin() as session:
-            query = select(self.users)
-            result = await session.execute(query)
-            users = result.all()
-
-        return [await self._make_user(user) for user in users] if users else None
+        query = select(self.user_table)
+        result = await self.session.execute(query)
+        users = result.all()
+        return [self.user_db_model.from_orm(user[0]) for user in users] if users else None
 
 
 async def get_async_session() -> AsyncGenerator[AsyncSession, None]:

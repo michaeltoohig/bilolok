@@ -68,7 +68,7 @@
             dark
             small
             color="secondary darken-1"
-            :disabled="true"
+            :disabled="false"
             @click.stop="setShowHeatmapMenu(true)"
             v-bind="attrs"
             v-on="on"

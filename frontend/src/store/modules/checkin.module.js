@@ -36,8 +36,8 @@ const getters = {
     if ('dt' in state.filters && state.filters.dt !== null) {
       checkins = checkins.filter((c) => state.filters.dt.isBefore(dayjs(c.created_at)));
     } else {
-      // set default 30 day filter for heatmap
-      checkins = checkins.filter((c) => dayjs().subtract(30, 'd').isBefore(dayjs(c.created_at)));
+      // set default 60 day filter for heatmap
+      checkins = checkins.filter((c) => dayjs().subtract(60, 'd').isBefore(dayjs(c.created_at)));
     }
     return checkins;
   },
@@ -88,18 +88,17 @@ const actions = {
     });
   },
   getRecent: async ({ commit }) => {
-    let checkins = [];
+    const threshold = 3; // XXX hardcoded value
     const response = await checkinsApi.getRecent();
-    checkins = response.data;
-    const threshold = 3  // XXX hardcoded value
-    if (!checkins.length < threshold) {
+    let items = response.data;
+    if (!items.length < threshold) {
       const response = await checkinsApi.getAll({ limit: threshold })
-      checkins = response.data;
+      items = response.data;
     }
-    checkins.forEach((item) => {
+    items.forEach((item) => {
       commitAddCheckin(item, commit);
     });
-    commit('setRecentIds', checkins.map(i => i.id));
+    commit('setRecentIds', items.map((i) => i.id));
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getCheckins(nakamalId);
@@ -136,6 +135,27 @@ const actions = {
       }, { root: true });
     }
   },
+  remove: async ({ commit, dispatch, rootState }, id) => {
+    try {
+      let token = rootState.auth.token;
+      await checkinsApi.remove(token, id);
+      commit('remove', id);
+      dispatch('notify/add', {
+        title: 'Check-in Removed',
+        text: 'Check-in removed from the system.',
+        type: 'warning',
+      }, { root: true });
+    }
+    catch (error) {
+      console.log('Check-in remove error');
+      await dispatch('auth/checkApiError', error, { root: true });
+      dispatch('notify/add', {
+        title: 'Not Allowed',
+        text: error.response.data.detail,
+        type: 'warning',
+      }, { root: true });
+    }
+  },
   setFilter: ({ commit }, { key, value }) => {
     commit('setFilter', { key, value });
   },
@@ -163,6 +183,20 @@ const mutations = {
     else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
       state.byNakamalId[item.nakamal].push(item.id);
     }
+  },
+  remove: (state, id) => {
+    let index;
+    const nId = state.byId[id].nakamal;
+    index= state.byNakamalId[nId].indexOf(id)
+    if (index !== -1) {
+      state.byNakamalId[nId].splice(index, 1);
+    } 
+    index = state.recentIds.indexOf(id);
+    if (index !== -1) {
+      state.recentIds.splice(index, 1);
+    }
+    state.allIds.splice(state.allIds.indexOf(id), 1);
+    Vue.delete(state.byId, id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

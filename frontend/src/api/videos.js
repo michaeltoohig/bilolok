@@ -15,7 +15,7 @@ export default {
   async getRecent() {
     return http.get(`${resource}`, {
       params: {
-        limit: 3,
+        recent: true,
       },
     });
   },

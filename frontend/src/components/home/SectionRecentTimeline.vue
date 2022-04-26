@@ -37,6 +37,20 @@
           :linkNakamal="true"
         />
       </div>
+      <div class="text-center">
+        <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
+        <h2 class="headline text-h2">End of Today's News Feed.</h2>
+        <p>Browse our map and see what else is on Bilolok.</p>
+        <v-btn
+          x-large
+          tile
+          color="primary"
+          :to="{ name: 'Map' }"
+        >
+          Go to the Map
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-btn>
+      </div>
     </v-container>
   </div>
 </template>
@@ -67,8 +81,8 @@ export default {
     ...mapGetters({
       recentCheckins: 'checkin/recent',
       recentImages: 'image/recent',
-      recentTrips: 'trip/recent', // TODO check this exists.
-      recentVideos: 'video/recent', // TODO check this exists.
+      recentTrips: 'trip/recent',
+      recentVideos: 'video/recent',
     }),
     checkins() {
       const n = Math.min(this.recentCheckins.length, this.recentItemCount);

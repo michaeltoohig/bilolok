@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, List
+from app.api.deps.checkin import get_checkin_or_404
 
 from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
@@ -25,7 +26,7 @@ router = SQLAlchemyCRUDRouter(
     create_route=False,
     update_route=False,
     delete_all_route=False,
-    delete_one_route=[Depends(current_superuser)],
+    delete_one_route=False,
 )
 
 
@@ -40,10 +41,9 @@ async def get_all(
     crud_checkin = CRUDCheckin(db)
     if recent:
         items = await crud_checkin.get_recent()
-        return [CheckinSchemaOut(**item.dict()) for item in items]
     else:
         items = await crud_checkin.get_multi(skip=skip, limit=limit)
-        return [CheckinSchemaOut(**item.dict()) for item in items]
+    return [CheckinSchemaOut(**item.dict()) for item in items]
 
 
 @router.post(
@@ -120,3 +120,30 @@ async def create_one(
     # Create checkin
     checkin = await crud_checkin.create(payload, user_id=user.id)
     return CheckinSchemaOut(**checkin.dict())
+
+
+@router.delete(
+    "/{item_id:uuid}",
+    response_model=CheckinSchemaOut,
+    responses={
+        status.HTTP_403_FORBIDDEN: {
+            "detail": "User does not have permission to delete this check-in."
+        },
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Check-in not found.",
+        },
+    },
+)
+async def delete_one(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(current_active_verified_user),
+    *,
+    item: CheckinSchema = Depends(get_checkin_or_404),
+) -> Any:
+    """Delete a check-in at a nakamal"""
+    if not user.is_superuser:
+        if user.id != item.user.id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    crud_checkin = CRUDCheckin(db)
+    item = await crud_checkin.delete(item.id)
+    return CheckinSchemaOut(**item.dict())

@@ -5,6 +5,13 @@
     :nakamal="item.nakamal"
     :linkNakamal="linkNakamal"
   >
+    <template v-slot:card-action>
+      <BaseTimelineCardMenu
+        :on-share="onShare"
+        :on-delete="onDelete"
+        :user-can-delete="userCanDelete"
+      ></BaseTimelineCardMenu>
+    </template>
     <v-card-text id="map-wrapper">
       <l-map
         style="z-index: 0;"
@@ -54,6 +61,7 @@ import {
 } from 'vue2-leaflet';
 import { mapGetters } from 'vuex';
 import BaseTimelineCard from '@/components/timeline/BaseTimelineCard.vue';
+import BaseTimelineCardMenu from '@/components/timeline/BaseTimelineCardMenu.vue';
 
 const iconMarkerPath = require('@/assets/map-marker.svg');
 
@@ -61,6 +69,7 @@ export default {
   name: 'TripTimelineCard',
   components: {
     BaseTimelineCard,
+    BaseTimelineCardMenu,
     LMap,
     LTileLayer,
     LPolyline,
@@ -88,8 +97,16 @@ export default {
   },
   computed: {
     ...mapGetters({
+      user: 'auth/user',
+      hasAdminAccess: 'auth/hasAdminAccess',
       darkMode: 'setting/darkMode',
     }),
+    isMine() {
+      return this.item.user.id === this.user.id;
+    },
+    userCanDelete() {
+      return this.isMine || this.hasAdminAccess;
+    },
     url() {
       if (this.darkMode) {
         return 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
@@ -104,6 +121,17 @@ export default {
     },
     bounds() {
       return latLngBounds(this.item.data);
+    },
+  },
+  methods: {
+    onShare() {
+      console.log('TODO share');
+    },
+    onDelete() {
+      /* eslint-disable no-alert, no-restricted-globals */
+      if (confirm('Are you sure you want to remove this trip?')) {
+        this.$store.dispatch('trip/remove', this.item.id);
+      }
     },
   },
 };

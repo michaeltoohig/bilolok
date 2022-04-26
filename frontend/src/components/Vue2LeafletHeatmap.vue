@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 <template>
   <div style="display: none;">
     <slot v-if="ready"></slot>
@@ -64,7 +62,7 @@ const props = {
   },
 };
 export default {
-  name: 'LHeatmap',
+  name: 'Vue2LeafletHeatmap',
   props,
   data() {
     return {
@@ -75,6 +73,7 @@ export default {
   },
   watch: {
     latLng(newVal, oldVal) {
+      if (!this.ready) return;
       if (newVal !== oldVal) {
         this.mapObject.setLatLngs(newVal);
       }

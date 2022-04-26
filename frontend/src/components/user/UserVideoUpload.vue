@@ -6,7 +6,7 @@
       bottom
       right
       fixed
-      @click="dialog = !dialog"
+      @click="toggleUploadVideoDialog"
     >
       <v-icon>mdi-video-plus</v-icon>
     </v-btn>
@@ -25,7 +25,7 @@
           color="red"
         ><v-icon>mdi-close</v-icon></v-btn>
         <VideoJSRecord :enable="dialog" v-on:recorded-data="addVideoFile" />
-        <StatusBar :uppy="uppy" :props="uppyOptions" />
+        <StatusBar :uppy="uppy" />
       </v-card>
     </v-dialog>
   </div>
@@ -52,20 +52,13 @@ export default {
   data() {
     return {
       dialog: false,
-      uppyOptions: {
-        hideUploadButton: true,
-        hideAfterFinish: false,
-        restrictions: {
-          maxNumberOfFiles: 1,
-          allowedFileTypes: ['video/mp4'],
-        },
-      },
     };
   },
   computed: {
     ...mapGetters({
       user: 'auth/user',
       token: 'auth/token',
+      isUserVerified: 'auth/isUserVerified',
       darkMode: 'setting/darkMode',
     }),
     theme() {
@@ -75,6 +68,12 @@ export default {
       return new Uppy({
         meta: {
           Target: 'USER_VIDEO',
+        },
+        hideUploadButton: true,
+        hideAfterFinish: false,
+        restrictions: {
+          maxNumberOfFiles: 1,
+          allowedFileTypes: ['.mp4', '.mkv', '.webm'],
         },
       })
         .use(Tus, {
@@ -117,6 +116,13 @@ export default {
     },
   },
   methods: {
+    toggleUploadVideoDialog() {
+      if (this.isUserVerified) {
+        this.dialog = !this.dialog;
+      } else {
+        this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+      }
+    },
     addVideoFile(blob) {
       console.log('got file', blob);
       this.uppy.addFile({

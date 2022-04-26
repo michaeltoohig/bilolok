@@ -65,12 +65,17 @@ function commitAddImage(image, commit) {
 
 const actions = {
   getRecent: async ({ commit }) => {
+    const threshold = 3; // XXX hardcoded value
     const response = await imagesApi.getRecent();
-    const images = response.data;
-    images.forEach((item) => {
+    let items = response.data;
+    if (!items.length < threshold) {
+      const response = await imagesApi.getAll({ limit: threshold });
+      items = response.data;
+    }
+    items.forEach((item) => {
       commitAddImage(item, commit);
     });
-    commit('setRecentIds', images.map(i => i.id));
+    commit('setRecentIds', items.map((i) => i.id));
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getImages(nakamalId);
@@ -89,7 +94,6 @@ const actions = {
   remove: async ({ commit, dispatch, rootState }, id) => {
     try {
       let token = rootState.auth.token;
-      const data = 
       await imagesApi.remove(token, id);
       commit('remove', id);
       dispatch('notify/add', {
@@ -99,6 +103,7 @@ const actions = {
       }, { root: true });
     }
     catch (error) {
+      console.log('Image remove error');
       await dispatch('auth/checkApiError', error, { root: true });
       dispatch('notify/add', {
         title: 'Not Allowed',
@@ -130,10 +135,17 @@ const mutations = {
     }
   },
   remove: (state, id) => {
-    const nakamalId = state.byId[id].nakamal
+    let index;
+    const nId = state.byId[id].nakamal
+    index = state.byNakamalId[nId].indexOf(id);
+    if (index !== -1) {
+      state.byNakamalId[nId].splice(index, 1);
+    }
+    index = state.recentIds.indexOf(id);
+    if (index !== -1) {
+      state.recentIds.splice(index, 1);
+    }
     state.allIds.splice(state.allIds.indexOf(id), 1);
-    state.recentIds.splice(state.recentIds.indexOf(id), 1);
-    state.byNakamalId[nakamalId].splice(state.byNakamalId[nakamalId].indexOf(id), 1);
     Vue.delete(state.byId, id);
   },
   setRecentIds: (state, ids) => {
