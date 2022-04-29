@@ -189,8 +189,10 @@ server {
   error_log /var/log/nginx/{{ domain_video }}-error.log;
   access_log /var/log/nginx/{{ domain_video }}-access.log;
 
+  alias {{ video_remote_directory }};
+
   location /videos {
-    alias {{ video_remote_directory }};
+    try_files $uri =404;
   }
 }
 
