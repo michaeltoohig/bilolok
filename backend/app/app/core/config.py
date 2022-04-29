@@ -153,6 +153,8 @@ class Settings(BaseSettings):
 
     RECENT_THRESHOLD_HOURS: int = 4
 
+    FFMPEG_COMMAND: str = "ffmpeg"
+
     class Config:
         case_sensitive = True
         json_loads = list_parse_fallback
