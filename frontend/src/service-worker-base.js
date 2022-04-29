@@ -26,6 +26,7 @@ import { WorkboxError } from 'workbox-core/_private/WorkboxError.js';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 // Used to limit entries in cache, remove entries after a certain period of time
 import { ExpirationPlugin } from 'workbox-expiration';
+import { RangeRequestsPlugin } from 'workbox-range-requests';
 
 import { apiDomain } from '@/env';
 
@@ -434,6 +435,7 @@ registerRoute(
       new CacheableResponsePlugin({
         statuses: [200],
       }),
+      RangeRequestsPlugin(),
       // Don't cache more than 50 items, and expire them after 1 days
       new ExpirationPlugin({
         maxEntries: 50,
@@ -442,6 +444,9 @@ registerRoute(
         purgeOnQuotaError: true,
       }),
     ],
+    // matchOptions: {
+    //   ignoreVary: true
+    // }
   }),
 );
 

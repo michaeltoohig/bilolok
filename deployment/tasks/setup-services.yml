@@ -34,6 +34,14 @@
 - name: start systemd api service
   systemd: "name={{ be_api_service_name }} state=restarted enabled=yes daemon_reload=yes"
 
+- name: template systemd service config for Open Graph app
+  template:
+    src: templates/og-app.service.j2
+    dest: "/etc/systemd/system/{{ be_og_app_service_name }}"
+
+- name: start systemd Open Graph app service
+  systemd: "name={{ be_og_app_service_name }} state=restarted enabled=yes daemon_reload=yes"
+
 - name: remove default nginx site config
   file: path=/etc/nginx/sites-enabled/default state=absent
 

@@ -14,23 +14,14 @@
     </template>
 
     <v-list>
-      <v-tooltip left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-list-item
-            @click.prevent="onShare"
-            v-bind="attrs"
-            v-on="on"
-          >
-            <v-list-item-icon>
-              <v-icon>mdi-share-variant</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>
-              Share
-            </v-list-item-title>
-          </v-list-item>
-        </template>
-        <span>Coming Soon!</span>
-      </v-tooltip>
+      <v-list-item @click.prevent="onShare">
+        <v-list-item-icon>
+          <v-icon>mdi-share-variant</v-icon>
+        </v-list-item-icon>
+        <v-list-item-title>
+          Share
+        </v-list-item-title>
+      </v-list-item>
       <v-list-item v-if="userCanDelete" @click.prevent="onDelete">
         <v-list-item-icon>
           <v-icon>mdi-delete</v-icon>

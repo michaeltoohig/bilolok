@@ -70,10 +70,9 @@ async def get_all(
     },
 )
 async def get_one(
-    db: AsyncSession = Depends(get_db),
-    *,
     item: ImageSchema = Depends(get_image_or_404),
 ) -> ImageSchemaOut:
+    """An image"""
     return ImageSchemaOut(**item.dict())
 
 

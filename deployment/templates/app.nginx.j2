@@ -6,14 +6,17 @@ server {
   root {{ fe_remote_directory }};
   index index.html;
 
-  location /facebook {
-    try_files $uri $uri/ /index.html;
+  location @crawler {
+    include proxy_params;
+    proxy_pass http://127.0.0.1:{{ be_og_app_service_port }};
   }
 
   location / {
-    if ($http_user_agent ~* "facebookexternalhit") {
-      rewrite ^ /facebook$request_uri;
-      break;
+    if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
+      if ($http_user_agent ~ facebookexternalhit) {
+        gzip off;
+      }
+      proxy_pass @crawler;
     }
     return 301 https://{{ domain }}$request_uri;
   }
@@ -35,14 +38,17 @@ server {
   root {{ fe_remote_directory }};
   index index.html;
 
-  location /facebook {
-    try_files $uri $uri/ /index.html;
+  location @crawler {
+    include proxy_params;
+    proxy_pass http://127.0.0.1:{{ be_og_app_service_port }};
   }
 
   location / {
-    if ($http_user_agent ~* "facebookexternalhit") {
-      rewrite ^ /facebook$request_uri;
-      break;
+    if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
+      if ($http_user_agent ~ facebookexternalhit) {
+        gzip off;
+      }
+      proxy_pass @crawler;
     }
     return 301 https://{{ domain }}$request_uri;
   }
@@ -67,14 +73,17 @@ server {
   root {{ fe_remote_directory }};
   index index.html;
 
-  location /facebook {
-    try_files $uri $uri/ /index.html;
+  location @crawler {
+    include proxy_params;
+    proxy_pass http://127.0.0.1:{{ be_og_app_service_port }};
   }
 
   location / {
-    if ($http_user_agent ~* "facebookexternalhit") {
-      rewrite ^ /facebook$request_uri;
-      break;
+    if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
+      if ($http_user_agent ~ facebookexternalhit) {
+        gzip off;
+      }
+      proxy_pass @crawler;
     }
     try_files $uri $uri/ /index.html;
   }

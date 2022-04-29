@@ -23,7 +23,7 @@
           <span>{{ formatTime(timestamp) }}</span>
         </v-tooltip>
         <div v-if="nakamal && linkNakamal">
-          <a @click="$router.push({ name: 'Nakamal', params: { id: nakamal.id } })">
+          <a @click="toNakamal">
             <h3 class="primary--text">{{ nakamal.name }}</h3>
           </a>
         </div>
@@ -79,6 +79,13 @@ export default {
         return images[0];
       }
       return null;
+    },
+    toNakamal() {
+      const { id } = this.nakamal;
+      this.$store.dispatch('nakamal/select', id)
+        .then(() => {
+          this.$router.push({ name: 'Nakamal', params: { id } });
+        });
     },
   },
 };

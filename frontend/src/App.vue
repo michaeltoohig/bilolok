@@ -137,8 +137,6 @@
             </p>
           </v-card-text>
           <v-card-actions>
-            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
-            <v-spacer></v-spacer>
             <v-btn
               text
               outlined
@@ -147,6 +145,8 @@
             >
               Send Email Verification
             </v-btn>
+            <v-spacer></v-spacer>
+            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -218,7 +218,7 @@ export default {
       },
       {
         property: 'og:image',
-        content: 'https://bilolok.com/img/BilolokCover.png',
+        content: 'https://bilolok.com/img/cover.jpg',
         vmid: 'og:image',
       },
       {

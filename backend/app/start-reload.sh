@@ -8,7 +8,6 @@ elif [ -f /app/main.py ]; then
 elif [ -f ./app/main.py ]; then
     DEFAULT_MODULE_NAME=app.main
 fi
-# DEFAULT_MODULE_NAME=app.main
 
 MODULE_NAME=${MODULE_NAME:-$DEFAULT_MODULE_NAME}
 VARIABLE_NAME=${VARIABLE_NAME:-app}

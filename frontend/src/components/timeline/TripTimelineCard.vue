@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import { domain } from '@/env';
 import {
   latLngBounds, icon,
 } from 'leaflet';
@@ -97,11 +98,13 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isLoggedIn: 'auth/isLoggedIn',
       user: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
       darkMode: 'setting/darkMode',
     }),
     isMine() {
+      if (!this.isLoggedIn) return false;
       return this.item.user.id === this.user.id;
     },
     userCanDelete() {
@@ -124,8 +127,38 @@ export default {
     },
   },
   methods: {
-    onShare() {
-      console.log('TODO share');
+    async onShare() {
+      const text = `User's trip to ${this.item.nakamal.name} on Bilolok!`;
+      const url = `${domain}/trip/${this.item.id}`;
+      if (navigator.share) {
+        const { title } = document;
+        navigator.share({
+          url,
+          title,
+          text,
+        }).then(() => {
+          this.$store.dispatch('notify/add', {
+            title: 'Thanks For Sharing!',
+            text: 'We appreciate you letting others know about Bilolok.',
+            type: 'primary',
+          });
+        });
+      } else {
+        if (!navigator.clipboard) {
+          await this.$store.dispatch('notify/add', {
+            title: 'Share Not Available',
+            text: 'Your device does not support sharing.',
+            type: 'error',
+          });
+          return;
+        }
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        await this.$store.dispatch('notify/add', {
+          title: 'Copied to Clipboard!',
+          text: 'We appreciate you letting others know about Bilolok.',
+          type: 'primary',
+        });
+      }
     },
     onDelete() {
       /* eslint-disable no-alert, no-restricted-globals */

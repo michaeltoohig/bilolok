@@ -7,27 +7,48 @@
     - name: Create a local backup directory
       delegate_to: localhost
       file:
-        path: ../backup/images/users
+        path: ../_backup/images/users
         mode: 0755
         state: directory
     - name: Copy user images
       synchronize:
         mode: pull
-        src: "{{ root_directory }}/images/users"
-        dest: ../backup/images/
+        src: "{{ data_directory }}/images/users"
+        dest: ../_backup/images/
         recursive: yes
     - name: Create a local backup directory
       delegate_to: localhost
       file:
-        path: ../backup/images/nakamals
+        path: ../_backup/images/nakamals
         mode: 0755
         state: directory
     - name: Copy nakamal images
       synchronize:
         mode: pull
-        src: "{{ root_directory }}/images/nakamals"
-        dest: ../backup/images/
+        src: "{{ data_directory }}/images/nakamals"
+        dest: ../_backup/images/
         recursive: yes
+
+- name: Backup video files
+  gather_facts: false
+  hosts: webservers
+  tasks:
+    - name: Create a local backup directory
+      delegate_to: localhost
+      file:
+        path: ../_backup/videos
+        mode: 0755
+        state: directory
+    - name: Copy videos
+      synchronize:
+        mode: pull
+        src: "{{ data_directory }}/videos"
+        dest: ../_backup/videos/
+        recursive: yes
+        rsync_opts:
+          - "--include=original/**"
+          - "--exclude=*.webm"
+          - "--exclude=*.jpg"
 
 - name: Backup database
   gather_facts: false
@@ -48,13 +69,13 @@
     - name: Create a local backup directory
       delegate_to: localhost
       file:
-        path: ../backup/db
+        path: ../_backup/db
         mode: 0755
         state: directory
     - name: "Fetch backup from the server"
       fetch:
         src: "{{ remote_backup_dir }}/dump_{{ now }}.sql.gz"
-        dest: "../backup/db/dump_{{ now }}.sql.gz"
+        dest: "../_backup/db/dump_{{ now }}.sql.gz"
         flat: yes
 
 # To restore the database

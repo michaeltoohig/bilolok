@@ -15,6 +15,7 @@ from app.models.user import User
 from app.schemas.checkin import (CheckinSchema, CheckinSchemaIn,
                                  CheckinSchemaOut)
 
+# TODO remove crud router
 router = SQLAlchemyCRUDRouter(
     prefix="checkins",
     tags=["checkins"],
@@ -22,6 +23,7 @@ router = SQLAlchemyCRUDRouter(
     create_schema=CheckinSchemaIn,
     db_model=Checkin,
     db=get_db,
+    get_one_route=False,
     get_all_route=False,
     create_route=False,
     update_route=False,
@@ -44,6 +46,22 @@ async def get_all(
     else:
         items = await crud_checkin.get_multi(skip=skip, limit=limit)
     return [CheckinSchemaOut(**item.dict()) for item in items]
+
+
+@router.get(
+    "/{item_id:uuid}",
+    response_model=CheckinSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Checkin not found.",
+        },
+    },
+)
+async def get_one(
+    item: CheckinSchema = Depends(get_checkin_or_404),
+) -> CheckinSchemaOut:
+    """A check-in at a nakamal"""
+    return CheckinSchemaOut(**item.dict())
 
 
 @router.post(

@@ -1,0 +1,76 @@
+{% macro og_tag(property, content) %}
+<meta property="{{ property }}" content="{{ content }}">
+{% endmacro %}
+
+{% macro default_og_title() %}
+{{ og_tag("og:title", "Bilolok | it means kava") }}
+{% endmacro %}
+
+{% macro default_og_description() %}
+{{ og_tag("og:description", "Bilolok is an app for kava bars and kava drinkers in Port Vila, Vanuatu.") }}
+{% endmacro %}
+
+{% macro og_image(url, width, height, type) %}
+{{ og_tag("og:image", url) }}
+{{ og_tag("og:image:width", width) }}
+{{ og_tag("og:image:height", height) }}
+{{ og_tag("og:image:type", type) }}
+{% endmacro %}
+
+{% macro default_og_image() %}
+{{ og_image("https://bilolok.com/img/cover.jpg", 1448, 636, "image/jpeg") }}
+{% endmacro %}
+
+{% macro og_video(url, width, height, type) %}
+{{ og_tag("og:video", url) }}
+{{ og_tag("og:video:width", width) }}
+{{ og_tag("og:video:height", height) }}
+{{ og_tag("og:video:type", type) }}
+{% endmacro %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="worker-src 'self'">
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="manifest" crossorigin="use-credentials" href="manifest.webmanifest" />
+
+  <!-- HTML Meta Tags -->
+  <title>Bilolok | it means kava</title>
+  <meta name="description" content="Bilolok is an app for kava bars and kava drinkers in Port Vila, Vanuatu.">
+
+  <!-- Open Graph Meta Tags -->
+  {% block og_content %}
+  {{ default_og_title() }}
+  {{ default_og_description() }}
+  {{ og_tag("og:type", "website") }}
+  {{ og_tag("og:url", "https://bilolok.com") }}
+  {{ default_og_image() }}
+  {% endblock og_content %}
+</head>
+
+<body>
+  <div id="main">
+    <h1>Bilolok</h1>
+    <a href="https://bilolok.com">Go to main website.</a>
+    <div>
+      {% block extra %}{% endblock %}
+    </div>
+  </div>
+</body>
+
+<style>
+  #main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    text-align: center;
+  }
+</style>
+</html>

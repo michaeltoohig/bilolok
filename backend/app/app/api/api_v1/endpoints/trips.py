@@ -16,6 +16,7 @@ from app.models.user import User
 from app.schemas.trip import (TripSchema, TripSchemaIn,
                                  TripSchemaOut)
 
+# TODO remove crud router
 router = SQLAlchemyCRUDRouter(
     prefix="trips",
     tags=["trips"],
@@ -48,6 +49,22 @@ async def get_all(
     return [TripSchemaOut(**item.dict()) for item in items]
 
 
+@router.get(
+    "/{item_id:uuid}",
+    response_model=TripSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Trip not found.",
+        },
+    },
+)
+async def get_one(
+    item: TripSchema = Depends(get_trip_or_404),
+) -> TripSchemaOut:
+    """Trip to a nakamal"""
+    return TripSchemaOut(**item.dict())
+
+
 @router.post(
     "",
     response_model=TripSchemaOut,
@@ -62,24 +79,6 @@ async def create_one(
     """Trip to a nakamal"""
     crud_trip = CRUDTrip(db)
     item = await crud_trip.create(payload, user_id=user.id)
-    return TripSchemaOut(**item.dict())
-
-
-@router.get(
-    "/{item_id:uuid}",
-    response_model=TripSchemaOut,
-    responses={
-        status.HTTP_404_NOT_FOUND: {
-            "detail": "Trip not found.",
-        },
-    },
-)
-async def get_one(
-    db: AsyncSession = Depends(get_db),
-    *,
-    item: TripSchema = Depends(get_trip_or_404),
-) -> TripSchemaOut:
-    """Trip to a nakamal"""
     return TripSchemaOut(**item.dict())
 
 

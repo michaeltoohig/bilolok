@@ -20,7 +20,7 @@ node_modules/
 .vault_pass
 
 # backup
-backup/
+_backup/
 
 # vapid
 vapid_private.pem

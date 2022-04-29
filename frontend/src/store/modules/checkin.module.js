@@ -87,6 +87,11 @@ const actions = {
       commitAddCheckin(item, commit);
     });
   },
+  getOne: async ({ commit }, id) => {
+    let response = await checkinsApi.get(id);
+    const checkin = response.data;
+    commitAddCheckin(checkin, commit);
+  },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
     const response = await checkinsApi.getRecent();

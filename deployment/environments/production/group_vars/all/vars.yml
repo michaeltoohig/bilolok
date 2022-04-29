@@ -26,7 +26,10 @@ data_directory: "{{ root_directory }}/data"
 be_worker_service_name: bilolok-worker.service
 be_api_service_name: api.bilolok.service
 be_api_service_port: 5000
+be_og_app_service_name: bilolok-og-app.service
+be_og_app_service_port: 5001
 be_remote_directory: "{{ repo_directory }}/backend/app"
+
 
 fe_local_directory: ../frontend
 fe_remote_directory: "{{ root_directory }}/www"

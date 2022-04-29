@@ -4,6 +4,10 @@ import http from './http-common';
 const resource = 'images';
 
 export default {
+  async get(id) {
+    return http.get(`${resource}/${id}`);
+  },
+
   async getAll(params) {
     return http.get(`${resource}`, {
       params: {

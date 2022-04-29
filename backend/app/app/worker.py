@@ -65,6 +65,7 @@ class WorkerSettings:
             "app.tasks.nakamal.select_featured_nakamal",
             hour=0,
             minute=0,
+            run_at_startup=True,  # our redis is currently not persistent so we need to run this at startup
         ),
     ]
     on_startup = startup

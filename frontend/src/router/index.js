@@ -57,6 +57,26 @@ const routes = [
     component: () => import(/* webpackChunkName: "public" */ '@/views/NakamalEdit.vue'),
   },
   {
+    path: '/checkin/:id',
+    name: 'Checkin',
+    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Checkin.vue'),
+  },
+  {
+    path: '/image/:id',
+    name: 'Checkin',
+    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Image.vue'),
+  },
+  {
+    path: '/trip/:id',
+    name: 'Checkin',
+    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Trip.vue'),
+  },
+  {
+    path: '/video/:id',
+    name: 'Checkin',
+    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Video.vue'),
+  },
+  {
     path: '/admin',
     name: 'Admin',
     redirect: '/admin/users/all',

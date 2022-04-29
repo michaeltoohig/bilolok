@@ -87,6 +87,11 @@ const actions = {
       commitAddTrip(item, commit);
     });
   },
+  getOne: async ({ commit }, id) => {
+    let response = await tripsApi.get(id);
+    const trip = response.data;
+    commitAddTrip(trip, commit);
+  },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
     const response = await tripsApi.getRecent();

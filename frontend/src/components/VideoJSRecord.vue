@@ -102,7 +102,14 @@ export default {
             debug: true,
             autoMuteDevice: true,
             pip: false,
-            audio: true,
+            audio: {
+              // Debugging audio quality problems; looking for best set of options
+              channels: 2,
+              autoGainControl: false,
+              googAutoGainControl: false,
+              echoCancellation: false,
+              noiseSuppression: false,
+            },
             maxLength: 10,
             aspectRatio: '1:1',
             video: {

@@ -1,0 +1,7 @@
+{% block og_content %}
+{{ og_tag("og:title", title) }}
+{{ default_og_description() }}
+{{ og_tag("og:type", "website") }}
+{{ og_tag("og:url", request.url) }}
+{{ default_og_image() }}
+{% endblock %}

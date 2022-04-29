@@ -8,9 +8,10 @@
     >
       <v-card-title></v-card-title>
     </v-img>
-
-    <v-card-title class="pb-0">
-      {{ nakamal.name }}
+    <v-card-title class="pb-0 primary--text">
+      <a @click="viewPage(nakamal.id)">
+        {{ nakamal.name }}
+      </a>
     </v-card-title>
     <v-card-subtitle v-if="nakamal.aliases.length" class="pt-2">
       {{ nakamal.aliases.join(', ') }}
@@ -72,6 +73,9 @@ export default {
     },
   },
   methods: {
+    // async onShare() {
+    //   console.log('ok');
+    // },
     viewPage(id) {
       this.$store.dispatch('nakamal/select', id)
         .then(() => {

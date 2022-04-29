@@ -1,0 +1,8 @@
+{% block og_content %}
+{{ og_tag("og:title", title) }}
+{{ default_og_description() }}
+{{ og_tag("og:type", "video") }}
+{{ og_tag("og:url", request.url) }}
+{{ og_image(image.cover, 480, 480, "image/jpeg") }}
+{{ og_video(image.src, 480, 480, "video/webm") }}
+{% endblock %}

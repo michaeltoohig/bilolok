@@ -13,7 +13,7 @@
       ></BaseTimelineCardMenu>
     </template>
     <v-card-text v-if="item.status==='COMPLETE'">
-      <video width="100%" :poster="item.cover" controls>
+      <video width="100%" :poster="item.cover" controls crossorigin="anonymous">
         <source :src="item.src" type="video/webm">
         <v-alert
           class="mx-auto elevation-2"
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import { domain } from '@/env';
 import { mapGetters } from 'vuex';
 import BaseTimelineCard from '@/components/timeline/BaseTimelineCard.vue';
 import BaseTimelineCardMenu from '@/components/timeline/BaseTimelineCardMenu.vue';
@@ -79,10 +80,12 @@ export default {
   },
   computed: {
     ...mapGetters({
+      isLoggedIn: 'auth/isLoggedIn',
       user: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
     }),
     isMine() {
+      if (!this.isLoggedIn) return false;
       return this.item.user.id === this.user.id;
     },
     userCanDelete() {
@@ -90,8 +93,38 @@ export default {
     },
   },
   methods: {
-    onShare() {
-      console.log('TODO share');
+    async onShare() {
+      const text = 'Video on Bilolok!';
+      const url = `${domain}/video/${this.item.id}`;
+      if (navigator.share) {
+        const { title } = document;
+        navigator.share({
+          url,
+          title,
+          text,
+        }).then(() => {
+          this.$store.dispatch('notify/add', {
+            title: 'Thanks For Sharing!',
+            text: 'We appreciate you letting others know about Bilolok.',
+            type: 'primary',
+          });
+        });
+      } else {
+        if (!navigator.clipboard) {
+          await this.$store.dispatch('notify/add', {
+            title: 'Share Not Available',
+            text: 'Your device does not support sharing.',
+            type: 'error',
+          });
+          return;
+        }
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        await this.$store.dispatch('notify/add', {
+          title: 'Copied to Clipboard!',
+          text: 'We appreciate you letting others know about Bilolok.',
+          type: 'primary',
+        });
+      }
     },
     onDelete() {
       /* eslint-disable no-alert, no-restricted-globals */

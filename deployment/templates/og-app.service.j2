@@ -1,0 +1,15 @@
+[Unit]
+Description=Start Bilolok Open Graph App
+After=network.target
+
+[Service]
+Environment=HOST=127.0.0.1 PORT={{ be_og_app_service_port }}
+User=root
+Group=www-data
+WorkingDirectory={{ be_remote_directory }}
+Environment="PATH={{ poetry_env_path }}"
+EnvironmentFile={{ repo_directory }}/.env
+ExecStart={{ poetry_env_path }}/bin/gunicorn -k uvicorn.workers.UvicornWorker -c {{ be_remote_directory }}/gunicorn_conf.py app.og_app.main:app
+
+[Install]
+WantedBy=multi-user.target

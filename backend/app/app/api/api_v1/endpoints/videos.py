@@ -54,10 +54,9 @@ async def get_all(
     },
 )
 async def get_one(
-    db: AsyncSession = Depends(get_db),
-    *,
     item: VideoSchema = Depends(get_video_or_404),
 ) -> VideoSchemaOut:
+    """A video"""
     return VideoSchemaOut(**item.dict())
 
 

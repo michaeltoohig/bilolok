@@ -64,6 +64,11 @@ function commitAddImage(image, commit) {
 };
 
 const actions = {
+  getOne: async ({ commit }, id) => {
+    let response = await imagesApi.get(id);
+    const image = response.data;
+    commitAddImage(image, commit);
+  },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
     const response = await imagesApi.getRecent();

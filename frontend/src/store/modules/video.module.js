@@ -88,6 +88,11 @@ const actions = {
       commitAddVideo(item, commit);
     });
   },
+  getOne: async ({ commit }, id) => {
+    let response = await videosApi.get(id);
+    const video = response.data;
+    commitAddVideo(video, commit);
+  },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
     const response = await videosApi.getRecent();

@@ -202,7 +202,17 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] home page recent videos
   - [x] sw cache for videos
   - [x] delete videos UI
+    - [ ] delete video/cover and original on backend
   - [x] restrict upload to verified users only
+
+- [x] Shareable pages
+  - [x] Check-ins
+  - [x] Images
+  - [x] Trips
+  - [x] Videos
+- [x] SSR OG tags
+
+- [ ] Check SW video/image caches
 
 - [ ] Chief of Nakamal
   - [ ] List
@@ -254,6 +264,20 @@ Vuex
 Vue-Router
 Vuetify
 Axios
+
+#### OpenGraph tags
+
+Currently OG tags are a mess. The OG tags are defined in multiple areas
+
+- public/index.html
+- public/facebook/index.html
+- views/*.vue
+
+Since the app is a SPA most crawlers or other websites checking for OG tags will only see the static tags set in index.html. The app views use `vue-meta` to update the OG tags and page title dynamically but again the remote websites do not load the js to get the updated values.
+
+To make things worse, Facebook, will not work on https and requires a special nginx check if the incoming request is a facebook bot then we redirect to a static file available to them via http.
+
+I believe going forward the proper solution will be an nginx check for any bots and redirects them to a flask app that can quickly spit out an empty html page with OG tags properly set. Otherwise, normal users will be correctly passed to the SPA and loaded the expected content. In this static page we should include a link to the https page incase our bot check catches a real user.
 
 ### Image Handling
 
