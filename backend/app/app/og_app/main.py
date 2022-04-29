@@ -8,6 +8,7 @@ from starlette.requests import Request
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
+from app.core.config import settings
 from app.crud.user import CRUDUser
 from app.crud.nakamal import CRUDNakamal
 from app.crud.image import CRUDImage
@@ -139,7 +140,7 @@ def startup():
 
 
 app = Starlette(
-    debug=True,
+    debug=settings.DEBUG,
     routes=routes,
     exception_handlers=exception_handlers,
     on_startup=[startup],
