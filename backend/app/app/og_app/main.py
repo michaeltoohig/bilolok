@@ -8,6 +8,15 @@ from starlette.requests import Request
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
+from app.crud.user import CRUDUser
+from app.crud.nakamal import CRUDNakamal
+from app.crud.image import CRUDImage
+from app.crud.checkin import CRUDCheckin
+from app.crud.image import CRUDImage
+from app.crud.image import CRUDImage
+from app.crud.trip import CRUDTrip
+from app.crud.video import CRUDVideo
+
 templates = Jinja2Templates(directory="templates")
 
 
@@ -16,7 +25,6 @@ async def default(request):
 
 
 async def user(request):
-    from app.crud.user import CRUDUser
     id = request.path_params["id"]
     async with async_session() as db:
         crud_user = CRUDUser(db)
@@ -30,8 +38,6 @@ async def user(request):
 
 
 async def nakamal(request):
-    from app.crud.nakamal import CRUDNakamal
-    from app.crud.image import CRUDImage
     id = request.path_params["id"]
     async with async_session() as db:
         crud_nakamal = CRUDNakamal(db)
@@ -49,8 +55,6 @@ async def nakamal(request):
 
 
 async def checkin(request):
-    from app.crud.checkin import CRUDCheckin
-    from app.crud.image import CRUDImage
     id = request.path_params["id"]
     async with async_session() as db:
         crud_checkin = CRUDCheckin(db)
@@ -58,7 +62,7 @@ async def checkin(request):
         if not checkin:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         crud_image = CRUDImage(db)
-        images = await crud_image.get_multi_by_nakamal(checkin.nakamal_id, limit=1)
+        images = await crud_image.get_multi_by_nakamal(checkin.nakamal.id, limit=1)
     return templates.TemplateResponse("checkin.html", {
         "request": request,
         "checkin": checkin,
@@ -68,7 +72,6 @@ async def checkin(request):
 
 
 async def image(request):
-    from app.crud.image import CRUDImage
     id = request.path_params["id"]
     async with async_session() as db:
         crud_image = CRUDImage(db)
@@ -83,7 +86,6 @@ async def image(request):
 
 
 async def trip(request):
-    from app.crud.trip import CRUDTrip
     id = request.path_params["id"]
     async with async_session() as db:
         crud_trip = CRUDTrip(db)
@@ -98,7 +100,6 @@ async def trip(request):
 
 
 async def video(request):
-    from app.crud.video import CRUDVideo
     id = request.path_params["id"]
     async with async_session() as db:
         crud_video = CRUDVideo(db)
@@ -120,7 +121,6 @@ routes = [
     Route("/trip/{id:uuid}", trip),
     Route("/video/{id:uuid}", video),
     Route("/{path:path}", default),
-    # Mount("/static", StaticFiles(directory="static")),
 ]
 
 
