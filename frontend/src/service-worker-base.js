@@ -435,7 +435,7 @@ registerRoute(
       new CacheableResponsePlugin({
         statuses: [200],
       }),
-      RangeRequestsPlugin(),
+      new RangeRequestsPlugin(),
       // Don't cache more than 50 items, and expire them after 1 days
       new ExpirationPlugin({
         maxEntries: 50,

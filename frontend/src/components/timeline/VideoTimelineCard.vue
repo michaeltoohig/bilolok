@@ -13,7 +13,7 @@
       ></BaseTimelineCardMenu>
     </template>
     <v-card-text v-if="item.status==='COMPLETE'">
-      <video width="100%" :poster="item.cover" controls crossorigin="anonymous">
+      <video width="100%" :poster="item.cover" controls>
         <source :src="item.src" type="video/webm">
         <v-alert
           class="mx-auto elevation-2"

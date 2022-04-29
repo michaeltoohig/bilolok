@@ -18,7 +18,7 @@ from app.crud.image import CRUDImage
 from app.crud.trip import CRUDTrip
 from app.crud.video import CRUDVideo
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/og_app/templates")
 
 
 async def default(request):
@@ -110,6 +110,7 @@ async def video(request):
     return templates.TemplateResponse("video.html", {
         "request": request,
         "video": video,
+        "title": f"User uploaded video on Bilolok!",
     })
     
 
