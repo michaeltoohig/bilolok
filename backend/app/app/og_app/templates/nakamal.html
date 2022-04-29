@@ -4,7 +4,7 @@
 {{ og_tag("og:title", title) }}
 {{ default_og_description() }}
 {{ og_tag("og:type", "website") }}
-{{ og_tag("og:url", request.url) }}
+{{ og_tag("og:url", url) }}
 {%- for image in images -%}
 {{ og_image(image.src, 1280, 720, "image/jpg") }}
 {%- endfor -%}

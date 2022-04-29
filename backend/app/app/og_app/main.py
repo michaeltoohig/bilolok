@@ -35,6 +35,7 @@ async def user(request):
     return templates.TemplateResponse("user.html", {
         "request": request,
         "user": user,
+        "url": settings.FRONTEND_HOST + request.url.path,
     })
 
 
@@ -50,6 +51,7 @@ async def nakamal(request):
     return templates.TemplateResponse("nakamal.html", {
         "request": request,
         "nakamal": nakamal,
+        "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"{nakamal.name} on Bilolok!",
         "images": list(images),
     })
@@ -67,6 +69,7 @@ async def checkin(request):
     return templates.TemplateResponse("checkin.html", {
         "request": request,
         "checkin": checkin,
+        "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"Check-in at {checkin.nakamal.name} on Bilolok!",
         "images": list(images),
     })
@@ -82,6 +85,7 @@ async def image(request):
     return templates.TemplateResponse("image.html", {
         "request": request,
         "image": image,
+        "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"Image of {image.nakamal.name} on Bilolok!",
     })
 
@@ -96,6 +100,7 @@ async def trip(request):
     return templates.TemplateResponse("trip.html", {
         "request": request,
         "trip": trip,
+        "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"Trip to {trip.nakamal.name} on Bilolok!",
     })
 
@@ -110,6 +115,7 @@ async def video(request):
     return templates.TemplateResponse("video.html", {
         "request": request,
         "video": video,
+        "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"User uploaded video on Bilolok!",
     })
     

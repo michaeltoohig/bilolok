@@ -4,6 +4,6 @@
 {{ default_og_title() }}
 {{ default_og_description() }}
 {{ og_tag("og:type", "website") }}
-{{ og_tag("og:url", request.url) }}
+{{ og_tag("og:url", url) }}
 {{ og_image(user.avatar, 100, 100, "image/jpg") }}
 {% endblock %}

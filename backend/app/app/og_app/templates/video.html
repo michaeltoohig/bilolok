@@ -4,7 +4,7 @@
 {{ og_tag("og:title", title) }}
 {{ default_og_description() }}
 {{ og_tag("og:type", "video") }}
-{{ og_tag("og:url", request.url) }}
+{{ og_tag("og:url", url) }}
 {{ og_image(video.cover, 480, 480, "image/jpg") }}
 {{ og_video(video.src, 480, 480, "video/webm") }}
 {% endblock %}
