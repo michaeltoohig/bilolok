@@ -33,10 +33,10 @@ router = SQLAlchemyCRUDRouter(
     db=get_db,
     get_one_route=False,
     get_all_route=False,
+    delete_one_route=False,
     delete_all_route=False,
     create_route=[Depends(current_active_verified_user)],
     update_route=[Depends(current_active_verified_user)],
-    delete_one_route=[Depends(current_superuser)],
 )
 
 
