@@ -110,18 +110,18 @@
             bordered
             bottom
             color="red"
-            icon="mdi-lock"
+            icon="mdi-email-alert"
             overlap
-            offset-x="20"
-            offset-y="20"
+            offset-x="10"
+            offset-y="10"
           >
-            <v-btn
-              icon
+            <v-avatar
               v-bind="attrs"
               v-on="on"
+              size="30"
             >
-              <v-icon>mdi-account</v-icon>
-            </v-btn>
+              <img :src="userAvatar">
+            </v-avatar>
           </v-badge>
         </template>
 
@@ -136,7 +136,7 @@
           </v-list-item>
           <v-list-item v-if="!isUserVerified" @click="sendVerificationEmail">
             <v-list-item-icon>
-              <v-icon color="red">mdi-lock</v-icon>
+              <v-icon color="red">mdi-email-alert</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
               Send Verification Email
@@ -223,6 +223,10 @@ export default {
     }),
     isMapView() {
       return this.$route.name === 'Map';
+    },
+    userAvatar() {
+      if (!this.isLoggedIn) return null;
+      return this.$store.getters['user/find'](this.me.id).avatar;
     },
   },
   methods: {

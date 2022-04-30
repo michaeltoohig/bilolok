@@ -211,6 +211,7 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] Trips
   - [x] Videos
 - [x] SSR OG tags
+  - [ ] Facebook issue with images having "incorrect content type"
 
 - [ ] Check SW video/image caches
 

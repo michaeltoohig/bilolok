@@ -12,13 +12,16 @@
         :user-can-delete="userCanDelete"
       ></BaseTimelineCardMenu>
     </template>
-    <v-card-text>
-      <v-img
-        contain
-        :max-height="300"
-        :src="item.src"
-        :lazy-src="item.msrc"
-      ></v-img>
+    <v-card-text class="d-flex justify-center">
+      <Photoswipe :options="{ history: true }">
+        <img
+          class="timeline-image"
+          :data-image-id="image.id"
+          v-pswp="image"
+          :src="image.src"
+          :lazy-src="image.msrc"
+        />
+      </Photoswipe>
     </v-card-text>
   </BaseTimelineCard>
 </template>
@@ -46,6 +49,9 @@ export default {
     },
   },
   computed: {
+    image() {
+      return { pid: this.item.id, ...this.item };
+    },
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
       user: 'auth/user',
@@ -104,5 +110,9 @@ export default {
 </script>
 
 <style>
-
+.timeline-image {
+  max-height: 300px;
+  max-width: 100%;
+  contain: cover;
+}
 </style>

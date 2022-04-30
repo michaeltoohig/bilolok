@@ -61,9 +61,9 @@ const actions = {
       if (token) {
         saveLocalToken(token);
         commit('setToken', token);
+        await dispatch('getMe');
         commit('setLoggedIn', true);
         commit('setLogInError', false);
-        await dispatch('getMe');
         await dispatch('routeLoggedIn');
         dispatch('notify/add', {
           title: 'Log In Success',
@@ -90,6 +90,7 @@ const actions = {
     try {
       const response = await usersApi.getMe(getters.token);
       if (response.data) {
+        await dispatch('user/getOne', response.data.id, { root: true });
         commit('setUserProfile', response.data);
       }
     } catch (error) {
@@ -124,6 +125,7 @@ const actions = {
       if (token) {
         try {
           const response = await usersApi.getMe(token);
+          await dispatch('user/getOne', response.data.id, { root: true });
           commit('setLoggedIn', true);
           commit('setUserProfile', response.data);
         } catch (error) {

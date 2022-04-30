@@ -156,8 +156,13 @@
                 <h3 class="text-h5">
                   No user activity :(
                 </h3>
-                <div>
-                  This user has not uploaded an image or checked-in to a kava bar yet.
+                <div v-if="isMe">
+                  Once you start using the app more you will see the
+                  history of your activities here.
+                  Including kava bar check-ins, videos, images, etc.
+                </div>
+                <div v-else>
+                  This user has not done anything public yet on Bilolok.
                 </div>
               </v-alert>
             </div>

@@ -21,7 +21,8 @@
                 <v-avatar
                   v-if="nakamalProfile"
                   size="164"
-                  class="mx-auto mb-3"
+                  class="mx-auto mb-3 nakamal-avatar"
+                  v-ripple="{ center: true }"
                   @click="tab = 'images'"
                 >
                   <v-img
@@ -233,7 +234,7 @@ export default {
   data() {
     return {
       loading: true,
-      tab: 'details',
+      tab: 'timeline',
       uploadImageDialog: false,
       checkinDialog: false,
       checkinMsg: null,
@@ -366,5 +367,7 @@ export default {
 </script>
 
 <style>
-
+.nakamal-avatar {
+  cursor: pointer;
+}
 </style>

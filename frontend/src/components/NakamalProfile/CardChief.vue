@@ -135,6 +135,10 @@ export default {
 </script>
 
 <style>
+.user-avatar {
+  cursor: pointer;
+}
+
 .v-card--reveal {
   bottom: 0;
   opacity: 1 !important;
