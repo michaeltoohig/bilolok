@@ -422,33 +422,34 @@ registerRoute(
   }),
 );
 
-// Video cache
-registerRoute(
-  // Check to see if the request's destination is for a video
-  ({ request }) => request.destination === 'video',
-  // Use a Cache First caching strategy
-  new CacheFirst({
-    // Put all cached files in a cache named 'images'
-    cacheName: 'bilolok-videos',
-    plugins: [
-      // Ensure that only requests that result in a 200 status are cached
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-      new RangeRequestsPlugin(),
-      // Don't cache more than 50 items, and expire them after 1 days
-      new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
-        // Automatically cleanup if quota is exceeded.
-        purgeOnQuotaError: true,
-      }),
-    ],
-    // matchOptions: {
-    //   ignoreVary: true
-    // }
-  }),
-);
+// XXX Failed due to CORS issue; need to try again later.
+// // Video cache
+// registerRoute(
+//   // Check to see if the request's destination is for a video
+//   ({ request }) => request.destination === 'video',
+//   // Use a Cache First caching strategy
+//   new CacheFirst({
+//     // Put all cached files in a cache named 'images'
+//     cacheName: 'bilolok-videos',
+//     plugins: [
+//       // Ensure that only requests that result in a 200 status are cached
+//       new CacheableResponsePlugin({
+//         statuses: [200],
+//       }),
+//       new RangeRequestsPlugin(),
+//       // Don't cache more than 50 items, and expire them after 1 days
+//       new ExpirationPlugin({
+//         maxEntries: 50,
+//         maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
+//         // Automatically cleanup if quota is exceeded.
+//         purgeOnQuotaError: true,
+//       }),
+//     ],
+//     // matchOptions: {
+//     //   ignoreVary: true
+//     // }
+//   }),
+// );
 
 // Use a stale-while-revalidate strategy for all other requests.
 setDefaultHandler(new StaleWhileRevalidate());

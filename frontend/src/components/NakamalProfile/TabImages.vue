@@ -7,7 +7,7 @@
       <h2>No Images Yet</h2>
     </div>
     <Photoswipe :options="{ history: true }">
-      <v-row class="ma-0">
+      <v-row class="ma-0" no-gutters>
         <v-col
           v-for="(image, i) in images"
           :key="i"
@@ -48,8 +48,6 @@ import dayjs from 'dayjs';
 
 export default {
   name: 'TabImages',
-  components: {
-  },
   props: ['nakamal'],
   data() {
     return {

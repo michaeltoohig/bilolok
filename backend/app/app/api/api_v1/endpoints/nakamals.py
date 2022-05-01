@@ -36,7 +36,7 @@ router = SQLAlchemyCRUDRouter(
     delete_one_route=False,
     delete_all_route=False,
     create_route=[Depends(current_active_verified_user)],
-    update_route=[Depends(current_active_verified_user)],
+    update_route=False,
 )
 
 

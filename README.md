@@ -139,6 +139,7 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [x] Save the trip for showing later
   - [x] Auto submit when proximity threshold reached
   - [ ] Fix edge cases and odd behavior
+    - [ ] Compass failing to save after repeated uses without reloading page
 - [x] User profile upgrade
   - [x] show favourite nakamals (maybe ranked top 3) by check-in count
   - [x] personalized user profile picture
@@ -204,6 +205,11 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] delete videos UI
     - [ ] delete video/cover and original on backend
   - [x] restrict upload to verified users only
+  - [ ] allow upload video
+    - [x] handle video without sound
+    - [ ] limit to specific duration
+    - [x] limit to specific max size
+    - [ ] limit to square video only or process in task to sqaure video
 
 - [x] Shareable pages
   - [x] Check-ins
@@ -214,6 +220,9 @@ I would have to say adding video and some other features I'm working on is pushi
   - [ ] Facebook issue with images having "incorrect content type"
 
 - [ ] Check SW video/image caches
+  - [ ] Looks like we have to resolve cross-origin assets
+
+- [ ] Vue-tour ?
 
 - [ ] Chief of Nakamal
   - [ ] List

@@ -17,19 +17,19 @@
         <v-row>
           <v-col sm="4" cols="12">
             <v-card class="mb-3">
-              <v-card-title>
+              <v-card-title class="d-flex flex-column justify-center text-center">
                 <v-avatar
                   v-if="nakamalProfile"
                   size="164"
-                  class="mx-auto mb-3 nakamal-avatar"
+                  class="mb-5 nakamal-avatar"
                   v-ripple="{ center: true }"
-                  @click="tab = 'images'"
+                  @click="goToTabImages"
                 >
                   <v-img
                     :src="nakamalProfile.thumbnail"
                   ></v-img>
                 </v-avatar>
-                <h1 class="mx-auto" v-text="nakamal.name"></h1>
+                <h1 v-text="nakamal.name"></h1>
               </v-card-title>
               <v-card-text class="px-3 pb-3">
                 <v-alert
@@ -95,7 +95,7 @@
                 <v-tab href="#images">Images</v-tab>
               </v-tabs>
 
-              <v-card-text>
+              <v-card-text id="tab-content">
                 <v-tabs-items v-if="!loading" v-model="tab">
                   <v-tab-item value="details">
                     <TabDetails :nakamal="nakamal"></TabDetails>
@@ -288,6 +288,12 @@ export default {
     ...mapActions({
       checkin: 'checkin/add',
     }),
+    goToTabImages() {
+      this.tab = 'images';
+      setTimeout(() => {
+        this.$vuetify.goTo('#tab-content');
+      }, 200);
+    },
     toggleUploadImageDialog() {
       if (this.isUserVerified) {
         this.uploadImageDialog = !this.uploadImageDialog;

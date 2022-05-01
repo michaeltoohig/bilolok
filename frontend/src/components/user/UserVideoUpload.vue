@@ -11,6 +11,26 @@
       <v-icon>mdi-video-plus</v-icon>
     </v-btn>
 
+    <!-- TODO limit video duration for user uploads and process videos into square videos -->
+    <v-btn
+      v-show="false"
+      fab
+      color="secondary"
+      bottom
+      left
+      fixed
+      @click="openUppy = !openUppy"
+    >
+      <v-icon>mdi-upload</v-icon>
+    </v-btn>
+
+    <DashboardModal
+      :uppy="uppy"
+      :open="openUppy"
+      :plugins="[]"
+      :props="{ theme }"
+    />
+
     <v-dialog
       v-model="dialog"
       persistent
@@ -34,11 +54,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import VideoJSRecord from '@/components/VideoJSRecord.vue';
-import { StatusBar } from '@uppy/vue';
+import { DashboardModal, StatusBar } from '@uppy/vue';
 import { uploadDomain } from '@/env';
 
 import '@uppy/core/dist/style.css';
 import '@uppy/status-bar/dist/style.css';
+import '@uppy/dashboard/dist/style.css';
 
 import { Uppy } from '@uppy/core';
 import Tus from '@uppy/tus';
@@ -46,12 +67,14 @@ import Tus from '@uppy/tus';
 export default {
   name: 'UserVideoUpload',
   components: {
-    VideoJSRecord,
+    DashboardModal,
     StatusBar,
+    VideoJSRecord,
   },
   data() {
     return {
       dialog: false,
+      openUppy: false,
     };
   },
   computed: {
@@ -73,6 +96,7 @@ export default {
         hideAfterFinish: false,
         restrictions: {
           maxNumberOfFiles: 1,
+          maxFileSize: 3_000_000,
           allowedFileTypes: ['.mp4', '.mkv', '.webm'],
         },
       })
@@ -85,6 +109,7 @@ export default {
         })
         .on('complete', () => {
           console.log('complete upload');
+          this.openUppy = false;
           // Short timeout delay to allow video to process before fetching
           setTimeout(() => {
             this.$store.dispatch('video/getUser', this.user.id);
@@ -92,6 +117,7 @@ export default {
         })
         .on('upload-error', (_, error) => {
           // this.$emit('close-modal');
+          this.openUppy = false;
           if (error.isNetworkError) {
             this.$store.dispatch('notify/add', {
               title: 'Network Error',
@@ -148,6 +174,6 @@ export default {
   position: absolute;
   z-index: 10;
   top: 10px;
-  right: 10px;
+  left: 10px;
 }
 </style>

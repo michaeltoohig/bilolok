@@ -31,7 +31,7 @@ async def process_video(ctx: dict, item_id: UUID):
             ffp = Path(settings.DATA_LOCAL_DIR) / crud_video._video_filepath(video)
             logger.debug(f"Got video {str(video.id)} final path {str(ffp)}")
             # webm video
-            os.system(f"{settings.FFMPEG_COMMAND} -i {str(sfp)} -i {str(watermark)} -filter_complex '[1:v]scale=180:-2[z];[0:v][z]overlay[out]' -map '[out]' -map '0:a' -c:v libvpx -qmin 0 -qmax 25 -crf 4 -b:v 500k -acodec libvorbis {str(ffp)}")
+            os.system(f"{settings.FFMPEG_COMMAND} -i {str(sfp)} -i {str(watermark)} -filter_complex '[1:v]scale=180:-2[z];[0:v][z]overlay[out]' -map '[out]' -map '0:a?' -c:v libvpx -qmin 0 -qmax 25 -crf 4 -b:v 500k -acodec libvorbis {str(ffp)}")
             logger.info(f"Complete transcode video {str(video.id)}")
             # cover image
             ffp = Path(settings.DATA_LOCAL_DIR) / crud_video._cover_filepath(video)

@@ -70,7 +70,7 @@ function commitAddCheckin(checkin, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
   commit('add', normalizeRelations(checkin, ['nakamal', 'user']));
-  // // Add or update the nakamal.
+  // Add or update relations.
   commit('nakamal/add', checkin.nakamal, {
     root: true,
   });
@@ -125,6 +125,7 @@ const actions = {
       let response = await checkinsApi.create(token, payload);
       const checkin = response.data;
       commitAddCheckin(checkin, commit);
+      commit('addRecentId', checkin.id);
       dispatch('notify/add', {
         title: 'Checked-In!',
         text: `You are checked-in to this kava bar.`,
@@ -202,6 +203,9 @@ const mutations = {
     }
     state.allIds.splice(state.allIds.indexOf(id), 1);
     Vue.delete(state.byId, id);
+  },
+  addRecentId: (state, id) => {
+    state.recentIds.unshift(id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

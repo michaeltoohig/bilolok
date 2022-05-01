@@ -125,6 +125,7 @@ const actions = {
       let response = await tripsApi.create(token, payload);
       const trip = response.data;
       commitAddTrip(trip, commit);
+      commit('addRecentId', trip.id);
       dispatch('notify/add', {
         title: 'Trip Complete',
         text: 'You have arrived at your destination. You should now check-in to the kava bar.',
@@ -203,6 +204,9 @@ const mutations = {
     }
     state.allIds.splice(state.allIds.indexOf(id), 1);
     Vue.delete(state.byId, id);
+  },
+  addRecentId: (state, id) => {
+    state.recentIds.unshift(id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;

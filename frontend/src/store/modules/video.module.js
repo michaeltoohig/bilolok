@@ -69,7 +69,7 @@ function commitAddVideo(video, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
   commit('add', normalizeRelations(video, ['nakamal', 'user']));
-  // // Add or update the nakamal.
+  // Add or update relations.
   if (video.nakamal) {
     commit('nakamal/add', video.nakamal, {
       root: true,
@@ -124,8 +124,9 @@ const actions = {
     try {
       let token = rootState.auth.token;
       let response = await videosApi.create(token, payload);
-      const trip = response.data;
-      commitAddVideo(trip, commit);
+      const video = response.data;
+      commitAddVideo(video, commit);
+      commit('addRecentId', video.id);
       dispatch('notify/add', {
         title: 'Video Uploaded',
         text: 'Your video will be ready to view soon; we have to process it first.',
@@ -206,6 +207,9 @@ const mutations = {
     }
     state.allIds.splice(state.allIds.indexOf(id), 1);
     Vue.delete(state.byId, id);
+  },
+  addRecentId: (state, id) => {
+    state.recentIds.unshift(id);
   },
   setRecentIds: (state, ids) => {
     state.recentIds = ids;
