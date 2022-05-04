@@ -1,5 +1,5 @@
 /* eslint-disable */
-import usersApi from '@/api/users.js';
+import i18n from '@/plugins/i18n';
 import { getDarkMode, saveDarkMode, getLocale, saveLocale } from '@/utils.js';
 
 const initialState = () => ({
@@ -30,6 +30,7 @@ const actions = {
   },
   checkLocale({ commit }) {
     const locale = getLocale();
+    i18n.locale = locale;
     commit('setLocale', locale);
   },
 };
