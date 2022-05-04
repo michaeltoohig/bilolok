@@ -222,6 +222,9 @@ I would have to say adding video and some other features I'm working on is pushi
 - [ ] Check SW video/image caches
   - [ ] Looks like we have to resolve cross-origin assets
 
+- [ ] Translations
+  - [ ] Store preference same as dark/light mode
+
 - [ ] Vue-tour ?
 
 - [ ] Chief of Nakamal

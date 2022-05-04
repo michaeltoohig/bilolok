@@ -10,7 +10,7 @@
     >
       <span class="mx-auto">
       <v-icon>mdi-wifi-strength-alert-outline</v-icon>
-      You are offline!
+        {{ $t('app.offline') }}
       </span>
     </v-system-bar>
 
@@ -19,7 +19,7 @@
         <v-layout align-center justify-center>
           <v-flex>
             <div class="text-center">
-              <div class="headline my-5">Loading...</div>
+              <div class="headline my-5">{{ $t('loading.app') }}</div>
               <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
             </div>
           </v-flex>
@@ -46,19 +46,9 @@
                 dismissible
               >
                 <div class="title">
-                  Some Features Not Available.
+                  {{ $t('app.no_service_worker_title') }}
                 </div>
-                <div>
-                  Your browser does not support
-                  <a
-                    target="_blank"
-                    href="https://developers.google.com/web/fundamentals/primers/service-workers"
-                  >Service Workers</a>
-                  so many features of this app will not work as
-                  intended and it will be slower.
-                  Please consider using a more modern
-                  web browser.
-                </div>
+                <div v-html="$t('app.no_service_worker_body')" />
               </v-alert>
               <v-alert
                 v-if="updateExists"
@@ -71,10 +61,10 @@
               >
                 <v-row align="center">
                   <v-col class="grow">
-                    New Updates Available.
+                    {{ $t('app.update_available_title') }}
                   </v-col>
                   <v-col class="shrink">
-                    <v-btn @click="refreshApp">Update Now!</v-btn>
+                    <v-btn @click="refreshApp">{{ $t('app.update_available_btn') }}</v-btn>
                   </v-col>
                 </v-row>
               </v-alert>
@@ -91,26 +81,32 @@
         max-width="400"
       >
         <v-card>
-          <v-card-title>Login Required</v-card-title>
-          <v-card-subtitle>You must be logged in to perform that action.</v-card-subtitle>
+          <v-card-title>{{ $t('auth.alert.auth_required_title') }}</v-card-title>
+          <v-card-subtitle>
+            {{ $t('auth.alert.auth_required_subtitle') }}
+          </v-card-subtitle>
           <v-card-text>
-            <p>
-              We require users have an account with us to perform some actions.
-            </p>
+            <p>{{ $t('auth.alert.auth_required_body') }}</p>
           </v-card-text>
           <v-card-actions>
             <v-btn
               text
               outlined
               @click="goToLogin"
-            >Login</v-btn>
+            >
+              {{ $t('auth.login') }}
+            </v-btn>
             <v-btn
               text
               outlined
               @click="goToSignup"
-            >Register</v-btn>
+            >
+              {{ $t('auth.register') }}
+            </v-btn>
             <v-spacer></v-spacer>
-            <v-btn text @click="closeAuthModal">Close</v-btn>
+            <v-btn text @click="closeAuthModal">
+              {{ $t('buttons.close') }}
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -121,32 +117,29 @@
         max-width="400"
       >
         <v-card>
-          <v-card-title>Email Verification Required</v-card-title>
-          <v-card-subtitle>You must verify your email to perform that action.</v-card-subtitle>
+          <v-card-title>{{ $t('auth.alert.email_verification_required_title') }}</v-card-title>
+          <v-card-subtitle>
+            {{ $t('auth.alert.email_verification_required_subtitle') }}
+          </v-card-subtitle>
           <div class="d-flex justify-center">
             <v-icon size="100">mdi-email-alert</v-icon>
           </div>
           <v-card-text>
-            <p>
-              To prevent abuse we require a user verify the email address they
-              provided during sign up. Check your email for a message from
-              Bilolok with instructions to verify your email.
-            </p>
-            <p>
-              Then, you may try again.
-            </p>
+            <p>{{ $t('auth.alert.email_verification_required_body') }}</p>
           </v-card-text>
           <v-card-actions>
+            <v-btn text @click="closeUserVerifiedModal">
+              {{ $t('buttons.close') }}
+            </v-btn>
+            <v-spacer></v-spacer>
             <v-btn
               text
               outlined
               color="primary"
               @click="sendVerificationEmail"
             >
-              Send Email Verification
+              {{ $t('auth.send_verification_email') }}
             </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text @click="closeUserVerifiedModal">Close</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -158,30 +151,27 @@
         transition="dialog-top-transition"
       >
         <v-card>
-          <v-card-title>Install Bilolok App</v-card-title>
-          <v-card-subtitle>Open Bilolok directly from your homescreen or desktop</v-card-subtitle>
+          <v-card-title>{{ $t('app.install_app_title') }}</v-card-title>
+          <v-card-subtitle>{{ $t('app.install_app_subtitle') }}</v-card-subtitle>
           <v-card-text>
-            <p>
-              It only takes a few seconds and makes it easier to return to Bilolok
-              in the future since you can access Bilolok directly from your homescreen.
-            </p>
-            <p>
-              Plus, it removes the annoying browser URL bar at the top of the screen
-              so you can view the app as intended.
-            </p>
+            <p>{{ $t('app.install_app_body') }}</p>
           </v-card-text>
           <v-card-actions class="justify-end">
             <v-spacer></v-spacer>
             <v-btn
               text
               @click="showInstallPrompt = false"
-            >Cancel</v-btn>
+            >
+              {{ $t('buttons.cancel') }}
+            </v-btn>
             <v-btn
               text
               outlined
               color="primary"
               @click="installApp"
-            >Install App</v-btn>
+            >
+              {{ $t('app.install_app_btn') }}
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -301,6 +291,7 @@ export default {
   async created() {
     if (process.browser) {
       this.$store.dispatch('setting/checkDarkMode');
+      this.$store.dispatch('setting/checkLocale');
     }
     // Save prompt to allow user to install app to their phone
     window.addEventListener('beforeinstallprompt', (e) => {

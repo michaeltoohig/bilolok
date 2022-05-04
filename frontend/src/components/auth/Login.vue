@@ -1,22 +1,37 @@
 <template>
   <div>
-    <h1>Log In</h1>
-    <v-btn @click="signup">Sign Up</v-btn>
-    <v-btn @click="forgotPassword">Forgot Password</v-btn>
+    <v-alert
+      border="top"
+      colored-border
+      type="info"
+      elevation="2"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ $t('auth.register_available') }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn @click.prevent="signup">{{ $t('auth.register') }}</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+
+    <h1>{{ $t('auth.login') }}</h1>
 
     <v-text-field
       v-model.trim="username"
-      label="Email"
+      :label="$t('auth.email')"
     ></v-text-field>
     <v-text-field
       v-model="password"
-      label="Password"
+      :label="$t('auth.password')"
       type="password"
       @keydown.enter="submit"
     ></v-text-field>
 
-    <v-btn @click="submit">Submit</v-btn>
+    <v-btn @click="submit">{{ $t('buttons.submit') }}</v-btn>
 
+    <a href="#" class="ml-3" @click.prevent="forgotPassword">{{ $t('auth.forgot_password') }}</a>
   </div>
 </template>
 

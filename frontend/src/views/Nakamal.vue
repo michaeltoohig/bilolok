@@ -5,7 +5,7 @@
         <v-layout align-center justify-center>
           <v-flex>
             <div class="text-center">
-              <div class="headline my-5">Loading Kava Bar...</div>
+              <div class="headline my-5">{{ $t('loading.nakamal') }}</div>
               <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
             </div>
           </v-flex>
@@ -39,7 +39,7 @@
                   border="left"
                   class="ma-0 py-2"
                 >
-                  Has recent check-ins.
+                  {{ $t('nakamal.has_recent_checkins') }}
                 </v-alert>
               </v-card-text>
               <v-card-actions v-show="hasAdminAccess">
@@ -47,12 +47,16 @@
                   text
                   color="secondary lighten-2"
                   :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
-                >Edit</v-btn>
+                >
+                  {{ $t('buttons.edit') }}
+                </v-btn>
                 <v-btn
                   text
                   color="secondary lighten-2"
                   @click="remove"
-                >Delete</v-btn>
+                >
+                  {{ $t('buttons.delete') }}
+                </v-btn>
               </v-card-actions>
             </v-card>
             <CardChief :nakamal="nakamal"></CardChief>
@@ -68,7 +72,7 @@
                     <v-icon>mdi-map</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>View on map</v-list-item-title>
+                    <v-list-item-title>{{ $t('nakamal.view_on_map') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item @click="onShare">
@@ -76,7 +80,7 @@
                     <v-icon>mdi-share-variant</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>Share</v-list-item-title>
+                    <v-list-item-title>{{ $t('buttons.share') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -90,9 +94,9 @@
                 background-color="transparent"
                 :fixed-tabs="$vuetify.breakpoint.mdAndDown"
               >
-                <v-tab href="#details">Details</v-tab>
-                <v-tab href="#timeline">Timeline</v-tab>
-                <v-tab href="#images">Images</v-tab>
+                <v-tab href="#details">{{ $t('nakamal.tab_details') }}</v-tab>
+                <v-tab href="#timeline">{{ $t('nakamal.tab_timeline') }}</v-tab>
+                <v-tab href="#images">{{ $t('nakamal.tab_images') }}</v-tab>
               </v-tabs>
 
               <v-card-text id="tab-content">
@@ -133,7 +137,7 @@
     <v-dialog max-width="500" v-model="checkinDialog">
       <v-card>
         <v-card-title class="text-h5">
-          Check-In
+          {{ $t('checkin.title') }}
         </v-card-title>
 
         <v-card-text>
@@ -155,7 +159,7 @@
             text
             @click="checkinDialog = false"
           >
-            Close
+            {{ $t('buttons.cancel') }}
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
@@ -163,7 +167,7 @@
             text
             @click="submitCheckin"
           >
-            Submit
+            {{ $t('buttons.submit') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -349,7 +353,7 @@ export default {
     },
     remove() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove this nakamal?')) {
+      if (confirm(this.$i18n.t('nakamal.confirm_delete'))) {
         this.$store.dispatch('nakamal/remove', this.nakamal.id)
           .then(() => {
             this.$router.push({ name: 'Home' });

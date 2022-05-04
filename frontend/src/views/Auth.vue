@@ -2,7 +2,7 @@
   <div class="auth">
     <v-container>
       <v-responsive max-width="500" class="mx-auto">
-        <component :is="$route.params.auth"></component>
+        <component class="pa-3" :is="$route.params.auth"></component>
         <div class="mt-5" v-show="false">
           <v-alert color="info">
             Testing

@@ -4,7 +4,7 @@
       <v-layout align-center justify-center>
         <v-flex>
           <div class="text-center">
-            <div class="headline my-5">Loading...</div>
+            <div class="headline my-5">{{ $t('loading.defaul') }}</div>
             <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
           </div>
         </v-flex>
@@ -39,15 +39,15 @@
       </div>
       <div class="text-center">
         <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
-        <h2 class="headline text-h2">End of Today's News Feed.</h2>
-        <p>Browse our map and see what else is on Bilolok.</p>
+        <h2 class="headline text-h2">{{ $t('home.end_of_feed') }}</h2>
+        <p>{{ $t('home.end_of_feed_extra') }}</p>
         <v-btn
           x-large
           tile
           color="primary"
           :to="{ name: 'Map' }"
         >
-          Go to the Map
+          {{ $t('home.go_to_map') }}
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </div>

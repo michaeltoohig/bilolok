@@ -15,7 +15,7 @@
     <v-card-text class="d-flex flex-row justify-start align-center">
       <v-icon>mdi-marker-check</v-icon>
       <h2>
-        <span>Check-in</span>
+        <span>{{ $t('checkin.title') }}</span>
       </h2>
     </v-card-text>
     <v-card-text v-if="item.message" class="pt-0 text-h5 font-weight-normal">
@@ -96,7 +96,7 @@ export default {
     },
     onDelete() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove this check-in?')) {
+      if (confirm(this.$i18n.t('checkin.confirm_delete'))) {
         this.$store.dispatch('checkin/remove', this.item.id);
       }
     },

@@ -10,10 +10,7 @@
             <h1 class="text-h1 font-weight-bold">Bilolok</h1>
           </div>
 
-          <p class="text-center">
-            Bilolok means <strong>Kava</strong> in the local language of a small
-            village on the east, south-east side of Malekula island in Vanuatu.
-          </p>
+          <p class="text-center" v-html="$t('intro')"></p>
 
           <hr class="mb-5"/>
         </v-col>
@@ -33,7 +30,7 @@
             cols="12"
           >
             <h1 class="text-h4 font-weight-bold mb-4" :class="{'black--text': !darkMode}">
-              Explore the kava bars!
+              {{ $t('home.hero') }}
             </h1>
             <v-btn
               x-large
@@ -41,7 +38,7 @@
               color="primary"
               :to="{ name: 'Map' }"
             >
-              Go to the Map
+              {{ $t('home.go_to_map') }}
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </v-col>
@@ -53,14 +50,14 @@
       <SectionRecentTimeline />
       <div v-if="!isLoggedIn" class="text-center">
         <hr class="my-5"/>
-        <h2 class="headline text-h4">Join Bilolok</h2>
+        <h2 class="headline text-h4">{{ $t('home.join_bilolok') }}</h2>
         <v-btn
           text
           outlined
           color="primary"
           @click="goToSignup"
         >
-          Create an Account
+          {{ $t('home.join_bilolok_btn') }}
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </div>

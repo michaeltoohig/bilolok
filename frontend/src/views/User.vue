@@ -1,11 +1,11 @@
 <template>
-  <div class="nakamal">
+  <div class="user">
     <div v-if="loading">
       <v-container fill-height>
         <v-layout align-center justify-center>
           <v-flex>
             <div class="text-center">
-              <div class="headline my-5">Loading User...</div>
+              <div class="headline my-5">{{ $t('loading.user') }}</div>
               <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
             </div>
           </v-flex>
@@ -34,7 +34,7 @@
                       <v-icon>mdi-camera-plus</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title>Change Profile</v-list-item-title>
+                      <v-list-item-title>{{ $t('user.change_profile_image') }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item v-if="isMe && !isDefaultProfile" @click="removeUserProfile">
@@ -42,7 +42,7 @@
                       <v-icon>mdi-camera-off</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title>Remove Profile</v-list-item-title>
+                      <v-list-item-title>{{ $t('user.remove_profile_image') }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                   <v-list-item @click="onShare">
@@ -50,7 +50,7 @@
                       <v-icon>mdi-share-variant</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                      <v-list-item-title>Share</v-list-item-title>
+                      <v-list-item-title>{{ $t('buttons.share') }}</v-list-item-title>
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
@@ -58,13 +58,13 @@
             </v-card>
 
             <v-list subheader class="elevation-3 mb-3">
-              <v-subheader>Favorite Kava Bars This Month</v-subheader>
+              <v-subheader>{{ $t('user.favorite_nakamals') }}</v-subheader>
               <v-list-item v-if="topNakamalsByCheckins.length === 0">
                 <v-list-item-icon class="mr-3">
                   <v-icon>mdi-emoticon-sad-outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>No check-ins this month</v-list-item-title>
+                  <v-list-item-title>{{ $t('user.favorite_nakamals_none') }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item
@@ -78,7 +78,9 @@
                   <v-list-item-title v-else class="font-weight-light">
                     {{ item.nakamal.name }}
                   </v-list-item-title>
-                  <v-list-item-subtitle>Check-ins: {{ item.count }}</v-list-item-subtitle>
+                  <v-list-item-subtitle>
+                    {{ $t('checkin.title') }}: {{ item.count }}
+                  </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-avatar
                   v-if="nakamalAvatar(item.nakamal.id)"
@@ -101,12 +103,10 @@
               text
             >
               <h3 class="text-h5">
-                Email Not Verified
+                {{ $t('auth.email_not_verified_title') }}
               </h3>
               <div>
-                Your email account is not yet verified. You will not be
-                able to perform some actions until you verify your email
-                account.
+                {{ $t('auth.email_not_verified_body') }}
               </div>
               <v-divider
                 class="my-4 info"
@@ -117,7 +117,7 @@
                   color="info"
                   @click="sendVerificationEmail"
                 >
-                  Send Verification Email
+                  {{ $t('auth.send_verification_email') }}
                 </v-btn>
               </div>
             </v-alert>
@@ -154,15 +154,13 @@
                 text
               >
                 <h3 class="text-h5">
-                  No user activity :(
+                  {{ $t('user.no_activity_title') }}
                 </h3>
                 <div v-if="isMe">
-                  Once you start using the app more you will see the
-                  history of your activities here.
-                  Including kava bar check-ins, videos, images, etc.
+                  {{ $t('user.no_activity_private_body') }}
                 </div>
                 <div v-else>
-                  This user has not done anything public yet on Bilolok.
+                  {{ $t('user.no_activity_public_body') }}
                 </div>
               </v-alert>
             </div>
@@ -320,7 +318,7 @@ export default {
     },
     async removeUserProfile() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove your profile picture?')) {
+      if (confirm(this.$i18n.t('user.remove_profile_image_confirm'))) {
         await this.$store.dispatch('user/removeProfile');
       }
     },

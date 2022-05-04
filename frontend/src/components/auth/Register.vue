@@ -1,24 +1,39 @@
 <template>
   <div>
-    <h1>Sign Up</h1>
-    <v-btn @click="login">Log In</v-btn>
+    <v-alert
+      border="top"
+      colored-border
+      type="info"
+      elevation="2"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ $t('auth.login_available') }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn @click.prevent="login">{{ $t('auth.login') }}</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+
+    <h1>{{ $t('auth.register') }}</h1>
 
     <v-text-field
       v-model.trim="email"
-      label="Email"
+      :label="$t('auth.email')"
     ></v-text-field>
     <v-text-field
       v-model="password"
-      label="Password"
+      :label="$t('auth.password')"
       type="password"
     ></v-text-field>
     <v-text-field
       v-model="confirmPassword"
-      label="Confirm Password"
+      :label="$t('auth.confirm_password')"
       type="password"
     ></v-text-field>
 
-    <v-btn :disabled="!isValid" @click="submit">Submit</v-btn>
+    <v-btn :disabled="!isValid" @click="submit">{{ $t('buttons.submit') }}</v-btn>
 
   </div>
 </template>

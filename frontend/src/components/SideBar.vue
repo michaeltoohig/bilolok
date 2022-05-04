@@ -12,7 +12,7 @@
             Bilolok
           </v-list-item-title>
           <v-list-item-subtitle>
-            ...means kava
+            {{ $t('tagline') }}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -28,7 +28,7 @@
           <v-list-item-icon>
             <v-icon>mdi-key</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>Admin</v-list-item-title>
+          <v-list-item-title>{{ $t('menu.admin') }}</v-list-item-title>
         </v-list-item>
         <v-list-item
           v-for="item in items"
@@ -40,13 +40,13 @@
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
 
       <div v-show="isMapView">
-        <v-subheader>Nakamals in view</v-subheader>
+        <v-subheader>{{ $t('menu.nakamals_in_view') }}</v-subheader>
         <BoundedNakamalsList v-on:close-drawer="drawer = false"></BoundedNakamalsList>
         <v-divider></v-divider>
       </div>
@@ -62,7 +62,7 @@
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item-title>{{ $t(item.title) }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -80,6 +80,8 @@
 
       <v-spacer></v-spacer>
 
+      <SelectLocale />
+
       <v-btn
         icon
         @click="toggleDarkMode"
@@ -95,7 +97,7 @@
         outlined
         :to="{ name: 'Auth', params: { auth: 'login' } }"
       >
-        Login
+        {{ $t('auth.login') }}
       </v-btn>
 
       <v-menu
@@ -131,7 +133,7 @@
               <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              Profile
+              {{ $t('user.profile') }}
             </v-list-item-title>
           </v-list-item>
           <v-list-item v-if="!isUserVerified" @click="sendVerificationEmail">
@@ -139,7 +141,7 @@
               <v-icon color="red">mdi-email-alert</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              Send Verification Email
+              {{ $t('auth.send_verification_email') }}
             </v-list-item-title>
           </v-list-item>
 
@@ -150,7 +152,7 @@
               <v-icon>mdi-logout</v-icon>
             </v-list-item-icon>
             <v-list-item-title>
-              Log Out
+              {{ $t('auth.logout') }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -162,11 +164,13 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import SelectLocale from '@/components/SelectLocale.vue';
 import BoundedNakamalsList from '@/components/BoundedNakamalsList.vue';
 
 export default {
   name: 'SideBar',
   components: {
+    SelectLocale,
     BoundedNakamalsList,
   },
   data() {
@@ -174,34 +178,34 @@ export default {
       drawer: this.$vuetify.breakpoint.mdAndUp,
       items: [
         {
-          title: 'Home',
+          title: 'menu.home',
           link: { name: 'Home' },
           icon: 'mdi-home',
         },
         {
-          title: 'Map',
+          title: 'menu.map',
           link: { name: 'Map' },
           icon: 'mdi-map',
         },
         {
-          title: 'Users',
+          title: 'menu.users',
           link: { name: 'UserList' },
           icon: 'mdi-account-box-multiple',
         },
         {
-          title: 'About',
+          title: 'menu.about',
           link: { name: 'About' },
           icon: 'mdi-information-variant',
         },
       ],
       remoteItems: [
         {
-          title: 'Follow our FB Page',
+          title: 'menu.fb_page',
           href: 'https://www.facebook.com/bilolokapp',
           icon: 'mdi-facebook',
         },
         {
-          title: 'Join our FB Group',
+          title: 'menu.fb_group',
           href: 'https://www.facebook.com/groups/573807847105108',
           icon: 'mdi-facebook',
         },
@@ -241,6 +245,10 @@ export default {
     },
     toggleDarkMode() {
       this.$store.dispatch('setting/setDarkMode', !this.darkMode);
+    },
+    toggleLang() {
+      console.log('lang', this.$i18n.locale);
+      this.$i18n.locale = 'bi';
     },
   },
 };

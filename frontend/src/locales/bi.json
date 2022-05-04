@@ -1,0 +1,139 @@
+{
+  "intro": "Bilolok i minim <strong>Kava</strong> long lanwej long wan vilij long ist, saot-ist Malekula long Vanuatu.",
+  "tagline": "i minim kava",
+  "app": {
+    "offline": "Yu offline!",
+    "update_available_title": "I Kat Apdeit",
+    "update_available_btn": "Apdeitem Naoia!",
+    "install_app_title": "Install Bilolok App",
+    "install_app_subtitle": "Yu save openem Bilolok app lo fon blong yu olsem wan app",
+    "install_app_body": "I mekem Bilolok app stap lo hom skrin blong fon blong yu. I isi blong kam bak lo Bilolok tumoro.",
+    "install_app_btn": "Installem Bilolok Naoia!",
+    "no_service_worker_title": "Sam Samting I No Gud",
+    "no_service_worker_body": "Web browser blong yu i no supotem <a target='_blank' href='https://developers.google.com/web/fundamentals/primers/service-workers'>Service Workers</a> minim se sam samting long Bilolok i no save wok gud mo Bilolok app bae i no hariap tumas. Yu sud usum wan web browser we hemi no olfala tumas."
+  },
+  "loading": {
+    "app": "Stap Loadem Bilolok App...",
+    "default": "Stap Loadem...",
+    "user": "Stap Loadem User ia...",
+    "nakamal": "Stap Loadem Kava Bar ia...",
+    "map": "Stap Loadem Ol Kava Bar..."
+  },
+  "buttons": {
+    "cancel": "Kanselem",
+    "close": "Klosem",
+    "delete": "Aotem",
+    "edit": "Edit",
+    "save": "Sevem",
+    "share": "Serem",
+    "submit": "Submitim"
+  },
+  "home": {
+    "hero": "Luk ol kava bar long map!",
+    "go_to_map": "Ko long map",
+    "end_of_feed": "Ol Post Blong Tete i Finis ia.",
+    "end_of_feed_extra": "Traem lukluk map blo lukaotem ol narafala samting long Bilolok.",
+    "join_bilolok": "Joenem Bilolok",
+    "join_bilolok_btn": "Saenap long Bilolok Naoia"
+  },
+  "menu": {
+    "admin": "Maneja",
+    "home": "Hom",
+    "map": "Map",
+    "users": "Ol Users",
+    "about": "Baot",
+    "nakamals_in_view": "Ol Nakamal",
+    "fb_page": "Leikem Facebook paeg",
+    "fb_group": "Joenem Facebook grup"
+  },
+  "nakamal": {
+    "confirm_delete": "Yu wantem aotem kava bar ia?",
+    "attrs": {
+      "light": "Laet",
+      "area": "Eria",
+      "kava_source": "Kava blong wea",
+      "number_of_windows": "Namba blong windo",
+      "other_names": "Narafala nem blong kava bar",
+      "owner": "Owna blong kava bar",
+      "phone": "Namba blong owna",
+      "checkins_today": "Namba blong jek-in tete",
+      "checkins_month": "Namba blong jek-in long manis",
+      "resources": "Kava bar ia i kat...",
+      "resources_none": "...kava nomo"
+    },
+    "has_recent_checkins": "I kat jek-in tete.",
+    "view_on_map": "Luk Long Map",
+    "tab_details": "Ditel",
+    "tab_timeline": "Taem Laen",
+    "tab_timeline_be_first_to_checkin": "I no kat jek-in long kava bar ia iet. Yu save mekem jek-in festaem long ol narafala man!",
+    "tab_images": "Ol Pikja",
+    "tab_images_none": "No kat pikja blong kava bar ia iet",
+    "tab_images_confirm_delete": "Yu wantem aotem pikja ia?",
+    "chief": "Jif",
+    "chief_checkins_this_month": "Namba blong jek-in",
+    "chief_what_is_this": "Hemia man we namba blong jek-in blong hem i bitim ol narafala man lo las 30 dei.",
+    "chief_what_is_this_btn": "Wanem ia?"
+  },
+  "user": {
+    "profile": "Profael",
+    "change_profile_image": "Apdeitem Profael",
+    "remove_profile_image": "Aotem Profael",
+    "remove_profile_image_confirm": "Yu wantem aotem profael pikja blong yu?",
+    "favorite_nakamals": "Ol Favorite Kava Bar Long Manis Ia",
+    "favorite_nakamals_none": "No kat jek-in long manis ia",
+    "no_activity_title": "I no kat :(",
+    "no_activity_private_body": "Taem yu usum Bilolok app ia, bambae yu luk ol samting we yu mekem lo ples ia olsem ol pikja, ol video, ol jek-in long kava bar blong yu.",
+    "no_activity_public_body": "Man ia i no kat samting we hemi sharem lo pablik."
+  },
+  "auth": {
+    "email": "Imeil",
+    "password": "Paswod",
+    "confirm_password": "Raetem Paswod Bakegen",
+    "logout": "Saen Aot",
+    "login": "Saen In",
+    "login_available": "Yu joenem Bilolok finis?",
+    "register": "Joenem Bilolok",
+    "register_available": "Yu no bin joenem Bilolok iet?",
+    "forgot_password": "Forgetem paswod blo mi",
+    "reset_password": "Mekem Niu Paswod",
+    "email_not_verified_title": "Imeil no kat verification",
+    "email_not_verified_body": "Imeil blong yu no kat verification iet. Yu no save mekem sam samting long Bilolok app ia kasem taem yu mekem verification blong imeil blong yu.",
+    "send_verification_email": "Sendem verification imeil",
+    "verify_email": "Confirm se imeil ia hemi blong mi",
+    "verify_email_body": "Yu klik long hemia i minim se imeil ia hemi imeil blong yu. Afta, bambae yu save uploadem pikja, jek-in lo kava bar, mo ol nara samting long Bilolok.",
+    "alert": {
+      "auth_required_title": "Yu Mas Saen In",
+      "auth_required_subtitle": "Tabu blong mekem samting ia taem yu no saen in",
+      "auth_required_body": "Mifala mekemsua ol user i saen in blong mekem sam samting.",
+      "email_verification_required_title": "Yu Mas Mekem Verification blong Imeil ",
+      "email_verification_required_subtitle": "Tabu blong mekem samting ia taem yu no mekem verification blong imeil blong yu",
+      "email_verification_required_body": "Mifala mekemsua ol user i mekem verification blong imeil blong olgeta. Spos no, ol man i save mekem no gud samting long Bilolok.",
+      "email_verification_sent_title": "Sendem Imeil Finis",
+      "email_verification_sent_body": "Long imeil we mifala sendem, bambae yu save confirm se imeil hemi blong yu.",
+      "email_verification_missing_token_title": "No save confirm imeil blong yu",
+      "email_verification_missing_token_body": "No kat imeil verification token long rikwest blong yu.",
+      "password_reset_success_title": "Niufala Paswod",
+      "password_reset_success_body": "Noaia yu save saen in wetem niufala paswod blong yu.",
+      "password_reset_fail_title": "Niufala Paswod I No Gud",
+      "password_reset_fail_body": "Sori, mifala no save mekem niufala paswod blong yu. Yu mas askem wan niufala imeil blong mekem niufala paswod.",
+      "password_reset_missing_token_title": "No Save Mekem Niufala Paswod",
+      "password_reset_missing_token_body": "Imeil blong mekem niufala paswod i olfala tumas o i no gud."
+    }
+  },
+  "checkin": {
+    "title": "Jek-in",
+    "confirm_delete":"Yu wantem aotem jek-in ia?"
+  },
+  "image": {
+    "confirm_delete": "Yu wantem aotem pikja ia?"
+  },
+  "trip": {
+    "confirm_delete": "Yu wantem aotem trip ia?"
+  },
+  "video": {
+    "not_supported": "Sori, web browser blong yu i no supportem video. Yu save luk video lo <a target='_blank' :href='{src}'>link ia</a>.",
+    "processing": "Video blong yu i no redi iet.",
+    "error": "Sori, samting i mekem video blong yu no gud. Sestem i bagerap. Bambae mifala aotem video ia spos mifala no save fiksim.",
+    "confirm_delete": "Yu wantem aotem video ia?"
+  }
+}

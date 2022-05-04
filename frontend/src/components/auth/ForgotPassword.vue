@@ -1,15 +1,30 @@
 <template>
   <div>
-    <h1>Forgot Password</h1>
-    <v-btn @click="login">Login</v-btn>
+    <v-alert
+      border="top"
+      colored-border
+      type="info"
+      elevation="2"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ $t('auth.login_available') }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn @click.prevent="login">{{ $t('auth.login') }}</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
+
+    <h1>{{ $t('auth.forgot_password') }}</h1>
 
     <v-text-field
       v-model.trim="email"
-      label="Email"
+      :label="$t('auth.email')"
       :disabled="sent"
     ></v-text-field>
 
-    <v-btn @click="submit" :disabled="sent">Submit</v-btn>
+    <v-btn @click="submit" :disabled="sent">{{ $t('buttons.submit') }}</v-btn>
 
   </div>
 </template>
@@ -33,8 +48,8 @@ export default {
       this.sent = true;
       await authApi.forgotPassword({ email: this.email });
       this.$store.dispatch('notify/add', {
-        title: 'Email Sent',
-        text: 'An email was sent with instructions to reset your password.',
+        title: this.$i18n.t('auth.alert.email_verification_sent_title'),
+        text: this.$i18n.t('auth.alert.email_verification_sent_body'),
         type: 'info',
         duration: 10_000,
       });

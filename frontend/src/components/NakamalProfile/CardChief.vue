@@ -7,9 +7,9 @@
   >
     <div class="d-flex flex-no-wrap justify-space-between">
       <div>
-        <v-card-title class="text-h5 pb-0">Chief</v-card-title>
+        <v-card-title class="text-h5 pb-0">{{ $t('nakamal.chief') }}</v-card-title>
         <v-card-text class="mt-0">
-          <h5>Check-ins this month:</h5>
+          <h5>{{ $t('nakamal.chief_checkins_this_month') }}:</h5>
           <span class="font-weight-bold text-h5">{{ userCheckinCountMonth(chief.id) }}</span>
         </v-card-text>
         <v-card-actions class="py-1">
@@ -19,7 +19,7 @@
             color="secondary lighten-2"
             @click="show = !show"
           >
-            What's This?
+            {{ $t('nakamal.chief_what_is_this_btn') }}
           </v-btn>
         </v-card-actions>
       </div>
@@ -42,11 +42,10 @@
       >
         <v-card-text class="pb-0">
           <p class="text-h5 mb-1">
-            Chief
+            {{ $t('nakamal.chief') }}
           </p>
           <p class="">
-            This is the user who has
-            the most check-ins in the last 30 days.
+            {{ $t('nakamal.chief_what_is_this') }}
           </p>
         </v-card-text>
         <v-card-actions class="pt-0">
@@ -55,7 +54,7 @@
             color="primary lighten-2"
             @click="show = false"
           >
-            Close
+            {{ $t('buttons.close') }}
           </v-btn>
         </v-card-actions>
       </v-card>

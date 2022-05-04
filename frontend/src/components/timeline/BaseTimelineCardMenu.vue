@@ -19,7 +19,7 @@
           <v-icon>mdi-share-variant</v-icon>
         </v-list-item-icon>
         <v-list-item-title>
-          Share
+          {{ $t('buttons.share') }}
         </v-list-item-title>
       </v-list-item>
       <v-list-item v-if="userCanDelete" @click.prevent="onDelete">
@@ -27,7 +27,7 @@
           <v-icon>mdi-delete</v-icon>
         </v-list-item-icon>
         <v-list-item-title>
-          Delete
+          {{ $t('buttons.delete') }}
         </v-list-item-title>
       </v-list-item>
     </v-list>

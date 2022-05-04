@@ -1,9 +1,10 @@
 /* eslint-disable */
 import usersApi from '@/api/users.js';
-import { getDarkMode, saveDarkMode } from '@/utils.js';
+import { getDarkMode, saveDarkMode, getLocale, saveLocale } from '@/utils.js';
 
 const initialState = () => ({
   darkMode: false,
+  locale: 'bi',
 });
 
 const state = initialState();
@@ -23,6 +24,14 @@ const actions = {
     const dark = getDarkMode();
     commit('setDarkMode', dark);
   },
+  setLocale: async ({ commit }, locale) => {
+    saveLocale(locale);
+    commit('setLocale', locale);
+  },
+  checkLocale({ commit }) {
+    const locale = getLocale();
+    commit('setLocale', locale);
+  },
 };
 
 const mutations = {
@@ -35,6 +44,9 @@ const mutations = {
   // TODO update below to be same as pattern seen in other modules
   setDarkMode(state, dark) {
     state.darkMode = dark;
+  },
+  setLocale(state, locale) {
+    state.locale = locale;
   },
 };
 

@@ -1,7 +1,11 @@
 <template>
   <div>
-    <h4>This kava bar has...</h4>
-    <span><strong v-if="!nakamal.resources.length">...nothing but kava</strong></span>
+    <h4>{{ $t('nakamal.attrs.resources') }}</h4>
+    <span>
+      <strong v-if="!nakamal.resources.length">
+        {{ $t('nakamal.attrs.resources_none') }}
+      </strong>
+    </span>
     <v-chip
       v-for="resource in nakamal.resources"
       :key="resource.id"
@@ -13,55 +17,55 @@
     <v-list>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Light</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.light') }}</v-list-item-title>
           <v-list-item-subtitle>{{ nakamal.light }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Area</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.area') }}</v-list-item-title>
           <v-list-item-subtitle>{{ nakamal.area.name }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Kava Source</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.kava_source') }}</v-list-item-title>
           <v-list-item-subtitle>{{ kavaSource(nakamal.kava_source) }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title># of Windows</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.number_of_windows') }}</v-list-item-title>
           <v-list-item-subtitle>{{ nakamal.windows }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Other Names</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.other_names') }}</v-list-item-title>
           <v-list-item-subtitle>{{ aliasNames(nakamal.aliases) }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Owner</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.owner') }}</v-list-item-title>
           <v-list-item-subtitle>{{ nakamal.owner }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Number</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.phone') }}</v-list-item-title>
           <v-list-item-subtitle>{{ nakamal.phone }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Checkins Today</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.checkins_today') }}</v-list-item-title>
           <v-list-item-subtitle>{{ checkinsCountToday }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item two-line>
         <v-list-item-content>
-          <v-list-item-title>Checkins Month</v-list-item-title>
+          <v-list-item-title>{{ $t('nakamal.attrs.checkins_month') }}</v-list-item-title>
           <v-list-item-subtitle>{{ checkinsCountMonth }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

@@ -162,7 +162,7 @@ export default {
     },
     onDelete() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove this trip?')) {
+      if (confirm(this.$i18n.t('trip.confirm_delete'))) {
         this.$store.dispatch('trip/remove', this.item.id);
       }
     },

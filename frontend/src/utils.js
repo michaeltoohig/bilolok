@@ -11,3 +11,7 @@ export const saveDarkMode = (dark) => localStorage.setItem('dark_mode', dark);
 export const getDeviceId = () => localStorage.getItem('deviceId');
 
 export const saveDeviceId = (deviceId) => localStorage.setItem('deviceId', deviceId);
+
+export const getLocale = () => localStorage.getItem('locale');
+
+export const saveLocale = (locale) => localStorage.setItem('locale', locale);

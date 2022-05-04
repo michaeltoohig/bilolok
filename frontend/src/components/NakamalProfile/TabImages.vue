@@ -4,7 +4,7 @@
       v-if="!images.length"
       class="text-center"
     >
-      <h2>No Images Yet</h2>
+      <h2>{{ $t('nakamal.tab_images_none') }}</h2>
     </div>
     <Photoswipe :options="{ history: true }">
       <v-row class="ma-0" no-gutters>
@@ -34,7 +34,7 @@
       >
         <v-list>
           <v-list-item link @click="removeImage">
-            <v-list-item-title>Remove</v-list-item-title>
+            <v-list-item-title>{{ $t('buttons.delete') }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -85,7 +85,7 @@ export default {
     },
     removeImage() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove this image?')) {
+      if (confirm(this.$i18n.t('nakamal.tab_images_confirm_delete'))) {
         this.$store.dispatch('image/remove', this.selectedImageId);
       }
     },

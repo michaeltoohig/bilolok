@@ -23,8 +23,7 @@
           icon="mdi-video"
           border="left"
         >
-          Sorry, your browser does not support embedded videos. Here is
-          a <a target="_blank" :href="item.src">link to the video</a> instead.
+          <p v-html="$t('video.not_supported', { src: item.src })" />
         </v-alert>
       </video>
     </v-card-text>
@@ -37,7 +36,7 @@
         icon="mdi-video"
         border="left"
       >
-        Your video is still processing and not ready for playing yet.
+        {{ $t('video.processing') }}
       </v-alert>
     </v-card-text>
     <v-card-text v-else>
@@ -49,8 +48,7 @@
         icon="mdi-video"
         border="left"
       >
-        Video Error. Something went wrong and we will try to fix it.
-        Otherwise we will delete this video in the coming days.
+        {{ $t('video.error') }}
       </v-alert>
     </v-card-text>
   </BaseTimelineCard>
@@ -128,7 +126,7 @@ export default {
     },
     onDelete() {
       /* eslint-disable no-alert, no-restricted-globals */
-      if (confirm('Are you sure you want to remove this video?')) {
+      if (confirm(this.$i18n.t('video.confirm_delete'))) {
         this.$store.dispatch('video/remove', this.item.id);
       }
     },

@@ -10,7 +10,7 @@
       border="left"
       max-width="500"
     >
-      Be first to check-in!
+      {{ $t('nakamal.tab_timeline_be_first_to_checkin') }}
     </v-alert>
     <div
       v-for="item in timelineItems"
