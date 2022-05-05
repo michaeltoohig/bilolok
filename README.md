@@ -223,7 +223,11 @@ I would have to say adding video and some other features I'm working on is pushi
   - [ ] Looks like we have to resolve cross-origin assets
 
 - [ ] Translations
-  - [ ] Store preference same as dark/light mode
+  - [x] Store preference same as dark/light mode
+
+- [ ] Refactor frontend components
+  - [ ] Move map components to map directory
+  - [ ] break out components related to map edit/create to a subdirectory
 
 - [ ] Vue-tour ?
 

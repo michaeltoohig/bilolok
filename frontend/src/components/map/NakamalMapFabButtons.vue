@@ -43,7 +43,7 @@
             <v-icon>mdi-crosshairs-gps</v-icon>
           </v-btn>
         </template>
-        <span>Get Location</span>
+        <span>{{ $t('map.menu.user_location') }}</span>
       </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
@@ -59,7 +59,7 @@
             <v-icon>mdi-map-search</v-icon>
           </v-btn>
         </template>
-        <span>Search</span>
+        <span>{{ $t('map.menu.search') }}</span>
       </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
@@ -76,7 +76,7 @@
             <v-icon>mdi-fire</v-icon>
           </v-btn>
         </template>
-        <span>Check-in Heatmap (Needs Repair)</span>
+        <span>{{ $t('map.menu.heatmap') }}</span>
       </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
@@ -92,7 +92,7 @@
             <v-icon>mdi-menu-open</v-icon>
           </v-btn>
         </template>
-        <span>Filter</span>
+        <span>{{ $t('map.menu.filters') }}</span>
       </v-tooltip>
       <v-tooltip left>
         <template v-slot:activator="{ on, attrs }">
@@ -108,7 +108,7 @@
             <v-icon>mdi-map-marker-plus</v-icon>
           </v-btn>
         </template>
-        <span>Add Kava Bar</span>
+        <span>{{ $t('map.menu.add_nakamal') }}</span>
       </v-tooltip>
     </v-speed-dial>
   </v-fab-transition>
@@ -150,8 +150,8 @@ export default {
       console.log('Location error:', error);
       this.setShowLocationProgress(false);
       this.$store.dispatch('notify/add', {
-        title: 'Location Not Found',
-        text: 'Your device did not provide an accurate location.',
+        title: this.$i18n.t('map.alert.getting_location_fail_title'),
+        text: this.$i18n.t('map.alert.getting_location_fail_body'),
         color: 'error',
         duration: 5_000,
       });
@@ -164,8 +164,8 @@ export default {
       this.$root.$emit('fly-to', latLng(-17.4, 168.4));
       if (!('geolocation' in navigator)) {
         this.$store.dispatch('notify/add', {
-          title: 'Location Not Available',
-          text: 'Your device does not provide location or you have blocked location access.',
+          title: this.$i18n.t('map.alert.getting_location_denied_title'),
+          text: this.$i18n.t('map.alert.getting_location_denied_body'),
           color: 'info',
           duration: 5_000,
         });

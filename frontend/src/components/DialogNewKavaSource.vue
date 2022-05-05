@@ -4,22 +4,19 @@
     max-width="400"
   >
     <v-card>
-      <v-card-title>Add New Kava Source</v-card-title>
+      <v-card-title>{{ $t('nakamal.add_new_kava_source') }}</v-card-title>
       <v-card-text>
-        <p>
-          Specify the area/island and province of the kava.
-          Please be sure a similar kava source does not already exist.
-        </p>
+        <p>{{ $t('nakamal.add_new_kava_source_extra') }}</p>
       </v-card-text>
       <v-card-text>
         <v-text-field
           v-model="island"
-          label="Island / Area"
+          :label="$t('nakamal.area_island')"
         ></v-text-field>
         <v-select
           v-model="province"
           :items="provinces"
-          label="Province"
+          :label="$t('nakamal.area_province')"
         ></v-select>
       </v-card-text>
       <v-card-actions>
@@ -28,7 +25,9 @@
           text
           outlined
           color="primary"
-        >Submit</v-btn>
+        >
+          {{ $t('buttons.submit') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

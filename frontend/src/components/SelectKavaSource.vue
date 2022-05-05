@@ -9,7 +9,7 @@
       :items="kavaSources"
       item-value="id"
       item-text="name"
-      label="Kava Source"
+      :label="$t('nakamal.attrs.kava_source')"
     ></v-select>
     <DialogNewKavaSource
       v-model="showNewDialog"

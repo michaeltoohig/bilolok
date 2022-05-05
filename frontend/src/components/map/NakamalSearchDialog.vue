@@ -7,7 +7,7 @@
   >
     <v-card>
       <v-card-title>
-        Search
+        {{ $t('map.search') }}
       </v-card-title>
       <v-card-text>
         <v-autocomplete
@@ -16,7 +16,7 @@
           outlined
           item-value="id"
           item-text="name"
-          label="Search Kava Bars"
+          :label="$t('map.search')"
           class="mt-3"
           @change="searchSelect"
         >
@@ -45,26 +45,24 @@
           color="secondary"
           elevation="2"
         >
-          You currently have map filters enabled so only kava bars
-          visible on the map may be searched. If you wish to search
-          all kava bars then clear the filters.
+          {{ $t('map.search_filter_alert') }}
         </v-alert>
       </v-card-text>
       <v-card-actions class="justify-end">
+        <v-spacer></v-spacer>
         <v-btn
           v-if="hasFilters"
           text
           outlined
           @click="removeFilters"
         >
-          Clear Filters
+          {{ $t('map.filters_remove') }}
         </v-btn>
-        <v-spacer></v-spacer>
         <v-btn
           text
           @click="setShowSearch(false)"
         >
-          Close
+          {{ $t('buttons.close') }}
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -4,7 +4,7 @@
     v-bind:value="value"
     @change="change"
     :items="items"
-    label="Light Color"
+    :label="$t('nakamal.attrs.light')"
   ></v-select>
 </template>
 

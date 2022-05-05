@@ -4,14 +4,14 @@
       <v-layout align-center justify-center>
         <v-flex>
           <div class="text-center">
-            <div class="headline my-5">{{ $t('loading.defaul') }}</div>
+            <div class="headline my-5">{{ $t('loading.default') }}</div>
             <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
           </div>
         </v-flex>
       </v-layout>
     </v-container>
     <v-container v-else>
-      <h2>Recent Activity</h2>
+      <h2>{{ $t('home.timeline_title') }}</h2>
       <div
         v-for="item in timelineItems"
         :key="item.data.id"

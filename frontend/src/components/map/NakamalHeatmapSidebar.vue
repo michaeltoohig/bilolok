@@ -15,7 +15,7 @@
         icon="mdi-map-marker"
         color="primary"
       >
-        {{ checkins.length }} check-ins on map
+        {{ $t('map.heatmap_total_checkins', { count: checkins.length }) }}
       </v-alert>
     </template>
 
@@ -23,21 +23,21 @@
       <v-switch
         inset
         v-model="toggleHeatmap"
-        label="Show Heatmap"
+        :label="$t('map.heatmap_show')"
       ></v-switch>
 
       <v-switch
         v-if="isLoggedIn"
         inset
         v-model="toggleUserOnly"
-        label="Show Only Your Check-ins"
+        :label="$t('map.heatmap_show_only_me')"
         :disabled="!toggleHeatmap"
       ></v-switch>
 
       <v-switch
         inset
         v-model="toggleDt"
-        label="Show Only Last Week Check-ins"
+        :label="$t('map.heatmap_show_last_week')"
         :disabled="!toggleHeatmap"
       ></v-switch>
     </v-container>

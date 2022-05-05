@@ -13,7 +13,9 @@
     <v-list light dense>
       <v-list-item v-if="selectedNakamal.aliases.length">
         <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold">Other Names</v-list-item-title>
+          <v-list-item-title class="font-weight-bold">
+            {{ $t('nakamal.attrs.other_names') }}
+          </v-list-item-title>
           <v-list-item-subtitle>
             {{ aliasNames(selectedNakamal.aliases) }}
           </v-list-item-subtitle>
@@ -21,7 +23,9 @@
       </v-list-item>
       <v-list-item v-if="location">
         <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold">Distance</v-list-item-title>
+          <v-list-item-title class="font-weight-bold">
+            {{ $t('map.compass.distance') }}
+          </v-list-item-title>
           <v-list-item-subtitle>
             {{ displayDistance }}
           </v-list-item-subtitle>
@@ -29,7 +33,9 @@
       </v-list-item>
       <v-list-item>
         <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold">Light</v-list-item-title>
+          <v-list-item-title class="font-weight-bold">
+            {{ $t('nakamal.attrs.light') }}
+          </v-list-item-title>
           <v-list-item-subtitle>
             {{ selectedNakamal.light }}
           </v-list-item-subtitle>
@@ -37,7 +43,9 @@
       </v-list-item>
       <v-list-item>
         <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold"># of Windows</v-list-item-title>
+          <v-list-item-title class="font-weight-bold">
+            {{ $t('nakamal.attrs.number_of_windows') }}
+          </v-list-item-title>
           <v-list-item-subtitle>
             {{ selectedNakamal.windows || '-' }}
           </v-list-item-subtitle>
@@ -45,7 +53,9 @@
       </v-list-item>
       <v-list-item>
         <v-list-item-content class="py-0">
-          <v-list-item-title class="font-weight-bold">Area</v-list-item-title>
+          <v-list-item-title class="font-weight-bold">
+            {{ $t('nakamal.attrs.area') }}
+          </v-list-item-title>
           <v-list-item-subtitle>
             <span v-if="selectedNakamal.area">
               {{ selectedNakamal.area.name }}
@@ -61,7 +71,7 @@
       color="primary"
       :to="{ name: 'Nakamal', params: { id: selectedNakamal.id } }"
     >
-      View Page
+      {{ $t('nakamal.view_page') }}
     </v-btn>
     <v-btn
       small
@@ -71,7 +81,7 @@
       @click="clickCompass"
     >
       <v-icon small class="mr-1">mdi-compass</v-icon>
-      Compass
+      {{ $t('map.compass.compass') }}
     </v-btn>
   </l-popup>
 </template>

@@ -4,16 +4,14 @@
     max-width="400"
   >
     <v-card>
-      <v-card-title>Add New Area</v-card-title>
+      <v-card-title>{{ $t('nakamal.add_new_area') }}</v-card-title>
       <v-card-text>
-        <p>
-          Please be sure a similar area does not already exist.
-        </p>
+        <p>{{ $t('nakamal.add_new_area_extra') }}</p>
       </v-card-text>
       <v-card-text>
         <v-text-field
           v-model="name"
-          label="Area"
+          :label="$t('nakamal.attrs.area')"
         ></v-text-field>
       </v-card-text>
       <v-card-actions>
@@ -22,7 +20,9 @@
           text
           outlined
           color="primary"
-        >Submit</v-btn>
+        >
+          {{ $t('buttons.submit') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

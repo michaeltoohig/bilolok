@@ -15,10 +15,10 @@
         icon="mdi-map-marker"
         color="primary"
       >
-        {{ nakamals.length }} kava bars on map
+        {{ $t('map.filters_total_nakamals', { count: nakamals.length }) }}
       </v-alert>
     </template>
-    <h5>Filters</h5>
+    <h5>{{ $t('map.filters') }}</h5>
     <SelectLight
       v-model="selectedLight"
       @input="changeLight"
@@ -29,7 +29,7 @@
       :items="areas"
       item-value="id"
       item-text="name"
-      label="Area"
+      :label="$t('nakamal.attrs.area')"
     ></v-select>
     <v-select
       @change="changeKavaSource"
@@ -37,7 +37,7 @@
       :items="kava_sources"
       item-value="id"
       item-text="name"
-      label="Kava Source"
+      :label="$t('nakamal.attrs.kava_source')"
     ></v-select>
     <v-select
       @change="changeResources"
@@ -45,14 +45,14 @@
       :items="resources"
       item-value="id"
       item-text="name"
-      label="Resources"
+      :label="$t('nakamal.attrs.resources')"
       multiple
     ></v-select>
 
     <template v-slot:append>
       <div class="pa-2">
         <v-btn block outlined color="primary" :disabled="!hasFilters" @click="clearFilters">
-          Clear Filters
+          {{ $t('map.filters_remove') }}
         </v-btn>
       </div>
     </template>

@@ -12,11 +12,11 @@
           top
           height="6"
         ></v-progress-linear>
-        <v-card-title>Getting Your Location</v-card-title>
+        <v-card-title>{{ $t('map.alert.getting_location_title') }}</v-card-title>
         <v-card-text>
           <div class="d-flex flex-row justify-start align-center">
             <v-icon class="mr-3" size="64">mdi-crosshairs-gps</v-icon>
-            Please wait while we get your device's location. This may take a few seconds.
+            {{ $t('map.alert.getting_location_body') }}
           </div>
         </v-card-text>
       </v-card>

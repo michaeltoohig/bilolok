@@ -15,16 +15,15 @@
     ></v-progress-linear>
     <v-card-text v-if="user" class="py-1 px-3">
       <v-alert color="warning" v-if="!user.heading">
-        Your device did not provide your heading so we can not
-        point you towards the kava bar.
+        {{ $t('map.compass.compass_heading_none') }}
       </v-alert>
-      <span class="small">Heading To:</span>
+      <span class="small">{{ $t('map.compass.headed_to') }}:</span>
       <h3>{{ nakamal.name }}</h3>
       <div class="d-flex justify-center align-center">
         <v-icon size="100">{{ bearingIcon }}</v-icon>
       </div>
-      <h5>Distance: {{ displayDistance }}</h5>
-      <h5>Trip: {{ displayTrip }}</h5>
+      <h5>{{ $t('map.compass.distance') }}: {{ displayDistance }}</h5>
+      <h5>{{ $t('map.compass.trip') }}: {{ displayTrip }}</h5>
     </v-card-text>
     <v-divider></v-divider>
     <v-card-actions class="pa-1">
@@ -35,7 +34,7 @@
         @click="saveTrip"
         :disabled="saving"
       >
-        Finish!
+        {{ $t('buttons.complete') }}!
       </v-btn>
       <v-spacer></v-spacer>
       <v-btn
@@ -44,7 +43,7 @@
         :disabled="showFinishBtn"
         @click="stopCompassMode"
       >
-        Close
+        {{ $t('buttons.cancel') }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -170,8 +169,8 @@ export default {
         });
       } else {
         this.$store.dispatch('notify/add', {
-          title: 'Trip Not Saved',
-          text: 'You do not have a verified account so we did not save your trip for you.',
+          title: this.$i18n.t('map.compass.trip_not_saved_title'),
+          text: this.$i18n.t('map.compass.trip_not_saved_body'),
           color: 'warning',
           duration: 8_000,
         });

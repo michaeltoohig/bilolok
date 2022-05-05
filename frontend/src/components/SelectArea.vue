@@ -9,7 +9,7 @@
       :items="areas"
       item-value="id"
       item-text="name"
-      label="Area"
+      :label="$t('nakamal.attrs.area')"
     ></v-select>
     <DialogNewArea
       v-model="showNewDialog"

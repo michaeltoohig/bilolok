@@ -89,12 +89,6 @@
       </l-layer-group>
 
       <l-control
-        :position="'bottomleft'"
-      >
-        <NetworkStatusDialog></NetworkStatusDialog>
-      </l-control>
-
-      <l-control
         :position="'bottomright'"
       >
         <NakamalMapFabButtons></NakamalMapFabButtons>
@@ -145,7 +139,7 @@
               </template>
               <span>{{ formatTime(trip.start_at) }}</span>
             </v-tooltip>
-            <span class="font-weight-normal">Headed to:</span>
+            <span class="font-weight-normal">{{ $t('map.compass.headed_to') }}:</span>
             <h3 class="text-h6 font-weight-bold mb-2">{{ trip.nakamal.name }}</h3>
             <v-btn
               outlined
@@ -153,7 +147,7 @@
               color="primary"
               @click="markerClick(trip.nakamal.id)"
             >
-              View Kava Bar
+              {{ $t('map.go_to_nakamal') }}
             </v-btn>
           </div>
         </LPopup>
@@ -171,8 +165,6 @@
     </l-map>
 
     <NakamalSearchDialog></NakamalSearchDialog>
-
-    <NakamalBottomSheet></NakamalBottomSheet>
 
     <NakamalFilterSidebar></NakamalFilterSidebar>
 
@@ -194,7 +186,7 @@
     >
       <v-card>
         <v-card-title >
-          Nearby Kava Bars
+          {{ $t('map.nearby_nakamals') }}
         </v-card-title>
         <v-divider></v-divider>
         <v-card-text class="py-3" v-if="nearbyNakamals.length > 0">
@@ -208,7 +200,7 @@
           </v-row>
         </v-card-text>
         <v-card-text v-else class="text-center mt-5 font-weight-bold h5">
-          No kava bars nearby...
+          {{ $t('map.nearby_nakamals_none') }}
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
@@ -217,7 +209,7 @@
             text
             @click="showNearbyNakamals = false"
           >
-            close
+            {{ $t('buttons.close') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -235,7 +227,7 @@
           <v-layout align-center justify-center>
             <v-flex>
               <div class="text-center">
-                <div class="headline my-5">Loading Kava Bars...</div>
+                <div class="headline my-5">{{ $t('loading.map') }}</div>
                 <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
               </div>
             </v-flex>
@@ -262,18 +254,16 @@ import {
 // import { AntPath } from 'leaflet-ant-path';
 import sphereKnn from 'sphere-knn';
 
-import NakamalMapFabButtons from '@/components/NakamalMapFabButtons.vue';
-import NakamalSearchDialog from '@/components/NakamalSearchDialog.vue';
-import NewNakamalDialog from '@/components/NewNakamalDialog.vue';
-import NetworkStatusDialog from '@/components/NetworkStatusDialog.vue';
-import NakamalBottomSheet from '@/components/NakamalBottomSheet.vue';
-import NakamalMapPopup from '@/components/NakamalMapPopup.vue';
-import NakamalFilterSidebar from '@/components/NakamalFilterSidebar.vue';
-import NakamalHeatmapSidebar from '@/components/NakamalHeatmapSidebar.vue';
+import NakamalMapFabButtons from '@/components/map/NakamalMapFabButtons.vue';
+import NakamalSearchDialog from '@/components/map/NakamalSearchDialog.vue';
+import NewNakamalDialog from '@/components/map/NewNakamalDialog.vue';
+import NakamalMapPopup from '@/components/map/NakamalMapPopup.vue';
+import NakamalFilterSidebar from '@/components/map/NakamalFilterSidebar.vue';
+import NakamalHeatmapSidebar from '@/components/map/NakamalHeatmapSidebar.vue';
 import NakamalListItem from '@/components/NakamalListItem.vue';
-import Compass from '@/components/Compass.vue';
-import CompassModeIntroDialog from '@/components/CompassModeIntroDialog.vue';
-import LocationProgressDialog from '@/components/LocationProgressDialog.vue';
+import Compass from '@/components/map/Compass.vue';
+import CompassModeIntroDialog from '@/components/map/CompassModeIntroDialog.vue';
+import LocationProgressDialog from '@/components/map/LocationProgressDialog.vue';
 
 import Vue2LeafletHeatmap from '@/components/Vue2LeafletHeatmap.vue';
 
@@ -287,8 +277,6 @@ export default {
   mixins: [FormatDatetime, OfflineMixin],
   components: {
     NakamalMapFabButtons,
-    NakamalBottomSheet,
-    NetworkStatusDialog,
     NakamalSearchDialog,
     NewNakamalDialog,
     NakamalMapPopup,

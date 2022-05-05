@@ -21,21 +21,21 @@
       <v-row>
         <v-col cols="6">
           <div class="font-weight-light">
-            Light:
+            {{ $t('nakamal.attrs.light') }}:
             <span class="font-weight-bold">{{ nakamal.light }}</span>
           </div>
           <div class="font-weight-light">
-            Windows:
+            {{ $t('nakamal.attrs.number_of_windows') }}:
             <span class="font-weight-bold">{{ nakamal.windows || '-' }}</span>
           </div>
         </v-col>
         <v-col cols="6">
           <div class="font-weight-light">
-            Area:
+            {{ $t('nakamal.attrs.area') }}:
             <span class="font-weight-bold">{{ nakamal.area.name }}</span>
           </div>
           <div class="font-weight-light">
-            Kava Source:
+            {{ $t('nakamal.attrs.kava_source') }}:
             <span class="font-weight-bold">{{ kavaSource(nakamal.kava_source) }}</span>
           </div>
           <div class="font-weight-light">
@@ -49,7 +49,14 @@
         outlined
         @click="viewPage(nakamal.id)"
       >
-        Go to Kava Bar
+        {{ $t('nakamal.view_page') }}
+      </v-btn>
+      <v-btn
+        text
+        outlined
+        @click="viewOnMap(nakamal.id)"
+      >
+        {{ $t('nakamal.view_on_map') }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -76,6 +83,12 @@ export default {
     // async onShare() {
     //   console.log('ok');
     // },
+    viewOnMap(id) {
+      this.$store.dispatch('nakamal/select', id)
+        .then(() => {
+          this.$router.push({ name: 'Map' });
+        });
+    },
     viewPage(id) {
       this.$store.dispatch('nakamal/select', id)
         .then(() => {

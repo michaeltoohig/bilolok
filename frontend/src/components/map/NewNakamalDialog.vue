@@ -23,14 +23,14 @@
             v-bind="attrs"
             v-on="on"
           >
-            Add New Kava Bar
+            {{ $t('nakamal.add_new') }}
           </v-btn>
         </l-tooltip>
       </l-marker>
     </template>
     <v-card>
       <v-card-title>
-        <span class="headline">Kava Bar</span>
+        <span class="headline">{{ $t('nakamal.nakamal') }}</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -42,7 +42,7 @@
               <v-text-field
                 v-model="$v.name.$model"
                 :error="$v.name.$error"
-                label="Name"
+                :label="$t('nakamal.attrs.name')"
                 required
               ></v-text-field>
             </v-col>
@@ -63,7 +63,7 @@
                 :error="$v.aliases.$error"
                 chips
                 clearable
-                label="Other Names"
+                :label="$t('nakamal.attrs.other_names')"
                 multiple
               >
                 <template v-slot:selection="{ attrs, item, select, selected }">
@@ -95,7 +95,7 @@
               <v-text-field
                 v-model="$v.windows.$model"
                 :error="$v.windows.$error"
-                label="# of Windows"
+                :label="$t('nakamal.attrs.number_of_windows')"
                 type="number"
                 required
               ></v-text-field>
@@ -119,7 +119,7 @@
                 :items="allResources"
                 item-value="id"
                 item-text="name"
-                label="Resources"
+                :label="$t('nakamal.attrs.resources')"
                 multiple
               ></v-select>
             </v-col>
@@ -130,7 +130,7 @@
               <v-text-field
                 v-model="$v.owner.$model"
                 :error="$v.owner.$error"
-                label="Owner"
+                :label="$t('nakamal.attrs.owner')"
                 type="text"
                 required
               ></v-text-field>
@@ -142,7 +142,7 @@
               <v-text-field
                 v-model="$v.phone.$model"
                 :error="$v.phone.$error"
-                label="Contact Number"
+                :label="$t('nakamal.attrs.phone')"
                 type="text"
                 required
               ></v-text-field>
@@ -152,7 +152,7 @@
               sm="6"
             >
               <v-text-field
-                label="Latitude"
+                :label="$t('nakamal.attrs.lat')"
                 type="text"
                 disabled
                 required
@@ -164,7 +164,7 @@
               sm="6"
             >
               <v-text-field
-                label="Longitude"
+                :label="$t('nakamal.attrs.lng')"
                 type="text"
                 disabled
                 required
@@ -176,19 +176,19 @@
       </v-card-text>
       <v-card-actions>
         <v-btn
+          text
+          @click="dialog = false"
+        >
+          {{ $t('buttons.cancel') }}
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
           color="primary"
           outlined
           text
           @click="submit"
         >
-          Submit
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          text
-          @click="dialog = false"
-        >
-          Close
+          {{ $t('buttons.submit') }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -218,7 +218,7 @@ import SelectArea from '@/components/SelectArea.vue';
 import SelectKavaSource from '@/components/SelectKavaSource.vue';
 import SelectLight from '@/components/SelectLight.vue';
 
-const iconPath = require('../assets/map-marker.svg');
+const iconPath = require('@/assets/map-marker.svg');
 
 export default {
   name: 'NewNakamalDialog',

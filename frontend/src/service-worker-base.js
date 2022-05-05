@@ -459,6 +459,7 @@ setDefaultHandler(new StaleWhileRevalidate());
 var clearOldCaches = function (event) {
   event.waitUntil(
     caches.keys().then(function (cacheNames) {
+      // TODO FIXME workbox is not defined error
       let validCacheSet = new Set(Object.values(workbox.core.cacheNames));
       return Promise.all(
         cacheNames

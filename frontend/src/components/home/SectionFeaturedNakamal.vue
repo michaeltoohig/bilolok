@@ -1,12 +1,12 @@
 <template>
   <v-container v-if="show">
-    <h2>Featured Kava Bar</h2>
+    <h2>{{ $t('home.featured_nakamal') }}</h2>
 
     <v-container fill-height v-if="nakamal===null">
       <v-layout align-center justify-center>
         <v-flex>
           <div class="text-center">
-            <div class="headline my-5">Loading Featured Kava Bar...</div>
+            <div class="headline my-5">{{ $t('loading.nakamal') }}</div>
             <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
           </div>
         </v-flex>
