@@ -40,15 +40,15 @@ const actions = {
       // TODO check registration is good and make redirect action
       router.push({ name: 'Auth', params: { auth: 'login' } });
       dispatch('notify/add', {
-        title: 'Registration Success',
-        text: 'Please log in now.',
+        title: $t('auth.alert.register_success_title'),
+        text: $t('auth.alert.register_success_body'),
         type: 'primary',
         duration: 15_000,
       }, { root: true });
     }
     catch(error) {
       dispatch('notify/add', {
-        title: 'Registration Error',
+        title: $t('auth.alert.register_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });
@@ -66,8 +66,8 @@ const actions = {
         commit('setLogInError', false);
         await dispatch('routeLoggedIn');
         dispatch('notify/add', {
-          title: 'Log In Success',
-          text: 'Welcome back.',
+          title: $t('auth.alert.login_success_title'),
+          text: $t('auth.alert.login_success_body'),
           type: 'primary',
           duration: 3_000,
         }, { root: true });
@@ -78,7 +78,7 @@ const actions = {
     }
     catch (error) {
       dispatch('notify/add', {
-        title: 'Login Error',
+        title: $t('auth.alert.login_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });
@@ -158,10 +158,10 @@ const actions = {
     await dispatch('routeLogOut');
   },
   async userLogOut({ dispatch }) {
-    dispatch('logOut');
+    await dispatch('logOut');
     dispatch('notify/add', {
-      title: 'Logged Out',
-      text: 'See you later.',
+      title: $t('auth.alert.logout_success_title'),
+      text: $t('auth.alert.logout_success_body'),
       type: 'primary',
       duration: 5_000,
     }, { root: true });
@@ -216,8 +216,8 @@ const actions = {
   requestVerification: async ({ dispatch, getters }) => {
     await authApi.requestVerification(getters.user.email);
     dispatch('notify/add', {
-      title: 'Email Verification Sent',
-      text: 'Please check your inbox for the link to verify your email.',
+      title: $t('auth.alert.email_verification_sent_title'),
+      text: $t('auth.alert.email_verification_sent_body'),
       type: 'info',
       duration: 10_000,
     }, { root: true });
@@ -226,8 +226,8 @@ const actions = {
     try {
       await authApi.verify(token);
       dispatch('notify/add', {
-        title: 'Email Verified',
-        text: 'You email has been verified. You may now upload images, check-in, add kava bars to the map, etc.',
+        title: $t('auth.alert.email_verification_success_title'),
+        text: $t('auth.alert.email_verification_success_body'),
         type: 'success',
         duration: 10_000,
       }, { root: true });
@@ -235,7 +235,7 @@ const actions = {
     }
     catch (error) {
       dispatch('notify/add', {
-        title: 'Email Verification Error',
+        title: $t('auth.alert.email_verification_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });

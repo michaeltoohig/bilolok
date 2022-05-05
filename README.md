@@ -229,6 +229,8 @@ I would have to say adding video and some other features I'm working on is pushi
   - [ ] Move map components to map directory
   - [ ] break out components related to map edit/create to a subdirectory
 
+- [ ] Remove repetitive "Not Allowed" notifications in favor of single "Request Error" notification using the response.data.detail
+
 - [ ] Vue-tour ?
 
 - [ ] Chief of Nakamal
