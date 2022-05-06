@@ -167,6 +167,7 @@
     "verify_email": "Verify My Email",
     "verify_email_body": "Please click the following button to complete verification of your email address. Once complete, you will be able to upload images, check-in to kava bars and more.",
     "alert": {
+      "api_error": "Error!",
       "register_success_title": "Registration Complete",
       "register_success_body": "Now, you may sign in.",
       "register_fail_title": "Registration Failed",
@@ -198,18 +199,40 @@
   },
   "checkin": {
     "title": "Check-in",
-    "confirm_delete": "Are you sure you want to delete this check-in?"
+    "confirm_delete": "Are you sure you want to delete this check-in?",
+    "alert": {
+      "create_title": "Checked-in!",
+      "create_body": "You are checked-in to this kava bar.",
+      "remove_title": "Check-in Removed",
+      "remove_body": "Check-in removed from the system."
+    }
   },
   "image": {
-    "confirm_delete":"Are you sure you want to delete this image?"
+    "confirm_delete":"Are you sure you want to delete this image?",
+    "alert": {
+      "remove_title": "Image Removed",
+      "remove_body": "Image removed from the system."
+    }
   },
   "trip": {
-    "confirm_delete": "Are you sure you want to delete this trip?"
+    "confirm_delete": "Are you sure you want to delete this trip?",
+    "alert": {
+      "create_title": "Trip Complete",
+      "create_body": "You have arrived at your destination. You should check-in to the kava bar.",
+      "remove_title": "Trip Removed",
+      "remove_body": "Trip removed from the system."
+    }
   },
   "video": {
     "not_supported": "Sorry, your browser does not support embedded videos. Here is a <a target='_blank' :href='{src}'>link to the video</a> instead.",
     "processing": "Your video is still processing and not ready for playing yet.",
     "error": "Video Error. Something went wrong and we will try to fix it. Otherwise we will delete this video in the coming days.",
-    "confirm_delete": "Are you sure you want to delete this video?"
+    "confirm_delete": "Are you sure you want to delete this video?",
+    "alert": {
+      "create_title": "Video Uploaded",
+      "create_body": "Your video will be ready to play soon, we have to process it first.",
+      "remove_title": "Video Removed",
+      "remove_body": "Video removed from the system."
+    }
   }
 }

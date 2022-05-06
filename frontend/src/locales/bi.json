@@ -167,6 +167,7 @@
     "verify_email": "Confirm se imeil ia hemi blong mi",
     "verify_email_body": "Yu klik long hemia i minim se imeil ia hemi imeil blong yu. Afta, bambae yu save uploadem pikja, jek-in lo kava bar, mo ol nara samting long Bilolok.",
     "alert": {
+      "api_error": "Error!",
       "register_success_title": "Sakses, Yu Joenem Bilolok",
       "register_success_body": "Naoia, yu save saen in.",
       "register_fail_title": "Samting I Bagarap",
@@ -198,18 +199,40 @@
   },
   "checkin": {
     "title": "Jek-in",
-    "confirm_delete":"Yu wantem aotem jek-in ia?"
+    "confirm_delete":"Yu wantem aotem jek-in ia?",
+    "alert": {
+      "create_title": "Jek-in!",
+      "create_body": "Yu jes jek-in long kava bar ia.",
+      "remove_title": "Aotem Jek-in",
+      "remove_body": "Jek-in ia i no mo stap long sistem."
+    }
   },
   "image": {
-    "confirm_delete": "Yu wantem aotem pikja ia?"
+    "confirm_delete": "Yu wantem aotem pikja ia?",
+    "alert": {
+      "remove_title": "Aotem Pikja",
+      "remove_body": "Pikja ia i no mo stap long sistem."
+    }
   },
   "trip": {
-    "confirm_delete": "Yu wantem aotem trip ia?"
+    "confirm_delete": "Yu wantem aotem trip ia?",
+    "alert": {
+      "create_title": "Trip Finis",
+      "create_body": "Yu kasem kava bar finis. Yu sud jek-in long kava bar ia.",
+      "remove_title": "Aotem Trip",
+      "remove_body": "Trip ia i no mo stap long sistem."
+    }
   },
   "video": {
     "not_supported": "Sori, web browser blong yu i no supportem video. Yu save luk video lo <a target='_blank' :href='{src}'>link ia</a>.",
     "processing": "Video blong yu i no redi iet.",
     "error": "Sori, samting i mekem video blong yu no gud. Sestem i bagerap. Bambae mifala aotem video ia spos mifala no save fiksim.",
-    "confirm_delete": "Yu wantem aotem video ia?"
+    "confirm_delete": "Yu wantem aotem video ia?",
+    "alert": {
+      "create_title": "Aplodem Video",
+      "create_body": "Video blong yu e aplod finis, naoia mifala mas rerem video blong yu festaem.",
+      "remove_title": "Aotem Video",
+      "remove_body": "Video ia i no mo stap long sistem."
+    }
   }
 }

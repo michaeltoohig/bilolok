@@ -7,6 +7,7 @@ import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import tripsApi from '@/api/trips';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
+import i18n from '../../plugins/i18n';
 
 const initialState = () => ({
   byId: {},
@@ -127,19 +128,14 @@ const actions = {
       commitAddTrip(trip, commit);
       commit('addRecentId', trip.id);
       dispatch('notify/add', {
-        title: 'Trip Complete',
-        text: 'You have arrived at your destination. You should now check-in to the kava bar.',
+        title: i18n.t('trip.alert.create_title'),
+        text: i18n.t('trip.alert.create_body'),
         color: 'primary',
         duration: 5_000,
       }, { root: true });
     }
     catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {
@@ -148,19 +144,14 @@ const actions = {
       await tripsApi.remove(token, id);
       commit('remove', id);
       dispatch('notify/add', {
-        title: 'Trip Removed',
-        text: 'Trip removed from the system.',
+        title: i18n.t('trip.alert.remove_title'),
+        text: i18n.t('trip.alert.remove_body'),
         type: 'warning',
       }, { root: true });
     }
     catch (error) {
       console.log('Trip remove error');
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   // setFilter: ({ commit }, { key, value }) => {

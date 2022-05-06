@@ -6,6 +6,7 @@ import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import imagesApi from '@/api/images';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
+import i18n from '../../plugins/i18n';
 
 const initialState = () => ({
   byId: {},
@@ -102,19 +103,14 @@ const actions = {
       await imagesApi.remove(token, id);
       commit('remove', id);
       dispatch('notify/add', {
-        title: 'Image Removed',
-        text: 'Image removed from the system.',
+        title: i18n.t('image.alert.remove_title'),
+        text: i18n.t('image.alert.remove_body'),
         type: 'warning',
       }, { root: true });
     }
     catch (error) {
       console.log('Image remove error');
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
 };

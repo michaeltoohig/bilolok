@@ -1,5 +1,6 @@
 /* eslint-disable */
 
+import i18n from '../../plugins/i18n';
 import { latLng } from 'leaflet';
 
 const initialState = () => ({
@@ -87,9 +88,9 @@ const actions = {
   startCompassMode: async ({ commit, dispatch, getters }) => {
     if (!('geolocation' in navigator)) {
       await dispatch('notify/add', {
-        title: 'Location Not Available',
-        text: 'Your device does not provide location or you have blocked location access.',
-        color: 'info',
+        title: i18n.t('map.alert.getting_location_denied_title'),
+        text: i18n.t('map.alert.getting_location_denied_body'),
+        color: 'error',
         duration: 5_000,
       }, { root: true });
       return;

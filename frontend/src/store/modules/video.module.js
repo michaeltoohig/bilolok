@@ -6,6 +6,7 @@ import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import videosApi from '@/api/videos';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
+import i18n from '../../plugins/i18n';
 
 const initialState = () => ({
   byId: {},
@@ -128,19 +129,14 @@ const actions = {
       commitAddVideo(video, commit);
       commit('addRecentId', video.id);
       dispatch('notify/add', {
-        title: 'Video Uploaded',
-        text: 'Your video will be ready to view soon; we have to process it first.',
+        title: i18n.t('video.alert.create_title'),
+        text: i18n.t('video.alert.create_body'),
         color: 'primary',
         duration: 5_000,
       }, { root: true });
     }
     catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {
@@ -149,19 +145,14 @@ const actions = {
       await videosApi.remove(token, id);
       commit('remove', id);
       dispatch('notify/add', {
-        title: 'Video Removed',
-        text: 'Video removed from the system.',
+        title: i18n.t('video.alert.remove_title'),
+        text: i18n.t('video.alert.remove_body'),
         type: 'warning',
       }, { root: true });
     }
     catch (error) {
       console.log('Video remove error');
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   // setFilter: ({ commit }, { key, value }) => {

@@ -159,11 +159,6 @@ const actions = {
     }
     catch (error) { 
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   loadFeatured: async ({ commit }) => {
@@ -201,11 +196,6 @@ const actions = {
     }
     catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
 };

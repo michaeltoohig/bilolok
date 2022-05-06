@@ -7,6 +7,7 @@ import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import checkinsApi from '@/api/checkins';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
+import i18n from '../../plugins/i18n';
 
 const initialState = () => ({
   byId: {},
@@ -127,18 +128,13 @@ const actions = {
       commitAddCheckin(checkin, commit);
       commit('addRecentId', checkin.id);
       dispatch('notify/add', {
-        title: 'Checked-In!',
-        text: `You are checked-in to this kava bar.`,
+        title: i18n.t('checkin.alert.create_title'),
+        text: i18n.t('checkin.alert.create_body'),
         type: 'primary',
       }, { root: true });
     }
     catch (error) {
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {
@@ -147,19 +143,14 @@ const actions = {
       await checkinsApi.remove(token, id);
       commit('remove', id);
       dispatch('notify/add', {
-        title: 'Check-in Removed',
-        text: 'Check-in removed from the system.',
+        title: i18n.t('checkin.alert.remove_title'),
+        text: i18n.t('checkin.alert.remove_body'),
         type: 'warning',
       }, { root: true });
     }
     catch (error) {
       console.log('Check-in remove error');
       await dispatch('auth/checkApiError', error, { root: true });
-      dispatch('notify/add', {
-        title: 'Not Allowed',
-        text: error.response.data.detail,
-        type: 'warning',
-      }, { root: true });
     }
   },
   setFilter: ({ commit }, { key, value }) => {
