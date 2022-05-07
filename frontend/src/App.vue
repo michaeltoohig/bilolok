@@ -162,7 +162,7 @@
               text
               @click="showInstallPrompt = false"
             >
-              {{ $t('buttons.cancel') }}
+              {{ $t('buttons.close') }}
             </v-btn>
             <v-btn
               text

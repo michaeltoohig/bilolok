@@ -6,8 +6,8 @@
     "update_available_title": "I Kat Apdeit",
     "update_available_btn": "Apdeitem Naoia!",
     "install_app_title": "Install Bilolok App",
-    "install_app_subtitle": "Yu save openem Bilolok app lo fon blong yu olsem wan app",
-    "install_app_body": "I mekem Bilolok app stap lo hom skrin blong fon blong yu. I isi blong kam bak lo Bilolok tumoro.",
+    "install_app_subtitle": "Yu save openem Bilolok app long fon blong yu olsem wan app",
+    "install_app_body": "I mekem Bilolok app stap long hom skrin blong fon blong yu. I isi blong kam bak long Bilolok tumoro.",
     "install_app_btn": "Installem Bilolok Naoia!",
     "no_service_worker_title": "Sam Samting I No Gud",
     "no_service_worker_body": "Web browser blong yu i no supotem <a target='_blank' href='https://developers.google.com/web/fundamentals/primers/service-workers'>Service Workers</a> minim se sam samting long Bilolok i no save wok gud mo Bilolok app bae i no hariap tumas. Yu sud usum wan web browser we hemi no olfala tumas."

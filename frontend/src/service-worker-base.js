@@ -1,9 +1,9 @@
 /* eslint-disable */
 
 import Dexie from 'dexie';
-// import {
-//   setCacheNameDetails,
-// } from 'workbox-core';
+import {
+  cacheNames,
+} from 'workbox-core';
 import {
   registerRoute,
   NavigationRoute,
@@ -41,7 +41,7 @@ const precacheUrls = [
 precacheAndRoute(precacheUrls);
 
 // Remove outdated pre-caches - not sure this does what I expect yet
-cleanupOutdatedCaches();
+// cleanupOutdatedCaches();
 
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type);
@@ -458,11 +458,11 @@ setDefaultHandler(new StaleWhileRevalidate());
 // Clear old caches
 var clearOldCaches = function (event) {
   event.waitUntil(
-    caches.keys().then(function (cacheNames) {
+    caches.keys().then(function (allCaches) {
       // TODO FIXME workbox is not defined error
-      let validCacheSet = new Set(Object.values(workbox.core.cacheNames));
+      let validCacheSet = new Set(Object.values(cacheNames));
       return Promise.all(
-        cacheNames
+        allCaches
           .filter(function (cacheName) {
             return !validCacheSet.has(cacheName);
           })
