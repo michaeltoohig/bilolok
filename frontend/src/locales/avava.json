@@ -1,0 +1,53 @@
+{
+  "intro": "Bilolok ivi akis nan ewe nan <strong>Bilolok</strong> nan sin git.",
+  "tagline": "ewe nan Bilolok",
+  "app": {
+    "offline": "Ong offlaen!",
+    "update_available_title": "I Kat Apdeit",
+    "update_available_btn": "Apdeitem Naoia!",
+    "install_app_title": "Install Bilolok App",
+    "install_app_subtitle": "Yu save openem Bilolok app long fon blong yu olsem wan app",
+    "install_app_body": "I mekem Bilolok app stap long hom skrin blong fon blong yu. I isi blong kam bak long Bilolok tumoro.",
+    "install_app_btn": "Installem Bilolok Naoia!",
+    "no_service_worker_title": "Sam Samting I No Gud",
+    "no_service_worker_body": "Web browser blong yu i no supotem <a target='_blank' href='https://developers.google.com/web/fundamentals/primers/service-workers'>Service Workers</a> minim se sam samting long Bilolok i no save wok gud mo Bilolok app bae i no hariap tumas. Yu sud usum wan web browser we hemi no olfala tumas."
+  },
+  "loading": {
+    "app": "Hutng Bilolok Mai Ip Mei...",
+    "default": "Mai Ip Mei...",
+    "user": "Mut Mai Ip Mei...",
+    "nakamal": "Amal Lesles Nan Bilolok Mai Ip Mei...",
+    "map": "Mai Ip Mei..."
+  },
+  "buttons": {
+    "cancel": "Bititik",
+    "complete": "Garen",
+    "close": "Kocor",
+    "delete": "Keserlu",
+    "edit": "Kavasur",
+    "save": "Keideingi sur",
+    "share": "Batarak",
+    "start": "Matan",
+    "submit": "Kesuri"
+  },
+  "home": {
+    "hero": "Kawai amal lesles nan Bilolok mei!",
+    "go_to_map": "Len asal anang",
+    "featured_nakamal": "Spesel Kava Bar Blo Tete",
+    "timeline_title": "Ol Niufala Post",
+    "end_of_feed": "Ol Post Blong Tete i Finis ia.",
+    "end_of_feed_extra": "Trunaem lukluk map blo lukaotem ol narafala samting long Bilolok.",
+    "join_bilolok": "Joenem Bilolok",
+    "join_bilolok_btn": "Saenap long Bilolok Naoia"
+  },
+  "menu": {
+    "admin": null,
+    "home": "Hutng",
+    "map": "Asal",
+    "users": "Mutir",
+    "about": "Tirtirsalnan",
+    "nakamals_in_view": "Kava bars in view",
+    "fb_page": "Follow our FB Page",
+    "fb_group": "Join our FB Group"
+  }
+}

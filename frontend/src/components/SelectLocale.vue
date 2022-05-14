@@ -39,6 +39,7 @@
 <script>
 const usaFlag = require('@/assets/usa_flag.svg');
 const vuFlag = require('@/assets/vu_flag.svg');
+const malampaFlag = require('@/assets/vu_malampa_flag.svg');
 
 export default {
   name: 'SelectLocale',
@@ -54,6 +55,11 @@ export default {
           locale: 'en',
           lang: 'English',
           flag: usaFlag,
+        },
+        {
+          locale: 'avava',
+          lang: 'Avava',
+          flag: malampaFlag,
         },
       ],
     };
