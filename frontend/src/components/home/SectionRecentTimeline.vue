@@ -121,11 +121,29 @@ export default {
       await this.getRecentImages();
       await this.getRecentTrips();
       await this.getRecentVideos();
+      // sessionStorage.setItem('home-timeline-fetched', new Date().toISOString());
       this.loading = false;
     },
   },
   async mounted() {
     await this.fetchData();
+
+    // XXX below was dumb attempt to reduce fetching data everytime we return home.
+    //  A better caching strategy would be smarter and less fragile.
+    //  Perhaps a CacheFirst strategy or longer cache max-age
+
+    // const timelineFetched = sessionStorage.getItem('home-timeline-fetched');
+    // if (timelineFetched === null) {
+    //   await this.fetchData();
+    //   return;
+    // }
+    // const timelineFetchedDate = new Date(timelineFetched).getTime();
+    // const timelineFetchedSecs = Math.abs(new Date().getTime() - timelineFetchedDate) / 1000;
+    // // Update again after 3600 seconds - XXX hardcoded value
+    // if (timelineFetchedSecs > 3600) {
+    //   await this.fetchData();
+    // }
+    // this.loading = false;
   },
 };
 </script>
