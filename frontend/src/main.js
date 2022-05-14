@@ -5,6 +5,7 @@ import { sentryDsn, sentryTunnel } from '@/env';
 
 import App from './App.vue';
 import './registerServiceWorker';
+import httpConfig from './api/http-config';
 import i18n from './plugins/i18n';
 import router from './router';
 import store from './store';
@@ -17,6 +18,12 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'; // eslint-ignore import/n
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'; // eslint-ignore
 import './geo';
 import './deviceId';
+
+httpConfig.init();
+
+// Testing strategy to reduce refetching timeline when returning to home page
+//  That idea is dumb I think and should be handled with better caching strategies
+// sessionStorage.removeItem('home-timeline-fetched');
 
 // Testing the following
 function getPWADisplayMode() {

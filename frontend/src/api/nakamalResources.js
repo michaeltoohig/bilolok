@@ -1,22 +1,23 @@
+import Vue from 'vue';
+// import http from './http-common';
 import authHeaders from './utils';
-import http from './http-common';
 
 const resource = 'nakamal-resources';
 
 export default {
   async getAll(params) {
-    return http.get(`${resource}`, { params });
+    return Vue.prototype.$http.get(`${resource}`, { params });
   },
 
   async create(token, payload) {
-    return http.post(`${resource}`, payload, authHeaders(token));
+    return Vue.prototype.$http.post(`${resource}`, payload, authHeaders(token));
   },
 
   async update(token, id, payload) {
-    return http.put(`${resource}/${id}`, payload, authHeaders(token));
+    return Vue.prototype.$http.put(`${resource}/${id}`, payload, authHeaders(token));
   },
 
   async remove(token, id) {
-    return http.delete(`${resource}/${id}`, authHeaders(token));
+    return Vue.prototype.$http.delete(`${resource}/${id}`, authHeaders(token));
   },
 };

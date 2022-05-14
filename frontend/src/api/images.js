@@ -1,15 +1,16 @@
+import Vue from 'vue';
+// import http from './http-common';
 import authHeaders from './utils';
-import http from './http-common';
 
 const resource = 'images';
 
 export default {
   async get(id) {
-    return http.get(`${resource}/${id}`);
+    return Vue.prototype.$http.get(`${resource}/${id}`);
   },
 
   async getAll(params) {
-    return http.get(`${resource}`, {
+    return Vue.prototype.$http.get(`${resource}`, {
       params: {
         ...params,
       },
@@ -17,7 +18,7 @@ export default {
   },
 
   async getRecent() {
-    return http.get(`${resource}`, {
+    return Vue.prototype.$http.get(`${resource}`, {
       params: {
         recent: true,
       },
@@ -25,6 +26,6 @@ export default {
   },
 
   async remove(token, id) {
-    return http.delete(`${resource}/${id}`, authHeaders(token));
+    return Vue.prototype.$http.delete(`${resource}/${id}`, authHeaders(token));
   },
 };
