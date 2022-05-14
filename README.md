@@ -217,7 +217,10 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] Trips
   - [x] Videos
 - [x] SSR OG tags
-  - [ ] Facebook issue with images having "incorrect content type"
+  - [x] Facebook issue with images having "incorrect content type"
+    - [x] Issue was related to https not being supported by facebook crawler
+    - [x] Resolve http solution for video subdomain
+      - [x] Issue above is images are not minimum 600px for FB
 
 - [ ] Check SW video/image caches
   - [ ] Looks like we have to resolve cross-origin assets
@@ -227,8 +230,10 @@ I would have to say adding video and some other features I'm working on is pushi
 
 - [ ] Refactor frontend components
   - [ ] Move map components to map directory
-  - [ ] break out components related to map edit/create to a subdirectory
+  - [ ] break out components related to map edit/create to a subdirector
+  - [ ] Create components for App.vue
 
+- [x] Handle request timeout gracefully
 - [ ] Remove repetitive "Not Allowed" notifications in favor of single "Request Error" notification using the response.data.detail
 
 - [ ] Vue-tour ?
