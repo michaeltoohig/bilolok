@@ -63,17 +63,17 @@ const routes = [
   },
   {
     path: '/image/:id',
-    name: 'Checkin',
+    name: 'Image',
     component: () => import(/* webpackChunkName: "public" */ '@/views/share/Image.vue'),
   },
   {
     path: '/trip/:id',
-    name: 'Checkin',
+    name: 'Trip',
     component: () => import(/* webpackChunkName: "public" */ '@/views/share/Trip.vue'),
   },
   {
     path: '/video/:id',
-    name: 'Checkin',
+    name: 'Video',
     component: () => import(/* webpackChunkName: "public" */ '@/views/share/Video.vue'),
   },
   {
