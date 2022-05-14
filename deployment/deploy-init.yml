@@ -16,16 +16,14 @@
         state: restarted
         name: "{{ be_api_service_name }}" 
 
-    # - name: Restart celery worker service
-    #   systemd:
-    #     state: restarted
-    #     name: "{{ be_celery_service_name }}"
-    #   become: yes
-    #   # when: be_clone.changed
+    - name: Restart worker service
+      systemd:
+        state: restarted
+        name: "{{ be_worker_service_name }}"
+      # when: be_clone.changed
 
-    # - name: Restart celerybeat service
-    #   systemd:
-    #     state: restarted
-    #     name: "{{ be_celerybeat_service_name }}"
-    #   become: yes
-    #   # when: be_clone.changed
+    - name: Restart open graph app service
+      systemd:
+        state: restarted
+        name: "{{ be_og_app_service_name }}"
+      # when: be_clone.changed
