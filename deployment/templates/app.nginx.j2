@@ -52,23 +52,22 @@ server {
   include snippets/ssl.conf;
   include snippets/letsencrypt.conf;
 
+  error_log /var/log/nginx/{{ domain }}-error.log;
+  access_log /var/log/nginx/{{ domain }}-access.log;
+
   location /.well-known/assetlinks.json {
     alias /var/www/{{ domain }}/assetlinks.json;
   }
-
-  root {{ fe_remote_directory }};
-  index index.html;
 
   location / {
     if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
       proxy_pass http://127.0.0.1:{{ be_og_app_service_port }};
       break;
     }
+    root {{ fe_remote_directory }};
+    index index.html;
     try_files $uri $uri/ /index.html;
   }
-
-  error_log /var/log/nginx/{{ domain }}-error.log;
-  access_log /var/log/nginx/{{ domain }}-access.log;
 }
 
 server {
@@ -107,7 +106,14 @@ server {
   server_name {{ domain_image }};
 
   include snippets/letsencrypt.conf;
-  return 301 https://{{ domain_image }}$request_uri;
+
+  location / {
+    if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
+      proxy_pass proxy_pass http://127.0.0.1:{{ image_service_port }};
+      break;
+    }
+    return 301 https://{{ domain_image }}$request_uri;
+  }
 }
 
 server {
@@ -168,8 +174,18 @@ server {
   listen 80;
   server_name {{ domain_video }};
 
+  client_max_body_size 5M;
+  include snippets/gzip.conf;
   include snippets/letsencrypt.conf;
-  return 301 https://{{ domain_video }}$request_uri;
+
+  error_log /var/log/nginx/{{ domain_video }}-error.log;
+  access_log /var/log/nginx/{{ domain_video }}-access.log;
+
+  # NOTE could not make if statement to redirect users to https while allowing bots to try_files
+  location /videos {
+    alias {{ video_remote_directory }};
+    try_files $uri =404;
+  }
 }
 
 server {
@@ -194,5 +210,3 @@ server {
     try_files $uri =404;
   }
 }
-
-
