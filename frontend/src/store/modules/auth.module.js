@@ -41,15 +41,15 @@ const actions = {
       // TODO check registration is good and make redirect action
       router.push({ name: 'Auth', params: { auth: 'login' } });
       dispatch('notify/add', {
-        title: i18n.$t('auth.alert.register_success_title'),
-        text: i18n.$t('auth.alert.register_success_body'),
+        title: i18n.t('auth.alert.register_success_title'),
+        text: i18n.t('auth.alert.register_success_body'),
         type: 'primary',
         duration: 15_000,
       }, { root: true });
     }
     catch(error) {
       dispatch('notify/add', {
-        title: i18n.$t('auth.alert.register_fail_title'),
+        title: i18n.t('auth.alert.register_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });
@@ -67,8 +67,8 @@ const actions = {
         commit('setLogInError', false);
         await dispatch('routeLoggedIn');
         dispatch('notify/add', {
-          title: i18n.$t('auth.alert.login_success_title'),
-          text: i18n.$t('auth.alert.login_success_body'),
+          title: i18n.t('auth.alert.login_success_title'),
+          text: i18n.t('auth.alert.login_success_body'),
           type: 'primary',
           duration: 3_000,
         }, { root: true });
@@ -79,7 +79,7 @@ const actions = {
     }
     catch (error) {
       dispatch('notify/add', {
-        title: i18n.$t('auth.alert.login_fail_title'),
+        title: i18n.t('auth.alert.login_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });
@@ -161,8 +161,8 @@ const actions = {
   async userLogOut({ dispatch }) {
     await dispatch('logOut');
     dispatch('notify/add', {
-      title: i18n.$t('auth.alert.logout_success_title'),
-      text: i18n.$t('auth.alert.logout_success_body'),
+      title: i18n.t('auth.alert.logout_success_title'),
+      text: i18n.t('auth.alert.logout_success_body'),
       type: 'primary',
       duration: 5_000,
     }, { root: true });
@@ -225,8 +225,8 @@ const actions = {
   requestVerification: async ({ dispatch, getters }) => {
     await authApi.requestVerification(getters.user.email);
     dispatch('notify/add', {
-      title: i18n.$t('auth.alert.email_verification_sent_title'),
-      text: i18n.$t('auth.alert.email_verification_sent_body'),
+      title: i18n.t('auth.alert.email_verification_sent_title'),
+      text: i18n.t('auth.alert.email_verification_sent_body'),
       type: 'info',
       duration: 10_000,
     }, { root: true });
@@ -235,8 +235,8 @@ const actions = {
     try {
       await authApi.verify(token);
       dispatch('notify/add', {
-        title: i18n.$t('auth.alert.email_verification_success_title'),
-        text: i18n.$t('auth.alert.email_verification_success_body'),
+        title: i18n.t('auth.alert.email_verification_success_title'),
+        text: i18n.t('auth.alert.email_verification_success_body'),
         type: 'success',
         duration: 10_000,
       }, { root: true });
@@ -244,7 +244,7 @@ const actions = {
     }
     catch (error) {
       dispatch('notify/add', {
-        title: i18n.$t('auth.alert.email_verification_fail_title'),
+        title: i18n.t('auth.alert.email_verification_fail_title'),
         text: error.response.data.detail,
         type: 'warning',
       }, { root: true });
