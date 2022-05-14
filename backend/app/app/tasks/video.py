@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from uuid import UUID
+from PIL import Image, ImageOps
 
 from loguru import logger
 
@@ -8,6 +9,45 @@ from app.core.config import settings
 from app.crud.video import CRUDVideo
 from app.models.video import VideoProcessingStatus
 from app.schemas.video import VideoSchemaUpdate
+
+
+def make_social_video(sfp: Path):
+    ffp = sfp.parent / sfp.name.replace(sfp.suffix, ".mp4")
+    os.system(f"{settings.FFMPEG_COMMAND} -i {str(sfp)} -movflags faststart -profile:v high -level 4.2 {str(ffp)}")
+    logger.info(f"Complete transcode video to mp4 for social sharing")
+
+
+def make_social_thumbnail(thumbnail: Path, watermark: Path, ffp: Path):
+    BORDER = 120
+    logger.info(f"Creating social thumbnail of {str(thumbnail)} and {str(watermark)}")
+    img = Image.open(str(thumbnail))
+    wm = Image.open(str(watermark))
+    # Expand a white border around thumbnail to reach minimum 600px requirement of FB
+    img = ImageOps.expand(img, border=BORDER, fill=(255,255,255))
+    logger.debug("Expanded border of thumbnail")
+    # resize watermark to fit border
+    ratio = (BORDER / float(wm.size[1]))
+    w = int((float(wm.size[0])*float(ratio)))
+    wm = wm.resize((w,BORDER), Image.Resampling.LANCZOS)
+    logger.debug("Resized watermark")
+    # paste watermark around border of image
+    center = img.size[0] // 2
+    adj_center = center - (wm.size[0] // 2)
+    # top watermark
+    img.paste(wm, (adj_center,0), wm)
+    # bottom watermark
+    wm = wm.transpose(Image.Transpose.ROTATE_180)
+    img.paste(wm, (adj_center,img.size[1]-BORDER), wm)
+    # right side watermark
+    wm = wm.transpose(Image.Transpose.ROTATE_90)
+    center = img.size[1] // 2
+    adj_center = center - (wm.size[1] // 2)
+    img.paste(wm, (img.size[0]-BORDER,adj_center), wm)
+    # left side watermark
+    wm = wm.transpose(Image.Transpose.ROTATE_180)
+    img.paste(wm, (0,adj_center), wm)
+    logger.debug("Added watermark to thumbnail")
+    img.save(str(ffp))
 
 
 async def process_video(ctx: dict, item_id: UUID):
@@ -41,6 +81,10 @@ async def process_video(ctx: dict, item_id: UUID):
                 video.id,
                 VideoSchemaUpdate(status=VideoProcessingStatus.COMPLETE),
             )
+            logger.info("Creating additional variations for social media")
+            make_social_video(ffp)
+            social_fp = Path(settings.DATA_LOCAL_DIR) / crud_video._social_thumbnail_filepath(video)
+            make_social_thumbnail(ffp, watermark, social_fp)
         except Exception as exc:
             logger.error(f"Video {str(video.id)} failed")
             video = await crud_video.update(

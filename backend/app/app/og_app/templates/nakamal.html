@@ -6,6 +6,6 @@
 {{ og_tag("og:type", "website") }}
 {{ og_tag("og:url", url) }}
 {%- for image in images -%}
-{{ og_image(image.src, 1280, 720, "image/jpg") }}
+{{ og_image(image.src, 1280, 720, "image/jpeg") }}
 {%- endfor -%}
 {% endblock %}

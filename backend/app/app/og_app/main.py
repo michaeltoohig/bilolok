@@ -97,11 +97,14 @@ async def trip(request):
         trip = await crud_trip.get_by_id(id)
         if not trip:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        crud_image = CRUDImage(db)
+        images = await crud_image.get_multi_by_nakamal(trip.nakamal.id, limit=1)
     return templates.TemplateResponse("trip.html", {
         "request": request,
         "trip": trip,
         "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"Trip to {trip.nakamal.name} on Bilolok!",
+        "images": list(images),
     })
 
 
@@ -118,7 +121,7 @@ async def video(request):
         "url": settings.FRONTEND_HOST + request.url.path,
         "title": f"User uploaded video on Bilolok!",
     })
-    
+
 
 routes = [
     Route("/", default),

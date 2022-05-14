@@ -5,6 +5,6 @@
 {{ default_og_description() }}
 {{ og_tag("og:type", "video") }}
 {{ og_tag("og:url", url) }}
-{{ og_image(video.cover, 480, 480, "image/jpg") }}
+{{ og_image(video.social_thumbnail , 600, 600, "image/jpeg") }}
 {{ og_video(video.src, 480, 480, "video/webm") }}
 {% endblock %}

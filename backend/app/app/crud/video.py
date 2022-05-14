@@ -51,6 +51,14 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
             filename=filename,
         )
 
+    def _social_thumbnail_filepath(self, video: VideoSchema) -> Path:
+        filename = "social_thumbnail.jpg"
+        return self._table.build_filepath(
+            user_id=video.user.id,
+            file_id=video.file_id,
+            filename=filename,
+        )
+
     # def make_src_url(self, video: VideoSchema) -> str:
     #     filename = f"{video.file_id}.webm"
     #     uri = self._table.build_filepath(video.user_id, video.file_id, filename)
@@ -66,9 +74,11 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
             # use static files returned by fastapi
             video.src = "{}/{}".format(settings.SERVER_HOST, self._video_filepath(video))
             video.cover = "{}/{}".format(settings.SERVER_HOST, self._cover_filepath(video))
+            video.social_thumbnail = "{}/{}".format(settings.SERVER_HOST, self._social_thumbnail_filepath(video))
         else:
             video.src = "{}/{}".format(settings.VIDEO_SERVER, self._video_filepath(video))
             video.cover = "{}/{}".format(settings.VIDEO_SERVER, self._cover_filepath(video))
+            video.social_thumbnail = "{}/{}".format(settings.VIDEO_SERVER, self._social_thumbnail_filepath(video))
         return video
 
     async def _get_one(self, item_id: UUID):

@@ -37,6 +37,7 @@ class VideoSchema(VideoSchemaBase):
 
     src: str
     cover: str
+    social_thumbnail: str
 
     user: UserSchema
     nakamal: Optional[NakamalSchema] = None

@@ -11,21 +11,24 @@
 {%- endmacro -%}
 
 {%- macro og_image(url, width, height, type) -%}
-{{ og_tag("og:image", url) }}
+{{ og_tag("og:image", url | replace("https://", "http://")) }}
+{{ og_tag("og:image:secure_url", url) }}
 {{ og_tag("og:image:width", width) }}
 {{ og_tag("og:image:height", height) }}
 {{ og_tag("og:image:type", type) }}
 {%- endmacro -%}
 
 {%- macro default_og_image() -%}
-{{ og_image("https://bilolok.com/img/cover.jpg", 1448, 636, "image/jpg") }}
+{# TODO change this to an image hosted by our image domain to be consistent and to handle FB's stupid http only bug #}
+{{ og_image("https://bilolok.com/img/cover.jpg", 1448, 636, "image/jpeg") }}
 {%- endmacro -%}
 
 {%- macro og_video(url, width, height, type) -%}
-{{ og_tag("og:video", url) }}
+{{ og_tag("og:video", url | replace(".webm", ".mp4")) }}
+{{ og_tag("og:video:secure_url", url | replace(".webm", ".mp4")) }}
 {{ og_tag("og:video:width", width) }}
 {{ og_tag("og:video:height", height) }}
-{{ og_tag("og:video:type", type) }}
+{{ og_tag("og:video:type", "video/mp4") }}
 {%- endmacro -%}
 
 <!DOCTYPE html>

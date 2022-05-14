@@ -5,5 +5,7 @@
 {{ default_og_description() }}
 {{ og_tag("og:type", "website") }}
 {{ og_tag("og:url", url) }}
-{{ default_og_image() }}
+{%- for image in images -%}
+{{ og_image(image.src, 1280, 720, "image/jpeg") }}
+{%- endfor -%}
 {% endblock %}
