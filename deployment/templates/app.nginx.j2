@@ -109,7 +109,7 @@ server {
 
   location / {
     if ($http_user_agent ~* "linkedinbot|googlebot|yahoo|bingbot|baiduspider|yandex|yeti|yodaobot|gigabot|ia_archiver|facebookexternalhit|twitterbot|developers\.google\.com") {
-      proxy_pass proxy_pass http://127.0.0.1:{{ image_service_port }};
+      proxy_pass http://127.0.0.1:{{ image_service_port }};
       break;
     }
     return 301 https://{{ domain_image }}$request_uri;
