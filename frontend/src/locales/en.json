@@ -137,7 +137,9 @@
     "chief": "Chief",
     "chief_checkins_this_month": "Check-ins this month",
     "chief_what_is_this": "This is the user who has the most check-ins in the last 30 days.",
-    "chief_what_is_this_btn": "What's this?"
+    "chief_what_is_this_btn": "What's this?",
+    "is_featured": "Featured Kava Bar",
+    "set_featured": "Select As Featured"
   },
   "user": {
     "profile": "Profile",

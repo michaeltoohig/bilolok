@@ -137,7 +137,9 @@
     "chief": "Jif",
     "chief_checkins_this_month": "Namba blong jek-in",
     "chief_what_is_this": "Hemia man we namba blong jek-in blong hem i bitim ol narafala man lo las 30 dei.",
-    "chief_what_is_this_btn": "Wanem ia?"
+    "chief_what_is_this_btn": "Wanem ia?",
+    "is_featured": "Spesel Kava Bar Blong Tete",
+    "set_featured": "Mekem Spesel"
   },
   "user": {
     "profile": "Profael",

@@ -222,6 +222,8 @@ I would have to say adding video and some other features I'm working on is pushi
     - [x] Resolve http solution for video subdomain
       - [x] Issue above is images are not minimum 600px for FB
 
+- [x] Allow users to set featured nakamal
+
 - [ ] Check SW video/image caches
   - [ ] Looks like we have to resolve cross-origin assets
 

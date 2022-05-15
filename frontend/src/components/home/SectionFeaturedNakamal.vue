@@ -1,6 +1,9 @@
 <template>
   <v-container v-if="show">
-    <h2>{{ $t('home.featured_nakamal') }}</h2>
+    <h2>
+      <v-icon class="pb-2">mdi-trophy-award</v-icon>
+      {{ $t('home.featured_nakamal') }}
+    </h2>
 
     <v-container fill-height v-if="nakamal===null">
       <v-layout align-center justify-center>

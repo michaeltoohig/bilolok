@@ -33,11 +33,21 @@
               </v-card-title>
               <v-card-text class="px-3 pb-3">
                 <v-alert
+                  v-show="isFeatured"
+                  color="accent"
+                  outlined
+                  icon="mdi-trophy-award"
+                  border="left"
+                  class="mx-0 mt-0 mb-1 py-2"
+                >
+                  {{ $t('nakamal.is_featured') }}
+                </v-alert>
+                <v-alert
                   v-show="hasRecentCheckin"
                   outlined
                   icon="mdi-marker-check"
                   border="left"
-                  class="ma-0 py-2"
+                  class="mx-0 mt-0 mb-1 py-2"
                 >
                   {{ $t('nakamal.has_recent_checkins') }}
                 </v-alert>
@@ -73,6 +83,14 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>{{ $t('nakamal.view_on_map') }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item :disabled="isFeatured" @click="setFeatured(nakamal.id)">
+                  <v-list-item-icon>
+                    <v-icon>mdi-trophy-award</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ $t('nakamal.set_featured') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
                 <v-list-item @click="onShare">
@@ -250,6 +268,7 @@ export default {
       hasAdminAccess: 'auth/hasAdminAccess',
       isUserVerified: 'auth/isUserVerified',
       nakamal: 'nakamal/selected',
+      featured: 'nakamal/featured',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
       recentNakamalIds: 'checkin/recentNakamalIds',
@@ -261,6 +280,10 @@ export default {
     hasRecentCheckin() {
       if (!this.nakamal) return false;
       return this.recentNakamalIds.includes(this.nakamal.id);
+    },
+    isFeatured() {
+      if (!this.nakamal || !this.featured) return false;
+      return this.nakamal.id === this.featured.id;
     },
     // loading() {
     //   return !this.nakamal;
@@ -291,6 +314,7 @@ export default {
   methods: {
     ...mapActions({
       checkin: 'checkin/add',
+      setFeatured: 'nakamal/setFeatured',
     }),
     goToTabImages() {
       this.tab = 'images';
@@ -364,7 +388,7 @@ export default {
   async mounted() {
     const { id } = this.$route.params;
     await this.$store.dispatch('image/getNakamal', id);
-    this.$store.dispatch('checkin/getNakamal', id);
+    await this.$store.dispatch('checkin/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {
         if (!this.nakamal) {
