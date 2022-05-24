@@ -95,17 +95,21 @@ const actions = {
     commitAddVideo(video, commit);
   },
   getRecent: async ({ commit }) => {
-    const threshold = 3; // XXX hardcoded value
-    const response = await videosApi.getRecent();
-    let items = response.data;
-    if (!items.length < threshold) {
-      const response = await videosApi.getAll({ limit: threshold })
-      items = response.data;
+    try {
+      const threshold = 3; // XXX hardcoded value
+      const response = await videosApi.getRecent();
+      let items = response.data;
+      if (!items.length < threshold) {
+        const response = await videosApi.getAll({ limit: threshold })
+        items = response.data;
+      }
+      items.forEach((item) => {
+        commitAddVideo(item, commit);
+      });
+      commit('setRecentIds', items.map((i) => i.id));
+    } catch (error) {
+      console.log('recent video error', error);
     }
-    items.forEach((item) => {
-      commitAddVideo(item, commit);
-    });
-    commit('setRecentIds', items.map((i) => i.id));
   },
   // getNakamal: async ({ commit }, nakamalId) => {
   //   const response = await nakamalsApi.getCheckins(nakamalId);

@@ -17,8 +17,8 @@ async def sentry_tunnel_endpoint(request: Request):
     if settings.DEBUG:
         envelope = await request.body()
         pieces = envelope.decode().split("\n")
-        logger.error(envelope)
-        return Response(None, status_code=status.HTTP_201_CREATED)
+        # logger.error(envelope)
+        return Response(status_code=status.HTTP_201_CREATED)
     try:
         envelope = await request.body()
         pieces = envelope.decode().split("\n")
@@ -37,7 +37,8 @@ async def sentry_tunnel_endpoint(request: Request):
         else:
             logger.warning("Sentry DSN does not match expected values")
     except Exception as exc:
+        logger.warning("Exception handling sentry tunnel request")
         logger.exception(exc)
         raise exc  # will be picked up by sentry_sdk
     finally:
-        return Response(None, status_code=status.HTTP_201_CREATED)
+        return Response(status_code=status.HTTP_201_CREATED)

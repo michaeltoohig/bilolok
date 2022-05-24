@@ -71,17 +71,21 @@ const actions = {
     commitAddImage(image, commit);
   },
   getRecent: async ({ commit }) => {
-    const threshold = 3; // XXX hardcoded value
-    const response = await imagesApi.getRecent();
-    let items = response.data;
-    if (!items.length < threshold) {
-      const response = await imagesApi.getAll({ limit: threshold });
-      items = response.data;
+    try {
+      const threshold = 3; // XXX hardcoded value
+      const response = await imagesApi.getRecent();
+      let items = response.data;
+      if (!items.length < threshold) {
+        const response = await imagesApi.getAll({ limit: threshold });
+        items = response.data;
+      }
+      items.forEach((item) => {
+        commitAddImage(item, commit);
+      });
+      commit('setRecentIds', items.map((i) => i.id));
+    } catch (error) {
+      console.log('recent image error', error);
     }
-    items.forEach((item) => {
-      commitAddImage(item, commit);
-    });
-    commit('setRecentIds', items.map((i) => i.id));
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getImages(nakamalId);

@@ -95,16 +95,20 @@ const actions = {
   },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
-    const response = await checkinsApi.getRecent();
-    let items = response.data;
-    if (!items.length < threshold) {
-      const response = await checkinsApi.getAll({ limit: threshold })
-      items = response.data;
+    try {
+      const response = await checkinsApi.getRecent();
+      let items = response.data;
+      if (!items.length < threshold) {
+        const response = await checkinsApi.getAll({ limit: threshold })
+        items = response.data;
+      }
+      items.forEach((item) => {
+        commitAddCheckin(item, commit);
+      });
+      commit('setRecentIds', items.map((i) => i.id));
+    } catch (error) {
+      console.log('recent checkin error', error);
     }
-    items.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
-    commit('setRecentIds', items.map((i) => i.id));
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getCheckins(nakamalId);

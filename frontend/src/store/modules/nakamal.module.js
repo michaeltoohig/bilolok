@@ -162,10 +162,14 @@ const actions = {
     }
   },
   loadFeatured: async ({ commit }) => {
-    const response = await nakamalsApi.getFeatured();
-    const nakamal = response.data;
-    commitAddNakamal(nakamal, commit);
-    commit('setFeatured', nakamal.id);
+    try {
+      const response = await nakamalsApi.getFeatured();
+      const nakamal = response.data;
+      commitAddNakamal(nakamal, commit);
+      commit('setFeatured', nakamal.id);
+    } catch(error) {
+      console.log('featured nakamal error', error);
+    }
   },
   setFeatured: async ({ commit }, id) => {
     await nakamalsApi.putFeatured(id);

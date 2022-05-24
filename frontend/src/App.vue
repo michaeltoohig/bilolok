@@ -28,120 +28,14 @@
     </v-main>
 
     <div v-else>
-      <div
-        v-if="noServiceWorker"
-        style="pointer-events: none; position: fixed; z-index: 3001; width: 100%;"
-      >
-        <div class="d-flex justify-center">
-          <v-alert
-            style="pointer-events: auto;"
-            class="my-5"
-            max-width="600"
-            type="warning"
-            dark
-            :prominent="!$vuetify.breakpoint.xsOnly"
-            transition="scale-transition"
-            dismissible
-          >
-            <div class="title">
-              {{ $t('app.no_service_worker_title') }}
-            </div>
-            <div v-html="$t('app.no_service_worker_body')" />
-          </v-alert>
-          <v-alert
-            v-if="updateExists"
-            class="mx-auto"
-            max-width="450"
-            type="info"
-            dark
-            :prominent="!$vuetify.breakpoint.xsOnly"
-            transition="scale-transition"
-          >
-            <v-row align="center">
-              <v-col class="grow">
-                {{ $t('app.update_available_title') }}
-              </v-col>
-              <v-col class="shrink">
-                <v-btn @click="refreshApp">{{ $t('app.update_available_btn') }}</v-btn>
-              </v-col>
-            </v-row>
-          </v-alert>
-        </div>
-      </div>
+      <AlertUpdateAvailable/>
       <SideBar></SideBar>
       <v-main>
         <router-view></router-view>
       </v-main>
       <Notifications></Notifications>
 
-      <v-dialog
-        v-model="showAuthModal"
-        persistent
-        max-width="400"
-      >
-        <v-card>
-          <v-card-title>{{ $t('auth.alert.auth_required_title') }}</v-card-title>
-          <v-card-subtitle>
-            {{ $t('auth.alert.auth_required_subtitle') }}
-          </v-card-subtitle>
-          <v-card-text>
-            <p>{{ $t('auth.alert.auth_required_body') }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              text
-              outlined
-              @click="goToLogin"
-            >
-              {{ $t('auth.login') }}
-            </v-btn>
-            <v-btn
-              text
-              outlined
-              @click="goToSignup"
-            >
-              {{ $t('auth.register') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn text @click="closeAuthModal">
-              {{ $t('buttons.close') }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
-      <v-dialog
-        v-model="showUserVerifiedModal"
-        persistent
-        max-width="400"
-      >
-        <v-card>
-          <v-card-title>{{ $t('auth.alert.email_verification_required_title') }}</v-card-title>
-          <v-card-subtitle>
-            {{ $t('auth.alert.email_verification_required_subtitle') }}
-          </v-card-subtitle>
-          <div class="d-flex justify-center">
-            <v-icon size="100">mdi-email-alert</v-icon>
-          </div>
-          <v-card-text>
-            <p>{{ $t('auth.alert.email_verification_required_body') }}</p>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text @click="closeUserVerifiedModal">
-              {{ $t('buttons.close') }}
-            </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              outlined
-              color="primary"
-              @click="sendVerificationEmail"
-            >
-              {{ $t('auth.send_verification_email') }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <DialogUserAuthRequired />
 
       <v-dialog
         v-model="showInstallPrompt"
@@ -181,8 +75,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import OfflineMixin from '@/mixins/offline';
-import UpdateMixin from './mixins/update';
-import Notifications from './components/Notifications.vue';
+import Notifications from '@/components/Notifications.vue';
+import AlertUpdateAvailable from '@/components/AlertUpdateAvailable.vue';
+import DialogUserAuthRequired from '@/components/DialogUserAuthRequired.vue';
 import SideBar from './components/SideBar.vue';
 
 export default {
@@ -230,8 +125,10 @@ export default {
   components: {
     SideBar,
     Notifications,
+    AlertUpdateAvailable,
+    DialogUserAuthRequired,
   },
-  mixins: [UpdateMixin, OfflineMixin],
+  mixins: [OfflineMixin],
   data() {
     return {
       deferredPrompt: null,
@@ -242,8 +139,6 @@ export default {
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',
-      showAuthModal: 'auth/showAuthModal',
-      showUserVerifiedModal: 'auth/showUserVerifiedModal',
       darkMode: 'setting/darkMode',
     }),
   },
@@ -257,23 +152,6 @@ export default {
     ...mapActions({
       checkLoggedIn: 'auth/checkLoggedIn',
     }),
-    closeAuthModal() {
-      this.$store.dispatch('auth/setShowAuthModal', false);
-    },
-    closeUserVerifiedModal() {
-      this.$store.dispatch('auth/setShowUserVerifiedModal', false);
-    },
-    goToLogin() {
-      this.closeAuthModal();
-      this.$router.push({ name: 'Auth', params: { auth: 'login' } });
-    },
-    goToSignup() {
-      this.closeAuthModal();
-      this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
-    },
-    sendVerificationEmail() {
-      this.$store.dispatch('auth/requestVerification');
-    },
     async installApp() {
       // hide our install prompt
       this.showInstallPrompt = false;
@@ -307,6 +185,8 @@ export default {
       return false;
     });
 
+    // Add event listener to know when user installs app.
+    //  Could be used to modify design, log event, etc
     window.addEventListener('appinstalled', () => {
       // TODO show always persistent install now option in UI
       //   then we can remove that if this event occurs.
@@ -319,6 +199,7 @@ export default {
       // Optionally, send analytics event to indicate successful install
       console.log('PWA was installed');
     });
+
     // Lastly, check user auth status which will remove the loading screen
     await this.checkLoggedIn();
   },
