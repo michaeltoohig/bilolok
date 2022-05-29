@@ -4,6 +4,7 @@
       <NakamalPost
         :nakamal="nakamal"
         @select-checkin="selectCheckin"
+        @select-video="selectVideo"
       ></NakamalPost>
 
       <hr class="my-3"/>
@@ -26,12 +27,16 @@
       :key="item.id"
     >
       <CheckinTimelineCard
-        v-if="getItemType(item) === 'checkin'"
-        :item="item"
+        v-if="item.type === 'checkin'"
+        :item="item.data"
       />
       <ImageTimelineCard
-        v-if="getItemType(item) === 'image'"
-        :item="item"
+        v-if="item.type === 'image'"
+        :item="item.data"
+      />
+      <VideoTimelineCard
+        v-if="item.type === 'video'"
+        :item="item.data"
       />
     </div>
   </div>
@@ -40,32 +45,28 @@
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
-import timeline from '@/mixins/timeline';
+// import timeline from '@/mixins/timeline';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
+import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
 import NakamalPost from '@/components/NakamalProfile/NakamalPost.vue';
 
 export default {
   name: 'TabTimeline',
-  mixins: [timeline],
+  // mixins: [timeline],
   props: ['nakamal'],
   components: {
     NakamalPost,
     CheckinTimelineCard,
     ImageTimelineCard,
-  },
-  data() {
-    return {
-      // XXX HACK my `timeline` mixin expects a `trips` and `videos` array.
-      trips: [],
-      videos: [],
-    };
+    VideoTimelineCard,
   },
   computed: {
     ...mapGetters({
       isUserVerified: 'auth/isUserVerified',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
+      getVideos: 'video/nakamal',
     }),
     checkins() {
       return this.getCheckins(this.nakamal.id)
@@ -75,11 +76,32 @@ export default {
       return this.getImages(this.nakamal.id)
         .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
     },
+    videos() {
+      return this.getVideos(this.nakamal.id)
+        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+    },
+    timelineItems() {
+      let items = this.checkins.map((i) => ({ type: 'checkin', data: i }));
+      items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
+      // items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
+      items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
+      return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
+    },
   },
   methods: {
+    async fetchData() {
+      // TODO fetch data here and show loading for timeline so page can load faster
+      return null;
+    },
     selectCheckin() {
       this.$emit('select-checkin');
     },
+    selectVideo() {
+      this.$emit('select-video');
+    },
+  },
+  async mounted() {
+    this.fetchData();
   },
 };
 </script>

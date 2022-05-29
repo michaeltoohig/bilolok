@@ -201,7 +201,7 @@
   },
   "checkin": {
     "title": "Check-in",
-    "message_placeholder": "Your check-in text...",
+    "message_placeholder": "Your check-in message...",
     "confirm_delete": "Are you sure you want to delete this check-in?",
     "alert": {
       "create_title": "Checked-in!",
@@ -227,6 +227,7 @@
     }
   },
   "video": {
+    "title": "Video",
     "not_supported": "Sorry, your browser does not support embedded videos. Here is a <a target='_blank' :href='{src}'>link to the video</a> instead.",
     "processing": "Your video is still processing and not ready for playing yet.",
     "error": "Video Error. Something went wrong and we will try to fix it. Otherwise we will delete this video in the coming days.",

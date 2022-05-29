@@ -25,11 +25,11 @@
 
       <v-card-actions>
         <v-btn
-          style="display: none"
           color="primary"
+          @click="selectVideo"
         >
           <v-icon class="mr-2">mdi-video-plus</v-icon>
-          Video
+          {{ $t('video.title') }}
         </v-btn>
         <v-btn
           style="display: none"
@@ -83,6 +83,9 @@ export default {
     },
     selectCheckin() {
       this.$emit('select-checkin');
+    },
+    selectVideo() {
+      this.$emit('select-video');
     },
   },
 };

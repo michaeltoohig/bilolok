@@ -1,5 +1,7 @@
 from typing import Any, AsyncIterator, List
 from uuid import UUID
+from app.crud.video import CRUDVideo
+from app.schemas.video import VideoSchemaOut
 
 import loguru
 from fastapi import Depends, status
@@ -180,6 +182,25 @@ async def get_all_images(
     crud_checkin = CRUDCheckin(db)
     checkins = await crud_checkin.get_multi_by_nakamal(item.id)
     return [CheckinSchemaOut(**checkin.dict()) for checkin in checkins]
+
+
+@router.get(
+    "/{item_id:uuid}/videos",
+    response_model=List[VideoSchemaOut],
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
+async def get_all_videos(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> List[VideoSchemaOut]:
+    crud_video = CRUDVideo(db)
+    videos = await crud_video.get_multi_by_nakamal(item.id)
+    return [VideoSchemaOut(**video.dict()) for video in videos]
 
 
 @router.put(

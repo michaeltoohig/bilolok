@@ -51,6 +51,15 @@ export default {
     });
   },
 
+  async getVideos(id, skip = 0, limit = 100) {
+    return Vue.prototype.$http.get(`${resource}/${id}/videos`, {
+      params: {
+        skip,
+        limit,
+      },
+    });
+  },
+
   async putResource(token, id, resourceId) {
     return Vue.prototype.$http.put(`${resource}/${id}/resources/${resourceId}`, {}, authHeaders(token));
   },

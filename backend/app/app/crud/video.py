@@ -132,9 +132,9 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
         )
         query = (
             select(self._table)
-            .where(self._table.created_at >= threshold)
             .options(selectinload(self._table.nakamal))
             .options(selectinload(self._table.user))
+            .where(self._table.created_at >= threshold)
             .order_by(desc(self._table.created_at))
         )
         results = await self._db_session.execute(query)
@@ -146,13 +146,15 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
     ) -> List[VideoSchema]:
         query = (
             select(self._table)
+            .options(selectinload(self._table.user))
             .options(selectinload(self._table.nakamal))
-            .order_by(desc(self._table.created_at))
             .where(self._table.nakamal_id == nakamal_id)
+            .order_by(desc(self._table.created_at))
         )
         results = await self._db_session.execute(query)
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
+
 
     async def get_multi_by_user(
         self,

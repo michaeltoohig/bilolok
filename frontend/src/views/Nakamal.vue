@@ -126,6 +126,7 @@
                     <TabTimeline
                       :nakamal="nakamal"
                       @select-checkin="() => this.showCheckinDialog = true"
+                      @select-video="() => this.showUploadVideoDialog = true"
                     />
                   </v-tab-item>
                   <v-tab-item value="images">
@@ -168,6 +169,13 @@
       :open="showUploadImageDialog"
       @close-modal="() => this.showUploadImageDialog = false"
     ></NakamalImageUpload>
+
+    <VideoUploadDialog
+      v-if="!loading"
+      :nakamal="nakamal"
+      :open="showUploadVideoDialog"
+      @close-modal="() => this.showUploadVideoDialog = false"
+    ></VideoUploadDialog>
   </div>
 </template>
 
@@ -179,6 +187,7 @@ import TabDetails from '@/components/NakamalProfile/TabDetails.vue';
 import TabTimeline from '@/components/NakamalProfile/TabTimeline.vue';
 import TabImages from '@/components/NakamalProfile/TabImages.vue';
 import CardChief from '@/components/NakamalProfile/CardChief.vue';
+import VideoUploadDialog from '@/components/NakamalProfile/VideoUploadDialog.vue';
 
 export default {
   name: 'Nakamal',
@@ -219,6 +228,7 @@ export default {
     };
   },
   components: {
+    VideoUploadDialog,
     DialogCheckin,
     NakamalImageUpload,
     TabDetails,
@@ -230,6 +240,7 @@ export default {
     return {
       loading: true,
       tab: 'timeline',
+      showUploadVideoDialog: false,
       showUploadImageDialog: false,
       showCheckinDialog: false,
     };
@@ -300,6 +311,13 @@ export default {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
     },
+    // toggleUploadVideoDialog() {
+    //   if (this.isUserVerified) {
+    //     this.showUploadVideoDialog = !this.showUploadVideoDialog;
+    //   } else {
+    //     this.$store.dispatch('auth/setShowUserVerifiedModal', true);
+    //   }
+    // },
     toggleCheckinDialog() {
       if (this.isUserVerified) {
         this.showCheckinDialog = !this.showCheckinDialog;
@@ -356,6 +374,7 @@ export default {
     const { id } = this.$route.params;
     await this.$store.dispatch('image/getNakamal', id);
     await this.$store.dispatch('checkin/getNakamal', id);
+    await this.$store.dispatch('video/getNakamal', id);
     await this.$store.dispatch('nakamal/select', id)
       .then(() => {
         if (!this.nakamal) {

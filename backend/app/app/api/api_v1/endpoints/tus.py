@@ -28,6 +28,7 @@ router = APIRouter()
 
 class UploadTarget(Enum):
     NAKAMAL = "NAKAMAL"
+    NAKAMAL_VIDEO = "NAKAMAL_VIDEO"
     USER_PROFILE = "USER_PROFILE"
     USER_VIDEO = "USER_VIDEO"
 
@@ -93,7 +94,7 @@ async def tus_hook(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Target is not valid"
         )
 
-    if target == UploadTarget.NAKAMAL:
+    if target in [UploadTarget.NAKAMAL, UploadTarget.NAKAMAL_VIDEO]:
         # Check Nakamal exists
         nakamal_id = tusdIn.get("Upload").get("MetaData").get("NakamalID")
         nakamal = await crud_nakamal.get_by_id(nakamal_id)
@@ -174,6 +175,36 @@ async def tus_hook(
                 )
                 video = await crud_video.create(in_schema=in_schema)
                 logger.debug("Complete video save to db")
+                await arq_app.enqueue_job(
+                    "process_video", str(video.id),
+                )
+            except Exception:
+                # TODO log
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        elif target == UploadTarget.NAKAMAL_VIDEO:
+            try:
+                tusUpload = Path(settings.DATA_LOCAL_DIR) / "uploads" / file_id
+                assert tusUpload.exists()
+                crud_video = CRUDVideo(db)
+                crud_video.save_file(tusUpload, user_id=user_id, file_id=file_id, filename=filename)
+                logger.debug("Complete video save_file")
+                # Remove Tus `.info` file
+                tusInfo = Path(str(tusUpload) + ".info")
+                tusInfo.unlink()
+            except Exception:
+                # TODO log
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            try:
+                arq_app = await get_arq_app()
+                in_schema = VideoSchemaIn(
+                    file_id=file_id,
+                    filename=filename,
+                    filetype=filetype,
+                    user_id=user_id,
+                    nakamal_id=nakamal_id,
+                )
+                video = await crud_video.create(in_schema=in_schema)
+                logger.debug("Complete nakamal video save to db")
                 await arq_app.enqueue_job(
                     "process_video", str(video.id),
                 )

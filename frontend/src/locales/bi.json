@@ -207,7 +207,7 @@
       "create_title": "Jek-in!",
       "create_body": "Yu jes jek-in long kava bar ia.",
       "remove_title": "Aotem Jek-in",
-      "remove_body": "Jek-in ia i no mo stap long sistem."
+      "remove_body": "Jek-in ia I no mo stap long sistem."
     }
   },
   "image": {
@@ -227,6 +227,7 @@
     }
   },
   "video": {
+    "title": "Vidio",
     "not_supported": "Sori, web browser blong yu i no supportem video. Yu save luk video lo <a target='_blank' :href='{src}'>link ia</a>.",
     "processing": "Video blong yu i no redi iet.",
     "error": "Sori, samting i mekem video blong yu no gud. Sistem i bagerap. Bambae mifala aotem video ia spos mifala no save fiksim.",

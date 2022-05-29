@@ -111,13 +111,13 @@ const actions = {
       console.log('recent video error', error);
     }
   },
-  // getNakamal: async ({ commit }, nakamalId) => {
-  //   const response = await nakamalsApi.getCheckins(nakamalId);
-  //   const videos = response.data;
-  //   videos.forEach((item) => {
-  //     commitAddVideo(item, commit);
-  //   });
-  // },
+  getNakamal: async ({ commit }, nakamalId) => {
+    const response = await nakamalsApi.getVideos(nakamalId);
+    const videos = response.data;
+    videos.forEach((item) => {
+      commitAddVideo(item, commit);
+    });
+  },
   getUser: async ({ commit }, userId) => {
     const response = await usersApi.getVideos(userId);
     const videos = response.data;
@@ -179,12 +179,14 @@ const mutations = {
     if (!state.allIds.includes(item.id)) {
       state.allIds.push(item.id);
     }
-    if (!state.byNakamalId[item.nakamal]) {
-      Vue.set(state.byNakamalId, item.nakamal, []);
-      state.byNakamalId[item.nakamal].push(item.id);
-    }
-    else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
-      state.byNakamalId[item.nakamal].push(item.id);
+    if (item.nakamal) {
+      if (!state.byNakamalId[item.nakamal]) {
+        Vue.set(state.byNakamalId, item.nakamal, []);
+        state.byNakamalId[item.nakamal].push(item.id);
+      }
+      else if (!state.byNakamalId[item.nakamal].includes(item.id)) {
+        state.byNakamalId[item.nakamal].push(item.id);
+      }
     }
   },
   remove: (state, id) => {
