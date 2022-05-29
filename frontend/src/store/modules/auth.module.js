@@ -174,10 +174,11 @@ const actions = {
   },
   checkApiError: async ({ dispatch }, payload) => {
     // TODO review if we need to specify more specific error handling later
+    console.log('checkApiError', payload);
     if (payload.response?.data?.detail) {
       dispatch('notify/add', {
         title: i18n.t('auth.alert.api_error'),
-        text: payload.response?.data.detail,
+        text: payload.response.data.detail,
         type: 'warning',
       }, { root: true });
     }

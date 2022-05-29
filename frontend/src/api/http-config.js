@@ -31,10 +31,10 @@ export default {
   endpoint: baseURL,
   timeout: 15_000,
 
-  requestInterceptor: (config) => {
-    config.headers.Authorization = store.getters.getToken;
-    return config;
-  },
+  // requestInterceptor: (config) => {
+  //   config.headers.Authorization = store.getters.getToken;
+  //   return config;
+  // },
 
   responseHandler: (response) => response,
 
@@ -50,7 +50,7 @@ export default {
         //  If not logged in redirect to login.
         console.log('401 nauthorized error');
         router.push('/auth/login?unauthorized=true');
-        return Promise.reject(error);
+        // return Promise.reject(error);
       }
     } else if (error.request) {
       if (error.message.startsWith('timeout')) {
@@ -71,13 +71,15 @@ export default {
           type: 'error',
           timeout: 10_000,
         });
-        return Promise.reject(error);
+        // return Promise.reject(error);
       }
     } else {
       // Something happened in setting up the request that triggered an Error
       console.log('Error', error.message);
+      // return Promise.reject(error);
     }
-    console.log(error.config);
+    // console.log(error.config);
+    return Promise.reject(error);
   },
 
   init() {

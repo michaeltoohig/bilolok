@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import Vue from 'vue';
 import dayjs from 'dayjs';
 
@@ -127,7 +125,8 @@ const actions = {
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      let response = await checkinsApi.create(token, payload);
+      const response = await checkinsApi.create(token, payload);
+      console.log('resp', response);
       const checkin = response.data;
       commitAddCheckin(checkin, commit);
       commit('addRecentId', checkin.id);
@@ -138,6 +137,7 @@ const actions = {
       }, { root: true });
     }
     catch (error) {
+      console.log('error in add checkin', error);
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },

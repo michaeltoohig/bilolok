@@ -1,6 +1,7 @@
 const { InjectManifest } = require('workbox-webpack-plugin');
 
 module.exports = {
+  lintOnSave: process.env.NODE_ENV !== 'production',
   transpileDependencies: [
     'vuetify',
   ],

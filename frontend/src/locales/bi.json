@@ -169,7 +169,7 @@
     "verify_email": "Confirm se imeil ia hemi blong mi",
     "verify_email_body": "Yu klik long hemia i minim se imeil ia hemi imeil blong yu. Afta, bambae yu save uploadem pikja, jek-in lo kava bar, mo ol nara samting long Bilolok.",
     "alert": {
-      "api_error": "Error!",
+      "api_error": "Hemia I No Gud!",
       "register_success_title": "Sakses, Yu Joenem Bilolok",
       "register_success_body": "Naoia, yu save saen in.",
       "register_fail_title": "Samting I Bagarap",
@@ -201,6 +201,7 @@
   },
   "checkin": {
     "title": "Jek-in",
+    "message_placeholder": "Text blong Jek-in blong yu...",
     "confirm_delete":"Yu wantem aotem jek-in ia?",
     "alert": {
       "create_title": "Jek-in!",

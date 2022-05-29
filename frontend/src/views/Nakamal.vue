@@ -123,7 +123,10 @@
                     <TabDetails :nakamal="nakamal"></TabDetails>
                   </v-tab-item>
                   <v-tab-item value="timeline">
-                    <TabTimeline :nakamal="nakamal"/>
+                    <TabTimeline
+                      :nakamal="nakamal"
+                      @select-checkin="() => this.showCheckinDialog = true"
+                    />
                   </v-tab-item>
                   <v-tab-item value="images">
                     <TabImages :nakamal="nakamal"/>
@@ -152,50 +155,18 @@
       </v-btn>
     </v-fab-transition>
 
-    <v-dialog max-width="500" v-model="checkinDialog">
-      <v-card>
-        <v-card-title class="text-h5">
-          {{ $t('checkin.title') }}
-        </v-card-title>
-
-        <v-card-text>
-          <v-textarea
-            filled
-            counter
-            maxlength="280"
-            label="Message"
-            rows="3"
-            row-height="30"
-            v-model="checkinMsg"
-          ></v-textarea>
-        </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-btn
-            text
-            @click="checkinDialog = false"
-          >
-            {{ $t('buttons.cancel') }}
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="submitCheckin"
-          >
-            {{ $t('buttons.submit') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <DialogCheckin
+      v-if="!loading"
+      :nakamal="nakamal"
+      :open="showCheckinDialog"
+      @close-modal="() => this.showCheckinDialog = false"
+    ></DialogCheckin>
 
     <NakamalImageUpload
       v-if="!loading"
       :nakamal="nakamal"
-      :open="uploadImageDialog"
-      @close-modal="() => this.uploadImageDialog = false"
+      :open="showUploadImageDialog"
+      @close-modal="() => this.showUploadImageDialog = false"
     ></NakamalImageUpload>
   </div>
 </template>
@@ -203,6 +174,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex';
 import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
+import DialogCheckin from '@/components/NakamalProfile/DialogCheckin.vue';
 import TabDetails from '@/components/NakamalProfile/TabDetails.vue';
 import TabTimeline from '@/components/NakamalProfile/TabTimeline.vue';
 import TabImages from '@/components/NakamalProfile/TabImages.vue';
@@ -247,6 +219,7 @@ export default {
     };
   },
   components: {
+    DialogCheckin,
     NakamalImageUpload,
     TabDetails,
     TabTimeline,
@@ -257,9 +230,8 @@ export default {
     return {
       loading: true,
       tab: 'timeline',
-      uploadImageDialog: false,
-      checkinDialog: false,
-      checkinMsg: null,
+      showUploadImageDialog: false,
+      showCheckinDialog: false,
     };
   },
   computed: {
@@ -313,7 +285,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      checkin: 'checkin/add',
       setFeatured: 'nakamal/setFeatured',
     }),
     goToTabImages() {
@@ -324,14 +295,14 @@ export default {
     },
     toggleUploadImageDialog() {
       if (this.isUserVerified) {
-        this.uploadImageDialog = !this.uploadImageDialog;
+        this.showUploadImageDialog = !this.showUploadImageDialog;
       } else {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
     },
     toggleCheckinDialog() {
       if (this.isUserVerified) {
-        this.checkinDialog = !this.checkinDialog;
+        this.showCheckinDialog = !this.showCheckinDialog;
       } else {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
@@ -370,10 +341,6 @@ export default {
           type: 'primary',
         });
       }
-    },
-    submitCheckin() {
-      this.checkinDialog = false;
-      this.checkin({ nakamal_id: this.nakamal.id, message: this.checkinMsg });
     },
     remove() {
       /* eslint-disable no-alert, no-restricted-globals */
