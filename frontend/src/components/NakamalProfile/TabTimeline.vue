@@ -45,7 +45,6 @@
 <script>
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
-// import timeline from '@/mixins/timeline';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
@@ -53,7 +52,6 @@ import NakamalPost from '@/components/NakamalProfile/NakamalPost.vue';
 
 export default {
   name: 'TabTimeline',
-  // mixins: [timeline],
   props: ['nakamal'],
   components: {
     NakamalPost,
@@ -89,10 +87,10 @@ export default {
     },
   },
   methods: {
-    async fetchData() {
-      // TODO fetch data here and show loading for timeline so page can load faster
-      return null;
-    },
+    // async fetchData() {
+    //   // TODO fetch data here and show loading for timeline so page can load faster
+    //   return null;
+    // },
     selectCheckin() {
       this.$emit('select-checkin');
     },
@@ -100,9 +98,9 @@ export default {
       this.$emit('select-video');
     },
   },
-  async mounted() {
-    this.fetchData();
-  },
+  // async mounted() {
+  //   this.fetchData();
+  // },
 };
 </script>
 

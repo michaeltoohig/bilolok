@@ -268,23 +268,6 @@ export default {
       if (!this.nakamal || !this.featured) return false;
       return this.nakamal.id === this.featured.id;
     },
-    // loading() {
-    //   return !this.nakamal;
-    // },
-    // images() {
-    //   if (this.loading) return [];
-    //   return this.getImages(this.nakamal.id)
-    //     .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
-    // },
-    // imageCount() {
-    //   if (!this.images.length) return '0';
-    //   return this.images.length;
-    // },
-    // checkins() {
-    //   if (this.loading) return [];
-    //   return this.getCheckins(this.nakamal.id)
-    //     .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
-    // },
     activeFab() {
       switch (this.tab) {
         case 'details': return { color: 'secondary', icon: 'mdi-marker-check', action: () => this.toggleCheckinDialog() };
@@ -311,13 +294,6 @@ export default {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
     },
-    // toggleUploadVideoDialog() {
-    //   if (this.isUserVerified) {
-    //     this.showUploadVideoDialog = !this.showUploadVideoDialog;
-    //   } else {
-    //     this.$store.dispatch('auth/setShowUserVerifiedModal', true);
-    //   }
-    // },
     toggleCheckinDialog() {
       if (this.isUserVerified) {
         this.showCheckinDialog = !this.showCheckinDialog;

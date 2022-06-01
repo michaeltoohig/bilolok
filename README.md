@@ -233,7 +233,7 @@ I would have to say adding video and some other features I'm working on is pushi
 - [ ] Refactor frontend components
   - [ ] Move map components to map directory
   - [ ] break out components related to map edit/create to a subdirector
-  - [ ] Create components for App.vue
+  - [x] Create components for App.vue
 
 - [x] Handle request timeout gracefully
 - [ ] Remove repetitive "Not Allowed" notifications in favor of single "Request Error" notification using the response.data.detail
