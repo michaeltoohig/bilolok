@@ -349,7 +349,7 @@ registerRoute(
 // Nakamal API cache
 registerRoute(
   ({ request }) => request.url.includes('/api/v1/nakamals'),
-  new NetworkFirst({
+  new StaleWhileRevalidate({
     cacheName: 'bilolok-api-nakamals',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
@@ -363,7 +363,7 @@ registerRoute(
 // User API cache
 registerRoute(
   ({ request }) => request.url.includes('/api/v1/users'),
-  new NetworkFirst({
+  new StaleWhileRevalidate({
     cacheName: 'bilolok-api-users',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
@@ -456,23 +456,23 @@ setDefaultHandler(new StaleWhileRevalidate());
 
 // https://stackoverflow.com/questions/60036010/keep-the-precache-while-deleting-other-cache-in-workbox-service-worker
 // Clear old caches
-var clearOldCaches = function (event) {
-  event.waitUntil(
-    caches.keys().then(function (allCaches) {
-      // TODO FIXME workbox is not defined error
-      let validCacheSet = new Set(Object.values(cacheNames));
-      return Promise.all(
-        allCaches
-          .filter(function (cacheName) {
-            return !validCacheSet.has(cacheName);
-          })
-          .map(function (cacheName) {
-            return caches.delete(cacheName);
-          })
-      );
-    })
-  );
-};
+// var clearOldCaches = function (event) {
+//   event.waitUntil(
+//     caches.keys().then(function (allCaches) {
+//       // TODO FIXME workbox is not defined error
+//       let validCacheSet = new Set(Object.values(cacheNames));
+//       return Promise.all(
+//         allCaches
+//           .filter(function (cacheName) {
+//             return !validCacheSet.has(cacheName);
+//           })
+//           .map(function (cacheName) {
+//             return caches.delete(cacheName);
+//           })
+//       );
+//     })
+//   );
+// };
 
 self.addEventListener("activate", function (event) {
   clearOldCaches(event);

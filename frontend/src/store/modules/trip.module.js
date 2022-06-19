@@ -71,11 +71,16 @@ function commitAddTrip(trip, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
   commit('add', normalizeRelations(trip, ['nakamal', 'user']));
-  // // Add or update the nakamal.
-  commit('nakamal/add', trip.nakamal, {
+  // Add or update relations
+  commit('user/setUser', trip.user, {
     root: true,
   });
-  commit('user/setUser', trip.user, {
+  if (trip.nakamal.chief) {
+    commit('user/setUser', trip.nakamal.chief, {
+      root: true,
+    });
+  }
+  commit('nakamal/add', normalizeRelations(trip.nakamal, ['chief']), {
     root: true,
   });
 };

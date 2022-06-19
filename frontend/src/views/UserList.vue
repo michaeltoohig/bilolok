@@ -43,7 +43,7 @@ export default {
     const resp = await usersApi.getUsers(null, { includeDetails: true });
     /* eslint-disable */
     this.users = resp.data.filter((u) => u.latest_checkin !== null)
-      .sort((a, b) => dayjs(b.latest_checkin.created_at).isBefore(a.latest_checkin.created_at) ? 1 : -1);
+      .sort((a, b) => dayjs(b.latest_checkin.created_at).isBefore(a.latest_checkin.created_at) ? -1 : 1);
   },
 };
 </script>

@@ -82,43 +82,7 @@ export default {
       return this.getCheckins(this.nakamal.id);
     },
     chief() {
-      if (!this.checkins) return null;
-      // Limit checkins to last 30 days only
-      const threshold = dayjs().startOf('d').subtract(30, 'd');
-      const checkins = this.checkins.filter((c) => dayjs(c.created_at).isAfter(threshold));
-      if (checkins.length === 0) return null;
-      // Setup
-      const checkinMap = {};
-      let maxEl = checkins[0];
-      let maxCount = 1;
-      // Find user with most checkins
-      for (let i = 0; i < checkins.length; i += 1) {
-        const el = checkins[i];
-        const userId = el.user.id;
-        // Add userId to checkin map if not exists or increment count
-        if (!checkinMap[userId]) {
-          checkinMap[userId] = {
-            count: 1,
-            created: el.created_at,
-          };
-        } else {
-          // Increment count and set latest created
-          checkinMap[userId].count += 1;
-          if (dayjs(maxEl.created_at).isBefore(el.created_at)) {
-            checkinMap[userId].created = el.created_at;
-          }
-        }
-        // Determine current user with most check-ins or if a tie then most recent check-in
-        if (checkinMap[userId].count > maxCount) {
-          maxCount = checkinMap[userId].count;
-          maxEl = el;
-        } else if (checkinMap[userId].count === maxCount) {
-          if (dayjs(el.created_at).isAfter(dayjs(checkinMap[userId].created))) {
-            maxEl = el;
-          }
-        }
-      }
-      return maxEl.user;
+      return this.nakamal.chief;
     },
   },
   methods: {

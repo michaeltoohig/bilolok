@@ -1,5 +1,4 @@
 import Vue from 'vue';
-// import http from './http-common';
 
 const resource = 'auth';
 

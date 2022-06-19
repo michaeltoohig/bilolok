@@ -57,6 +57,37 @@
               </v-list>
             </v-card>
 
+            <v-list
+              v-if="chiefOf.length > 0"
+              color="secondary darken-2"
+              dark
+              subheader
+              class="elevation-3 mb-3"
+            >
+              <v-subheader>
+                {{ $tc('user.chief_of', chiefOf.length, { count: chiefOf.length }) }}
+              </v-subheader>
+              <v-list-item
+                :to="{ name: 'Nakamal', params: { id: nakamal.id } }"
+                v-for="(nakamal, i) in chiefOf"
+                :key="nakamal.id"
+              >
+                <v-list-item-content>
+                  <v-list-item-title v-if="i === 0">{{ nakamal.name }}</v-list-item-title>
+                  <v-list-item-title v-else class="font-weight-light">
+                    {{ nakamal.name }}
+                  </v-list-item-title>
+                </v-list-item-content>
+                <v-list-item-avatar
+                  v-if="nakamalAvatar(nakamal.id)"
+                >
+                  <v-img
+                    :src="nakamalAvatar(nakamal.id).thumbnail"
+                  ></v-img>
+                </v-list-item-avatar>
+              </v-list-item>
+            </v-list>
+
             <v-list subheader class="elevation-3 mb-3">
               <v-subheader>{{ $t('user.favorite_nakamals') }}</v-subheader>
               <v-list-item v-if="topNakamalsByCheckins.length === 0">
@@ -236,6 +267,7 @@ export default {
       getUserTrips: 'trip/user',
       getUserVideos: 'video/user',
       getNakamalImages: 'image/nakamal',
+      getChiefOf: 'nakamal/listByChief',
     }),
     checkins() {
       const { id } = this.user;
@@ -259,6 +291,9 @@ export default {
       items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
       items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
       return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
+    },
+    chiefOf() {
+      return this.getChiefOf(this.$route.params.id);
     },
     topNakamalsByCheckins() {
       if (!this.checkins) return null;
@@ -307,6 +342,7 @@ export default {
       await this.$store.dispatch('image/getUser', id);
       await this.$store.dispatch('trip/getUser', id);
       await this.$store.dispatch('video/getUser', id);
+      // await this.$store.dispatch('chief/getUser', id);
       this.loading = false;
     },
     async changeProfilePicture() {

@@ -72,7 +72,12 @@ function commitAddVideo(video, commit) {
   commit('add', normalizeRelations(video, ['nakamal', 'user']));
   // Add or update relations.
   if (video.nakamal) {
-    commit('nakamal/add', video.nakamal, {
+    if (video.nakamal.chief) {
+      commit('user/setUser', video.nakamal.chief, {
+        root: true,
+      });
+    }
+    commit('nakamal/add', normalizeRelations(video.nakamal, ['chief']), {
       root: true,
     });
   }

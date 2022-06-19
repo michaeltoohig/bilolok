@@ -17,13 +17,25 @@ export function normalizeRelations(data, fields) {
 
 export function resolveRelations(data, fields, rootGetters) {
   if (!data) return data;
+  let key, relation;
+  const resolvedFields = fields.reduce((prev, field) => {
+    if (Array.isArray(field)) {
+      key = field[0];
+      relation = field[1];
+    } else {
+      key = field;
+      relation = field;
+    }
+    return {
+      ...prev,
+      [key]: Array.isArray(data[key])
+        ? data[key].map((x) => rootGetters[`${relation}/find`](x))
+        : rootGetters[`${relation}/find`](data[key]),
+    }
+  }, {});
+  
   return {
     ...data,
-    ...fields.reduce((prev, field) => ({
-      ...prev,
-      [field]: Array.isArray(data[field])
-        ? data[field].map((x) => rootGetters[`${field}/find`](x))
-        : rootGetters[`${field}/find`](data[field]),
-    }), {}),
+    ...resolvedFields,
   };
 }

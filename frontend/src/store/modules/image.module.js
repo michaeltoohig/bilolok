@@ -55,8 +55,13 @@ function commitAddImage(image, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
   commit('add', normalizeRelations(image, ['nakamal', 'user']));
-  // Add or update the image.
-  commit('nakamal/add', image.nakamal, {
+  // Add or update the image relations.
+  if (image.nakamal.chief) {
+    commit('user/setUser', image.nakamal.chief, {
+      root: true,
+    });
+  }
+  commit('nakamal/add', normalizeRelations(image.nakamal, ['chief']), {
     root: true,
   });
   commit('user/setUser', image.user, {

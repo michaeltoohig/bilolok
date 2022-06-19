@@ -70,7 +70,12 @@ function commitAddCheckin(checkin, commit) {
   // in the API response with an ID reference.
   commit('add', normalizeRelations(checkin, ['nakamal', 'user']));
   // Add or update relations.
-  commit('nakamal/add', checkin.nakamal, {
+  if (checkin.nakamal.chief) {
+    commit('user/setUser', checkin.nakamal.chief, {
+      root: true,
+    });
+  }
+  commit('nakamal/add', normalizeRelations(checkin.nakamal, ['chief']), {
     root: true,
   });
   commit('user/setUser', checkin.user, {

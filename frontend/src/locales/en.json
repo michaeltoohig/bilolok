@@ -146,6 +146,7 @@
     "change_profile_image": "Change Profile",
     "remove_profile_image": "Remove Profile",
     "remove_profile_image_confirm": "Are you sure you want to remove your profile picture?",
+    "chief_of": "Chief Of {count} Kava Bars",
     "favorite_nakamals": "Favorite Kava Bars This Month",
     "favorite_nakamals_none": "No check-ins this month",
     "no_activity_title": "Nothing here :(",

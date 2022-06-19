@@ -15,6 +15,7 @@ const initialState = () => ({
   selectedId: null,
   featuredId: null,
   filters: {},
+  // chiefIds: {},
 });
 
 const state = initialState();
@@ -23,7 +24,7 @@ const getters = {
   // Return a single nakamal with the given id.
   find: (state, _, __, rootGetters) => id => {
     // Swap ID referenes with the resolved image objects.
-    return resolveRelations(state.byId[id], ['image'], rootGetters);
+    return resolveRelations(state.byId[id], [['chief', 'user']], rootGetters);
   },
   // Return a list of nakamals in the order of `allIds`.
   list: (state, getters) => {
@@ -67,13 +68,22 @@ const getters = {
   featured: (state, getters) => {
     if (state.featuredId === null) return null;
     return getters.find(state.featuredId);
-  }
+  },
+  listByChief: (state, getters) => (id) => {
+    return Object.keys(state.byId).filter((nid) => state.byId[nid].chief === id).map((nid) => getters.find(nid));
+  },
 };
 
 function commitAddNakamal(nakamal, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(nakamal, []));
+  commit('add', normalizeRelations(nakamal, ['chief']));
+  // Add or update the user
+  if (nakamal.chief) {
+    commit('user/setUser', nakamal.chief, {
+      root: true,
+    });
+  }
 };
 
 const actions = {

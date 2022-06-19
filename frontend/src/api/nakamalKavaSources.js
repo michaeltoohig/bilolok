@@ -1,5 +1,4 @@
 import Vue from 'vue';
-// import http from './http-common';
 import authHeaders from './utils';
 
 const resource = 'nakamal-kava-sources';
