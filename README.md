@@ -163,9 +163,9 @@ For version 2 and beyond we can build upon this foundation such as the following
   - [ ] Must be able to listen to incoming messages in background while user has joined chat for the day or something like this? Or it becomes a always running chat app at the same time???
   - [ ] Current active users list on frontend? - may be best if implemented when new auth token is generated since if we have refresh tokens we can set the auth tokens to a short lifespan - or when if chat is an available feature then use the websocket to set a more precise value based on last message sent or other event
 - [x] Fix right side bars not collapsing on desktop
-- [ ] Cheif stored in DB
-  - [ ] notification when cheif position is lost
-  - [ ] user view can show number of cheif titles held by user
+- [ ] Chief stored in DB
+  - [ ] notification when chief position is lost
+  - [ ] user view can show number of chief titles held by user
 
 - [x] Fix arq to use async db session
 - [ ] Stop loading all nakamals each time map view is mounted
@@ -173,7 +173,7 @@ For version 2 and beyond we can build upon this foundation such as the following
 - [ ] featured nakamal
   - [x] API endpoints
   - [x] Home page section
-    - [ ] when cheif is added to nakamal table then add cheif to featured nakamal card
+    - [ ] when chief is added to nakamal table then add chief to featured nakamal card
   - [ ] Map special marker
 - [ ] nakamal reviews
   - [ ] 0 - 100 rating scale / calculated to 5 star rating system
@@ -242,10 +242,34 @@ I would have to say adding video and some other features I'm working on is pushi
 
 - [ ] Chief of Nakamal
   - [ ] List
-  - [ ] isCheif special card styling
-  - [ ] event when cheif title is changed
+  - [ ] isChief special card styling
+  - [ ] event when chief title is changed
     - [ ] user notification
     - [ ] news feed card
+  - [ ] requirements
+    - [x] daily task to calculate new chiefs (expire chiefs too)
+    - [x] post check-in task to calculate if new chief title is awarded
+      - [ ] ? how to alert user they have become chief after task completes ?
+        - [ ] poll endpoint for task completion. notify result.
+    - [x] chief history table (using already versioned nakamal table)
+    - [x] chief user_id column on nakamal
+
+Chief todos
+  - [x] Add normalizeRelation and update resolveRelation helpers for store
+    - [x] Add user's chief of nakamal list to profile
+      - [ ] Add call to chiefs api to fetch complete list of chief titles in case nakamals are not all loaded already
+    - [ ] Add chiefs to home page or user list
+    - [ ] Add chief to nakamal popup
+    - [x] Remove chief calculation from nakamal profile use given chief value from API
+
+- [ ] Favourite nakamals on home page
+- [ ] Easy to access search (autocomplete) on home page
+
+- [ ] Your checkin count on nakamal profile (compare against chief)
+
+- [ ] New nakamal view tab for basic map with option to find your distance from etc.
+  - [ ] Big obvious "View on full map" link
+  - [ ] Pop up with name, area, perhaps name of nearby nakamals to help users find its general area. Maybe map is always centered on nakamal.
 
 - [ ] Admin features
   - [ ] Review status of push notifications

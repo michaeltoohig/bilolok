@@ -11,14 +11,19 @@ from arq import cron
 
 from app.db.session import async_session
 from app.core.arq_app import redis_settings
+
+# HACK handling circular import issues by importing these at the top of the worker
 from app.models.user import User  # noqa
+from app.schemas.user import UserSchema  # noqa
 
 
 ARQ_BACKGROUND_FUNCTIONS = [
     "app.tasks.utils.test_arq",
     "app.tasks.utils.test_arq_subtask",
-    "app.tasks.utils.send_daily_push_notification",
+    "app.tasks.utils.daily_send_push_notification",
     "app.tasks.nakamal.select_featured_nakamal",
+    "app.tasks.nakamal.update_nakamal_chief",
+    "app.tasks.nakamal.daily_check_chief",
     "app.tasks.video.process_video",
 ]
 
@@ -53,20 +58,26 @@ class WorkerSettings:
     """
 
     # NOTE cron times must be in UTC (hour=6 == 6:00 UTC == 17:00 VUT)
+    HOUR_MIDNIGHT = 13
     # XXX https://github.com/samuelcolvin/arq/issues/304 before uncommenting cron_jobs
     cron_jobs = [
         cron(
-            "app.tasks.utils.send_daily_push_notification",
+            "app.tasks.utils.daily_send_push_notification",
             weekday={0, 1, 2, 3, 4, 5},
             hour=6,
             minute=0,
         ),
         cron(
             "app.tasks.nakamal.select_featured_nakamal",
-            hour=0,
+            hour=HOUR_MIDNIGHT,
             minute=0,
             run_at_startup=True,  # our redis is currently not persistent so we need to run this at startup
         ),
+        cron(
+            "app.tasks.nakamal.daily_check_chief",
+            hour=HOUR_MIDNIGHT,
+            minute=0,
+        )
     ]
     on_startup = startup
     on_shutdown = shutdown

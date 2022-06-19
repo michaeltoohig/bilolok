@@ -4,7 +4,7 @@ from app.crud.video import CRUDVideo
 from app.schemas.video import VideoSchemaOut
 
 import loguru
-from fastapi import Depends, status
+from fastapi import Depends, Request, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -40,6 +40,19 @@ router = SQLAlchemyCRUDRouter(
     create_route=[Depends(current_active_verified_user)],
     update_route=False,
 )
+
+
+# @router.post("", response_model=NakamalSchemaOut)
+# async def create_one(
+#     request: Request,
+#     db: AsyncSession = Depends(get_db),
+#     user = Depends(current_active_verified_user),
+#     *,
+#     payload: NakamalSchemaIn,
+# ) -> Any:
+#     crud_nakamal = CRUDNakamal(db)
+#     item = await crud_nakamal.create(payload)
+#     return NakamalSchemaOut(**item.dict())
 
 
 @router.get("", response_model=List[NakamalSchemaOut])

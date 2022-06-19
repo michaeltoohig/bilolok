@@ -1,6 +1,5 @@
 import uuid
-from typing import ForwardRef, List, Optional
-# from app.schemas.checkin import CheckinSchema
+from typing import ForwardRef, Optional
 
 from fastapi_users import models
 from pydantic import AnyHttpUrl
@@ -31,6 +30,13 @@ class UserDB(User, models.BaseUserDB):
 class UserSchema(BaseSchema):
     id: uuid.UUID
     avatar: Optional[AnyHttpUrl] = None
+
+
+# NOTE the `UserSchema` is copied into a few other schema files 
+#  due to limitation of Pydantic. We need the `UserSchema` for
+#  a few different schemas but there were circular imports and
+#  `ForwardRef` or other solutions do not work for more than
+#  a single two-way binding. 
 
 
 CheckinSchema = ForwardRef("CheckinSchema")

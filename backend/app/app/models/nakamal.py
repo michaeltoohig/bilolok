@@ -32,7 +32,8 @@ class Nakamal(Base, TimeMixin):
     owner = Column(String)
     phone = Column(String)
     windows = Column(Integer, default=1)
-    # checkins = relationship("Checkin", cascade="save-update, merge, delete")
+    chief_id = Column(GUID, ForeignKey("user.id"), nullable=True)
+    chief = relationship("User", lazy="joined")
     kava_source_id = Column(GUID, ForeignKey("nakamal_kava_source.id"), nullable=False)
     kava_source = relationship("NakamalKavaSource", lazy="joined")
     resources = relationship(

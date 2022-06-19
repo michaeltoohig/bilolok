@@ -1,5 +1,5 @@
 from typing import List, Type
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
@@ -22,6 +22,13 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
     @property
     def _table(self) -> Type[Nakamal]:
         return Nakamal
+
+    async def create(self, in_schema: NakamalSchemaIn) -> NakamalSchema:
+        item_id = uuid4()
+        item = self._table(id=item_id, **in_schema.dict())
+        self._db_session.add(item)
+        await self._db_session.commit()
+        return await self.get_by_id(item_id)
 
     async def _get_one(self, item_id: UUID):
         query = (
@@ -51,3 +58,34 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         nakamal.resources.remove(resource)
         # await self._db_session.add(nakamal)
         await self._db_session.commit()
+
+    async def get_chiefs(self) -> List[NakamalSchema]:
+        """Return list of nakamals that currently have a chief"""
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.resources))
+            .where(self._table.chief_id != None)
+        )
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
+
+    async def get_multi_by_chief(self, chief_id: UUID):
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.resources))
+            .where(self._table.chief_id == chief_id)
+        )
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
+
+    async def update_chief(self, item_id: UUID, chief_id: UUID):
+        # Updating the chief is not available to users but handled by the system.
+        # So I felt creating a one-off update method for this use case was better
+        #  than adding logic to the normal nakamal schema and prevent the chief
+        #  from being modified by users.
+        # I may go back on this in the future and this may be an anti-pattern
+        nakamal = await self._get_one(item_id)
+        setattr(nakamal, "chief_id", chief_id)
+        self._db_session.add(nakamal)
+        await self._db_session.commit()
+        return self._schema.from_orm(nakamal)

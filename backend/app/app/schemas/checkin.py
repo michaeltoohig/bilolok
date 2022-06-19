@@ -2,9 +2,10 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from .base import BaseSchema
-from .nakamal import NakamalSchema
-from .user import UserSchema
+from pydantic import AnyHttpUrl
+
+from app.schemas.base import BaseSchema
+from app.schemas.nakamal import NakamalSchema
 
 
 class CheckinSchemaBase(BaseSchema):
@@ -20,6 +21,12 @@ class CheckinSchemaIn(CheckinSchemaBase):
     lat: Optional[float] = None
     lng: Optional[float] = None
     nakamal_id: uuid.UUID
+
+
+# HACK see main `UserSchema` for explanation
+class UserSchema(BaseSchema):
+    id: uuid.UUID
+    avatar: Optional[AnyHttpUrl] = None
 
 
 class CheckinSchema(CheckinSchemaBase):

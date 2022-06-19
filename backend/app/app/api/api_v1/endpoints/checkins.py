@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, List
 from app.api.deps.checkin import get_checkin_or_404
+from app.core.arq_app import get_arq_app
 
 from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
@@ -137,6 +138,9 @@ async def create_one(
         )
     # Create checkin
     checkin = await crud_checkin.create(payload, user_id=user.id)
+    # Update nakamal chief
+    arq_app = await get_arq_app()
+    await arq_app.enqueue_job("update_nakamal_chief", str(payload.nakamal_id))
     return CheckinSchemaOut(**checkin.dict())
 
 
@@ -162,6 +166,10 @@ async def delete_one(
     if not user.is_superuser:
         if user.id != item.user.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    nakamal_id = item.nakamal.id
     crud_checkin = CRUDCheckin(db)
     item = await crud_checkin.delete(item.id)
+    # Update nakamal chief
+    arq_app = await get_arq_app()
+    await arq_app.enqueue_job("update_nakamal_chief", str(nakamal_id))
     return CheckinSchemaOut(**item.dict())

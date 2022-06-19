@@ -12,6 +12,18 @@ services:
     ports:
       - "5432:5432"
 
+  test_db:
+    image: postgres:13
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=test_data
+    ports:
+      - "5433:5432"
+    profiles:
+      - dev
+
   redis:
     image: redis:6
     env_file:

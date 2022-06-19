@@ -2,8 +2,10 @@ import uuid
 from typing import List, Optional
 
 from app.models.nakamal import Province
+from pydantic import AnyHttpUrl
 
 from .base import BaseSchema
+
 
 #
 # Nakamal Kava Source
@@ -103,8 +105,15 @@ class NakamalSchemaIn(NakamalSchemaBase):
     kava_source_id: uuid.UUID
 
 
+# HACK see main `UserSchema` for explanation
+class UserSchema(BaseSchema):
+    id: uuid.UUID
+    avatar: Optional[AnyHttpUrl] = None
+
+
 class NakamalSchema(NakamalSchemaBase):
     id: uuid.UUID
+    chief: Optional[UserSchema] = None
     kava_source: NakamalKavaSourceSchema
     resources: List[NakamalResourceSchema]
     area: NakamalAreaSchema

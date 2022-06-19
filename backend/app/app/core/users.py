@@ -9,7 +9,7 @@ from fastapi_users import models as FUModels
 from fastapi_users.authentication import (AuthenticationBackend,
                                           BearerTransport, JWTStrategy)
 from fastapi_users.jwt import decode_jwt
-from fastapi_users.manager import BaseUserManager, UserNotExists
+from fastapi_users.manager import BaseUserManager, UserNotExists, UserAlreadyVerified
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from pydantic import UUID4
 from sqlalchemy import select
@@ -55,7 +55,10 @@ class UserManager(BaseUserManager[UserCreate, UserDB]):
         )
         await mail.send_message(message)
         # Send email verification email
-        await self.request_verify(user, request)
+        try:
+            await self.request_verify(user, request)
+        except UserAlreadyVerified:
+            pass
         # Render user's default avatar image
         relativeAvatarPath = UserTable.build_avatar_filepath(user.id)
         fullAvatarPath = Path(settings.DATA_LOCAL_DIR) / relativeAvatarPath

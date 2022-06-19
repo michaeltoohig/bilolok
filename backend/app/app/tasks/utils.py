@@ -21,7 +21,7 @@ async def test_arq(ctx: dict, word: str):
     return f"test task return {word}"
 
 
-async def send_daily_push_notification(ctx: dict):
+async def daily_send_push_notification(ctx: dict):
     db_session = ctx["db_session"]
     async with db_session() as db:
         crud_pn = CRUDPushNotification(db)
@@ -42,6 +42,7 @@ async def send_daily_push_notification(ctx: dict):
                 webpush(
                     subscription_info=sub.subscription_info,
                     data=json.dumps(data),
+                    ttl=60 * 60 * 2,  # 3 hours XXX hardcoded value
                     vapid_private_key=settings.VAPID_PRIVATE_KEY,
                     vapid_claims={
                         "sub": f"mailto:{settings.VAPID_MAILTO}",
