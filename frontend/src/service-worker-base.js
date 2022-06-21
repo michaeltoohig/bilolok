@@ -475,7 +475,7 @@ setDefaultHandler(new StaleWhileRevalidate());
 // };
 
 self.addEventListener("activate", function (event) {
-  clearOldCaches(event);
+  // clearOldCaches(event);
 });
 
 // This "catch" handler is triggered when any of the other routes fail to
