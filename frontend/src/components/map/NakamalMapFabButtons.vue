@@ -161,7 +161,7 @@ export default {
       this.setShowLocationProgress(true);
     },
     getLocation() {
-      this.$root.$emit('fly-to', latLng(-17.4, 168.4));
+      this.$root.$emit('fly-to', latLng(-17.4, 168.4)); // TODO why is this here?
       if (!('geolocation' in navigator)) {
         this.$store.dispatch('notify/add', {
           title: this.$i18n.t('map.alert.getting_location_denied_title'),
@@ -178,9 +178,9 @@ export default {
         this.getLocationError,
         this.getLocationProgress,
         {
-          desiredAccuracy: 20,
+          desiredAccuracy: 100,
           desiredAccuracyCountMin: 2,
-          maxWait: 15000,
+          maxWait: 15_000,
         },
       );
     },

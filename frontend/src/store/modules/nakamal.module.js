@@ -15,7 +15,6 @@ const initialState = () => ({
   selectedId: null,
   featuredId: null,
   filters: {},
-  // chiefIds: {},
 });
 
 const state = initialState();

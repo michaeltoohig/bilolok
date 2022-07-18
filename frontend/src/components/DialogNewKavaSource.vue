@@ -76,11 +76,11 @@ export default {
     async submit() {
       if (!this.isValid) return;
       const token = this.$store.getters['auth/token'];
-      const resp = await nakamalKavaSourcesApi.create(token, {
+      const data = await nakamalKavaSourcesApi.create(token, {
         island: this.island,
         province: this.province,
       });
-      this.$emit('submit', resp.data);
+      this.$emit('submit', data);
       this.show = false;
     },
   },

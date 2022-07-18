@@ -6169,6 +6169,11 @@ loader-utils@^2.0.0:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
+localstorage-slim@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/localstorage-slim/-/localstorage-slim-2.3.0.tgz#ff2a27660af352628e0c195f59e18d160d30b793"
+  integrity sha512-vGuIEXmoSseZW2dO7Y9vFIs2iBORvxSMlFBpNQpTpuE/s9/myj1Kxz3iQsyDMSRyusLB/Z4T/hlcMH36PUiJrg==
+
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"

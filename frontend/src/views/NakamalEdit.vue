@@ -370,8 +370,7 @@ export default {
       ],
     ),
     async getResources() {
-      const response = await nakamalResourcesApi.getAll();
-      this.allResources = response.data;
+      this.allResources = await nakamalResourcesApi.getAll();
     },
   },
   async mounted() {

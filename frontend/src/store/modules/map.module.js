@@ -85,7 +85,7 @@ const actions = {
   setShowLocationProgress: async ({ commit }, show) => {
     commit('setShowLocationProgress', show);
   },
-  startCompassMode: async ({ commit, dispatch, getters }) => {
+  startCompassMode: async ({ commit, dispatch }) => {
     if (!('geolocation' in navigator)) {
       await dispatch('notify/add', {
         title: i18n.t('map.alert.getting_location_denied_title'),

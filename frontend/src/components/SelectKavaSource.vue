@@ -60,8 +60,7 @@ export default {
       this.rawKavaSources.push(ks);
     },
     async getKavaSources() {
-      const response = await nakamalKavaSourcesApi.getAll();
-      this.rawKavaSources = response.data;
+      this.rawKavaSources = await nakamalKavaSourcesApi.getAll();
     },
   },
   async mounted() {

@@ -303,8 +303,7 @@ export default {
       console.log('xxy', area);
     },
     async getResources() {
-      const response = await nakamalResourcesApi.getAll();
-      this.allResources = response.data;
+      this.allResources = await nakamalResourcesApi.getAll();
     },
     removeAlias(alias) {
       this.aliases.splice(this.aliases.indexOf(alias), 1);

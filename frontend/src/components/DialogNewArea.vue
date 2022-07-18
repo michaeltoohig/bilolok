@@ -62,8 +62,8 @@ export default {
     async submit() {
       if (!this.isValid) return;
       const token = this.$store.getters['auth/token'];
-      const resp = await nakamalAreaApi.create(token, { name: this.name });
-      this.$emit('submit', resp.data);
+      const data = await nakamalAreaApi.create(token, { name: this.name });
+      this.$emit('submit', data);
       this.show = false;
     },
   },

@@ -30,18 +30,8 @@ import { RangeRequestsPlugin } from 'workbox-range-requests';
 
 import { apiDomain } from '@/env';
 
-const precacheUrls = [
-  { revision: null, url: `${apiDomain}/api/v1/nakamal-areas` },
-  { revision: null, url: `${apiDomain}/api/v1/nakamal-kava-sources` },
-  { revision: null, url: `${apiDomain}/api/v1/nakamal-resources` },
-  ...self.__WB_MANIFEST,
-];
-
 // Use with precache injection
-precacheAndRoute(precacheUrls);
-
-// Remove outdated pre-caches - not sure this does what I expect yet
-// cleanupOutdatedCaches();
+precacheAndRoute(self.__WB_MANIFEST);
 
 addEventListener('message', (event) => {
   console.log(event, event.data, event.data.type);
@@ -349,7 +339,7 @@ registerRoute(
 // Nakamal API cache
 registerRoute(
   ({ request }) => request.url.includes('/api/v1/nakamals'),
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: 'bilolok-api-nakamals',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
@@ -363,7 +353,7 @@ registerRoute(
 // User API cache
 registerRoute(
   ({ request }) => request.url.includes('/api/v1/users'),
-  new StaleWhileRevalidate({
+  new NetworkFirst({
     cacheName: 'bilolok-api-users',
     plugins: [
       // Ensure that only requests that result in a 200 status are cached
@@ -390,7 +380,7 @@ registerRoute(
       // Don't cache more than 50 items, and expire them after 7 days
       new ExpirationPlugin({
         maxEntries: 50,
-        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 Days
+        maxAgeSeconds: 60 * 60 * 24 * 14, // 14 Days
         // Automatically cleanup if quota is exceeded.
         purgeOnQuotaError: true,
       }),
@@ -452,7 +442,7 @@ registerRoute(
 // );
 
 // Use a stale-while-revalidate strategy for all other requests.
-setDefaultHandler(new StaleWhileRevalidate());
+setDefaultHandler(new NetworkFirst());
 
 // https://stackoverflow.com/questions/60036010/keep-the-precache-while-deleting-other-cache-in-workbox-service-worker
 // Clear old caches
@@ -475,6 +465,8 @@ setDefaultHandler(new StaleWhileRevalidate());
 // };
 
 self.addEventListener("activate", function (event) {
+  // Remove outdated pre-caches - not sure this does what I expect yet
+  cleanupOutdatedCaches();
   // clearOldCaches(event);
 });
 

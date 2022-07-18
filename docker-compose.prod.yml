@@ -78,7 +78,7 @@ services:
       # Normally this is set in connection with the number of CPU cores
       # Note however that you can also use the docker-compose scale option to dynamically
       # scale your thumbor instances
-      - THUMBOR_NUM_PROCESSES=4
+      - THUMBOR_NUM_PROCESSES=1
       # this would allow CORS from any origin (you can restrict to specific origins if you want)
       - CORS_ALLOW_ORIGIN=*
       # returns a webp image if browser Accept headers match
@@ -106,7 +106,7 @@ services:
       #           see https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path
       - PROXY_CACHE_SIZE=10g
       - PROXY_CACHE_MEMORY_SIZE=500m
-      - PROXY_CACHE_INACTIVE=300m
+      - PROXY_CACHE_INACTIVE=168h
     volumes:
       # this is essential for nginx-proxy to detect docker containers, scaling etc
       # see https://github.com/jwilder/nginx-proxy

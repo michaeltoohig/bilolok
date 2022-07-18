@@ -43,8 +43,7 @@ export default {
       this.areas.unshift(area);
     },
     async getAreas() {
-      const response = await nakamalAreaApi.getAll();
-      this.areas = response.data;
+      this.areas = await nakamalAreaApi.getAll();
     },
   },
   async mounted() {

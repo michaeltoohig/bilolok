@@ -129,16 +129,13 @@ export default {
       'removeFilters',
     ]),
     async getAreas() {
-      const response = await nakamalAreaApi.getAll();
-      this.areas = response.data;
+      this.areas = await nakamalAreaApi.getAll();
     },
     async getResources() {
-      const response = await nakamalResourcesApi.getAll();
-      this.resources = response.data;
+      this.resources = await nakamalResourcesApi.getAll();
     },
     async getKavaSources() {
-      const response = await nakamalKavaSourcesApi.getAll();
-      this.rawKavaSources = response.data;
+      this.rawKavaSources = await nakamalKavaSourcesApi.getAll();
     },
     clearFilters() {
       this.selectedArea = null;
