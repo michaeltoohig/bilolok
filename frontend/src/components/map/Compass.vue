@@ -109,7 +109,7 @@ export default {
       return icon;
     },
     showFinishBtn() {
-      return this.distance <= 30; // XXX hardcoded value
+      return this.compassModePolyline.length < 3 && this.distance <= 30; // XXX hardcoded values
     },
     distance() {
       if (!this.user || !this.nakamal) return null;
@@ -147,8 +147,8 @@ export default {
   },
   watch: {
     distance(val) {
-      // XXX hardcoded value
-      if (val <= 10) {
+      // XXX hardcoded values
+      if (val <= 10 && this.compassModePolyline.length < 3) {
         this.saveTrip();
       }
     },
