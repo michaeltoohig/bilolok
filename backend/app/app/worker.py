@@ -83,3 +83,5 @@ class WorkerSettings:
     on_shutdown = shutdown
     redis_settings = redis_settings
     functions: list = FUNCTIONS
+    max_jobs = 1
+    poll_delay = 5
