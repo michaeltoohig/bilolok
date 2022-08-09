@@ -101,6 +101,15 @@
                     <v-list-item-title>{{ $t('buttons.share') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
+                <v-spacer v-show="isUserVerified"></v-spacer>
+                <v-list-item color="primary lighten-2" v-show="isUserVerified" @click="onEdit">
+                  <v-list-item-icon>
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ $t('buttons.edit') }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
               </v-list-item-group>
             </v-list>
           </v-col>
@@ -300,6 +309,9 @@ export default {
       } else {
         this.$store.dispatch('auth/setShowUserVerifiedModal', true);
       }
+    },
+    onEdit() {
+      this.$router.push({ name: 'NakamalEdit', params: { id: this.nakamal.id } });
     },
     async onShare() {
       const text = `Check out ${this.nakamal.name} on Bilolok!`;
