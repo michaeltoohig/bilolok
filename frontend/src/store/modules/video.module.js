@@ -88,8 +88,7 @@ function commitAddVideo(video, commit) {
 
 const actions = {
   getAll: async ({ commit }) => {
-    const response = await videosApi.getAll();
-    const videos = response.data;
+    const videos = await videosApi.getAll();
     videos.forEach((item) => {
       commitAddVideo(item, commit);
     });
@@ -102,11 +101,9 @@ const actions = {
   getRecent: async ({ commit }) => {
     try {
       const threshold = 3; // XXX hardcoded value
-      const response = await videosApi.getRecent();
-      let items = response.data;
+      let items = await videosApi.getRecent();
       if (!items.length < threshold) {
-        const response = await videosApi.getAll({ limit: threshold })
-        items = response.data;
+        items = await videosApi.getAll({ limit: threshold })
       }
       items.forEach((item) => {
         commitAddVideo(item, commit);

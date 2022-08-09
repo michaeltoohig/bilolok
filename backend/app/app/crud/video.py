@@ -117,6 +117,7 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
     async def get_multi(self, *, skip: int = 0, limit: int = 100) -> List[VideoSchema]:
         query = (
             select(self._table)
+            .options(selectinload(self._table.user))
             .options(selectinload(self._table.nakamal))
             .order_by(desc(self._table.created_at))
             .offset(skip)
@@ -132,8 +133,8 @@ class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):
         )
         query = (
             select(self._table)
-            .options(selectinload(self._table.nakamal))
             .options(selectinload(self._table.user))
+            .options(selectinload(self._table.nakamal))
             .where(self._table.created_at >= threshold)
             .order_by(desc(self._table.created_at))
         )

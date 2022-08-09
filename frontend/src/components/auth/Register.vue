@@ -1,21 +1,5 @@
 <template>
   <div>
-    <v-alert
-      border="top"
-      colored-border
-      type="info"
-      elevation="2"
-    >
-      <v-row align="center">
-        <v-col class="grow">
-          {{ $t('auth.login_available') }}
-        </v-col>
-        <v-col class="shrink">
-          <v-btn @click.prevent="login">{{ $t('auth.login') }}</v-btn>
-        </v-col>
-      </v-row>
-    </v-alert>
-
     <h1>{{ $t('auth.register') }}</h1>
 
     <v-text-field
@@ -35,6 +19,25 @@
 
     <v-btn :disabled="!isValid" @click="submit">{{ $t('buttons.submit') }}</v-btn>
 
+    <v-alert
+      v-show="!isValid"
+      border="top"
+      colored-border
+      type="info"
+      elevation="2"
+      class="mt-6"
+      transition="scroll-y-transition"
+      mode="in-out"
+    >
+      <v-row align="center">
+        <v-col class="grow">
+          {{ $t('auth.login_available') }}
+        </v-col>
+        <v-col class="shrink">
+          <v-btn @click.prevent="login">{{ $t('auth.login') }}</v-btn>
+        </v-col>
+      </v-row>
+    </v-alert>
   </div>
 </template>
 

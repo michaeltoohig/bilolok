@@ -87,25 +87,21 @@ function commitAddTrip(trip, commit) {
 
 const actions = {
   getAll: async ({ commit }) => {
-    const response = await tripsApi.getAll();
-    const trips = response.data;
+    const trips = await tripsApi.getAll();
     trips.forEach((item) => {
       commitAddTrip(item, commit);
     });
   },
   getOne: async ({ commit }, id) => {
-    let response = await tripsApi.get(id);
-    const trip = response.data;
+    const trip = await tripsApi.get(id);
     commitAddTrip(trip, commit);
   },
   getRecent: async ({ commit }) => {
     try {
       const threshold = 3; // XXX hardcoded value
-      const response = await tripsApi.getRecent();
-      let items = response.data;
+      let items = await tripsApi.getRecent();
       if (!items.length < threshold) {
-        const response = await tripsApi.getAll({ limit: threshold })
-        items = response.data;
+        items = await tripsApi.getAll({ limit: threshold })
       }
       items.forEach((item) => {
         commitAddTrip(item, commit);
@@ -132,8 +128,7 @@ const actions = {
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      let response = await tripsApi.create(token, payload);
-      const trip = response.data;
+      const trip = await tripsApi.create(token, payload);
       commitAddTrip(trip, commit);
       commit('addRecentId', trip.id);
       dispatch('notify/add', {

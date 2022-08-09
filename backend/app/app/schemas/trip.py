@@ -2,6 +2,8 @@ from typing import List, Tuple
 import uuid
 from datetime import datetime
 
+from pydantic import conlist
+
 from .base import BaseSchema
 from .nakamal import NakamalSchema
 from .user import UserSchema
@@ -18,7 +20,7 @@ class TripSchemaBase(BaseSchema):
 
 
 class TripSchemaIn(TripSchemaBase):
-    data: List[TripDataPoint]
+    data: conlist(TripDataPoint, min_items=3)  # error of empty data arrays happening. not best solution yet.
     nakamal_id: uuid.UUID
 
 

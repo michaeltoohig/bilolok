@@ -9,6 +9,7 @@
       contain
       height="114"
       :src="selectedNakamalImage.thumbnail"
+      @click="goToNakamal"
     ></v-img>
     <v-list light dense>
       <v-list-item v-if="selectedNakamal.aliases.length">
@@ -138,6 +139,9 @@ export default {
     },
   },
   methods: {
+    goToNakamal() {
+      this.$router.push({ name: 'Nakamal', params: { id: this.selectedNakamal.id } });
+    },
     clickCompass() {
       this.$emit('compass');
     },
