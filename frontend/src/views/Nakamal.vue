@@ -22,7 +22,6 @@
                   v-if="nakamalProfile"
                   :color="nakamal.lightBadge.color"
                   :icon="nakamal.lightBadge.icon"
-                  large
                   overlap
                   bordered
                   left
@@ -107,7 +106,7 @@
                 </v-list-item>
                 <v-list-item color="primary lighten-2" v-show="hasAdminAccess" @click="onRemove">
                   <v-list-item-icon>
-                    <v-icon>mdi-trash</v-icon>
+                    <v-icon>mdi-trash-can-outline</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>{{ $t('buttons.delete') }}</v-list-item-title>

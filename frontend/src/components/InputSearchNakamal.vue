@@ -12,12 +12,22 @@
   >
     <template v-slot:item="data">
       <template>
-        <v-list-item-avatar>
-          <img
-            v-if="nakamalAvatar(data.item.id)"
-            :src="nakamalAvatar(data.item.id).thumbnail"
-          >
-        </v-list-item-avatar>
+        <v-badge
+          v-if="nakamalAvatar(data.item.id)"
+          :color="data.item.lightBadge.color"
+          dot
+          overlap
+          bordered
+          left
+          offset-x="24"
+          offset-y="18"
+        >
+          <v-list-item-avatar>
+            <img
+              :src="nakamalAvatar(data.item.id).thumbnail"
+            >
+          </v-list-item-avatar>
+        </v-badge>
         <v-list-item-content>
           <v-list-item-title v-html="data.item.name"></v-list-item-title>
           <v-list-item-subtitle

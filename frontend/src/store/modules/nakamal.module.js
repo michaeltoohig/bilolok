@@ -108,7 +108,7 @@ function setLightBadge(light) {
       break;
     case 'hurricane light':
       lightBadge['color'] = 'grey';
-      lightBadge['icon'] = 'mdi-post-lamp';
+      lightBadge['icon'] = 'mdi-candle';
       break;
     case 'none':
       lightBadge['color'] = 'grey';

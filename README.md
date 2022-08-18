@@ -282,9 +282,7 @@ Chief todos
 - [x] Add easy access search for kava bar from home page
 - [ ] Map view of nakamal on nakamal profile page
 - [ ] Use vue-router sub-routes for nakamal profile tabs
-- [ ] Nakamal light color extras
-  - [ ] Try light color badge for nakamal profile picture?
-  - [ ] Add border to nakamal profile picture of light color
+- [x] Nakamal light color badges for avatars
 
 - [ ] Add explicit profile picture selection for nakamals
 
