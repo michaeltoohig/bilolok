@@ -48,7 +48,7 @@ import dayjs from 'dayjs';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
-import NakamalPost from '@/components/NakamalProfile/NakamalPost.vue';
+import NakamalPost from '@/components/nakamal/NakamalPost.vue';
 
 export default {
   name: 'TabTimeline',

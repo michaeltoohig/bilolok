@@ -4,13 +4,29 @@
     @popupclose="popupClosed"
   >
     <h3 class="mb-2 text-h6 font-weight-bold">{{ selectedNakamal.name }}</h3>
-    <v-img
-      v-if="selectedNakamalImage"
-      contain
-      height="114"
-      :src="selectedNakamalImage.thumbnail"
-      @click="goToNakamal"
-    ></v-img>
+    <div class="d-flex justify-center">
+      <v-badge
+        v-if="selectedNakamalImage"
+        :color="selectedNakamal.lightBadge.color"
+        :icon="selectedNakamal.lightBadge.icon"
+        overlap
+        bordered
+        left
+      >
+        <v-avatar
+          @click="goToNakamal"
+          class="nakamal-avatar"
+          tile
+          size="114"
+        >
+          <v-img
+            height="114"
+            contain
+            :src="selectedNakamalImage.thumbnail"
+          ></v-img>
+        </v-avatar>
+      </v-badge>
+    </div>
     <v-list light dense>
       <v-list-item v-if="selectedNakamal.aliases.length">
         <v-list-item-content class="py-0">
@@ -32,7 +48,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item>
+      <v-list-item v-if="!selectedNakamalImage">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">
             {{ $t('nakamal.attrs.light') }}

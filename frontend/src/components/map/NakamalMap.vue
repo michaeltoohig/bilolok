@@ -239,6 +239,8 @@
 </template>
 
 <script>
+// TODO this should be the `MapView` component
+
 import OfflineMixin from '@/mixins/offline';
 import FormatDatetime from '@/mixins/formatDatetime';
 import {

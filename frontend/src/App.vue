@@ -49,7 +49,7 @@ import Notifications from '@/components/Notifications.vue';
 import AlertUpdateAvailable from '@/components/AlertUpdateAvailable.vue';
 import DialogUserAuthRequired from '@/components/DialogUserAuthRequired.vue';
 import DialogInstallApp from '@/components/DialogInstallApp.vue';
-import SideBar from './components/SideBar.vue';
+import SideBar from './components/layout/SideBar.vue';
 
 export default {
   name: 'App',

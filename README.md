@@ -277,6 +277,21 @@ Chief todos
   - [ ] Nakamal modifications / activity
 
 
+### Version 3.1  (version means nothing lol)
+
+- [x] Add easy access search for kava bar from home page
+- [ ] Map view of nakamal on nakamal profile page
+- [ ] Use vue-router sub-routes for nakamal profile tabs
+- [ ] Nakamal light color extras
+  - [ ] Try light color badge for nakamal profile picture?
+  - [ ] Add border to nakamal profile picture of light color
+
+- [ ] Add explicit profile picture selection for nakamals
+
+- [ ] Related nakamals or nearby nakamals selection from nakamal profile
+
+- [ ] Notification and email for change of chief status
+
 ## Development
 
 I welcome contributions and discussions for development. Below is some explanations of the current architecture and plans for future development.

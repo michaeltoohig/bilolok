@@ -45,7 +45,7 @@
       </v-list>
       <v-divider></v-divider>
 
-      <div v-show="isMapView">
+      <div v-if="isMapView">
         <v-subheader>{{ $t('menu.nakamals_in_view') }}</v-subheader>
         <BoundedNakamalsList v-on:close-drawer="drawer = false"></BoundedNakamalsList>
         <v-divider></v-divider>
@@ -164,8 +164,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import SelectLocale from '@/components/SelectLocale.vue';
-import BoundedNakamalsList from '@/components/BoundedNakamalsList.vue';
+import SelectLocale from '@/components/layout/SelectLocale.vue';
+import BoundedNakamalsList from '@/components/layout/BoundedNakamalsList.vue';
 
 export default {
   name: 'SideBar',

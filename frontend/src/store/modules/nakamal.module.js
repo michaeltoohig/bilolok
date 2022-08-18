@@ -73,6 +73,58 @@ const getters = {
   },
 };
 
+function setLightBadge(light) {
+  let lightBadge = {'color': null, icon: 'mdi-lightbulb-on'};
+  switch(light) {
+    case 'white':
+      lightBadge['color'] = 'white';
+      lightBadge['icon'] = 'mdi-lightbulb-on mdi-dark'
+      break;
+    case 'red':
+      lightBadge['color'] = 'red';
+      break;
+    case 'orange':
+      lightBadge['color'] = 'orange darken-1';
+      break;
+    case 'yellow':
+      lightBadge['color'] = 'yellow';
+      lightBadge['icon'] = 'mdi-lightbulb-on-outlight mdi-dark';
+      break;
+    case 'green':
+      lightBadge['color'] = 'green darken-1';
+      break;
+    case 'blue':
+      lightBadge['color'] = 'blue';
+      break;
+    case 'purple':
+      lightBadge['color'] = 'purple';
+      break;
+    case 'pink':
+      lightBadge['color'] = 'pink lighte-2';
+      break;
+    case 'candle':
+      lightBadge['color'] = 'grey';
+      lightBadge['icon'] = 'mdi-candle';
+      break;
+    case 'hurricane light':
+      lightBadge['color'] = 'grey';
+      lightBadge['icon'] = 'mdi-post-lamp';
+      break;
+    case 'none':
+      lightBadge['color'] = 'grey';
+      lightBadge['icon'] = 'mdi-lightbulb-off';
+      break;
+    case 'other':
+      lightBadge['color'] = 'grey';
+      lightBadge['icon'] = 'mdi-lightbulb-question';
+      break;
+    default:
+      lightBadge['color'] = 'grey';
+      lightBadge['icon'] = 'mdi-lightbulb-question';
+  }
+  return lightBadge;  
+};
+
 function commitAddNakamal(nakamal, commit) {
   // Normalize nested data and swap the image object
   // in the API response with an ID reference.
@@ -224,6 +276,7 @@ const mutations = {
     let i = {
       ...item,
       latLng: latLng(item.lat, item.lng),
+      lightBadge: setLightBadge(item.light !== null ? item.light.toLowerCase() : null),
     };
     Vue.set(state.byId, i.id, i);
     if (state.allIds.includes(i.id)) return;

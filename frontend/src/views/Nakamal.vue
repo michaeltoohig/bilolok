@@ -18,17 +18,28 @@
           <v-col sm="4" cols="12">
             <v-card class="mb-3">
               <v-card-title class="d-flex flex-column justify-center text-center">
-                <v-avatar
+                <v-badge
                   v-if="nakamalProfile"
-                  size="164"
-                  class="mb-5 nakamal-avatar"
-                  v-ripple="{ center: true }"
-                  @click="goToTabImages"
+                  :color="nakamal.lightBadge.color"
+                  :icon="nakamal.lightBadge.icon"
+                  large
+                  overlap
+                  bordered
+                  left
+                  offset-x="35"
+                  offset-y="25"
                 >
-                  <v-img
-                    :src="nakamalProfile.thumbnail"
-                  ></v-img>
-                </v-avatar>
+                  <v-avatar
+                    size="164"
+                    class="mb-5 nakamal-avatar"
+                    v-ripple="{ center: true }"
+                    @click="goToTabImages"
+                  >
+                    <v-img
+                      :src="nakamalProfile.thumbnail"
+                    ></v-img>
+                  </v-avatar>
+                </v-badge>
                 <h1 v-text="nakamal.name"></h1>
               </v-card-title>
               <v-card-text class="px-3 pb-3">
@@ -52,22 +63,6 @@
                   {{ $t('nakamal.has_recent_checkins') }}
                 </v-alert>
               </v-card-text>
-              <v-card-actions v-show="hasAdminAccess">
-                <v-btn
-                  text
-                  color="secondary lighten-2"
-                  :to="{ name: 'NakamalEdit', params: { id: nakamal.id } }"
-                >
-                  {{ $t('buttons.edit') }}
-                </v-btn>
-                <v-btn
-                  text
-                  color="secondary lighten-2"
-                  @click="remove"
-                >
-                  {{ $t('buttons.delete') }}
-                </v-btn>
-              </v-card-actions>
             </v-card>
             <CardChief :nakamal="nakamal"></CardChief>
             <v-list
@@ -108,6 +103,14 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>{{ $t('buttons.edit') }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item color="primary lighten-2" v-show="hasAdminAccess" @click="onRemove">
+                  <v-list-item-icon>
+                    <v-icon>mdi-trash</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ $t('buttons.delete') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -190,13 +193,13 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import NakamalImageUpload from '@/components/NakamalProfile/NakamalImageUpload.vue';
-import DialogCheckin from '@/components/NakamalProfile/DialogCheckin.vue';
-import TabDetails from '@/components/NakamalProfile/TabDetails.vue';
-import TabTimeline from '@/components/NakamalProfile/TabTimeline.vue';
-import TabImages from '@/components/NakamalProfile/TabImages.vue';
-import CardChief from '@/components/NakamalProfile/CardChief.vue';
-import VideoUploadDialog from '@/components/NakamalProfile/VideoUploadDialog.vue';
+import NakamalImageUpload from '@/components/nakamal/NakamalImageUpload.vue';
+import DialogCheckin from '@/components/nakamal/DialogCheckin.vue';
+import TabDetails from '@/components/nakamal/TabDetails.vue';
+import TabTimeline from '@/components/nakamal/TabTimeline.vue';
+import TabImages from '@/components/nakamal/TabImages.vue';
+import CardChief from '@/components/nakamal/CardChief.vue';
+import VideoUploadDialog from '@/components/nakamal/VideoUploadDialog.vue';
 
 export default {
   name: 'Nakamal',
@@ -348,7 +351,7 @@ export default {
         });
       }
     },
-    remove() {
+    onRemove() {
       /* eslint-disable no-alert, no-restricted-globals */
       if (confirm(this.$i18n.t('nakamal.confirm_delete'))) {
         this.$store.dispatch('nakamal/remove', this.nakamal.id)

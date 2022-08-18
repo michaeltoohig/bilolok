@@ -10,35 +10,7 @@
         {{ $t('map.search') }}
       </v-card-title>
       <v-card-text>
-        <v-autocomplete
-          :items="nakamals"
-          :filter="customFilter"
-          outlined
-          item-value="id"
-          item-text="name"
-          :label="$t('map.search')"
-          class="mt-3"
-          @change="searchSelect"
-        >
-          <template v-slot:item="data">
-            <template>
-              <v-list-item-avatar>
-                <img
-                  v-if="nakamalAvatar(data.item.id)"
-                  :src="nakamalAvatar(data.item.id).thumbnail"
-                >
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                <v-list-item-subtitle
-                  v-html="nakamalAliases(data.item.aliases)"
-                >
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </template>
-          </template>
-        </v-autocomplete>
-
+        <InputSearchNakamal :nakamals="nakamals" @on-select="onSelect" />
         <v-alert
           v-if="hasFilters"
           text
@@ -74,15 +46,18 @@ import {
   mapActions,
   mapGetters,
 } from 'vuex';
+import InputSearchNakamal from '@/components/InputSearchNakamal.vue';
 
 export default {
   name: 'NakamalSearchDialog',
+  components: {
+    InputSearchNakamal,
+  },
   computed: {
     ...mapGetters({
       showSearch: 'map/showSearch',
       nakamals: 'nakamal/filteredList',
       hasFilters: 'nakamal/hasFilters',
-      getNakamalImages: 'image/nakamal',
     }),
   },
   methods: {
@@ -92,32 +67,12 @@ export default {
     ...mapActions('nakamal', [
       'removeFilters',
     ]),
-    customFilter(item, queryText) {
-      const name = item.name.toLowerCase();
-      let aliases = [];
-      if (item.aliases) {
-        aliases = item.aliases.map((a) => a.toLowerCase());
-      }
-      const searchText = queryText.toLowerCase();
-      return name.indexOf(searchText) > -1 || aliases.some((a) => a.indexOf(searchText) > -1);
-    },
-    searchSelect(id) {
+    onSelect(id) {
       this.$store.dispatch('nakamal/select', id)
         .then(() => {
           this.setShowSearch(false);
           this.$root.$emit('fly-to-selected');
         });
-    },
-    nakamalAvatar(nakamalId) {
-      const images = this.getNakamalImages(nakamalId);
-      if (images.length > 0) {
-        return images[0];
-      }
-      return null;
-    },
-    nakamalAliases(aliases) {
-      if (!aliases) return '-';
-      return aliases.join(', ');
     },
   },
 };

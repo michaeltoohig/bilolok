@@ -2,9 +2,10 @@
   <v-card>
     <v-img
       v-if="hasImages"
-      class="white--text align-end"
+      class="white--text align-end nakamal-avatar"
       max-height="300px"
       :src="images[0].src"
+      @click="viewPage(nakamal.id)"
     >
       <v-card-title></v-card-title>
     </v-img>
