@@ -21,6 +21,7 @@
           left
           offset-x="24"
           offset-y="18"
+          dark
         >
           <v-list-item-avatar>
             <img

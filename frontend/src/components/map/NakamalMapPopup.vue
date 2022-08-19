@@ -12,6 +12,7 @@
         overlap
         bordered
         left
+        dark
       >
         <v-avatar
           @click="goToNakamal"

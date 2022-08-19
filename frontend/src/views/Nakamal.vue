@@ -27,6 +27,7 @@
                   left
                   offset-x="35"
                   offset-y="25"
+                  dark
                 >
                   <v-avatar
                     size="164"

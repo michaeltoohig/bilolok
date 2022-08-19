@@ -283,6 +283,7 @@ Chief todos
 - [ ] Map view of nakamal on nakamal profile page
 - [ ] Use vue-router sub-routes for nakamal profile tabs
 - [x] Nakamal light color badges for avatars
+  - [ ] make into component - make DRY
 
 - [ ] Add explicit profile picture selection for nakamals
 

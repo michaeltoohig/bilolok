@@ -78,13 +78,23 @@
                     {{ nakamal.name }}
                   </v-list-item-title>
                 </v-list-item-content>
-                <v-list-item-avatar
+                <v-badge
                   v-if="nakamalAvatar(nakamal.id)"
+                  :color="nakamal.lightBadge.color"
+                  dot
+                  overlap
+                  bordered
+                  left
+                  offset-x="24"
+                  offset-y="18"
+                  dark
                 >
-                  <v-img
-                    :src="nakamalAvatar(nakamal.id).thumbnail"
-                  ></v-img>
-                </v-list-item-avatar>
+                  <v-list-item-avatar>
+                    <v-img
+                      :src="nakamalAvatar(nakamal.id).thumbnail"
+                    ></v-img>
+                  </v-list-item-avatar>
+                </v-badge>
               </v-list-item>
             </v-list>
 
@@ -113,13 +123,23 @@
                     {{ $t('checkin.title') }}: {{ item.count }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
-                <v-list-item-avatar
+                <v-badge
                   v-if="nakamalAvatar(item.nakamal.id)"
+                  :color="item.nakamal.lightBadge.color"
+                  dot
+                  overlap
+                  bordered
+                  left
+                  offset-x="24"
+                  offset-y="18"
+                  dark
                 >
-                  <v-img
-                    :src="nakamalAvatar(item.nakamal.id).thumbnail"
-                  ></v-img>
-                </v-list-item-avatar>
+                  <v-list-item-avatar>
+                    <v-img
+                      :src="nakamalAvatar(item.nakamal.id).thumbnail"
+                    ></v-img>
+                  </v-list-item-avatar>
+                </v-badge>
               </v-list-item>
             </v-list>
 
