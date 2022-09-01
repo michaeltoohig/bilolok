@@ -99,5 +99,5 @@ async def delete_one(
         if user.id != item.user.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     crud_image = CRUDImage(db)
-    item = await crud_image.delete(item.id)
+    item = await crud_image.remove(item.id)
     return ImageSchemaOut(**item.dict())

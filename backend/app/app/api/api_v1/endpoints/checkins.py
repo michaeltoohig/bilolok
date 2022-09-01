@@ -168,7 +168,7 @@ async def delete_one(
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
     nakamal_id = item.nakamal.id
     crud_checkin = CRUDCheckin(db)
-    item = await crud_checkin.delete(item.id)
+    item = await crud_checkin.remove(item.id)
     # Update nakamal chief
     arq_app = await get_arq_app()
     await arq_app.enqueue_job("update_nakamal_chief", str(nakamal_id))

@@ -61,6 +61,7 @@ async def get_all(
 ) -> Any:
     crud_nakamal = CRUDNakamal(db)
     items = await crud_nakamal.get_multi()
+    # TODO load profile
     return [NakamalSchemaOut(**item.dict()) for item in items]
 
 
@@ -80,6 +81,7 @@ async def get_featured(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Nakamal not found.",
         )
+    # TODO load profile
     return item
 
 
@@ -93,9 +95,13 @@ async def get_featured(
     },
 )
 async def get_one(
+    db: AsyncSession = Depends(get_db),
     item: NakamalSchema = Depends(get_nakamal_or_404),
-) -> NakamalSchemaOut:
-    return NakamalSchemaOut(**item.dict())
+) -> NakamalSchemaOut:  
+    crud_image = CRUDImage(db)
+    # profile = await crud_image.get_current_nakamal_profile(item.id)
+    item.profile = crud_image.make_src_urls(item.profile)
+    return NakamalSchemaOut(**item.dict())  #, profile=profile)
 
 
 @router.put(
@@ -117,6 +123,7 @@ async def update_one(
     crud_nakamal = CRUDNakamal(db)
     # logger.bind(payload=payload.dict()).debug("nakamal update")  # XXX take a look at this again and consider using to trigger alert for me
     item = await crud_nakamal.update(item.id, payload)
+    # TODO load profile
     return NakamalSchemaOut(**item.dict())
 
 
@@ -137,7 +144,8 @@ async def delete_one(
 ) -> NakamalSchemaOut:
     # XXX fails when checkins or images or resources exist on the relationships
     crud_nakamal = CRUDNakamal(db)
-    item = await crud_nakamal.delete(item.id)
+    # TODO load profile
+    item = await crud_nakamal.remove(item.id)
     return NakamalSchemaOut(**item.dict())
 
 
@@ -156,6 +164,7 @@ async def update_featured(
     item: NakamalSchema = Depends(get_nakamal_or_404),
 ) -> NakamalSchemaOut:
     await redis.set("featured-nakamal", str(item.id))
+    # TODO load profile
     return NakamalSchemaOut(**item.dict())
 
 
@@ -271,4 +280,65 @@ async def delete_one_resource(
     r = await crud_resource._get_one(resource.id)
     await crud_nakamal.remove_resource(item.id, r)
     item = await crud_nakamal.get_by_id(item.id)
+    return NakamalSchemaOut(**item.dict())
+
+
+@router.put(
+    "/{item_id:uuid}/profile/{image_id:uuid}",
+    response_model=NakamalSchemaOut,
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal Not Found.",
+        },
+    },
+)
+async def put_profile_image(
+    db: AsyncSession = Depends(get_db),
+    user = Depends(current_active_verified_user),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+    image_id: UUID,
+) -> NakamalSchemaOut:
+    """Set new nakamal profile image"""
+
+    # TODO check image is not already in profile images
+    # if yes, then change its start time to now and return
+    # 
+    
+    # TODO check user is chief to set profie
+    # if item.nakamal_id is None:
+    #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    crud_image = CRUDImage(db)
+    image = await crud_image.get_by_id(image_id)
+    if not image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found."
+        )
+    if not image.nakamal.id == item.id:
+        raise HTTPException(
+            status_code =status.HTTP_400_BAD_REQUEST, detail="Image is not associated with the nakamal."
+        )
+    await crud_image.create_nakamal_profile(image)
+    # XXX shortcut to built schema out
+    return NakamalSchemaOut(**item.dict(), profile=image)
+
+
+@router.delete("/{item_id:uuid}/profile/{image_id:uuid}")
+async def delete_profile_image(
+    db: AsyncSession = Depends(get_db),
+    user = Depends(current_active_verified_user),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+    image_id: UUID,
+) -> NakamalSchemaOut:
+    """Remove nakamal profile image."""
+    # remove all occurances of image Id from nakamal profile table
+    
+    crud_image = CRUDImage(db)
+    image = await crud_image.get_by_id(image_id)
+    if not image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Image not found."
+        )
+    await crud_image.remove_nakamal_profile(image.id)    
     return NakamalSchemaOut(**item.dict())

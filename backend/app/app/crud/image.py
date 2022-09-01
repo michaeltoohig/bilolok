@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Type
 from uuid import uuid4, UUID
 from app.db.errors import DoesNotExist
+from app.models.nakamal import NakamalProfile
 
 from sqlalchemy import desc, select
 from sqlalchemy.exc import NoResultFound
@@ -118,7 +119,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         return (self._schema.from_orm(item) for item in items)
 
     async def get_multi_by_nakamal(
-        self, nakamal_id: str, *, skip: int = 0, limit: int = 100
+        self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100
     ) -> List[ImageSchema]:
         query = (
             select(self._table)
@@ -129,6 +130,58 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         results = await self._db_session.execute(query)
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
+
+    async def create_nakamal_profile(
+        self, image: ImageSchema,
+    ) -> None:
+        query = (
+            select(NakamalProfile)
+            .where(NakamalProfile.image_id == image.id)
+        )
+        result = await self._db_session.execute(query)
+        item = result.scalars().first()
+        if not item:
+            # create new profile picture
+            item = NakamalProfile(id=uuid4(), image_id=image.id, nakamal_id=image.nakamal.id)
+            self._db_session.add(item)
+            await self._db_session.commit()
+        else:
+            # update `updated_at` field on profile picture
+            setattr(item, "updated_at", datetime.utcnow())
+            self._db_session.add(item)
+            await self._db_session.commit()
+        # return await self.get_by_id(image.id)
+        
+    async def get_current_nakamal_profile(
+        self, nakamal_id: UUID
+    ) -> ImageSchema:
+        query = (
+            select(NakamalProfile)
+            .where(NakamalProfile.nakamal_id == nakamal_id)
+            .order_by(NakamalProfile.updated_at.desc())
+        )
+        result = await self._db_session.execute(query)
+        item = result.scalars().first()
+        if not item:
+            return None
+        item = await self.get_by_id(item.image_id)
+        item = self.make_src_urls(item)
+        return item
+
+    async def remove_nakamal_profile(
+        self, image_id: UUID,
+    ) -> None:
+        query = (
+            select(NakamalProfile)
+            .where(NakamalProfile.image_id == image_id)
+        )
+        try:
+            (item,) = (await self._db_session.execute(query)).one()
+        except NoResultFound:
+            return None
+        await self._db_session.delete(item)
+        await self._db_session.commit()
+        return None
 
     async def get_multi_by_user(
         self,
@@ -150,7 +203,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
         items = (self.make_src_urls(item) for item in results.scalars())
         return (self._schema.from_orm(item) for item in items)
 
-    async def delete(self, item_id: UUID) -> ImageSchema:
+    async def remove(self, item_id: UUID) -> ImageSchema:
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()

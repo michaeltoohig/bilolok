@@ -3,9 +3,10 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, aliased
 
 from app.crud.base import CRUDBase
+from app.models.image import Image
 from app.models.nakamal import Nakamal
 from app.schemas.nakamal import NakamalSchema, NakamalSchemaIn
 
@@ -23,6 +24,44 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
     def _table(self) -> Type[Nakamal]:
         return Nakamal
 
+    # async def get_id(self, item_id: UUID):
+    #     profileImage = aliased(Image, name="profile")
+    #     profile_id = (
+    #         select(profileImage.id)
+    #         .filter(profileImage.nakamal_id == self._table.id)
+    #         .limit(1)
+    #         .correlate(self._table)
+    #         .scalar_subquery()
+    #     )
+    #     query = (
+    #         select(self._table, Image)
+    #         .options(selectinload(self._table.resources))
+    #         .outerjoin(Image, Image.id == profile_id)
+    #         .where(self._table.id == item_id)
+    #     )
+    #     item = (await self._db_session.execute(query)).scalar_one()
+    #     return item
+        # query = (
+        #     select(self._table)
+        #     .options(selectinload(self._table.resources))
+        #     .where(self._table.id == item_id)
+        # )
+        # LastPost = aliased(Post, name='last')
+        # last_id = (
+        #     session.query(LastPost.id)
+        #     .filter(LastPost.author_id == Author.id)
+        #     .order_by(LastPost.publish_date.desc())
+        #     .order_by(LastPost.id.desc())
+        #     .limit(1)
+        #     .correlate(Author)
+        #     .as_scalar()
+        # )
+
+        # query = (
+        #     DBSession.query(Author, Post)
+        #     .outerjoin(Post, Post.id == last_id)
+        # )
+
     async def create(self, in_schema: NakamalSchemaIn) -> NakamalSchema:
         item_id = uuid4()
         item = self._table(id=item_id, **in_schema.dict())
@@ -34,6 +73,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
+            .options(selectinload(self._table.latest_profile))
             .where(self._table.id == item_id)
         )
         try:
@@ -43,7 +83,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         return item
 
     async def get_multi(self) -> List[NakamalSchema]:
-        query = select(self._table).options(selectinload(self._table.resources))
+        query = select(self._table).options(selectinload(self._table.resources)).options(selectinload(self._tale.latest_profile))
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
@@ -64,6 +104,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
+            .options(selectinload(self._table.latest_profile))
             .where(self._table.chief_id != None)
         )
         results = await self._db_session.execute(query)
@@ -73,6 +114,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
+            .options(selectinload(self._table.latest_profile))
             .where(self._table.chief_id == chief_id)
         )
         results = await self._db_session.execute(query)

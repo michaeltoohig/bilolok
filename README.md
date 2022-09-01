@@ -279,6 +279,14 @@ Chief todos
 
 ### Version 3.1  (version means nothing lol)
 
+TODO
+1. update get all route, trip routes, etc to return nakamal schema with profile
+2. work on nakamal profile points below
+3. work on frontend
+4. cache nakamal and update trip endpoints, etc to return UUID not full object
+
+- [ ] Can we google translate for more languages? Why not auto translate to major languages?
+
 - [x] Add easy access search for kava bar from home page
 - [ ] Map view of nakamal on nakamal profile page
 - [ ] Use vue-router sub-routes for nakamal profile tabs
@@ -286,10 +294,23 @@ Chief todos
   - [ ] make into component - make DRY
 
 - [ ] Add explicit profile picture selection for nakamals
+  - [x] Add api endpoints to update the profile picture ID
+    - [x] Add logic to restrict who may update profile id
+    - [x] Add logic to handle when profile picture is removed
+    - [x] Add logic to restrict profile ID to image of nakamal
+    - [ ] Make sure all occurances of `nakamal` API responses have up-to-date profile
+      - [now] Or properly return the profile image object when making query for nakamal; avoiding n+1 problem
+    - [ ] Set all most recent images for each nakamal as the profile picture for first release
+    - [ ] Add logic to set first image of a nakamal as profile when added
+    - [ ] Alembic migration must set initial profile pictures
+    - [ ] Add UI to remove and set profile picture on frontend
+  - [ ] Update logic to display profile picture instead of first image across frontend
+  - [ ] add cascade to delete profile when image is deleted
 
 - [ ] Related nakamals or nearby nakamals selection from nakamal profile
 
 - [ ] Notification and email for change of chief status
+- [ ] Handle chief in separate table just like profile picture so history of chiefs can be retained
 
 ## Development
 

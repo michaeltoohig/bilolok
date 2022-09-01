@@ -22,7 +22,7 @@ class Image(Base, TimeMixin):
     user_id = Column(GUID, ForeignKey("user.id"), nullable=False)
     user = relationship("User", lazy="joined")
     nakamal_id = Column(GUID, ForeignKey("nakamal.id"), nullable=False)
-    nakamal = relationship("Nakamal", lazy="joined")
+    nakamal = relationship("Nakamal", foreign_keys=nakamal_id, lazy="joined")
 
     @staticmethod
     def build_filepath(nakamal_id: UUID, file_id: str, filename: str):

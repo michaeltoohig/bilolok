@@ -47,7 +47,7 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         await self._db_session.commit()
         return self._schema.from_orm(item)
 
-    async def delete(self, item_id: UUID) -> SCHEMA:
+    async def remove(self, item_id: UUID) -> SCHEMA:
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()
@@ -67,6 +67,8 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
             raise DoesNotExist(
                 f"{self._table.__name__}<id:{item_id}> does not exist"
             )
+        import pdb; pdb.set_trace()
+        
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:
@@ -74,8 +76,12 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
         results = (await self._db_session.execute(query)).scalars()
         return (self._schema.from_orm(item) for item in results)
 
-    async def remove(self, item_id: UUID) -> SCHEMA:
-        logger.warning("Deprecate Waring: use `delete` method instead")
+    async def delete(self, item_id: UUID) -> SCHEMA:
+        # I think using remove is better since `delete` is usually a reserved key word
+        # it also implies actual deletion from harddrive where some items are not deleted
+        # for good but just hidden from users.
+        # TODO migrate all CRUD use to `remove` and remove this
+        logger.warning("Deprecate Waring: use `remove` method instead")
         item = await self._get_one(item_id)
         await self._db_session.delete(item)
         await self._db_session.commit()
