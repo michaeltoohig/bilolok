@@ -87,6 +87,20 @@ class CRUDTrip(CRUDBase[Trip, TripSchemaIn, TripSchema]):
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
+    async def get_multi_by_nakamal(
+        self, nakamal_id: UUID, *, skip: int = 0, limit: int = 100
+    ) -> List[TripSchema]:
+        query = (
+            select(self._table)
+            .options(selectinload(self._table.nakamal))
+            .options(selectinload(self._table.user))
+            .where(self._table.nakamal_id == nakamal_id)
+            .order_by(desc(self._table.created_at))
+        )
+        results = await self._db_session.execute(query)
+        return (self._schema.from_orm(item) for item in results.scalars())
+
+
     async def get_multi_by_user(
         self,
         user_id: UUID,

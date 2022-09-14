@@ -1,10 +1,9 @@
 from typing import Any, AsyncIterator, List
 from uuid import UUID
 from app.crud.video import CRUDVideo
-from app.schemas.video import VideoSchemaOut
 
 import loguru
-from fastapi import Depends, Request, status
+from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -16,9 +15,12 @@ from app.crud.checkin import CRUDCheckin
 from app.crud.image import CRUDImage
 from app.crud.nakamal import CRUDNakamal
 from app.crud.nakamalResource import CRUDNakamalResource
+from app.crud.trip import CRUDTrip
 from app.models.nakamal import Nakamal
 from app.schemas.checkin import CheckinSchemaOut
 from app.schemas.image import ImageSchemaOut
+from app.schemas.trip import TripSchemaOut
+from app.schemas.video import VideoSchemaOut
 from app.schemas.nakamal import (NakamalSchema, NakamalSchemaIn,
                                  NakamalSchemaOut, NakamalSchemaUpdate)
 
@@ -98,10 +100,11 @@ async def get_one(
     db: AsyncSession = Depends(get_db),
     item: NakamalSchema = Depends(get_nakamal_or_404),
 ) -> NakamalSchemaOut:  
-    crud_image = CRUDImage(db)
+    # crud_image = CRUDImage(db)
     # profile = await crud_image.get_current_nakamal_profile(item.id)
-    item.profile = crud_image.make_src_urls(item.profile)
-    return NakamalSchemaOut(**item.dict())  #, profile=profile)
+    # item.profile = crud_image.make_src_urls(item.profile)
+    # return NakamalSchemaOut(**item.dict())  #, profile=profile)
+    return item
 
 
 @router.put(
@@ -196,7 +199,7 @@ async def get_all_images(
         },
     },
 )
-async def get_all_images(
+async def get_all_checkins(
     db: AsyncSession = Depends(get_db),
     *,
     item: NakamalSchema = Depends(get_nakamal_or_404),
@@ -223,6 +226,25 @@ async def get_all_videos(
     crud_video = CRUDVideo(db)
     videos = await crud_video.get_multi_by_nakamal(item.id)
     return [VideoSchemaOut(**video.dict()) for video in videos]
+
+
+@router.get(
+    "/{item_id:uuid}/trips",
+    response_model=List[TripSchemaOut],
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "detail": "Nakamal not found.",
+        },
+    },
+)
+async def get_all_trips(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> List[TripSchemaOut]:
+    crud_trip = CRUDTrip(db)
+    trips = await crud_trip.get_multi_by_nakamal(item.id)
+    return [TripSchemaOut(**trip.dict()) for trip in trips]
 
 
 @router.put(
@@ -284,7 +306,7 @@ async def delete_one_resource(
 
 
 @router.put(
-    "/{item_id:uuid}/profile/{image_id:uuid}",
+    "/{item_id:uuid}/profiles/{image_id:uuid}",
     response_model=NakamalSchemaOut,
     responses={
         status.HTTP_404_NOT_FOUND: {
@@ -299,31 +321,28 @@ async def put_profile_image(
     item: NakamalSchema = Depends(get_nakamal_or_404),
     image_id: UUID,
 ) -> NakamalSchemaOut:
-    """Set new nakamal profile image"""
-
-    # TODO check image is not already in profile images
-    # if yes, then change its start time to now and return
-    # 
-    
+    """Set new nakamal profile image"""    
     # TODO check user is chief to set profie
     # if item.nakamal_id is None:
     #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+    #
     crud_image = CRUDImage(db)
     image = await crud_image.get_by_id(image_id)
     if not image:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Image not found."
         )
-    if not image.nakamal.id == item.id:
+    if image.nakamal.id != item.id:
         raise HTTPException(
             status_code =status.HTTP_400_BAD_REQUEST, detail="Image is not associated with the nakamal."
         )
     await crud_image.create_nakamal_profile(image)
-    # XXX shortcut to built schema out
-    return NakamalSchemaOut(**item.dict(), profile=image)
+    crud_nakamal = CRUDNakamal(db)
+    item = await crud_nakamal.get_by_id(item.id)
+    return NakamalSchemaOut(**item.dict())
 
 
-@router.delete("/{item_id:uuid}/profile/{image_id:uuid}")
+@router.delete("/{item_id:uuid}/profiles/{image_id:uuid}")
 async def delete_profile_image(
     db: AsyncSession = Depends(get_db),
     user = Depends(current_active_verified_user),

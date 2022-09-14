@@ -73,7 +73,6 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
-            .options(selectinload(self._table.latest_profile))
             .where(self._table.id == item_id)
         )
         try:
@@ -83,7 +82,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         return item
 
     async def get_multi(self) -> List[NakamalSchema]:
-        query = select(self._table).options(selectinload(self._table.resources)).options(selectinload(self._tale.latest_profile))
+        query = select(self._table).options(selectinload(self._table.resources))
         results = await self._db_session.execute(query)
         return (self._schema.from_orm(item) for item in results.scalars())
 
@@ -104,7 +103,6 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
-            .options(selectinload(self._table.latest_profile))
             .where(self._table.chief_id != None)
         )
         results = await self._db_session.execute(query)
@@ -114,7 +112,6 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
         query = (
             select(self._table)
             .options(selectinload(self._table.resources))
-            .options(selectinload(self._table.latest_profile))
             .where(self._table.chief_id == chief_id)
         )
         results = await self._db_session.execute(query)

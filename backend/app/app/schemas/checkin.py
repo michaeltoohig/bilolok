@@ -32,6 +32,8 @@ class UserSchema(BaseSchema):
 class CheckinSchema(CheckinSchemaBase):
     id: uuid.UUID
     created_at: datetime
+    user_id: uuid.UUID
+    nakamal_id: uuid.UUID
     user: UserSchema
     nakamal: NakamalSchema
 

@@ -8,6 +8,7 @@ from app.models.nakamal import NakamalProfile
 from sqlalchemy import desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
+from sqlalchemy_utc import utcnow
 
 from app.core.config import settings
 from app.core.image import img_crypto_url
@@ -147,11 +148,11 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             await self._db_session.commit()
         else:
             # update `updated_at` field on profile picture
-            setattr(item, "updated_at", datetime.utcnow())
+            setattr(item, "updated_at", utcnow())
             self._db_session.add(item)
             await self._db_session.commit()
-        # return await self.get_by_id(image.id)
-        
+        return None
+
     async def get_current_nakamal_profile(
         self, nakamal_id: UUID
     ) -> ImageSchema:

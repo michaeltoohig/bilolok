@@ -67,8 +67,6 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
             raise DoesNotExist(
                 f"{self._table.__name__}<id:{item_id}> does not exist"
             )
-        import pdb; pdb.set_trace()
-        
         return self._schema.from_orm(item)
 
     async def get_multi(self) -> List[SCHEMA]:

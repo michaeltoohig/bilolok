@@ -1,10 +1,9 @@
 from enum import Enum
-from app.models.image import Image
 
 from fastapi_users_db_sqlalchemy import GUID
-from sqlalchemy import select, and_, Column, Float, ForeignKey, Integer, String, Table, Enum as SQLAEnum
+from sqlalchemy import select, text, and_, Column, Float, ForeignKey, Integer, String, Table, Enum as SQLAEnum
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import relationship, declared_attr, relation
+from sqlalchemy.orm import relationship, declared_attr, relation, column_property
 
 from app.db.base_class import Base
 from app.db.mixins import TimeMixin
@@ -41,10 +40,6 @@ class Nakamal(Base, TimeMixin):
     chief_id = Column(GUID, ForeignKey("user.id"), nullable=True)
     chief = relationship("User", lazy="joined")
 
-    # NOTE debating as to return the thumbnail URL directly or the full ImageSchema object
-    # profile_id = Column(GUID, ForeignKey("image.id"), nullable=True)
-    # profile = relationship("Image", foreign_keys=profile_id, lazy="joined")
-
     kava_source_id = Column(GUID, ForeignKey("nakamal_kava_source.id"), nullable=False)
     kava_source = relationship("NakamalKavaSource", lazy="joined")
     resources = relationship(
@@ -53,30 +48,14 @@ class Nakamal(Base, TimeMixin):
     area_id = Column(GUID, ForeignKey("nakamal_area.id"), nullable=False)
     area = relationship("NakamalArea", lazy="joined")
 
-    @declared_attr
-    def __mapper_args__(cls):
-        # for original source
-        # https://stackoverflow.com/questions/73509673/sqlalchemy-1-4-table-query-that-includes-first-result-of-second-table?noredirect=1#comment129824735_73509673
-        children = NakamalProfile.__table__
-        image = Image.__table__
-        most_recent_profile = (
-            select(children.c.image_id)
-            .where(children.c.nakamal_id == cls.id)
-            .order_by(children.c.updated_at.desc())
-            .limit(1)
-            .correlate(cls.__table__)
-            .scalar_subquery()
-        )
-
-        rel = relation(
-            "Image",
-            primaryjoin=and_(
-                Image.id == most_recent_profile, Image.nakamal_id == cls.id
-            ),
-            uselist=False,
-            viewonly=True,
-        )
-        return {'properties': {'latest_profile': rel}}
+    profile_id = column_property(
+        select(NakamalProfile.image_id)
+        .where(NakamalProfile.nakamal_id == text("nakamal.id"))
+        .order_by(NakamalProfile.updated_at.desc())
+        .limit(1)
+        .correlate(NakamalProfile)
+        .scalar_subquery()
+    )
 
 
 class NakamalResource(Base):
