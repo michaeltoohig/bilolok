@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      load: 'checkin/getOne',
+      load: 'checkin/loadOne',
     }),
   },
   async mounted() {

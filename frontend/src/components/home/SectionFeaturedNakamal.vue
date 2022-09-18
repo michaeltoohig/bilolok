@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="show">
+  <v-container>
     <h2>
       <v-icon class="pb-2">mdi-trophy-award</v-icon>
       {{ $t('home.featured_nakamal') }}
@@ -15,7 +15,9 @@
         </v-flex>
       </v-layout>
     </v-container>
-    <CardNakamal v-else :nakamal="nakamal" />
+    <v-container v-else>
+      <CardNakamal :nakamal="nakamal" />
+    </v-container>
   </v-container>
 </template>
 
@@ -30,13 +32,8 @@ export default {
   },
   data() {
     return {
-      show: true,
+      nakamal: null,
     };
-  },
-  computed: {
-    ...mapGetters({
-      nakamal: 'nakamal/featured',
-    }),
   },
   methods: {
     ...mapActions({
@@ -44,7 +41,8 @@ export default {
     }),
   },
   async mounted() {
-    await this.getFeaturedNakamal();
+    // TODO add cache in vuex store
+    this.nakamal = await this.getFeaturedNakamal();
   },
 };
 </script>

@@ -1,8 +1,8 @@
 <template>
   <BaseTimelineCard
     :timestamp="item.start_at"
-    :user="item.user"
-    :nakamal="item.nakamal"
+    :user="user"
+    :nakamal="nakamal"
     :linkNakamal="linkNakamal"
   >
     <template v-slot:card-action>
@@ -37,8 +37,9 @@
           :weight="5"
         ></l-polyline>
         <l-marker
+          v-if="nakamal"
           :icon="icon"
-          :lat-lng="item.nakamal.latLng"
+          :lat-lng="nakamal.latLng"
         >
           <l-tooltip :options="{
             permanent: 'true',
@@ -60,7 +61,7 @@ import {
 import {
   LMap, LTileLayer, LPolyline, LMarker, LTooltip,
 } from 'vue2-leaflet';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import BaseTimelineCard from '@/components/timeline/BaseTimelineCard.vue';
 import BaseTimelineCardMenu from '@/components/timeline/BaseTimelineCardMenu.vue';
 
@@ -89,6 +90,8 @@ export default {
   },
   data() {
     return {
+      user: null,
+      nakamal: null,
       icon: icon({
         iconUrl: iconMarkerPath,
         iconSize: [54, 44],
@@ -99,13 +102,13 @@ export default {
   computed: {
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
-      user: 'auth/user',
+      currentUser: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
       darkMode: 'setting/darkMode',
     }),
     isMine() {
-      if (!this.isLoggedIn) return false;
-      return this.item.user.id === this.user.id;
+      if (!this.user || !this.isLoggedIn) return false;
+      return this.user.id === this.currentUser.id;
     },
     userCanDelete() {
       return this.isMine || this.hasAdminAccess;
@@ -128,7 +131,7 @@ export default {
   },
   methods: {
     async onShare() {
-      const text = `User's trip to ${this.item.nakamal.name} on Bilolok!`;
+      const text = `User's trip to ${this.nakamal.name} on Bilolok!`;
       const url = `${domain}/trip/${this.item.id}`;
       if (navigator.share) {
         const { title } = document;
@@ -166,6 +169,16 @@ export default {
         this.$store.dispatch('trip/remove', this.item.id);
       }
     },
+    ...mapActions({
+      loadUser: 'user/loadOne',
+      loadNakamal: 'nakamal/loadOne',
+    }),
+  },
+  async mounted() {
+    if (this.item.nakamal) {
+      this.nakamal = await this.loadNakamal(this.item.nakamal);
+    }
+    this.user = await this.loadUser(this.item.user);
   },
 };
 </script>

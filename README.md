@@ -293,19 +293,32 @@ TODO
 - [x] Nakamal light color badges for avatars
   - [ ] make into component - make DRY
 
+!! - [ ] Stop returning full objects and instead return IDs then let client load object
+
 - [ ] Add explicit profile picture selection for nakamals
   - [x] Add api endpoints to update the profile picture ID
     - [x] Add logic to restrict who may update profile id
     - [x] Add logic to handle when profile picture is removed
     - [x] Add logic to restrict profile ID to image of nakamal
-    - [ ] Make sure all occurances of `nakamal` API responses have up-to-date profile
-      - [now] Or properly return the profile image object when making query for nakamal; avoiding n+1 problem
-    - [ ] Set all most recent images for each nakamal as the profile picture for first release
-    - [ ] Add logic to set first image of a nakamal as profile when added
-    - [ ] Alembic migration must set initial profile pictures
-    - [ ] Add UI to remove and set profile picture on frontend
-  - [ ] Update logic to display profile picture instead of first image across frontend
-  - [ ] add cascade to delete profile when image is deleted
+    - [x] Make sure all occurances of `nakamal` API responses have up-to-date profile
+    - [x] Set all most recent images for each nakamal as the profile picture for first release
+    - [x] Alembic migration must set initial profile pictures
+    - [x] Add logic to set first image of a nakamal as profile when added
+    - [x] Add UI to remove and set profile picture on frontend
+  - [x] Update logic to display profile picture instead of first image across frontend
+  - [x] add logic to delete profile when image is deleted (not a cascade)
+  
+  To make profile pictures possible; avoid recursion in loading related objects nakamal -> profile -> nakamal -> ... we need to change the way we handle vuex store and fetching objects.
+  My plan at the moment is to use the local cache I've introduced for more objects and wrap vuex actions with cache checks to transparently return the requested object when a component's `mounted` call would otherwise fetch the object.
+  Below are the steps I see thus far to acheive this goal and lay the foundation for the remaining steps for nakamal profile pictures
+  - [ ] Find components (mainly view components) that use a `${resource}/find` getter from vuex as a local computed property where a local variable would be better since these properties are tied to the view and not changing.
+  - [ ] Update vuex modules to include a "fetch" action that checks a local cache before making a remote request
+    - [ ] when fetching many perhaps it is always a shallow fetch then at the component level the component fetches related objects which again would possibly hit the vuex cache behind the scenes.
+  Steps:
+    1. make "fetch" actions that include a cache check
+    2. update view components to use fetch on mounted lifecycle hook then store the result for the route in local variable
+    3. components would use the ID from the local object to fetch (or get from cache) related objects instead of transparently merging related objects in the vuex store
+      3a. Cache must use a volatile storage so hard refreshes can override (i think that is a good idea right now; I like the idea of overridinge cache or clearing cache being available to users)
 
 - [ ] Related nakamals or nearby nakamals selection from nakamal profile
 

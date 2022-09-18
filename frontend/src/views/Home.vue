@@ -15,13 +15,6 @@
           <hr class="mb-5"/>
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <v-card tile bordered class="pa-0 pt-3">
-            <InputSearchNakamal :nakamals="nakamals" @on-select="goToNakamal" class="ma-3" />
-          </v-card>
-        </v-col>
-      </v-row>
     </v-container>
     <v-container>
       <v-parallax
@@ -90,8 +83,6 @@ import { mapGetters } from 'vuex';
 import SectionFeaturedNakamal from '@/components/home/SectionFeaturedNakamal.vue';
 import SectionRecentTimeline from '@/components/home/SectionRecentTimeline.vue';
 
-import InputSearchNakamal from '@/components/InputSearchNakamal.vue';
-
 const lightMapImage = require('../assets/PortVilaMap-light.jpg');
 const darkMapImage = require('../assets/PortVilaMap-dark.jpg');
 const logo = require('../assets/logo.png');
@@ -99,7 +90,6 @@ const logo = require('../assets/logo.png');
 export default {
   name: 'Home',
   components: {
-    InputSearchNakamal,
     SectionFeaturedNakamal,
     SectionRecentTimeline,
   },
@@ -114,7 +104,6 @@ export default {
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
       darkMode: 'setting/darkMode',
-      nakamals: 'nakamal/list',
     }),
     mapImagePath() {
       if (this.darkMode) {
@@ -127,12 +116,6 @@ export default {
     goToSignup() {
       this.$router.push({ name: 'Auth', params: { auth: 'signup' } });
     },
-    goToNakamal(id) {
-      this.$router.push({ name: 'Nakamal', params: { id: id } });
-    },
-  },
-  async mounted() {
-    await this.$store.dispatch('nakamal/load');
   },
 };
 </script>

@@ -133,9 +133,13 @@ async def tus_hook(
                     nakamal_id=nakamal_id,
                 )
                 image = await crud_image.create(in_schema=in_schema)
+                # Set image as profile if no images exist for nakamal
+                priofile = await crud_image.get_current_nakamal_profile(nakamal_id)
+                if not priofile:
+                    await crud_image.create_nakamal_profile(image)
             except Exception as exc:
                 # TODO log
-                logger.exception("Error saving image to database")
+                logger.exception("Error saving image to database or setting profile")
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
         elif target == UploadTarget.USER_PROFILE:
             try:

@@ -32,6 +32,14 @@ export default {
     return Vue.prototype.$http.put(`${resource}/${id}/featured`);
   },
 
+  async putProfileImage(token, id, imageId) {
+    return Vue.prototype.$http.put(`${resource}/${id}/profiles/${imageId}`, {}, authHeaders(token));
+  },
+
+  async deleteProfileImage(token, id, imageId) {
+    return Vue.prototype.$http.delete(`${resource}/${id}/profiles/${imageId}`, authHeaders(token));
+  },
+  
   async getImages(id, skip = 0, limit = 100) {
     return Vue.prototype.$http.get(`${resource}/${id}/images`, {
       params: {
@@ -52,6 +60,15 @@ export default {
 
   async getVideos(id, skip = 0, limit = 100) {
     return Vue.prototype.$http.get(`${resource}/${id}/videos`, {
+      params: {
+        skip,
+        limit,
+      },
+    });
+  },
+
+  async getTrips(id, skip = 0, limit = 100) {
+    return Vue.prototype.$http.get(`${resource}/${id}/trips`, {
       params: {
         skip,
         limit,

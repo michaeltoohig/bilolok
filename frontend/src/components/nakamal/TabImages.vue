@@ -33,6 +33,10 @@
         offset-y
       >
         <v-list>
+          <v-list-item link @click="setProfileImage">
+            <!-- TODO translate -->
+            <v-list-item-title>Set as Profile</v-list-item-title>
+          </v-list-item>
           <v-list-item link @click="removeImage">
             <v-list-item-title>{{ $t('buttons.delete') }}</v-list-item-title>
           </v-list-item>
@@ -82,6 +86,16 @@ export default {
       this.$nextTick(() => {
         this.showMenu = true;
       });
+    },
+    setProfileImage() {
+      /* eslint-disable no-alert, no-restricted-globals */
+      // TODO translate
+      if (confirm('Set as new nakamal profile image?')) { // confirm(this.$i18n.t('nakamal.tab_images_confirm_delete'))) {
+        this.$store.dispatch('nakamal/setProfile', {
+          nakamalId: this.nakamal.id,
+          imageId: this.selectedImageId,
+        });
+      }
     },
     removeImage() {
       /* eslint-disable no-alert, no-restricted-globals */

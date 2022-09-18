@@ -10,10 +10,11 @@
     <v-card class="elevation-2 mb-3">
       <v-list-item class="d-flex flex-row">
         <v-list-item-avatar
+          v-if="hasUser"
           color="grey darken-3 elevation-2 user-avatar"
           tile
           v-ripple="{ center: true }"
-          @click="$router.push({ name: 'User', params: { id: user.id } })"
+          @click="toUser"
         >
           <v-img :src="user.avatar"></v-img>
         </v-list-item-avatar>
@@ -30,7 +31,7 @@
             </template>
             <span>{{ formatTime(timestamp) }}</span>
           </v-tooltip>
-          <div v-if="nakamal && linkNakamal">
+          <div v-if="hasNakamal && linkNakamal">
             <a @click="toNakamal">
               <h3 class="primary--text">{{ nakamal.name }}</h3>
             </a>
@@ -62,11 +63,13 @@ export default {
     },
     user: {
       type: Object,
-      required: true,
+      // required: true,
+      default: {},
     },
     nakamal: {
       type: Object,
-      required: false,
+      // required: false,
+      default: {},
     },
     linkNakamal: {
       type: Boolean,
@@ -80,6 +83,12 @@ export default {
     };
   },
   computed: {
+    hasUser() {
+      return this.user !== null;
+    },
+    hasNakamal() {
+      return this.nakamal !== null;
+    },
     ...mapGetters({
       getNakamalImages: 'image/nakamal',
     }),
@@ -91,6 +100,10 @@ export default {
         return images[0];
       }
       return null;
+    },
+    toUser() {
+      const { id } = this.user;
+      this.$router.push({ name: 'User', params: { id } });
     },
     toNakamal() {
       const { id } = this.nakamal;

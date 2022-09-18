@@ -21,7 +21,7 @@
           :item="item.data"
           :linkNakamal="true"
         />
-        <!-- <ImageTimelineCard
+        <ImageTimelineCard
           v-if="item.type === 'image'"
           :item="item.data"
           :linkNakamal="true"
@@ -35,7 +35,7 @@
           v-if="item.type === 'video'"
           :item="item.data"
           :linkNakamal="true"
-        /> -->
+        />
       </div>
       <div class="text-center">
         <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
@@ -56,8 +56,6 @@
 </template>
 
 <script>
-// TODO This component should have a single "timeline" API endpoint to simplify this mess
-
 import dayjs from 'dayjs';
 import { mapActions, mapGetters } from 'vuex';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
@@ -77,20 +75,18 @@ export default {
     return {
       loading: true,
       recentItemCount: 3,
-
-      // checkins: [],
     };
   },
   computed: {
     ...mapGetters({
       recentCheckins: 'checkin/recent',
-      // recentImages: 'image/recent',
-      // recentTrips: 'trip/recent',
-      // recentVideos: 'video/recent',
+      recentImages: 'image/recent',
+      recentTrips: 'trip/recent',
+      recentVideos: 'video/recent',
     }),
     checkins() {
-      // const n = Math.min(this.recentCheckins.length, this.recentItemCount);
-      return this.recentCheckins; //.slice(0, n);
+      const n = Math.min(this.recentCheckins.length, this.recentItemCount);
+      return this.recentCheckins.slice(0, n);
     },
     // images() {
     //   const n = Math.min(this.recentImages.length, this.recentItemCount);
@@ -105,14 +101,11 @@ export default {
     //   return this.recentVideos.slice(0, n);
     // },
     timelineItems() {
-      console.log('timeline start');
       let items = this.checkins.map((i) => ({ type: 'checkin', data: i }));
-      console.log('timeline checkins', items);
-      return items;
       // items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
       // items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
       // items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
-      // return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
+      return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
     },
   },
   methods: {

@@ -1,10 +1,10 @@
 <template>
   <v-card>
     <v-img
-      v-if="hasImages"
+      v-if="profile"
       class="white--text align-end nakamal-avatar"
       max-height="300px"
-      :src="images[0].src"
+      :src="profile.src"
       @click="viewPage(nakamal.id)"
     >
       <v-card-title></v-card-title>
@@ -64,26 +64,20 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'CardNakamal',
   props: ['nakamal'],
-  computed: {
-    ...mapGetters({
-      getImages: 'image/nakamal',
-    }),
-    hasImages() {
-      return this.images.length > 0;
-    },
-    images() {
-      return this.getImages(this.nakamal.id);
-    },
+  data() {
+    return {
+      profile: null,
+    };
   },
   methods: {
-    // async onShare() {
-    //   console.log('ok');
-    // },
+    ...mapActions({
+      loadProfile: 'image/loadOne',
+    }),
     viewOnMap(id) {
       this.$store.dispatch('nakamal/select', id)
         .then(() => {
@@ -104,9 +98,9 @@ export default {
       return v;
     },
   },
-  beforeMount() {
-    if (!this.hasImages) {
-      this.$store.dispatch('image/getNakamal', this.nakamal.id);
+  async mounted() {
+    if (this.nakamal.profile !== null) {
+      this.profile = await this.loadProfile(this.nakamal.profile);
     }
   },
 };

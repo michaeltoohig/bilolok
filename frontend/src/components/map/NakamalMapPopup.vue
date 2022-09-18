@@ -6,7 +6,7 @@
     <h3 class="mb-2 text-h6 font-weight-bold">{{ selectedNakamal.name }}</h3>
     <div class="d-flex justify-center">
       <v-badge
-        v-if="selectedNakamalImage"
+        v-if="profile"
         :color="selectedNakamal.lightBadge.color"
         :icon="selectedNakamal.lightBadge.icon"
         overlap
@@ -23,7 +23,7 @@
           <v-img
             height="114"
             contain
-            :src="selectedNakamalImage.thumbnail"
+            :src="profile.thumbnail"
           ></v-img>
         </v-avatar>
       </v-badge>
@@ -49,7 +49,7 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="!selectedNakamalImage">
+      <v-list-item v-if="!profile">
         <v-list-item-content class="py-0">
           <v-list-item-title class="font-weight-bold">
             {{ $t('nakamal.attrs.light') }}
@@ -106,6 +106,7 @@
 
 <script>
 import {
+  mapActions,
   mapGetters,
 } from 'vuex';
 import {
@@ -131,8 +132,8 @@ export default {
       center: 'map/center',
       location: 'map/location',
       selectedNakamal: 'nakamal/selected',
-      getNakamalImages: 'image/nakamal',
-      getNakamalHasImages: 'image/nakamalHasImages',
+      // getNakamalImages: 'image/nakamal',
+      // getNakamalHasImages: 'image/nakamalHasImages',
     }),
     displayDistance() {
       if (!this.location) return null;
@@ -146,16 +147,18 @@ export default {
       }
       return distance;
     },
-    selectedNakamalImage() {
-      if (this.selectedNakamal) {
-        if (this.getNakamalHasImages(this.selectedNakamal.id)) {
-          return this.getNakamalImages(this.selectedNakamal.id)[0];
-        }
+    profile() {
+      if (this.selectedNakamal && this.selectedNakamal.profile) {
+        return this.$store.getters['image/find'](this.selectedNakamal.profile);
+      } else {
+        return null;
       }
-      return null;
     },
   },
   methods: {
+    ...mapActions({
+      loadProfile: 'image/loadOne',
+    }),
     goToNakamal() {
       this.$router.push({ name: 'Nakamal', params: { id: this.selectedNakamal.id } });
     },
@@ -169,18 +172,11 @@ export default {
       if (!aliases) return '-';
       return aliases.join(', ');
     },
-    // selectShowDistanceTo(to) {
-    //   this.setShowDistance({
-    //     from: {
-    //       lat: this.location.latitude,
-    //       lng: this.location.longitude,
-    //     },
-    //     to,
-    //   });
-    //   // TODO fly-to-bounds of Polyline created
-    //   // const bounds = latLngBounds(this.nakamals.map((n) => n.latLng));
-    //   // this.$refs.map.mapObject.flyToBounds(bounds, { duration: 1.0, padding: [50, 50] });
-    // },
+  },
+  async mounted() {
+    if (this.selectedNakamal.profile) {
+      await this.loadProfile(this.selectedNakamal.profile);
+    }
   },
 };
 </script>

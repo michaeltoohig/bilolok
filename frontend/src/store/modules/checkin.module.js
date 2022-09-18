@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import dayjs from 'dayjs';
+import ls from 'localstorage-slim';
 
-import { normalizeRelations, resolveRelations } from '@/store/helpers';
+import { normalizeRelations, renameRelation, resolveRelations } from '@/store/helpers';
 import checkinsApi from '@/api/checkins';
 import nakamalsApi from '@/api/nakamals';
 import usersApi from '@/api/users';
@@ -21,7 +22,8 @@ const getters = {
   // Return a single checkin with the given id.
   find: (state, _, __, rootGetters) => id => {
     // Swap ID references with the resolved nakamal objects.
-    return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    // return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    return state.byId[id];
   },
   // Return a list of checkins in the order of `allIds`.
   list: (state, getters) => {
@@ -48,7 +50,6 @@ const getters = {
   },
   // Return a list of recent checkins.
   recent: (state, getters) => {
-    // return state.allIds.map(id => getters.find(id)).filter(c => c.created_at)
     return state.recentIds.map(id => getters.find(id));
   },
   recentNakamalIds: (state, getters) => {
@@ -61,26 +62,56 @@ const getters = {
   },
   // Return a list of checkins of a user.
   user: (state, getters) => userId => {
-    return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
+    return state.allIds.map(id => getters.find(id)).filter(c => c.user === userId);
+  },
+  favoriteNakamals: (state, getters) => userId => {
+    let checkins = getters.user(userId);
+    const count = {};
+    const threshold = dayjs().subtract(30, 'd');
+    checkins = checkins.filter((c) => threshold.isBefore(dayjs(c.created_at)));
+    checkins.forEach((c) => {
+      const nId = c.nakamal;
+      if (Object.keys(count).includes(nId)) {
+        count[nId].count += 1;
+        if (dayjs(count[nId].created_at).isBefore(c.created_at)) {
+          count[nId].created_at = c.created_at;
+        }
+      } else {
+        count[nId] = {
+          count: 1,
+          created_at: c.created_at,
+          nakamal: c.nakamal,
+        };
+      }
+    });
+    const sorted = Object.values(count).sort((a, b) => {
+      if (a.count === b.count) {
+        return dayjs(b.created_at).isBefore(dayjs(a.created_at)) ? -1 : 1;
+      }
+      return a.count > b.count ? -1 : 1;
+    });
+    return sorted.slice(0, 3);
   },
 };
 
 function commitAddCheckin(checkin, commit) {
   // Normalize nested data and swap the nakamal object
   // in the API response with an ID reference.
-  commit('add', normalizeRelations(checkin, ['nakamal', 'user']));
+  // commit('add', normalizeRelations(checkin, ['nakamal', 'user']));
+  commit('add', renameRelation(checkin, [['nakamal_id', 'nakamal'], ['user_id', 'user']]));
+  
   // Add or update relations.
-  if (checkin.nakamal.chief) {
-    commit('user/setUser', checkin.nakamal.chief, {
-      root: true,
-    });
-  }
-  commit('nakamal/add', normalizeRelations(checkin.nakamal, ['chief']), {
-    root: true,
-  });
-  commit('user/setUser', checkin.user, {
-    root: true,
-  });
+  // if (checkin.nakamal.chief) {
+  //   commit('user/setUser', checkin.nakamal.chief, {
+  //     root: true,
+  //   });
+  // }
+  // commit('nakamal/add', normalizeRelations(checkin.nakamal, ['chief']), {
+  //   root: true,
+  // });
+  // commit('user/setUser', checkin.user, {
+  //   root: true,
+  // });
 };
 
 const actions = {
@@ -91,10 +122,20 @@ const actions = {
       commitAddCheckin(item, commit);
     });
   },
-  getOne: async ({ commit }, id) => {
-    let response = await checkinsApi.get(id);
-    const checkin = response.data;
+  loadOne: async ({ commit, getters }, id) => {
+    // TODO handle network errors
+    let checkin;
+    const cacheKey = `checkins-one:${id}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      checkin = cached;
+    } else {
+      let resp = await checkinsApi.get(id);
+      checkin = resp.data;
+      ls.set(cacheKey, checkin, { ttl: 300 });
+    }
     commitAddCheckin(checkin, commit);
+    return Promise.resolve(getters.find(id));
   },
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
@@ -113,6 +154,23 @@ const actions = {
       console.log('recent checkin error', error);
     }
   },
+  // loadRecent: async ({ commit }) => {
+  //   // fetch cache TODO
+    
+  //   // fetch remote
+  //   try {
+  //     let response = await checkinsApi.getRecent();
+  //     const items = response.data;
+  //     commitAddNakamal(items, commit);
+  //     // 2022-09-10  XXX gonna try to remove this load all
+  //     // Perhaps do not assume we want to load all right away
+  //     // dispatch('load');  // Load all others in background
+  //   }
+  //   catch (error) {
+  //     console.log(error, 'error in catch loadOne');
+  //     await dispatch('auth/checkApiError', error, { root: true });
+  //   }
+  // },
   getNakamal: async ({ commit }, nakamalId) => {
     const response = await nakamalsApi.getCheckins(nakamalId);
     const checkins = response.data;

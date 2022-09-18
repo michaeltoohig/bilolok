@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import Vue from 'vue';
+import ls from 'localstorage-slim';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import videosApi from '@/api/videos';
@@ -22,7 +23,8 @@ const getters = {
   // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
     // Swap ID references with the resolved nakamal objects.
-    return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    // return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    return state.byId[id];
   },
   // Return a list of videos in the order of `allIds`.
   list: (state, getters) => {
@@ -62,7 +64,7 @@ const getters = {
   },
   // Return a list of videos of a user.
   user: (state, getters) => userId => {
-    return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
+    return state.allIds.map(id => getters.find(id)).filter(c => c.user === userId);
   },
 };
 
@@ -71,19 +73,19 @@ function commitAddVideo(video, commit) {
   // in the API response with an ID reference.
   commit('add', normalizeRelations(video, ['nakamal', 'user']));
   // Add or update relations.
-  if (video.nakamal) {
-    if (video.nakamal.chief) {
-      commit('user/setUser', video.nakamal.chief, {
-        root: true,
-      });
-    }
-    commit('nakamal/add', normalizeRelations(video.nakamal, ['chief']), {
-      root: true,
-    });
-  }
-  commit('user/setUser', video.user, {
-    root: true,
-  });
+  // if (video.nakamal) {
+  //   if (video.nakamal.chief) {
+  //     commit('user/setUser', video.nakamal.chief, {
+  //       root: true,
+  //     });
+  //   }
+  //   commit('nakamal/add', normalizeRelations(video.nakamal, ['chief']), {
+  //     root: true,
+  //   });
+  // }
+  // commit('user/setUser', video.user, {
+  //   root: true,
+  // });
 };
 
 const actions = {
@@ -93,10 +95,20 @@ const actions = {
       commitAddVideo(item, commit);
     });
   },
-  getOne: async ({ commit }, id) => {
-    let response = await videosApi.get(id);
-    const video = response.data;
+  loadOne: async ({ commit, getters }, id) => {
+    // TODO handle network errors
+    let video;
+    const cacheKey = `videos-one:${id}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      video = cached;
+    } else {
+      let resp = await videosApi.get(id);
+      video = resp.data;
+      ls.set(cacheKey, video, { ttl: 300 });
+    }
     commitAddVideo(video, commit);
+    return Promise.resolve(getters.find(id));
   },
   getRecent: async ({ commit }) => {
     try {

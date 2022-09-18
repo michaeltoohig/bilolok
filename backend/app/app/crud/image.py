@@ -206,6 +206,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
 
     async def remove(self, item_id: UUID) -> ImageSchema:
         item = await self._get_one(item_id)
+        await self.remove_nakamal_profile(item.id)  # remove any references in NakammalProfile table
         await self._db_session.delete(item)
         await self._db_session.commit()
         item = self.make_src_urls(item)

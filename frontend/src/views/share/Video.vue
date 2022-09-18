@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      load: 'video/getOne',
+      load: 'video/loadOne',
     }),
   },
   async mounted() {

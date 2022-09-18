@@ -2,6 +2,7 @@
 
 import Vue from 'vue';
 import dayjs from 'dayjs';
+import ls from 'localstorage-slim';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import tripsApi from '@/api/trips';
@@ -23,7 +24,8 @@ const getters = {
   // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
     // Swap ID references with the resolved nakamal objects.
-    return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    // return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    return state.byId[id];
   },
   // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
@@ -63,7 +65,7 @@ const getters = {
   },
   // Return a list of trips of a user.
   user: (state, getters) => userId => {
-    return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
+    return state.allIds.map(id => getters.find(id)).filter(c => c.user === userId);
   },
 };
 
@@ -72,17 +74,17 @@ function commitAddTrip(trip, commit) {
   // in the API response with an ID reference.
   commit('add', normalizeRelations(trip, ['nakamal', 'user']));
   // Add or update relations
-  commit('user/setUser', trip.user, {
-    root: true,
-  });
-  if (trip.nakamal.chief) {
-    commit('user/setUser', trip.nakamal.chief, {
-      root: true,
-    });
-  }
-  commit('nakamal/add', normalizeRelations(trip.nakamal, ['chief']), {
-    root: true,
-  });
+  // commit('user/setUser', trip.user, {
+  //   root: true,
+  // });
+  // if (trip.nakamal.chief) {
+  //   commit('user/setUser', trip.nakamal.chief, {
+  //     root: true,
+  //   });
+  // }
+  // commit('nakamal/add', normalizeRelations(trip.nakamal, ['chief']), {
+  //   root: true,
+  // });
 };
 
 const actions = {
@@ -92,9 +94,21 @@ const actions = {
       commitAddTrip(item, commit);
     });
   },
-  getOne: async ({ commit }, id) => {
-    const trip = await tripsApi.get(id);
+  loadOne: async ({ commit, getters }, id) => {
+    // TODO handle network errors
+    let trip;
+    const cacheKey = `trips-one:${id}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      trip = cached;
+    } else {
+      const resp = await tripsApi.get(id);
+      trip = resp.data;
+      ls.set(cacheKey, trip, { ttl: 300 });
+    }
     commitAddTrip(trip, commit);
+    return Promise.resolve(getters.find(id));
+    
   },
   getRecent: async ({ commit }) => {
     try {
@@ -111,16 +125,16 @@ const actions = {
       console.log('recent trip error', error);
     }
   },
-  // getNakamal: async ({ commit }, nakamalId) => {
-  //   const response = await nakamalsApi.getCheckins(nakamalId);
-  //   const trips = response.data;
-  //   trips.forEach((item) => {
-  //     commitAddTrip(item, commit);
-  //   });
-  // },
+  getNakamal: async ({ commit }, nakamalId) => {
+    const resp = await nakamalsApi.getTrips(nakamalId);
+    const trips = resp.data;
+    trips.forEach((item) => {
+      commitAddTrip(item, commit);
+    });
+  },
   getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getTrips(userId);
-    const trips = response.data;
+    const resp = await usersApi.getTrips(userId);
+    const trips = resp.data;
     trips.forEach((item) => {
       commitAddTrip(item, commit);
     });

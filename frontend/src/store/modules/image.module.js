@@ -1,6 +1,7 @@
 /* eslint-disable */
 
 import Vue from 'vue';
+import ls from 'localstorage-slim';
 
 import { normalizeRelations, resolveRelations } from '@/store/helpers';
 import imagesApi from '@/api/images';
@@ -20,7 +21,9 @@ const state = initialState();
 const getters = {
   // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
-    return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    // TODO if not found dispatch the get_by_id method
+    // return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
+    return state.byId[id];
   },
   // Return a list of images in the order of `allIds`.
   list: (state, getters) => {
@@ -47,7 +50,7 @@ const getters = {
   },
   // Return a list of images of a user.
   user: (state, getters) => userId => {
-    return state.allIds.map(id => getters.find(id)).filter(c => c.user.id === userId);
+    return state.allIds.map(id => getters.find(id)).filter(c => c.user === userId);
   },
 };
 
@@ -56,24 +59,34 @@ function commitAddImage(image, commit) {
   // in the API response with an ID reference.
   commit('add', normalizeRelations(image, ['nakamal', 'user']));
   // Add or update the image relations.
-  if (image.nakamal.chief) {
-    commit('user/setUser', image.nakamal.chief, {
-      root: true,
-    });
-  }
-  commit('nakamal/add', normalizeRelations(image.nakamal, ['chief']), {
-    root: true,
-  });
-  commit('user/setUser', image.user, {
-    root: true,
-  });
+  // if (image.nakamal.chief) {
+  //   commit('user/setUser', image.nakamal.chief, {
+  //     root: true,
+  //   });
+  // }
+  // commit('nakamal/add', normalizeRelations(image.nakamal, ['chief']), {
+  //   root: true,
+  // });
+  // commit('user/setUser', image.user, {
+  //   root: true,
+  // });
 };
 
 const actions = {
-  getOne: async ({ commit }, id) => {
-    let response = await imagesApi.get(id);
-    const image = response.data;
+  loadOne: async ({ commit, getters }, id) => {
+    // TODO handle network errors
+    let image;
+    const cacheKey = `images-one:${id}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      image = cached;
+    } else {
+      let resp = await imagesApi.get(id);
+      image = resp.data;
+      ls.set(cacheKey, image, { ttl: 900 });
+    }
     commitAddImage(image, commit);
+    return Promise.resolve(getters.find(id));
   },
   getRecent: async ({ commit }) => {
     try {

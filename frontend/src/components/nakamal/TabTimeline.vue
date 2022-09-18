@@ -22,22 +22,40 @@
     >
       {{ $t('nakamal.tab_timeline_be_first_to_checkin') }}
     </v-alert>
-    <div
-      v-for="item in timelineItems"
-      :key="item.id"
-    >
-      <CheckinTimelineCard
-        v-if="item.type === 'checkin'"
-        :item="item.data"
-      />
-      <ImageTimelineCard
-        v-if="item.type === 'image'"
-        :item="item.data"
-      />
-      <VideoTimelineCard
-        v-if="item.type === 'video'"
-        :item="item.data"
-      />
+    <div v-if="loading">
+      <v-container fill-height>
+        <v-layout align-center justify-center>
+          <v-flex>
+            <div class="text-center">
+              <div class="headline my-5">{{ $t('loading.default') }}</div>
+              <v-progress-circular size="100" indeterminate color="primary"></v-progress-circular>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </div>
+    <div v-else>
+      <div
+        v-for="item in timelineItems"
+        :key="item.id"
+      >
+        <CheckinTimelineCard
+          v-if="item.type === 'checkin'"
+          :item="item.data"
+        />
+        <ImageTimelineCard
+          v-if="item.type === 'image'"
+          :item="item.data"
+        />
+        <VideoTimelineCard
+          v-if="item.type === 'video'"
+          :item="item.data"
+        />
+        <TripTimelineCard
+          v-if="item.type === 'trip'"
+          :item="item.data"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -48,6 +66,7 @@ import dayjs from 'dayjs';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
+import TripTimelineCard from '@/components/timeline/TripTimelineCard.vue';
 import NakamalPost from '@/components/nakamal/NakamalPost.vue';
 
 export default {
@@ -58,6 +77,13 @@ export default {
     CheckinTimelineCard,
     ImageTimelineCard,
     VideoTimelineCard,
+    TripTimelineCard,
+  },
+  data() {
+    return {
+      loading: true,
+      // items: [],
+    };
   },
   computed: {
     ...mapGetters({
@@ -65,31 +91,49 @@ export default {
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
       getVideos: 'video/nakamal',
+      getTrips: 'trip/nakamal',
     }),
     checkins() {
-      return this.getCheckins(this.nakamal.id)
-        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+      if (!this.nakamal) return [];
+      return this.getCheckins(this.nakamal.id);
     },
     images() {
-      return this.getImages(this.nakamal.id)
-        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+      if (!this.nakamal) return [];
+      return this.getImages(this.nakamal.id);
     },
     videos() {
-      return this.getVideos(this.nakamal.id)
-        .sort((a, b) => (dayjs(a.created_at).isAfter(dayjs(b.created_at)) ? -1 : 1));
+      if (!this.nakamal) return [];
+      return this.getVideos(this.nakamal.id);
+    },
+    trips() {
+      if (!this.nakamal) return [];
+      return this.getTrips(this.nakamal.id);
     },
     timelineItems() {
-      let items = this.checkins.map((i) => ({ type: 'checkin', data: i }));
+      let items = [];
+      items = items.concat(this.checkins.map((i) => ({ type: 'checkin', data: i })));
       items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
-      // items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
+      items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
       items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
       return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
     },
   },
   methods: {
-    // async fetchData() {
-    //   // TODO fetch data here and show loading for timeline so page can load faster
-    //   return null;
+    async fetchData() {
+      await Promise.all([
+        this.$store.dispatch('checkin/getNakamal', this.nakamal.id),
+        this.$store.dispatch('image/getNakamal', this.nakamal.id),
+        this.$store.dispatch('trip/getNakamal', this.nakamal.id),
+        this.$store.dispatch('video/getNakamal', this.nakamal.id),
+      ]);
+    },
+    // updateTimelineItems() {
+    //   let items = [];
+    //   items = items.concat(this.checkins.map((i) => ({ type: 'checkin', data: i })));
+    //   items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
+    //   items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
+    //   items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
+    //   return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
     // },
     selectCheckin() {
       this.$emit('select-checkin');
@@ -98,6 +142,12 @@ export default {
       this.$emit('select-video');
     },
   },
+  async mounted() {
+    this.loading = true;
+    // TODO timeline API endpoint instead of this
+    await this.fetchData();
+    this.loading = false;
+  }
   // async mounted() {
   //   this.fetchData();
   // },

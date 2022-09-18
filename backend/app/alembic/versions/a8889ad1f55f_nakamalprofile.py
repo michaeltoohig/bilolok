@@ -5,11 +5,13 @@ Revises: 919342d262c5
 Create Date: 2022-08-27 21:57:21.456263
 
 """
+import uuid
 from alembic import op
 import sqlalchemy as sa
 import fastapi_users_db_sqlalchemy
 import sqlalchemy_utc
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.exc import NoResultFound
 
 # revision identifiers, used by Alembic.
 revision = 'a8889ad1f55f'
@@ -30,6 +32,18 @@ def upgrade():
     sa.ForeignKeyConstraint(['nakamal_id'], ['nakamal.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+
+    conn = op.get_bind()
+    # Update nakamal profile to latest image
+    res = conn.execute("SELECT id FROM nakamal")
+    results = res.fetchall()
+    for res in results:
+        img_res = conn.execute(f"SELECT image.id FROM image WHERE image.nakamal_id = '{str(res[0])}' ORDER BY created_at DESC LIMIT 1")
+        result = img_res.fetchone()
+        if result is not None:
+            id = uuid.uuid4()
+            now = sqlalchemy_utc.utcnow()
+            conn.execute(f"INSERT INTO nakamal_profile(id, nakamal_id, image_id, created_at, updated_at) VALUES ('{str(id)}', '{str(res[0])}', '{str(result[0])}', {str(now)}, {str(now)})")
     # ### end Alembic commands ###
 
 

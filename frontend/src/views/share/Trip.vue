@@ -83,7 +83,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      load: 'trip/getOne',
+      load: 'trip/loadOne',
     }),
   },
   async mounted() {

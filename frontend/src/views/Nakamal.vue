@@ -262,15 +262,18 @@ export default {
       darkMode: 'setting/darkMode',
       hasAdminAccess: 'auth/hasAdminAccess',
       isUserVerified: 'auth/isUserVerified',
-      nakamal: 'nakamal/selected',
       featured: 'nakamal/featured',
       getImages: 'image/nakamal',
       getCheckins: 'checkin/nakamal',
       recentNakamalIds: 'checkin/recentNakamalIds',
     }),
+    nakamal() {
+      const { id } = this.$route.params;
+      return this.$store.getters['nakamal/find'](id);
+    },
     nakamalProfile() {
-      if (!this.nakamal) return null;
-      return this.$store.getters['image/nakamalProfile'](this.nakamal.id);
+      if (!this.nakamal || !this.nakamal.profile) return null;
+      return this.$store.getters['image/find'](this.nakamal.profile);
     },
     hasRecentCheckin() {
       if (!this.nakamal) return false;
@@ -292,6 +295,8 @@ export default {
   methods: {
     ...mapActions({
       setFeatured: 'nakamal/setFeatured',
+      loadNakamal: 'nakamal/loadOne',
+      loadProfile: 'image/loadOne',
     }),
     goToTabImages() {
       this.tab = 'images';
@@ -362,17 +367,18 @@ export default {
     },
   },
   async mounted() {
+    // TODO store nakamal in local variable
+    //  handle emits to reload the nakamal when sub components update the nakmal model
+    //  therefore less computed properties
     const { id } = this.$route.params;
-    await this.$store.dispatch('image/getNakamal', id);
-    await this.$store.dispatch('checkin/getNakamal', id);
-    await this.$store.dispatch('video/getNakamal', id);
+    await this.loadNakamal(id);
     await this.$store.dispatch('nakamal/select', id)
-      .then(() => {
-        if (!this.nakamal) {
-          this.$store.dispatch('nakamal/loadOne', id);
-        }
-      })
-      .then(() => { this.loading = false; });
+    this.$nextTick(() => {
+      if (this.nakamal.profile !== null) {
+        this.loadProfile(this.nakamal.profile);
+      }
+    })
+    this.loading = false;
   },
 };
 </script>

@@ -15,6 +15,28 @@ export function normalizeRelations(data, fields) {
   };
 }
 
+export function renameRelation(data, fields) {
+  const renameFields = fields.reduce((prev, fieldRename) => {
+    const value = data[fieldRename[0]];
+    delete data[fieldRename[0]];
+    return {
+      ...prev,
+      [fieldRename[1]]: value,
+    };
+  }, {});
+  return {
+    ...data,
+    ...renameFields,
+  };
+}
+
+export function loadRelations(data, fields, rootGetters) {
+  Object.entries(fields).forEach(([key, relation]) => {
+    rootGetters[`${relation}/loadOne`](data[key])
+  });
+}
+
+// TODO pass fields per use from view components; ensure infinite recursion is avoided
 export function resolveRelations(data, fields, rootGetters) {
   if (!data) return data;
   let key, relation;

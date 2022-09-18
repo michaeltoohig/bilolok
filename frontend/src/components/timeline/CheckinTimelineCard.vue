@@ -1,8 +1,8 @@
 <template>
   <BaseTimelineCard
     :timestamp="item.created_at"
-    :user="item.user"
-    :nakamal="item.nakamal"
+    :user="user"
+    :nakamal="nakamal"
     :linkNakamal="linkNakamal"
   >
     <template v-slot:card-action>
@@ -26,7 +26,7 @@
 
 <script>
 import { domain } from '@/env';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import BaseTimelineCard from '@/components/timeline/BaseTimelineCard.vue';
 import BaseTimelineCardMenu from '@/components/timeline/BaseTimelineCardMenu.vue';
 
@@ -46,15 +46,21 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      user: null,
+      nakamal: null,
+    };
+  },
   computed: {
     ...mapGetters({
       isLoggedIn: 'auth/isLoggedIn',
-      user: 'auth/user',
+      currentUser: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
     }),
     isMine() {
-      if (!this.isLoggedIn) return false;
-      return this.item.user.id === this.user.id;
+      if (!this.user || !this.isLoggedIn) return false;
+      return this.user.id === this.currentUser.id;
     },
     userCanDelete() {
       return this.isMine || this.hasAdminAccess;
@@ -62,7 +68,7 @@ export default {
   },
   methods: {
     async onShare() {
-      const text = `Check-in at ${this.item.nakamal.name} on Bilolok!`;
+      const text = `Check-in at ${this.nakamal.name} on Bilolok!`;
       const url = `${domain}/checkin/${this.item.id}`;
       if (navigator.share) {
         const { title } = document;
@@ -100,6 +106,16 @@ export default {
         this.$store.dispatch('checkin/remove', this.item.id);
       }
     },
+    ...mapActions({
+      loadUser: 'user/loadOne',
+      loadNakamal: 'nakamal/loadOne',
+    }),
+  },
+  async mounted() {
+    if (this.item.nakamal) {
+      this.nakamal = await this.loadNakamal(this.item.nakamal);
+    }
+    this.user = await this.loadUser(this.item.user);
   },
 };
 </script>
