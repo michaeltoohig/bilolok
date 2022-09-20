@@ -133,9 +133,9 @@ async def tus_hook(
                     nakamal_id=nakamal_id,
                 )
                 image = await crud_image.create(in_schema=in_schema)
-                # Set image as profile if no images exist for nakamal
-                priofile = await crud_image.get_current_nakamal_profile(nakamal_id)
-                if not priofile:
+                # Set image as profile if no profile exists
+                profile = await crud_image.get_current_nakamal_profile(nakamal_id)
+                if not profile:
                     await crud_image.create_nakamal_profile(image)
             except Exception as exc:
                 # TODO log

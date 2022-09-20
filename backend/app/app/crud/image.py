@@ -160,6 +160,7 @@ class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):
             select(NakamalProfile)
             .where(NakamalProfile.nakamal_id == nakamal_id)
             .order_by(NakamalProfile.updated_at.desc())
+            .limit(1)
         )
         result = await self._db_session.execute(query)
         item = result.scalars().first()

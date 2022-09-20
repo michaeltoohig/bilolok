@@ -35,17 +35,3 @@ class Image(Base, TimeMixin):
                 ext=Path(filename).suffix,
             )
         )
-    
-    # @property
-    # def filepath(self):
-    #     """Relative path to file."""
-    #     return self.build_filepath(
-    #         nakamal_id=self.nakamal_id,
-    #         file_id=self.file_id,
-    #         filename=self.filename,
-    #     )
-
-    # @property
-    # def full_filepath(self):
-    #     """Full path to file."""
-    #     return Path(settings.DATA_LOCAL_DIR) / self.filepath

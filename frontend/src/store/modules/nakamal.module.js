@@ -5,7 +5,7 @@ import ls from 'localstorage-slim';
 
 import { loadRelations, normalizeRelations, resolveRelations, renameRelation } from '@/store/helpers';
 import nakamalsApi from '@/api/nakamals';
-import cheifsApi from '@/api/chiefs';
+import chiefsApi from '@/api/chiefs';
 
 import {
   latLng,
@@ -266,10 +266,19 @@ const actions = {
       await dispatch('auth/checkApiError', error, { root: true });
     }
   },
-  loadChiefNakamals: async ({ commit, getters }, { userId }) => {
+  loadChiefNakamals: async ({ commit, getters }, userId) => {
+    // let nakamals;
+    // const cacheKey = `chiefs:${userId}`;
+    // const cached = ls.get(cacheKey);
+    // if (cached) {
+    //   nakamals = cached;
+    // } else {
+    //   ls.set(cacheKey, nakamals, { ttl: 300 });
+    // }
     try {
-      const resp = await cheifsApi.getUser(userId);
+      const resp = await chiefsApi.getUser(userId);
       const nakamals = resp.data;
+      ls.set(cacheKey, nakamals, { ttl: 300 });
       nakamals.forEach((item) => {
         commitAddNakamal(item, commit);
       });

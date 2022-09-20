@@ -4,6 +4,18 @@ Bilolok means `Kava` in the local language of a small village on the east, south
 
 Bilolok is an open-source application that allows users to browse the hundreds of kava bars in Vanuatu, but focused on Port Vila. It's future may include more social elements similar to the old Foursquare app, but for now will be a catalog of kava bars.
 
+## Roadmap
+
+- [ ] Nakamal events schedule
+- [ ] Upgrade FastAPI to latest version; handle issues regarding SQLAlchemy that result (ie. connections to db not closing after requests)
+- [ ] Create bottom nav element for important actions (ie. search)
+
+## Ideas
+
+- [ ] Update UI to focus more on map by making nakamals pages, home page, etc open as bottom sheets or something that feels as if the map view is the main view
+  - [ ] Bottom view for nakamals as a "peak" before opening it further
+- [ ] UI update to show delayed POST requests until network returns
+
 
 ## Version 1 Roadmap
 
@@ -231,7 +243,7 @@ I would have to say adding video and some other features I'm working on is pushi
   - [x] Store preference same as dark/light mode
 
 - [ ] Refactor frontend components
-  - [ ] Move map components to map directory
+  - [x] Move map components to map directory
   - [ ] break out components related to map edit/create to a subdirector
   - [x] Create components for App.vue
 
@@ -257,13 +269,13 @@ I would have to say adding video and some other features I'm working on is pushi
 Chief todos
   - [x] Add normalizeRelation and update resolveRelation helpers for store
     - [x] Add user's chief of nakamal list to profile
-      - [ ] Add call to chiefs api to fetch complete list of chief titles in case nakamals are not all loaded already
+      - [x] Add call to chiefs api to fetch complete list of chief titles in case nakamals are not all loaded already
     - [ ] Add chiefs to home page or user list
     - [ ] Add chief to nakamal popup
     - [x] Remove chief calculation from nakamal profile use given chief value from API
 
 - [ ] Favourite nakamals on home page
-- [ ] Easy to access search (autocomplete) on home page
+- [x] Easy to access search (autocomplete) on home page
 
 - [ ] Your checkin count on nakamal profile (compare against chief)
 
@@ -295,7 +307,7 @@ TODO
 
 !! - [ ] Stop returning full objects and instead return IDs then let client load object
 
-- [ ] Add explicit profile picture selection for nakamals
+- [x] Add explicit profile picture selection for nakamals
   - [x] Add api endpoints to update the profile picture ID
     - [x] Add logic to restrict who may update profile id
     - [x] Add logic to handle when profile picture is removed
@@ -307,7 +319,7 @@ TODO
     - [x] Add UI to remove and set profile picture on frontend
   - [x] Update logic to display profile picture instead of first image across frontend
   - [x] add logic to delete profile when image is deleted (not a cascade)
-  
+
   To make profile pictures possible; avoid recursion in loading related objects nakamal -> profile -> nakamal -> ... we need to change the way we handle vuex store and fetching objects.
   My plan at the moment is to use the local cache I've introduced for more objects and wrap vuex actions with cache checks to transparently return the requested object when a component's `mounted` call would otherwise fetch the object.
   Below are the steps I see thus far to acheive this goal and lay the foundation for the remaining steps for nakamal profile pictures
