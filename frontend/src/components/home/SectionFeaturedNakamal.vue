@@ -41,7 +41,6 @@ export default {
     }),
   },
   async mounted() {
-    // TODO add cache in vuex store
     this.nakamal = await this.getFeaturedNakamal();
   },
 };

@@ -116,7 +116,7 @@ export default {
       loadNakamal: 'nakamal/loadOne',
     }),
   },
-  async mounted() {
+  async created() {
     if (this.item.nakamal) {
       this.nakamal = await this.loadNakamal(this.item.nakamal);
     }

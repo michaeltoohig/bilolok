@@ -90,7 +90,7 @@ export default {
       if (!this.checkins) return null;
       return this.checkins
         .filter((c) => dayjs(c.created_at).isAfter(dayjs().subtract(30, 'd')))
-        .filter((c) => c.user.id === userId)
+        .filter((c) => c.user === userId)
         .length;
     },
   },

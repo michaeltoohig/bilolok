@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import Vue from 'vue';
-// import axiosRetry from 'axios-retry';
 import axios from 'axios';
 import store from '@/store';
 import router from '@/router';
@@ -9,37 +8,35 @@ import { apiDomain } from '@/env';
 
 const baseURL = `${apiDomain}/api/v1/`;
 
-// const retry = (error) => {
-//   const config = error.config;
-//   config.__retryCount = config.__retryCount || 0;
-//   console.log('###', config.__retryCount);
-//   if (config.__retryCount >= 3) {
-//     return Promise.reject(error);
-//   }
-//   config.__retryCount += 1;
-//   const backoff = new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve();
-//     }, 1000 * (config.__retryCount ** 2));
-//   });
-//   return backoff.then(() => {
-//     return axios(config);
-//   });
-// };
+const MAX_REQUESTS_COUNT = 5;
+const INTERVAL_MS = 10;
+let PENDING_REQUESTS = 0;
+
 
 export default {
   endpoint: baseURL,
   timeout: 15_000,
 
-  // requestInterceptor: (config) => {
-  //   config.headers.Authorization = store.getters.getToken;
-  //   return config;
-  // },
+  requestInterceptor: (config) => {
+    return new Promise((resolve, reject) => {
+      let interval = setInterval(() => {
+        if (PENDING_REQUESTS < MAX_REQUESTS_COUNT) {
+          PENDING_REQUESTS++
+          clearInterval(interval)
+          resolve(config)
+        }
+      }, INTERVAL_MS)
+    })
+  },
 
-  responseHandler: (response) => response,
+  responseHandler: (response) => {
+    PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
+    return Promise.resolve(response);
+  },
 
   responseErrorHandler: (error) => {
     console.log('Response Error Handler:', error.message);
+    PENDING_REQUESTS = Math.max(0, PENDING_REQUESTS - 1);
     if (error.response) {
       if (error.response.status === 401) {
         // NOTE this pattern fails if a logged in user 
@@ -54,17 +51,6 @@ export default {
       }
     } else if (error.request) {
       if (error.message.startsWith('timeout')) {
-        console.log('timeout error');
-        // retry(error)
-        //   .then((resp) => resp)
-        //   .catch(() => {
-        //     store.dispatch('notify/add', {
-        //       title: 'Server Timeout Error',
-        //       text: 'Sorry, the server is not responding. Please reload the page later.',
-        //       type: 'error',
-        //       timeout: 10_000,
-        //     });
-        //   });
         store.dispatch('notify/add', {
           title: 'Server Timeout Error',
           text: 'Sorry, the server is not responding. Please reload the page later.',
@@ -78,7 +64,6 @@ export default {
       console.log('Error', error.message);
       // return Promise.reject(error);
     }
-    // console.log(error.config);
     return Promise.reject(error);
   },
 
@@ -91,15 +76,10 @@ export default {
         'Content-Type': 'application/json',
       },
     });
-    // Vue.prototype.$http.interceptors.request.use(this.requestInterceptor);
+    Vue.prototype.$http.interceptors.request.use(this.requestInterceptor);
     Vue.prototype.$http.interceptors.response.use(
       (response) => this.responseHandler(response),
       (error) => this.responseErrorHandler(error),
     );
-    // retry logic - retries is not a priority compared to better caching on backend
-    // axiosRetry(Vue.prototype.$http, {
-    //   retries: 3,
-    //   retryCondition: 
-    // });
   },
 };

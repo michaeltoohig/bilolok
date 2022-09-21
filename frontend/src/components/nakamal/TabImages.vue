@@ -33,7 +33,7 @@
         offset-y
       >
         <v-list>
-          <v-list-item link @click="setProfileImage">
+          <v-list-item link @click="updateProfileImage">
             <!-- TODO translate -->
             <v-list-item-title>Set as Profile</v-list-item-title>
           </v-list-item>
@@ -87,11 +87,11 @@ export default {
         this.showMenu = true;
       });
     },
-    setProfileImage() {
+    updateProfileImage() {
       /* eslint-disable no-alert, no-restricted-globals */
       // TODO translate
       if (confirm('Set as new nakamal profile image?')) { // confirm(this.$i18n.t('nakamal.tab_images_confirm_delete'))) {
-        this.$store.dispatch('nakamal/setProfile', {
+        this.$store.dispatch('nakamal/updateProfile', {
           nakamalId: this.nakamal.id,
           imageId: this.selectedImageId,
         });

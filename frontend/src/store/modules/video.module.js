@@ -89,16 +89,23 @@ function commitAddVideo(video, commit) {
 };
 
 const actions = {
-  getAll: async ({ commit }) => {
-    const videos = await videosApi.getAll();
-    videos.forEach((item) => {
-      commitAddVideo(item, commit);
-    });
+  load: async ({ commit }) => {
+    const cacheKey = 'videos';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const videos = await videosApi.getAll();
+      videos.forEach((item) => {
+        commitAddVideo(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 }); 
+    }
   },
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let video;
-    const cacheKey = `videos-one:${id}`;
+    const cacheKey = `videos:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       video = cached;
@@ -126,24 +133,38 @@ const actions = {
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
-    const response = await nakamalsApi.getVideos(nakamalId);
-    const videos = response.data;
-    videos.forEach((item) => {
-      commitAddVideo(item, commit);
-    });
+    const cacheKey = `videos:nakamal:${nakamalId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await nakamalsApi.getVideos(nakamalId);
+      const videos = resp.data;
+      videos.forEach((item) => {
+        commitAddVideo(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getVideos(userId);
-    const videos = response.data;
-    videos.forEach((item) => {
-      commitAddVideo(item, commit);
-    });
+    const cacheKey = `videos:user:${userId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await usersApi.getVideos(userId);
+      const videos = resp.data;
+      videos.forEach((item) => {
+        commitAddVideo(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      let response = await videosApi.create(token, payload);
-      const video = response.data;
+      let resp = await videosApi.create(token, payload);
+      const video = resp.data;
       commitAddVideo(video, commit);
       commit('addRecentId', video.id);
       dispatch('notify/add', {

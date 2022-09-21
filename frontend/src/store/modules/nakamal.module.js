@@ -72,6 +72,7 @@ const getters = {
     if (state.featuredId === null) return null;
     return getters.find(state.featuredId);
   },
+  // TODO this is not efficient
   listByChief: (state, getters) => (id) => {
     return Object.keys(state.byId).filter((nid) => state.byId[nid].chief === id).map((nid) => getters.find(nid));
   },
@@ -145,62 +146,48 @@ function commitAddNakamal(nakamal, commit) {
   // }
 };
 
+const loadingPromises = {
+  nakamals: false,
+  nakamal: {},
+};
+
+async function loadOrWait(loadingPromises, id, fetchFunction) {
+  if (!loadingPromises[id]) {
+    loadingPromises[id] = fetchFunction();
+  }
+  await loadingPromises[id];
+};
+
 const actions = {
   load: async ({ commit }) => {
-    // XXX don't cache to hold too much redudant info
-    // we only fetch all when we want a new map view or something
-    // so we should have them loaded recently but a hardrefresh
-    // clears the local state so maybe a local state key to store
-    // a time to allow a fetch all request. 
-    
-    // const cacheKey = 'nakamals-load';
-    // const cached = ls.get(cacheKey);
-    // if (cached) {
-    //   // return Promise.resolve(cached);
-    //   return
-    // }
-
-    const resp = await nakamalsApi.getAll({});
-    // ls.set(cacheKey, null, { ttl: 300 });
-    const nakamals = resp.data
-    nakamals.forEach((item) => {
-      commitAddNakamal(item, commit);
-    });
+    const cacheKey = 'nakamals';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await nakamalsApi.getAll({});
+      ls.set(cacheKey, null, { ttl: 300 });
+      const nakamals = resp.data
+      nakamals.forEach((item) => {
+        commitAddNakamal(item, commit);
+      });
+    }
   },
   loadOne: async ({ commit, dispatch, getters }, id) => {
-    // TODO handle network errors
     let nakamal;
     const cacheKey = `nakamals:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       nakamal = cached;
     } else {
-      let resp = await nakamalsApi.get(id);
-      nakamal = resp.data;
-      ls.set(cacheKey, nakamal, { ttl: 300 });
+      await loadOrWait(loadingPromises.nakamal, id, async () => {
+        let resp = await nakamalsApi.get(id);
+        nakamal = resp.data;
+        ls.set(cacheKey, nakamal, { ttl: 300 });
+      });
     }
     commitAddNakamal(nakamal, commit);
     return Promise.resolve(getters.find(id));
-
-    // // fetch remote
-    // try {
-    //   let resp = await nakamalsApi.get(id);
-    //   const nakamal = resp.data;
-    //   ls.set(`nakamals-one:${id}`, nakamal, { ttl: 300 });
-    //   console.log('nakamal fetch', nakamal);
-    //   // const profile = await dispatch('image/loadOnes', nakamal.profile, { root: true });
-    //   // console.log('profile', profile);
-    //   // nakamal.profile = profile;
-    //   commitAddNakamal(nakamal, commit);
-    //   return Promise.resolve(getters.find(id));
-    //   // 2022-09-10  XXX gonna try to remove this load all
-    //   // Perhaps do not assume we want to load all right away
-    //   // dispatch('load');  // Load all others in background
-    // }
-    // catch (error) {
-    //   console.log(error, 'error in catch loadOne');
-    //   await dispatch('auth/checkApiError', error, { root: true });
-    // }
   },
   update: async ({ commit, dispatch, rootState }, { nakamalId, payload }) => {
     try {
@@ -247,7 +234,7 @@ const actions = {
         delete payload.resources;
       }
       // POST new nakamal
-      let response = await nakamalsApi.create(token, payload);
+      let resp = await nakamalsApi.create(token, payload);
       const nakamal = resp.data;
       // PUT resources to new nakamal
       if (resources.length) {
@@ -267,41 +254,48 @@ const actions = {
     }
   },
   loadChiefNakamals: async ({ commit, getters }, userId) => {
-    // let nakamals;
-    // const cacheKey = `chiefs:${userId}`;
-    // const cached = ls.get(cacheKey);
-    // if (cached) {
-    //   nakamals = cached;
-    // } else {
-    //   ls.set(cacheKey, nakamals, { ttl: 300 });
-    // }
-    try {
-      const resp = await chiefsApi.getUser(userId);
-      const nakamals = resp.data;
-      ls.set(cacheKey, nakamals, { ttl: 300 });
-      nakamals.forEach((item) => {
-        commitAddNakamal(item, commit);
-      });
-    } catch(error) {
-      console.log('load cheif of nakamals error', error);
+    const cacheKey = `nakamals:chief:${userId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      try {
+        const resp = await chiefsApi.getUser(userId);
+        const nakamals = resp.data;
+        nakamals.forEach((item) => {
+          commitAddNakamal(item, commit);
+        });
+        ls.set(cacheKey, null, { ttl: 300 });
+      } catch(error) {
+        console.log('load cheif of nakamals error', error);
+      }
     }
   },
   loadFeatured: async ({ commit, getters }) => {
-    try {
-      const resp = await nakamalsApi.getFeatured();
-      const nakamal = resp.data;
-      commitAddNakamal(nakamal, commit);
-      commit('setFeatured', nakamal.id);
-      return Promise.resolve(getters.find(nakamal.id))
-    } catch(error) {
-      console.log('featured nakamal error', error);
+    let nakamal;
+    const cacheKey = `nakamals:featured`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      nakamal = cached;
+    } else {
+      try {
+        const resp = await nakamalsApi.getFeatured();
+        nakamal = resp.data;
+        ls.set(cacheKey, nakamal, { ttl: 300 });
+      } catch(error) {
+        console.log('featured nakamal error', error);
+      }
     }
+    commit('setFeatured', nakamal.id);
+    commitAddNakamal(nakamal, commit);
+    return Promise.resolve(getters.find(nakamal.id))
   },
-  setFeatured: async ({ commit }, id) => {
+  updateFeatured: async ({ commit }, id) => {
     await nakamalsApi.putFeatured(id);
+    ls.remove('nakamals:featured');
     commit('setFeatured', id);
   },
-  setProfile: async ({ commit, dispatch, rootState }, { nakamalId, imageId }) => {
+  updateProfile: async ({ commit, dispatch, rootState }, { nakamalId, imageId }) => {
     try {
       let token = rootState.auth.token;
       const resp = await nakamalsApi.putProfileImage(token, nakamalId, imageId);
@@ -325,8 +319,6 @@ const actions = {
     }
   },
   select: async ({ commit, dispatch }, id) => {
-    // TODO can this be done?
-    // await dispatch('loadOne', id);
     commit('select', id);
   },
   unselect: async ({ commit }) => {
@@ -342,6 +334,8 @@ const actions = {
     try {
       let token = rootState.auth.token;
       await nakamalsApi.remove(token, id);
+      // TODO this is fragile - multiple locations updating cache
+      ls.remove(`nakamals:${id}`);
       commit('remove', id);
       dispatch('notify/add', {
         title: 'Kava Bar Removed',

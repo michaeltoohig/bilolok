@@ -239,8 +239,6 @@
 </template>
 
 <script>
-// TODO this should be the `MapView` component
-
 import OfflineMixin from '@/mixins/offline';
 import FormatDatetime from '@/mixins/formatDatetime';
 import {
@@ -269,7 +267,6 @@ import LocationProgressDialog from '@/components/map/LocationProgressDialog.vue'
 
 import Vue2LeafletHeatmap from '@/components/map/Vue2LeafletHeatmap.vue';
 
-// const { L } = window;
 const iconMarkerPath = require('../assets/map-marker.svg');
 const iconMarkerCheckmarkPath = require('../assets/map-marker-checkmark.svg');
 const iconMarkerGeolocationPath = require('../assets/map-marker-geolocation.svg');
@@ -357,7 +354,6 @@ export default {
       nakamals: 'nakamal/filteredList',
       total: 'nakamal/total',
       selectedNakamal: 'nakamal/selected',
-      getNakamalHasImages: 'image/nakamalHasImages',
       checkins: 'checkin/filteredList',
       recentCheckins: 'checkin/recent',
       recentNakamalIds: 'checkin/recentNakamalIds',
@@ -461,8 +457,8 @@ export default {
   },
   watch: {
     selectedNakamal(n) {
-      if (!this.getNakamalHasImages(n.id)) {
-        this.$store.dispatch('image/getNakamal', n.id);
+      if (n.profile) {
+        this.$store.dispatch('image/loadOne', n.profile)
       }
     },
     zoom(val) {

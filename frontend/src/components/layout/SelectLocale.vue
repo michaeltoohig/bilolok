@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     selectLocale(locale) {
-      this.$store.dispatch('setting/setLocale', locale);
+      this.$store.dispatch('setting/updateLocale', locale);
       this.$i18n.locale = locale;
     },
   },

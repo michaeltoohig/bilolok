@@ -115,17 +115,24 @@ function commitAddCheckin(checkin, commit) {
 };
 
 const actions = {
-  getAll: async ({ commit }) => {
-    const response = await checkinsApi.getAll();
-    const checkins = response.data;
-    checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
+  load: async ({ commit }) => {
+    const cacheKey = 'checkins';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await checkinsApi.getAll();
+      const checkins = resp.data;
+      checkins.forEach((item) => {
+        commitAddCheckin(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let checkin;
-    const cacheKey = `checkins-one:${id}`;
+    const cacheKey = `checkins:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       checkin = cached;
@@ -140,11 +147,11 @@ const actions = {
   getRecent: async ({ commit }) => {
     const threshold = 3; // XXX hardcoded value
     try {
-      const response = await checkinsApi.getRecent();
-      let items = response.data;
+      const resp = await checkinsApi.getRecent();
+      let items = resp.data;
       if (!items.length < threshold) {
-        const response = await checkinsApi.getAll({ limit: threshold })
-        items = response.data;
+        const resp = await checkinsApi.getAll({ limit: threshold })
+        items = resp.data;
       }
       items.forEach((item) => {
         commitAddCheckin(item, commit);
@@ -159,8 +166,8 @@ const actions = {
     
   //   // fetch remote
   //   try {
-  //     let response = await checkinsApi.getRecent();
-  //     const items = response.data;
+  //     let resp = await checkinsApi.getRecent();
+  //     const items = resp.data;
   //     commitAddNakamal(items, commit);
   //     // 2022-09-10  XXX gonna try to remove this load all
   //     // Perhaps do not assume we want to load all right away
@@ -172,25 +179,39 @@ const actions = {
   //   }
   // },
   getNakamal: async ({ commit }, nakamalId) => {
-    const response = await nakamalsApi.getCheckins(nakamalId);
-    const checkins = response.data;
-    checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
+    const cacheKey = `checkins:nakamal:${nakamalId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await nakamalsApi.getCheckins(nakamalId);
+      const checkins = resp.data;
+      checkins.forEach((item) => {
+        commitAddCheckin(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getCheckins(userId);
-    const checkins = response.data;
-    checkins.forEach((item) => {
-      commitAddCheckin(item, commit);
-    });
+    const cacheKey = `checkins:user:${userId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await usersApi.getCheckins(userId);
+      const checkins = resp.data;
+      checkins.forEach((item) => {
+        commitAddCheckin(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {
       let token = rootState.auth.token;
-      const response = await checkinsApi.create(token, payload);
-      console.log('resp', response);
-      const checkin = response.data;
+      const resp = await checkinsApi.create(token, payload);
+      console.log('resp', resp);
+      const checkin = resp.data;
       commitAddCheckin(checkin, commit);
       commit('addRecentId', checkin.id);
       dispatch('notify/add', {

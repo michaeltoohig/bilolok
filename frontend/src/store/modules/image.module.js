@@ -21,8 +21,6 @@ const state = initialState();
 const getters = {
   // Return a single image with the given id.
   find: (state, _, __, rootGetters) => id => {
-    // TODO if not found dispatch the get_by_id method
-    // return resolveRelations(state.byId[id], ['nakamal', 'user'], rootGetters);
     return state.byId[id];
   },
   // Return a list of images in the order of `allIds`.
@@ -37,16 +35,6 @@ const getters = {
   nakamal: (state, getters) => nakamalId => {
     if (!state.byNakamalId[nakamalId]) return [];
     return state.byNakamalId[nakamalId].map(id => getters.find(id));
-  },
-  // TODO is this needed - it feels hacky seeing it here
-  nakamalHasImages: (state, getters) => nakamalId => {
-    return Object.keys(state.byNakamalId).includes(nakamalId);
-  },
-  nakamalProfile: (state, getters) => nakamalId => {
-    if (!state.byNakamalId[nakamalId]) return null;
-    // Arbitrary first image but in future we could mark image as profile for easy filter
-    const profileImageId = state.byNakamalId[nakamalId][0]
-    return getters.find(profileImageId)
   },
   // Return a list of images of a user.
   user: (state, getters) => userId => {
@@ -76,7 +64,7 @@ const actions = {
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let image;
-    const cacheKey = `images-one:${id}`;
+    const cacheKey = `images:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       image = cached;
@@ -91,11 +79,11 @@ const actions = {
   getRecent: async ({ commit }) => {
     try {
       const threshold = 3; // XXX hardcoded value
-      const response = await imagesApi.getRecent();
-      let items = response.data;
+      const resp = await imagesApi.getRecent();
+      let items = resp.data;
       if (!items.length < threshold) {
-        const response = await imagesApi.getAll({ limit: threshold });
-        items = response.data;
+        const resp = await imagesApi.getAll({ limit: threshold });
+        items = resp.data;
       }
       items.forEach((item) => {
         commitAddImage(item, commit);
@@ -106,18 +94,32 @@ const actions = {
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
-    const response = await nakamalsApi.getImages(nakamalId);
-    const images = response.data;
-    images.forEach((item) => {
-      commitAddImage(item, commit);
-    });
+    const cacheKey = `images:nakamal:${nakamalId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await nakamalsApi.getImages(nakamalId);
+      const images = resp.data;
+      images.forEach((item) => {
+        commitAddImage(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   getUser: async ({ commit }, userId) => {
-    const response = await usersApi.getImages(userId);
-    const images = response.data;
-    images.forEach((item) => {
-      commitAddImage(item, commit);
-    });
+    const cacheKey = `images:user:${userId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await usersApi.getImages(userId);
+      const images = resp.data;
+      images.forEach((item) => {
+        commitAddImage(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {
     try {

@@ -30,7 +30,7 @@ export default {
 
   // TODO replace with using normal registration endpoint
   async createUser(token, payload) {
-    console.log('NotImplementedError: use registration endpoint instead');
+    console.warn('Depricated: use registration endpoint instead');
     return Vue.prototype.$http.post(`${resource}`, payload, authHeaders(token));
   },
 

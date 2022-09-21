@@ -21,6 +21,18 @@ const getters = {
   },
 };
 
+const loadingPromises = {
+  users: false,
+  user: {},
+};
+
+async function loadOrWait(loadingPromises, id, fetchFunction) {
+  if (!loadingPromises[id]) {
+    loadingPromises[id] = fetchFunction();
+  }
+  await loadingPromises[id];
+};
+
 const actions = {
   getUsers: async ({ commit, dispatch, rootState }, payload) => {
     try {
@@ -47,36 +59,21 @@ const actions = {
       return Promise.resolve(user);
     }
     
-    // TODO handle network errors
     let user;
-    const cacheKey = `users-one:${id}`;
+    const cacheKey = `users:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       user = cached;
     } else {
-      let resp = await usersApi.get(id, token);
-      user = resp.data;
-      ls.set(cacheKey, user, { ttl: 300 });
+      await loadOrWait(loadingPromises.user, id, async () => {
+        const resp = await usersApi.get(id, token);
+        user = resp.data;
+        ls.set(cacheKey, user, { ttl: 300 });
+      });
     }
     commit('add', user);
-    return Promise.resolve(getters.find(id));
-    
-    // TODO can't cache until we have endpoint for admin access to user vs normal user details api endpoint
-    // This means we have to remove the payload option
-
-    // try {
-    //   let token = rootState.auth.token;
-    //   const response = await usersApi.get(id, token, payload);
-    //   const user = response.data;
-    //   commit('add', user);
-    //   return Promise.resolve(user);
-    // }
-    // catch (error) {
-    //   console.log('error in get one user', error);
-    //   await dispatch('auth/checkApiError', error, { root: true });
-    // }
+    return Promise.resolve(getters.find(id));    
   },
-  // TODO loadOne same as getOne but with cache
   updateUser: async ({ commit, dispatch, rootState }, { userId, payload }) => {
     try {
       let token = rootState.auth.token;
@@ -139,15 +136,6 @@ const mutations = {
       state.allIds.push(item.id);
     }
   },
-  // TODO update below to be same as pattern seen in other modules
-  // setUsers(state, payload) {
-  //   state.users = payload;
-  // },
-  // setUser(state, payload) {
-  //   const users = state.users.filter((user) => user.id !== payload.id);
-  //   users.push(payload);
-  //   state.users = users;
-  // },
 };
 
 export default {

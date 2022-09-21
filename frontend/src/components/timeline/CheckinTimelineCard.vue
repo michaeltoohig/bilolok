@@ -57,6 +57,8 @@ export default {
       isLoggedIn: 'auth/isLoggedIn',
       currentUser: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
+      findNakamal: 'nakamal/find',
+      findUser: 'user/find',
     }),
     isMine() {
       if (!this.user || !this.isLoggedIn) return false;
@@ -111,7 +113,7 @@ export default {
       loadNakamal: 'nakamal/loadOne',
     }),
   },
-  async mounted() {
+  async created() {
     if (this.item.nakamal) {
       this.nakamal = await this.loadNakamal(this.item.nakamal);
     }

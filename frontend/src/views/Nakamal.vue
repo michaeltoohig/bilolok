@@ -80,7 +80,7 @@
                     <v-list-item-title>{{ $t('nakamal.view_on_map') }}</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
-                <v-list-item :disabled="isFeatured" @click="setFeatured(nakamal.id)">
+                <v-list-item :disabled="isFeatured" @click="updateFeatured(nakamal.id)">
                   <v-list-item-icon>
                     <v-icon>mdi-trophy-award</v-icon>
                   </v-list-item-icon>
@@ -294,7 +294,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      setFeatured: 'nakamal/setFeatured',
+      updateFeatured: 'nakamal/updateFeatured',
       loadNakamal: 'nakamal/loadOne',
       loadProfile: 'image/loadOne',
     }),

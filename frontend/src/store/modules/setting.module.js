@@ -16,7 +16,7 @@ const getters = {
 };
 
 const actions = {
-  setDarkMode: async ({ commit }, dark) => {
+  updateDarkMode: async ({ commit }, dark) => {
     saveDarkMode(dark);
     commit('setDarkMode', dark);
   },
@@ -24,7 +24,7 @@ const actions = {
     const dark = getDarkMode();
     commit('setDarkMode', dark);
   },
-  setLocale: async ({ commit }, locale) => {
+  updateLocale: async ({ commit }, locale) => {
     saveLocale(locale);
     commit('setLocale', locale);
   },
@@ -42,7 +42,6 @@ const mutations = {
       state[key] = newState[key];
     });
   },
-  // TODO update below to be same as pattern seen in other modules
   setDarkMode(state, dark) {
     state.darkMode = dark;
   },

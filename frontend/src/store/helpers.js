@@ -1,4 +1,9 @@
-/* If these functions become fragile replace with `normalizr` package */
+/* 
+  Sept 2022 refactor has made some of these unnecessary.
+  TODO
+  Or we can refactor slightly; but with better efficiency than before
+    by return related objects again but now loaded with our new cached `loadOne` actions.
+*/
 
 export function normalizeRelations(data, fields) {
   return {
@@ -36,7 +41,6 @@ export function loadRelations(data, fields, rootGetters) {
   });
 }
 
-// TODO pass fields per use from view components; ensure infinite recursion is avoided
 export function resolveRelations(data, fields, rootGetters) {
   if (!data) return data;
   let key, relation;

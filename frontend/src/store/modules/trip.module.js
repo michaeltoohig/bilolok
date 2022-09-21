@@ -88,16 +88,23 @@ function commitAddTrip(trip, commit) {
 };
 
 const actions = {
-  getAll: async ({ commit }) => {
-    const trips = await tripsApi.getAll();
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
-    });
+  load: async ({ commit }) => {
+    const cacheKey = 'trips';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const trips = await tripsApi.getAll();
+      trips.forEach((item) => {
+        commitAddTrip(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let trip;
-    const cacheKey = `trips-one:${id}`;
+    const cacheKey = `trips:${id}`;
     const cached = ls.get(cacheKey);
     if (cached) {
       trip = cached;
@@ -108,7 +115,6 @@ const actions = {
     }
     commitAddTrip(trip, commit);
     return Promise.resolve(getters.find(id));
-    
   },
   getRecent: async ({ commit }) => {
     try {
@@ -126,18 +132,32 @@ const actions = {
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
-    const resp = await nakamalsApi.getTrips(nakamalId);
-    const trips = resp.data;
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
-    });
+    const cacheKey = `trips:nakamal:${nakamalId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await nakamalsApi.getTrips(nakamalId);
+      const trips = resp.data;
+      trips.forEach((item) => {
+        commitAddTrip(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   getUser: async ({ commit }, userId) => {
-    const resp = await usersApi.getTrips(userId);
-    const trips = resp.data;
-    trips.forEach((item) => {
-      commitAddTrip(item, commit);
-    });
+    const cacheKey = `trips:user:${userId}`;
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await usersApi.getTrips(userId);
+      const trips = resp.data;
+      trips.forEach((item) => {
+        commitAddTrip(item, commit);
+      });
+      ls.set(cacheKey, null, { ttl: 300 });
+    }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {
     try {

@@ -15,7 +15,13 @@ Bilolok is an open-source application that allows users to browse the hundreds o
 - [ ] Update UI to focus more on map by making nakamals pages, home page, etc open as bottom sheets or something that feels as if the map view is the main view
   - [ ] Bottom view for nakamals as a "peak" before opening it further
 - [ ] UI update to show delayed POST requests until network returns
+- [ ] Show your checkin count for the month on nakamal profile
+  - [ ] Show other history of checkins
 
+## TODOs
+
+- [ ] Add cache to `loadRecent` actions
+  - [ ] Better yet create timeline API endpoint
 
 ## Version 1 Roadmap
 

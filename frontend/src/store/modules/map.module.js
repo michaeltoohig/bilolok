@@ -138,7 +138,8 @@ const actions = {
   setShowHeatmap: async ({ commit, dispatch }, show) => {
     commit('setShowHeatmap', show);
     if (show) {
-      await dispatch('checkin/getAll', {}, { root: true });
+      // TODO can we set this to null instead of {} ?
+      await dispatch('checkin/load', {}, { root: true });
     }
   },
   setShowHeatmapMenu: async ({ commit }, show) => {

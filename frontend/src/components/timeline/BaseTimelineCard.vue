@@ -63,13 +63,13 @@ export default {
     },
     user: {
       type: Object,
-      // required: true,
-      default: {},
+      required: false,
+      default: null,
     },
     nakamal: {
       type: Object,
-      // required: false,
-      default: {},
+      required: false,
+      default: null,
     },
     linkNakamal: {
       type: Boolean,

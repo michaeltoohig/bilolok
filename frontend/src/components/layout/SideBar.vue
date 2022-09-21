@@ -244,7 +244,7 @@ export default {
       this.$router.push({ name: 'AdminUsers' });
     },
     toggleDarkMode() {
-      this.$store.dispatch('setting/setDarkMode', !this.darkMode);
+      this.$store.dispatch('setting/updateDarkMode', !this.darkMode);
     },
     toggleLang() {
       console.log('lang', this.$i18n.locale);

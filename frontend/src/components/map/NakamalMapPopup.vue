@@ -132,8 +132,6 @@ export default {
       center: 'map/center',
       location: 'map/location',
       selectedNakamal: 'nakamal/selected',
-      // getNakamalImages: 'image/nakamal',
-      // getNakamalHasImages: 'image/nakamalHasImages',
     }),
     displayDistance() {
       if (!this.location) return null;
