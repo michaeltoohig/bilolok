@@ -45,7 +45,7 @@
             permanent: 'true',
             direction: 'bottom',
           }">
-            {{ item.nakamal.name }}
+            {{ nakamal.name }}
           </l-tooltip>
         </l-marker>
       </l-map>

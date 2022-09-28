@@ -99,7 +99,7 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, null, { ttl: 300 }); 
+      ls.set(cacheKey, true, { ttl: 300 }); 
     }
   },
   loadOne: async ({ commit, getters }, id) => {
@@ -118,18 +118,24 @@ const actions = {
     return Promise.resolve(getters.find(id));
   },
   getRecent: async ({ commit }) => {
-    try {
+    let items;
+    const cacheKey = 'videos:recent';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
+      const resp = await videosApi.getRecent();
+      items = resp.data;
       const threshold = 3; // XXX hardcoded value
-      let items = await videosApi.getRecent();
-      if (!items.length < threshold) {
-        items = await videosApi.getAll({ limit: threshold })
+      if (items.length < threshold) {
+        const resp = await videosApi.getAll({ limit: threshold })
+        items = resp.data;
       }
       items.forEach((item) => {
         commitAddVideo(item, commit);
       });
       commit('setRecentIds', items.map((i) => i.id));
-    } catch (error) {
-      console.log('recent video error', error);
+      ls.set(cacheKey, true, { ttl: 60 });
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
@@ -143,7 +149,7 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, null, { ttl: 300 });
+      ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   getUser: async ({ commit }, userId) => {
@@ -157,7 +163,7 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, null, { ttl: 300 });
+      ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {

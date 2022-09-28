@@ -1,19 +1,11 @@
 import Vue from 'vue';
 // import authHeaders from './utils';
-import ls from 'localstorage-slim';
 
 const resource = 'nakamal-resources';
 
 export default {
   async getAll(params) {
-    const cached = ls.get(resource);
-    if (cached) {
-      return cached;
-    } else {
-      const resp = await Vue.prototype.$http.get(`${resource}`, { params });
-      ls.set(resource, resp.data, { ttl: 3600 });
-      return resp.data;
-    }
+    return Vue.prototype.$http.get(`${resource}`, { params });
   },
 
   // async create(token, payload) {

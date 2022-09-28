@@ -166,7 +166,7 @@ const actions = {
       return;
     } else {
       const resp = await nakamalsApi.getAll({});
-      ls.set(cacheKey, null, { ttl: 300 });
+      ls.set(cacheKey, true, { ttl: 300 });
       const nakamals = resp.data
       nakamals.forEach((item) => {
         commitAddNakamal(item, commit);
@@ -265,7 +265,7 @@ const actions = {
         nakamals.forEach((item) => {
           commitAddNakamal(item, commit);
         });
-        ls.set(cacheKey, null, { ttl: 300 });
+        ls.set(cacheKey, true, { ttl: 300 });
       } catch(error) {
         console.log('load cheif of nakamals error', error);
       }

@@ -77,20 +77,24 @@ const actions = {
     return Promise.resolve(getters.find(id));
   },
   getRecent: async ({ commit }) => {
-    try {
-      const threshold = 3; // XXX hardcoded value
+    let items;
+    const cacheKey = 'images:recent';
+    const cached = ls.get(cacheKey);
+    if (cached) {
+      return;
+    } else {
       const resp = await imagesApi.getRecent();
-      let items = resp.data;
-      if (!items.length < threshold) {
-        const resp = await imagesApi.getAll({ limit: threshold });
+      items = resp.data;
+      const threshold = 3; // XXX hardcoded value
+      if (items.length < threshold) {
+        const resp = await imagesApi.getAll({ limit: threshold })
         items = resp.data;
       }
       items.forEach((item) => {
         commitAddImage(item, commit);
       });
       commit('setRecentIds', items.map((i) => i.id));
-    } catch (error) {
-      console.log('recent image error', error);
+      ls.set(cacheKey, true, { ttl: 60 });
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
@@ -104,7 +108,7 @@ const actions = {
       images.forEach((item) => {
         commitAddImage(item, commit);
       });
-      ls.set(cacheKey, null, { ttl: 300 });
+      ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   getUser: async ({ commit }, userId) => {
@@ -118,7 +122,7 @@ const actions = {
       images.forEach((item) => {
         commitAddImage(item, commit);
       });
-      ls.set(cacheKey, null, { ttl: 300 });
+      ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {

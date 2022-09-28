@@ -116,7 +116,7 @@
           }"
         >
           <v-avatar>
-            <v-img :src="trip.user.avatar"></v-img>
+            <v-img :src="findUserAvatar(trip.user)"></v-img>
           </v-avatar>
         </LTooltip>
         <LPopup>
@@ -126,7 +126,7 @@
               v-ripple="{ center: true }"
               @click="goToUser(trip.user.id)"
             >
-              <v-img :src="trip.user.avatar"></v-img>
+              <v-img :src="findUserAvatar(trip.user)"></v-img>
             </v-avatar>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -145,7 +145,7 @@
               outlined
               small
               color="primary"
-              @click="markerClick(trip.nakamal.id)"
+              @click="markerClick(trip.nakamal)"
             >
               {{ $t('map.go_to_nakamal') }}
             </v-btn>
@@ -399,12 +399,12 @@ export default {
       let maxCheckins = 1;
       if (this.hasFilters) {
         const nakIds = this.nakamals.map((n) => n.id);
-        checkins = this.checkins.filter((c) => nakIds.includes(c.nakamal.id));
+        checkins = this.checkins.filter((c) => nakIds.includes(c.nakamal));
       } else {
         checkins = this.checkins;
       }
       checkins.forEach((c) => {
-        const nId = c.nakamal.id;
+        const nId = c.nakamal;
         counts[nId] = counts[nId] ? counts[nId] + 1 : 1;
         if (counts[nId] > maxCheckins) {
           maxCheckins = counts[nId];
@@ -412,8 +412,9 @@ export default {
       });
       return checkins.map((c) => {
         let intensity = 0;
-        intensity = (counts[c.nakamal.id] / maxCheckins);
-        return [c.nakamal.lat, c.nakamal.lng, intensity];
+        let nakamal = this.$store.getters["nakamal/find"](c.nakamal);
+        intensity = (counts[c.nakamal] / maxCheckins);
+        return [nakamal.lat, nakamal.lng, intensity];
       });
     },
     url() {
@@ -481,6 +482,10 @@ export default {
         return;
       }
       this.showCompassModeIntroDialog = true;
+    },
+    findUserAvatar(id) {
+      let user = this.$store.getters["user/find"](id);
+      return user ? user.avatar : '#';
     },
     async setStopCompassMode() {
       await this.stopCompassMode();
@@ -626,6 +631,8 @@ export default {
     this.loading = false;
     await this.$store.dispatch('checkin/getRecent');
     await this.$store.dispatch('trip/getRecent');
+    // Temp solution to loading avatars for users
+    await this.$store.dispatch('user/getUsers');
     if (this.selectedNakamal) {
       setTimeout(() => {
         this.flyToSelected();
