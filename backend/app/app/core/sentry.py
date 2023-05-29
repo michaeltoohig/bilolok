@@ -22,7 +22,7 @@ def init_sentry():
     # this exception because it is happening outside of FastAPI in uvicorn.
     # https://github.com/encode/uvicorn/issues/1160
     # https://github.com/encode/starlette/issues/486
-    if settings.DEBUG:
+    if settings.DEBUG or settings.SENTRY_DSN is None:
         return None
     else:
         sentry_sdk.init(

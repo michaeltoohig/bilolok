@@ -31,20 +31,21 @@ async def init_db(db: Session) -> None:
             except:
                 pass  # user already exists
 
-            # TODO remove in future release - only needed for one production release
-            watermark = Path(settings.DATA_LOCAL_DIR) / "images" / "watermark.png"
-            assert watermark.exists()
-            try:
-                crud_video = CRUDVideo(session)
-                videos = await crud_video.get_multi()
-                for video in videos:
-                    src = Path(settings.DATA_LOCAL_DIR) / crud_video._video_filepath(video)
-                    social_src_path = src.parent / src.name.replace(src.suffix, ".mp4")
-                    if not social_src_path.exists(): 
-                        make_social_video(src)
-                    thumbnail = Path(settings.DATA_LOCAL_DIR) / crud_video._cover_filepath(video)
-                    social_thumbnail_path = Path(settings.DATA_LOCAL_DIR) / crud_video._social_thumbnail_filepath(video)
-                    if not social_thumbnail_path.exists():
-                        make_social_thumbnail(thumbnail, watermark, social_thumbnail_path)
-            except Exception as exc:
-                print("Social thumbnail generation failed")
+            # # TODO remove in future release - only needed for one production release
+            # watermark = Path(settings.DATA_LOCAL_DIR) / "images" / "watermark.png"
+            # assert watermark.exists()
+            # try:
+            #     crud_video = CRUDVideo(session)
+            #     videos = await crud_video.get_multi()
+            #     for video in videos:
+            #         src = Path(settings.DATA_LOCAL_DIR) / crud_video._video_filepath(video)
+            #         social_src_path = src.parent / src.name.replace(src.suffix, ".mp4")
+            #         if not social_src_path.exists(): 
+            #             make_social_video(src)
+            #         thumbnail = Path(settings.DATA_LOCAL_DIR) / crud_video._cover_filepath(video)
+            #         social_thumbnail_path = Path(settings.DATA_LOCAL_DIR) / crud_video._social_thumbnail_filepath(video)
+            #         if not social_thumbnail_path.exists():
+            #             make_social_thumbnail(thumbnail, watermark, social_thumbnail_path)
+            # except Exception as exc:
+            #     print("Social thumbnail generation failed")
+            #     raise

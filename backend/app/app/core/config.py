@@ -36,23 +36,27 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str
     PROJECT_SLUG: str
-    SENTRY_DSN: HttpUrl
+    SENTRY_DSN: Optional[HttpUrl] = None
     SENTRY_HOST: Optional[str] = None
     SENTRY_PROJECT_IDS: Optional[List[int]] = None
 
     @validator("SENTRY_HOST", pre=True)
     def extract_sentry_host(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        return urlparse(values.get("SENTRY_DSN")).hostname
+        if values.get("SENTRY_DSN", False):
+            if isinstance(v, str):
+                return v
+            return urlparse(values.get("SENTRY_DSN")).hostname
+        return None
 
     @validator("SENTRY_PROJECT_IDS", pre=True)
     def extract_sentry_project_id(
         cls, v: Optional[List[int]], values: Dict[str, Any]
     ) -> Any:
-        if isinstance(v, list):
-            return v
-        return [int(urlparse(values.get("SENTRY_DSN")).path.strip("/"))]
+        if values.get("SENTRY_DSN", False):
+            if isinstance(v, list):
+                return v
+            return [int(urlparse(values.get("SENTRY_DSN")).path.strip("/"))]
+        return None
 
     VAPID_PRIVATE_KEY: str
     VAPID_PUBLIC_KEY: str
@@ -146,7 +150,7 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str
     USERS_OPEN_REGISTRATION: bool = False
 
-    DATA_LOCAL_DIR: str = "_local_images"
+    DATA_LOCAL_DIR: str
     THUMBOR_SERVER: str
     THUMBOR_SECURITY_KEY: str
     VIDEO_SERVER: str

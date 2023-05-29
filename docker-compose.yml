@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:13
@@ -103,9 +101,9 @@ services:
       - DEFAULT_HOST=localhost
       # optional: control cache memory size (default 500m), cache size (default 10g) and inactive (default 300m)
       #           see https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path
-      - PROXY_CACHE_SIZE=10g
-      - PROXY_CACHE_MEMORY_SIZE=500m
-      - PROXY_CACHE_INACTIVE=300m
+      - PROXY_CACHE_SIZE=1g
+      - PROXY_CACHE_MEMORY_SIZE=250m
+      - PROXY_CACHE_INACTIVE=100m
     volumes:
       # this is essential for nginx-proxy to detect docker containers, scaling etc
       # see https://github.com/jwilder/nginx-proxy
@@ -125,10 +123,16 @@ services:
       dockerfile: backend.dockerfile
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
+    command: /code/start-reload.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - "${DATA_LOCAL_DIR}:/data/"
     depends_on:
       - db
       - redis
     environment:
+      - DATA_LOCAL_DIR=/data/
       - DEBUG
       - SECRET_KEY
       - SERVER_HOST
@@ -136,9 +140,9 @@ services:
       - BACKEND_CORS_ORIGINS
       - PROJECT_NAME
       - PROJECT_SLUG
-      - SENTRY_DSN
-      - SENTRY_HOST
-      - SENTRY_PROJECT_IDS
+      # - SENTRY_DSN
+      # - SENTRY_HOST
+      # - SENTRY_PROJECT_IDS
       - VAPID_PRIVATE_KEY
       - VAPID_PUBLIC_KEY
       - VAPID_MAILTO
@@ -160,6 +164,8 @@ services:
       - FIRST_SUPERUSER
       - FIRST_SUPERUSER_PASSWORD
       - VIDEO_SERVER
+      - THUMBOR_SECURITY_KEY
+      - THUMBOR_SERVER
 
     # env_file:
     #   - .env

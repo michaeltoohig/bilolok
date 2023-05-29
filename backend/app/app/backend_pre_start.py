@@ -59,10 +59,11 @@ def init_directories() -> None:
 
 
 def main() -> None:
-    logger.info("Initializing service")
+    logger.info("Initializing services")
     init_db()
     init_redis()
-    logger.info("Service finished initializing")
+    logger.info("Services finished initializing")
+    logger.info("Creating local directories")
     init_directories()
     logger.info("Local directories exist")
 

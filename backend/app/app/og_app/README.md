@@ -19,3 +19,5 @@ This is not ideal and should be consolidated in the future into a single SSR ren
 ### Future Design Idea
 
 Configure webserver to host this app on primary domain and serve the built `dist/` directory. It may couple the backend and frontend too much but would be away to have the og tags configured correctly in one place then make in-app sharing easier since we would not need to set share title and description in the frontend but could reference the OG tags from the JavaScript.
+
+A better idea would be to move this app into its own service to detangle it from the main app code and use API requests to fetch the required data to build a template then cache results.

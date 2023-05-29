@@ -16,10 +16,10 @@ app = FastAPI(
 )
 
 if settings.DEBUG:
-    app.mount("/videos", StaticFiles(directory=f"{settings.DATA_LOCAL_DIR}/videos"), name="videos")
+    app.mount("/videos", StaticFiles(directory=f"/videos"), name="videos")
 
 init_sentry()
-init_logging()
+# init_logging()
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 

@@ -30,7 +30,6 @@ WORKDIR /code
 COPY ./app/pyproject.toml ./app/poetry.lock* /code
 
 RUN poetry install --no-root --only main
-# TODO use new notation --only main
 
 # Allow installing dev dependencies to run tests
 # ARG INSTALL_DEV=false
@@ -50,4 +49,12 @@ ENV PYTHONPATH=/code
 
 WORKDIR /code/app
 
-CMD ["../.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+# run entrypoint.sh
+COPY ./entrypoint.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
+
+COPY ./start-reload.sh /code/start-reload.sh
+RUN chmod +x /code/start-reload.sh
+
+ENTRYPOINT [ "/code/entrypoint.sh" ]
+# CMD ["../.venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

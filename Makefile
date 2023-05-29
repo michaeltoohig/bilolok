@@ -9,7 +9,15 @@ build:
 
 .PHONY: up
 up:
-	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) up $(c)
+	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) up -d $(c)
+
+.PHONY: restart
+restart:
+	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) restart $(c)
+
+.PHONY: stop
+stop:
+	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) stop $(c)
 
 .PHONY: down
 down:
