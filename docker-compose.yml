@@ -5,49 +5,54 @@ services:
     image: postgres:13
     volumes:
       - bilolok-db-data:/var/lib/postgresql/data/pgdata
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_SERVER
+      - POSTGRES_PORT
+      - POSTGRES_DB
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
 
-  test_db:
-    image: postgres:13
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=test_data
-    ports:
-      - "5433:5432"
-    profiles:
-      - dev
+  # test_db:
+  #   image: postgres:13
+  #   environment:
+  #     - PGDATA=/var/lib/postgresql/data/pgdata
+  #     - POSTGRES_USER=user
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=test_data
+  #   ports:
+  #     - "5433:5432"
+  #   profiles:
+  #     - dev
 
   redis:
     image: redis:6
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     ports:
       - "6379:6379"
 
-  admin:
-    image: adminer
-    restart: always
-    ports:
-      - 8081:8080
-    depends_on: 
-      - db
-    profiles:
-      - dev
+  # admin:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8081:8080
+  #   depends_on: 
+  #     - db
+  #   profiles:
+  #     - dev
 
-  mail:
-    image: maildev/maildev
-    ports:
-      - "1025:25"
-      - "8082:80"
-    profiles:
-      - dev
+  # mail:
+  #   image: maildev/maildev
+  #   ports:
+  #     - "1025:25"
+  #     - "8082:80"
+  #   profiles:
+  #     - dev
 
   tusd:
     image: tusproject/tusd
@@ -55,16 +60,16 @@ services:
       - "8070:8070"
     volumes:
       - "${DATA_LOCAL_DIR}/uploads/:/data/"
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http http://host.docker.internal:8000/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
 
   thumbor:
     image: minimalcompact/thumbor
     volumes:
       - "${DATA_LOCAL_DIR}/:/data/uploads/"
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
       # VIRTUAL_HOST is picked up by nginx-proxy. Here it's set for localhost
       # but you usually need to point it to your domain, e.g. thumbor.example.com
@@ -88,9 +93,8 @@ services:
       - SECURITY_KEY=${THUMBOR_SECURITY_KEY}
       - LOADER=thumbor.loaders.file_loader
       - FILE_LOADER_ROOT_PATH=/data/uploads/
-    restart: always
 
-  nginx-proxy:
+  thumbor-proxy:
     image: minimalcompact/thumbor-nginx-proxy-cache
     environment:
       # setting the DEFAULT_HOST to the same as the VIRTUAL_HOST above.
@@ -110,23 +114,55 @@ services:
       - bilolok-img-cache-data:/var/cache/nginx
     ports:
       - "8888:80"
-      - "4443:4443"
-    restart: always
+      # - "4443:4443"
 
   # ffmpeg:
   #   image: jrottenberg/ffmpeg:4.4-alpine
 
-  # backend:
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   build:
-  #     context: ./backend
-  #     dockerfile: backend.dockerfile
-  #     args:
-  #       INSTALL_DEV: ${INSTALL_DEV-false}
+  backend:
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-false}
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG
+      - SECRET_KEY
+      - SERVER_HOST
+      - FRONTEND_HOST
+      - BACKEND_CORS_ORIGINS
+      - PROJECT_NAME
+      - PROJECT_SLUG
+      - SENTRY_DSN
+      - SENTRY_HOST
+      - SENTRY_PROJECT_IDS
+      - VAPID_PRIVATE_KEY
+      - VAPID_PUBLIC_KEY
+      - VAPID_MAILTO
+      - POSTGRES_SERVER
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - REDIS_SERVER
+      - REDIS_PORT
+      - MAIL_TLS
+      - MAIL_SSL
+      - MAIL_PORT
+      - MAIL_SERVER
+      - MAIL_USERNAME
+      - MAIL_PASSWORD
+      - MAIL_FROM
+      - MAIL_FROM_NAME
+      - MAIL_USE_CREDENTIALS
+      - FIRST_SUPERUSER
+      - FIRST_SUPERUSER_PASSWORD
+      - VIDEO_SERVER
+
+    # env_file:
+    #   - .env
 
   # worker:
   #   depends_on:

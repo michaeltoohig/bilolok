@@ -10,8 +10,8 @@ This file contains a combination of TODO items, wild ideas, project roadmap plan
 
 ## Ideas
 
-- [ ] Update UI to focus more on map by making nakamals pages, home page, etc open as bottom sheets or something that feels as if the map view is the main view
-  - [ ] Bottom view for nakamals as a "peak" before opening it further
+- [ ] Update UI to focus more on map by making nakamals pages, home page, etc open as bottom sheets or something that feels as if the map view is the only view
+  - [ ] Maybe bottom sheet for nakamals as a "peak" before opening it further
 - [ ] UI update to show delayed POST requests until network returns
 - [ ] Show your checkin count for the month on nakamal profile
   - [ ] Show other history of checkins

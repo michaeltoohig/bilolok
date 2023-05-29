@@ -1,0 +1,18 @@
+Roadmap for current project codebase update.
+
+I want to deploy the codebase consistently all in docker rather than what I have now of the backend and frontend and separate services as 3 elements to juggle to deploy.
+Perhaps frontend can be outside of docker but I can get code reload working for frontend and backend in docker for development as I have for another project.
+
+- [ ] Update dev docker config with explicity envvars
+Implicit envvars in docker-compose makes it hard to reason about IMO.
+- [ ] Makefile for easy dev, setup, deploy, etc.
+I am finding it hard to figure out how I setup for development in the past.
+Clearly my system wasn't that great but Docker-for-Windows has since improved and I can get everything into docker now.
+- [ ] Deploy on VPS
+
+- [ ] Frontend docker for development
+Mkae it easier for development in future
+- [ ] Update Python version
+3.8 is getting a tad old
+- [ ] Update SQLAlchemy
+Requires big update to CRUD classes to account for this
