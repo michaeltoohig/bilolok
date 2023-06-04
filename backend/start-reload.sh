@@ -1,7 +1,7 @@
 #! /usr/bin/env sh
 set -e
 
-if [ -f /app/app/main.py ]; then
+if [ -f /code/app/main.py ]; then
     DEFAULT_MODULE_NAME=app.main
 elif [ -f /app/main.py ]; then
     DEFAULT_MODULE_NAME=main

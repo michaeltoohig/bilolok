@@ -120,19 +120,20 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: backend.dockerfile
+      dockerfile: backendv2.dockerfile
+      target: development
       args:
         INSTALL_DEV: ${INSTALL_DEV-false}
-    command: /code/start-reload.sh
+    # command: /code/start-reload.sh
     ports:
       - "8000:8000"
     volumes:
-      - "${DATA_LOCAL_DIR}:/data/"
+      - "${DATA_LOCAL_DIR}:/code/data/"
     depends_on:
       - db
       - redis
     environment:
-      - DATA_LOCAL_DIR=/data/
+      - DATA_LOCAL_DIR=/code/data/
       - DEBUG
       - SECRET_KEY
       - SERVER_HOST

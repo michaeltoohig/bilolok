@@ -29,7 +29,9 @@ WORKDIR /code
 # Copy poetry.lock* in case it doesn't exist in the repo
 COPY ./app/pyproject.toml ./app/poetry.lock* /code
 
-RUN poetry install --no-root --only main
+# TODO sort out best install strategy
+#--no-root --no-dev
+RUN poetry install 
 
 # Allow installing dev dependencies to run tests
 # ARG INSTALL_DEV=false
