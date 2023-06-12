@@ -5,7 +5,7 @@ Perhaps frontend can be outside of docker but I can get code reload working for 
 
 - [ ] Update dev docker config with explicity envvars
 Implicit envvars in docker-compose makes it hard to reason about IMO.
-- [ ] Makefile for easy dev, setup, deploy, etc.
+- [x] Makefile for easy dev, setup, deploy, etc.
 I am finding it hard to figure out how I setup for development in the past.
 Clearly my system wasn't that great but Docker-for-Windows has since improved and I can get everything into docker now.
 - [ ] Deploy on VPS

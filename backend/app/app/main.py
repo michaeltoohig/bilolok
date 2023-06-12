@@ -16,7 +16,7 @@ app = FastAPI(
 )
 
 if settings.DEBUG:
-    app.mount("/videos", StaticFiles(directory=f"/videos"), name="videos")
+    app.mount("/videos", StaticFiles(directory=f"{settings.DATA_LOCAL_DIR}/videos"), name="videos")
 
 init_sentry()
 # init_logging()

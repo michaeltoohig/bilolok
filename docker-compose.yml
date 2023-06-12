@@ -119,11 +119,11 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: backendv2.dockerfile
+      context: ./backend/app
+      dockerfile: backend.dockerfile
       target: development
-      args:
-        INSTALL_DEV: ${INSTALL_DEV-false}
+      # args:
+      #   INSTALL_DEV: ${INSTALL_DEV-false}
     # command: /code/start-reload.sh
     ports:
       - "8000:8000"
