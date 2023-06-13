@@ -1,14 +1,14 @@
 from pathlib import Path
-from app.tasks.video import make_social_thumbnail, make_social_video
+from tasks.video import make_social_thumbnail, make_social_video
 
 from sqlalchemy.orm import Session
 
 # from app import crud
-from app.core.config import settings
-from app.core.users import fastapi_users
-from app.db.session import async_engine, async_session
-from app.schemas.user import UserCreate
-from app.crud.video import CRUDVideo
+from core.config import settings
+from core.users import fastapi_users
+from db.session import async_engine, async_session
+from schemas.user import UserCreate
+from crud.video import CRUDVideo
 
 # make sure all SQL Alchemy models are imported (app.db.base) before initializing DB
 # otherwise, SQLAlchemy might fail to initialize relationships properly

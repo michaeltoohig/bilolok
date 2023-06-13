@@ -4,9 +4,9 @@ from uuid import UUID, uuid4
 from sqlalchemy import and_, select
 from sqlalchemy.exc import NoResultFound
 
-from app.crud.base import CRUDBase
-from app.models.subscription import Subscription
-from app.schemas.subscription import SubscriptionSchema, SubscriptionSchemaIn
+from crud.base import CRUDBase
+from models.subscription import Subscription
+from schemas.subscription import SubscriptionSchema, SubscriptionSchemaIn
 
 
 class CRUDSubscription(

@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps.db import get_db
-from app.crud.trip import CRUDTrip
-from app.db.errors import DoesNotExist
-from app.schemas.trip import TripSchema
+from api.deps.db import get_db
+from crud.trip import CRUDTrip
+from db.errors import DoesNotExist
+from schemas.trip import TripSchema
 
 
 async def get_trip_or_404(

@@ -2,19 +2,19 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Optional, Type
 from uuid import uuid4, UUID
-from app.db.errors import DoesNotExist
-from app.models.nakamal import NakamalProfile
+from db.errors import DoesNotExist
+from models.nakamal import NakamalProfile
 
 from sqlalchemy import desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 from sqlalchemy_utc import utcnow
 
-from app.core.config import settings
-from app.core.image import img_crypto_url
-from app.crud.base import CRUDBase
-from app.models.image import Image
-from app.schemas.image import ImageSchema, ImageSchemaIn
+from core.config import settings
+from core.image import img_crypto_url
+from crud.base import CRUDBase
+from models.image import Image
+from schemas.image import ImageSchema, ImageSchemaIn
 
 
 class CRUDImage(CRUDBase[Image, ImageSchemaIn, ImageSchema]):

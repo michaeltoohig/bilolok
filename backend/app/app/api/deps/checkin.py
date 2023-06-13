@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps.db import get_db
-from app.crud.checkin import CRUDCheckin
-from app.db.errors import DoesNotExist
-from app.schemas.checkin import CheckinSchema
+from api.deps.db import get_db
+from crud.checkin import CRUDCheckin
+from db.errors import DoesNotExist
+from schemas.checkin import CheckinSchema
 
 
 async def get_checkin_or_404(

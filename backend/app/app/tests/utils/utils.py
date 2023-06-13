@@ -4,7 +4,7 @@ from typing import Dict
 
 from fastapi.testclient import TestClient
 
-from app.core.config import settings
+from core.config import settings
 
 
 def random_lower_string() -> str:

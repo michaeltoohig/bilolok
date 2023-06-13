@@ -7,9 +7,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utc import UtcDateTime
 
-from app.core.config import settings
-from app.db.base_class import Base
-from app.db.mixins import TimeMixin
+from core.config import settings
+from db.base_class import Base
+from db.mixins import TimeMixin
 
 
 class Trip(Base, TimeMixin):

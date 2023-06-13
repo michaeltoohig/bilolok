@@ -4,8 +4,8 @@ from typing import Optional
 
 from pydantic import AnyHttpUrl
 
-from app.schemas.base import BaseSchema
-from app.schemas.nakamal import NakamalSchema
+from schemas.base import BaseSchema
+from schemas.nakamal import NakamalSchema
 
 
 class CheckinSchemaBase(BaseSchema):

@@ -6,10 +6,10 @@ from sqlalchemy import and_, desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
-from app.core.config import settings
-from app.crud.base import CRUDBase
-from app.models.checkin import Checkin
-from app.schemas.checkin import CheckinSchema, CheckinSchemaIn
+from core.config import settings
+from crud.base import CRUDBase
+from models.checkin import Checkin
+from schemas.checkin import CheckinSchema, CheckinSchemaIn
 
 
 class CRUDCheckin(CRUDBase[Checkin, CheckinSchemaIn, CheckinSchema]):

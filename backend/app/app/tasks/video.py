@@ -5,10 +5,10 @@ from PIL import Image, ImageOps
 
 from loguru import logger
 
-from app.core.config import settings
-from app.crud.video import CRUDVideo
-from app.models.video import VideoProcessingStatus
-from app.schemas.video import VideoSchemaUpdate
+from core.config import settings
+from crud.video import CRUDVideo
+from models.video import VideoProcessingStatus
+from schemas.video import VideoSchemaUpdate
 
 
 def make_social_video(sfp: Path):

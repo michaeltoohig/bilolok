@@ -3,12 +3,12 @@ from typing import Any
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_active_user
-from app.core.config import settings
-from app.crud.subscription import CRUDSubscription
-from app.models.user import User
-from app.schemas.subscription import (SubscriptionPublicKeySchemaOut,
+from api.deps.db import get_db
+from api.deps.user import current_active_user
+from core.config import settings
+from crud.subscription import CRUDSubscription
+from models.user import User
+from schemas.subscription import (SubscriptionPublicKeySchemaOut,
                                       SubscriptionSchemaIn,
                                       SubscriptionSchemaOut)
 

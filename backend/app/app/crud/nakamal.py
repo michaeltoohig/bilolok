@@ -5,10 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload, aliased
 
-from app.crud.base import CRUDBase
-from app.models.image import Image
-from app.models.nakamal import Nakamal
-from app.schemas.nakamal import NakamalSchema, NakamalSchemaIn
+from crud.base import CRUDBase
+from models.image import Image
+from models.nakamal import Nakamal
+from schemas.nakamal import NakamalSchema, NakamalSchemaIn
 
 
 class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):

@@ -1,7 +1,7 @@
 import uuid
 from typing import Any, Dict, Optional
 
-from app.models.push_notification import PushNotificationStatus
+from models.push_notification import PushNotificationStatus
 
 from .base import BaseSchema
 

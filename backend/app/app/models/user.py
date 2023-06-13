@@ -4,9 +4,9 @@ from uuid import UUID
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Column, String
 
-from app.core.config import settings
-from app.core.image import img_crypto_url
-from app.db.base_class import Base
+from core.config import settings
+from core.image import img_crypto_url
+from db.base_class import Base
 
 
 class User(Base, SQLAlchemyBaseUserTable):

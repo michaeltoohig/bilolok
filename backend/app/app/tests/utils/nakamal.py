@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.nakamal import NakamalArea, NakamalKavaSource, Province
-from app.schemas.nakamal import NakamalAreaSchemaIn, NakamalKavaSourceSchemaIn
-from app.tests.utils.utils import random_lower_string
+from models.nakamal import NakamalArea, NakamalKavaSource, Province
+from schemas.nakamal import NakamalAreaSchemaIn, NakamalKavaSourceSchemaIn
+from tests.utils.utils import random_lower_string
 
 
 async def create_random_kava_source(db_session: AsyncSession):

@@ -1,14 +1,14 @@
 import abc
 from typing import Generic, List, Type, TypeVar
 from uuid import UUID, uuid4
-from app.db.errors import DoesNotExist
+from db.errors import DoesNotExist
 
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from app.db.errors import DoesNotExist
-from app.schemas.base import BaseSchema
+# from db.errors import DoesNotExist
+from schemas.base import BaseSchema
 
 IN_SCHEMA = TypeVar("IN_SCHEMA", bound=BaseSchema)
 SCHEMA = TypeVar("SCHEMA", bound=BaseSchema)
@@ -93,8 +93,8 @@ class CRUDBase(Generic[TABLE, IN_SCHEMA, SCHEMA], metaclass=abc.ABCMeta):
 # from sqlalchemy.orm import Session
 # from fastapi_crudrouter.core.databases import pydantify_record
 
-# from app.db.base_class import Base
-# from app.db.session import database
+# from db.base_class import Base
+# from db.session import database
 
 # ModelType = TypeVar("ModelType", bound=Base)
 # CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)

@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta, timezone
 import random
 
-from app.crud.nakamal import CRUDNakamal
-from app.crud.checkin import CRUDCheckin
+from crud.nakamal import CRUDNakamal
+from crud.checkin import CRUDCheckin
 
 
 async def select_featured_nakamal(ctx: dict):

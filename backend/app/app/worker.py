@@ -9,12 +9,12 @@
 from pydantic.utils import import_string
 from arq import cron
 
-from app.db.session import async_session
-from app.core.arq_app import redis_settings
+from db.session import async_session
+from core.arq_app import redis_settings
 
 # HACK handling circular import issues by importing these at the top of the worker
-from app.models.user import User  # noqa
-from app.schemas.user import UserSchema  # noqa
+from models.user import User  # noqa
+from schemas.user import UserSchema  # noqa
 
 
 ARQ_BACKGROUND_FUNCTIONS = [

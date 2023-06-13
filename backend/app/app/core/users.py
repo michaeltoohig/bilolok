@@ -15,11 +15,11 @@ from pydantic import UUID4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
-from app.core.mail import MessageSchema, mail
-from app.db.session import async_session
-from app.models.user import User as UserTable
-from app.schemas.user import User, UserCreate, UserDB, UserUpdate
+from core.config import settings
+from core.mail import MessageSchema, mail
+from db.session import async_session
+from models.user import User as UserTable
+from schemas.user import User, UserCreate, UserDB, UserUpdate
 
 
 class UserManager(BaseUserManager[UserCreate, UserDB]):

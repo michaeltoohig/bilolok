@@ -2,11 +2,11 @@ import json
 
 from pywebpush import WebPushException, webpush
 
-from app.core.config import settings
-from app.crud.push_notification import CRUDPushNotification
-from app.crud.subscription import CRUDSubscription
-from app.models.push_notification import PushNotificationStatus
-from app.schemas.push_notification import (PushNotificationSchemaIn,
+from core.config import settings
+from crud.push_notification import CRUDPushNotification
+from crud.subscription import CRUDSubscription
+from models.push_notification import PushNotificationStatus
+from schemas.push_notification import (PushNotificationSchemaIn,
                                            PushNotificationSchemaUpdate)
 
 

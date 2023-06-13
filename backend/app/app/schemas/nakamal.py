@@ -2,7 +2,7 @@ from fileinput import filename
 import uuid
 from typing import Any, List, Optional
 
-from app.models.nakamal import Province
+from models.nakamal import Province
 from pydantic import AnyHttpUrl
 
 from .base import BaseSchema

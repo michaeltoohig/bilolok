@@ -1,6 +1,6 @@
 from typing import Any, List, Optional, Union
-from app.crud.video import CRUDVideo
-from app.schemas.video import VideoSchemaOut
+from crud.video import CRUDVideo
+from schemas.video import VideoSchemaOut
 
 from pydantic import UUID4
 from fastapi import Depends, HTTPException, Request, status, APIRouter, Query
@@ -8,18 +8,18 @@ from fastapi_users.manager import InvalidPasswordException, UserAlreadyExists, U
 from fastapi_users.router.common import ErrorCode, ErrorModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_active_user, current_superuser, optional_current_superuser
-from app.core.users import UserManager, get_user_manager
-from app.crud.checkin import CRUDCheckin
-from app.crud.image import CRUDImage
-from app.crud.user import CRUDUser
-from app.crud.trip import CRUDTrip
-from app.models.user import User
-from app.schemas.checkin import CheckinSchemaOut
-from app.schemas.image import ImageSchemaOut
-from app.schemas.trip import TripSchemaOut
-from app.schemas.user import UserDB, UserSchema, UserSchemaDetails, UserUpdate
+from api.deps.db import get_db
+from api.deps.user import current_active_user, current_superuser, optional_current_superuser
+from core.users import UserManager, get_user_manager
+from crud.checkin import CRUDCheckin
+from crud.image import CRUDImage
+from crud.user import CRUDUser
+from crud.trip import CRUDTrip
+from models.user import User
+from schemas.checkin import CheckinSchemaOut
+from schemas.image import ImageSchemaOut
+from schemas.trip import TripSchemaOut
+from schemas.user import UserDB, UserSchema, UserSchemaDetails, UserUpdate
 
 # NOTE in this router we approximate the endpoints provided by the
 # FastAPI-Users user_router. I made some changes to support returning

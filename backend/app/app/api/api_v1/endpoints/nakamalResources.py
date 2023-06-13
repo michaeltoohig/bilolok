@@ -1,10 +1,10 @@
 from fastapi import Depends
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_superuser
-from app.models.nakamal import NakamalResource
-from app.schemas.nakamal import (NakamalResourceSchemaIn,
+from api.deps.db import get_db
+from api.deps.user import current_superuser
+from models.nakamal import NakamalResource
+from schemas.nakamal import (NakamalResourceSchemaIn,
                                  NakamalResourceSchemaOut)
 
 router = SQLAlchemyCRUDRouter(

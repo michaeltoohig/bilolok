@@ -4,7 +4,7 @@ from typing import ForwardRef, Optional
 from fastapi_users import models
 from pydantic import AnyHttpUrl
 
-from app.schemas.base import BaseSchema
+from schemas.base import BaseSchema
 
 # TODO update schema class names to match other schemas naming convention
 
@@ -46,5 +46,5 @@ class UserSchemaDetails(UserSchema):
     latest_checkin: Optional[CheckinSchema]
 
 
-from app.schemas.checkin import CheckinSchema
+from schemas.checkin import CheckinSchema
 UserSchemaDetails.update_forward_refs()

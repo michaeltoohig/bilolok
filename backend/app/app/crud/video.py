@@ -2,16 +2,16 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import List, Optional, Type
 from uuid import uuid4, UUID
-from app.db.errors import DoesNotExist
+from db.errors import DoesNotExist
 
 from sqlalchemy import desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
-from app.core.config import settings
-from app.crud.base import CRUDBase
-from app.models.video import Video
-from app.schemas.video import VideoSchemaIn, VideoSchema, VideoSchemaUpdate
+from core.config import settings
+from crud.base import CRUDBase
+from models.video import Video
+from schemas.video import VideoSchemaIn, VideoSchema, VideoSchemaUpdate
 
 
 class CRUDVideo(CRUDBase[Video, VideoSchemaIn, VideoSchema]):

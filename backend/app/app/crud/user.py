@@ -3,10 +3,10 @@ from typing import List, Type
 
 from sqlalchemy import select
 
-from app.core.config import settings
-from app.crud.base import CRUDBase
-from app.models.user import User
-from app.schemas.user import UserCreate, UserSchema, UserUpdate
+from core.config import settings
+from crud.base import CRUDBase
+from models.user import User
+from schemas.user import UserCreate, UserSchema, UserUpdate
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserSchema]):

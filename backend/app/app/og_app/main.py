@@ -1,5 +1,5 @@
-from app.db.session import async_session
-from app.db import base
+from db.session import async_session
+from db import base
 
 from starlette import status
 from starlette.applications import Starlette
@@ -8,15 +8,15 @@ from starlette.requests import Request
 from starlette.routing import Route
 from starlette.templating import Jinja2Templates
 
-from app.core.config import settings
-from app.crud.user import CRUDUser
-from app.crud.nakamal import CRUDNakamal
-from app.crud.image import CRUDImage
-from app.crud.checkin import CRUDCheckin
-from app.crud.image import CRUDImage
-from app.crud.image import CRUDImage
-from app.crud.trip import CRUDTrip
-from app.crud.video import CRUDVideo
+from core.config import settings
+from crud.user import CRUDUser
+from crud.nakamal import CRUDNakamal
+from crud.image import CRUDImage
+from crud.checkin import CRUDCheckin
+from crud.image import CRUDImage
+from crud.image import CRUDImage
+from crud.trip import CRUDTrip
+from crud.video import CRUDVideo
 
 templates = Jinja2Templates(directory="app/og_app/templates")
 

@@ -1,6 +1,6 @@
 from arq.connections import ArqRedis, RedisSettings, create_pool
 
-from app.core.config import settings
+from core.config import settings
 
 redis_settings = RedisSettings(host=settings.REDIS_SERVER, port=settings.REDIS_PORT)
 

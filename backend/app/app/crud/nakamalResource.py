@@ -1,8 +1,8 @@
 from typing import Type
 
-from app.crud.base import CRUDBase
-from app.models.nakamal import NakamalResource
-from app.schemas.nakamal import NakamalResourceSchema, NakamalResourceSchemaIn
+from crud.base import CRUDBase
+from models.nakamal import NakamalResource
+from schemas.nakamal import NakamalResourceSchema, NakamalResourceSchemaIn
 
 
 class CRUDNakamalResource(

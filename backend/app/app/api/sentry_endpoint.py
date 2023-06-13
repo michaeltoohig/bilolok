@@ -5,7 +5,7 @@ import httpx
 import loguru
 from fastapi import APIRouter, Request, Response, status
 
-from app.core.config import settings
+from core.config import settings
 
 logger = loguru.logger
 

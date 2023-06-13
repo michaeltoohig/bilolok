@@ -2,8 +2,8 @@ from fastapi_users_db_sqlalchemy import GUID
 from sqlalchemy import Column, ForeignKey, String, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 
-from app.db.base_class import Base
-from app.db.mixins import TimeMixin
+from db.base_class import Base
+from db.mixins import TimeMixin
 
 
 class Subscription(Base, TimeMixin):

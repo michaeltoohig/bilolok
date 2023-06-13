@@ -1,6 +1,6 @@
 from typing import Any, AsyncIterator, List
 from uuid import UUID
-from app.crud.video import CRUDVideo
+from crud.video import CRUDVideo
 
 import loguru
 from fastapi import Depends, status
@@ -8,20 +8,20 @@ from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db, get_redis
-from app.api.deps.nakamal import get_nakamal_or_404
-from app.api.deps.user import current_active_verified_user, current_superuser
-from app.crud.checkin import CRUDCheckin
-from app.crud.image import CRUDImage
-from app.crud.nakamal import CRUDNakamal
-from app.crud.nakamalResource import CRUDNakamalResource
-from app.crud.trip import CRUDTrip
-from app.models.nakamal import Nakamal
-from app.schemas.checkin import CheckinSchemaOut
-from app.schemas.image import ImageSchemaOut
-from app.schemas.trip import TripSchemaOut
-from app.schemas.video import VideoSchemaOut
-from app.schemas.nakamal import (NakamalSchema, NakamalSchemaIn,
+from api.deps.db import get_db, get_redis
+from api.deps.nakamal import get_nakamal_or_404
+from api.deps.user import current_active_verified_user, current_superuser
+from crud.checkin import CRUDCheckin
+from crud.image import CRUDImage
+from crud.nakamal import CRUDNakamal
+from crud.nakamalResource import CRUDNakamalResource
+from crud.trip import CRUDTrip
+from models.nakamal import Nakamal
+from schemas.checkin import CheckinSchemaOut
+from schemas.image import ImageSchemaOut
+from schemas.trip import TripSchemaOut
+from schemas.video import VideoSchemaOut
+from schemas.nakamal import (NakamalSchema, NakamalSchemaIn,
                                  NakamalSchemaOut, NakamalSchemaUpdate)
 
 logger = loguru.logger

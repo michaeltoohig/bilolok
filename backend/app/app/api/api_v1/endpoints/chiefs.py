@@ -4,10 +4,10 @@ from pydantic import UUID4
 from fastapi import Depends, HTTPException, status, APIRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
-from app.crud.nakamal import CRUDNakamal
-from app.crud.user import CRUDUser
-from app.schemas.nakamal import NakamalSchemaOut
+from api.deps.db import get_db
+from crud.nakamal import CRUDNakamal
+from crud.user import CRUDUser
+from schemas.nakamal import NakamalSchemaOut
 
 router = APIRouter(prefix="/chiefs")
 

@@ -1,19 +1,19 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, List
-from app.api.deps.checkin import get_checkin_or_404
-from app.core.arq_app import get_arq_app
+from api.deps.checkin import get_checkin_or_404
+from core.arq_app import get_arq_app
 
 from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
 from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_active_verified_user, current_superuser
-from app.crud.checkin import CRUDCheckin
-from app.models.checkin import Checkin
-from app.models.user import User
-from app.schemas.checkin import (CheckinSchema, CheckinSchemaIn,
+from api.deps.db import get_db
+from api.deps.user import current_active_verified_user, current_superuser
+from crud.checkin import CRUDCheckin
+from models.checkin import Checkin
+from models.user import User
+from schemas.checkin import (CheckinSchema, CheckinSchemaIn,
                                  CheckinSchemaOut)
 
 # TODO remove crud router

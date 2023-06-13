@@ -5,10 +5,10 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 
 # from app import crud
-from app.core.config import settings
-# from app.models.user import User
-# from app.schemas.user import UserCreate, UserUpdate
-from app.tests.utils.utils import random_email, random_lower_string
+from core.config import settings
+# from models.user import User
+# from schemas.user import UserCreate, UserUpdate
+from tests.utils.utils import random_email, random_lower_string
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -70,8 +70,8 @@ async def user_authentication_headers(
 
 import contextlib
 
-from app.schemas.user import UserCreate
-from app.core.users import get_user_manager, get_user_db, get_async_session
+from schemas.user import UserCreate
+from core.users import get_user_manager, get_user_db, get_async_session
 from fastapi_users.manager import UserAlreadyExists
 
 get_async_session_context = contextlib.asynccontextmanager(get_async_session)

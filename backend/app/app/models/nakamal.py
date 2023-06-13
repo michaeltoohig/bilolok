@@ -5,8 +5,8 @@ from sqlalchemy import select, text, and_, Column, Float, ForeignKey, Integer, S
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship, declared_attr, relation, column_property
 
-from app.db.base_class import Base
-from app.db.mixins import TimeMixin
+from db.base_class import Base
+from db.mixins import TimeMixin
 
 nakamal_resource_association = Table(
     "nakamal_resource_assocation",

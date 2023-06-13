@@ -6,8 +6,8 @@ from sqlalchemy import Enum as SQLAEnum
 from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import JSONB
 
-from app.db.base_class import Base
-from app.db.mixins import TimeMixin
+from db.base_class import Base
+from db.mixins import TimeMixin
 
 
 class PushNotificationStatus(Enum):

@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps.db import get_db
-from app.crud.image import CRUDImage
-from app.db.errors import DoesNotExist
-from app.schemas.image import ImageSchema
+from api.deps.db import get_db
+from crud.image import CRUDImage
+from db.errors import DoesNotExist
+from schemas.image import ImageSchema
 
 
 async def get_image_or_404(

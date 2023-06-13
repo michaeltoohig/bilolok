@@ -6,10 +6,10 @@ from sqlalchemy import and_, desc, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import selectinload
 
-from app.core.config import settings
-from app.crud.base import CRUDBase
-from app.models.trip import Trip
-from app.schemas.trip import TripSchema, TripSchemaIn
+from core.config import settings
+from crud.base import CRUDBase
+from models.trip import Trip
+from schemas.trip import TripSchema, TripSchemaIn
 
 
 class CRUDTrip(CRUDBase[Trip, TripSchemaIn, TripSchema]):

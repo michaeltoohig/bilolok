@@ -6,16 +6,16 @@ from pydantic.networks import EmailStr
 from pywebpush import WebPushException, webpush
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_superuser
-from app.core.arq_app import get_arq_app
-from app.core.config import settings
-from app.core.mail import MessageSchema, mail
-from app.crud.push_notification import CRUDPushNotification
-from app.crud.subscription import CRUDSubscription
-from app.models.push_notification import PushNotificationStatus
-from app.models.user import User
-from app.schemas.push_notification import (PushNotificationSchemaIn,
+from api.deps.db import get_db
+from api.deps.user import current_superuser
+from core.arq_app import get_arq_app
+from core.config import settings
+from core.mail import MessageSchema, mail
+from crud.push_notification import CRUDPushNotification
+from crud.subscription import CRUDSubscription
+from models.push_notification import PushNotificationStatus
+from models.user import User
+from schemas.push_notification import (PushNotificationSchemaIn,
                                            PushNotificationSchemaUpdate)
 
 router = APIRouter()

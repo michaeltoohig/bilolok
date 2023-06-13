@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any, List
-from app.api.deps.trip import get_trip_or_404
+from api.deps.trip import get_trip_or_404
 
 from fastapi import Depends, Query, status
 from fastapi.exceptions import HTTPException
@@ -8,12 +8,12 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from pydantic import UUID4
 
-from app.api.deps.db import get_db
-from app.api.deps.user import current_active_verified_user, current_superuser
-from app.crud.trip import CRUDTrip
-from app.models.trip import Trip
-from app.models.user import User
-from app.schemas.trip import (TripSchema, TripSchemaIn,
+from api.deps.db import get_db
+from api.deps.user import current_active_verified_user, current_superuser
+from crud.trip import CRUDTrip
+from models.trip import Trip
+from models.user import User
+from schemas.trip import (TripSchema, TripSchemaIn,
                                  TripSchemaOut)
 
 # TODO remove crud router

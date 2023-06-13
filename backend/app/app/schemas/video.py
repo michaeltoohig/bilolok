@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import datetime
 from pathlib import Path
 
-from app.models.video import VideoProcessingStatus
+from models.video import VideoProcessingStatus
 
 from .base import BaseSchema
 from .nakamal import NakamalSchema

@@ -3,8 +3,8 @@ from typing import AsyncIterator
 from aioredis import create_redis_pool, Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import settings
-from app.db.session import async_session
+from core.config import settings
+from db.session import async_session
 
 
 async def get_db() -> AsyncSession:

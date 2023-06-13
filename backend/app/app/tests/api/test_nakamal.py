@@ -1,15 +1,15 @@
 from unittest import mock
 
 import uuid
-from app.tests.utils.nakamal import create_random_area, create_random_kava_source
-from app.tests.utils.user import create_random_user, user_authentication_headers
+from tests.utils.nakamal import create_random_area, create_random_kava_source
+from tests.utils.user import create_random_user, user_authentication_headers
 import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from app.crud.nakamal import CRUDNakamal
-from app.schemas.nakamal import NakamalSchemaIn
+from crud.nakamal import CRUDNakamal
+from schemas.nakamal import NakamalSchemaIn
 
 pytestmark = pytest.mark.asyncio
 

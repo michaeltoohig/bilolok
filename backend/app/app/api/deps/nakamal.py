@@ -3,10 +3,10 @@ from uuid import UUID
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps.db import get_db
-from app.crud.nakamal import CRUDNakamal
-from app.db.errors import DoesNotExist
-from app.schemas.nakamal import NakamalSchema
+from api.deps.db import get_db
+from crud.nakamal import CRUDNakamal
+from db.errors import DoesNotExist
+from schemas.nakamal import NakamalSchema
 
 
 async def get_nakamal_or_404(

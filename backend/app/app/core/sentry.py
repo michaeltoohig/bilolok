@@ -1,7 +1,7 @@
 import sentry_sdk
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 
-from app.core.config import settings
+from core.config import settings
 
 # def traces_sampler(sampling_context):
 #     if settings.DEBUG:

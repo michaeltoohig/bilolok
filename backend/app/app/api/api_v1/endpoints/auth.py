@@ -1,8 +1,8 @@
 # from typing import Any
 # from fastapi import Response, Depends
 
-# from app.core.config import settings
-from app.core.users import auth_backend, fastapi_users
+# from core.config import settings
+from core.users import auth_backend, fastapi_users
 
 auth_router = fastapi_users.get_auth_router(auth_backend)
 register_router = fastapi_users.get_register_router()

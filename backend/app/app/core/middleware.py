@@ -11,9 +11,9 @@ from starlette.middleware.base import (BaseHTTPMiddleware,
 from starlette_context import context, plugins
 from starlette_context.middleware import ContextMiddleware
 
-from app.core.config import settings
-from app.core.sentry import sentry_sdk
-from app.core.users import get_jwt_strategy
+from core.config import settings
+from core.sentry import sentry_sdk
+from core.users import get_jwt_strategy
 
 logger = loguru.logger
 

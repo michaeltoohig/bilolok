@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import as_declarative, declared_attr
 from sqlalchemy_continuum import make_versioned
 from sqlalchemy_continuum.plugins import PropertyModTrackerPlugin
 
-from app.db.plugins import FastAPIUsersPlugin
+from db.plugins import FastAPIUsersPlugin
 
 make_versioned(
     plugins=[

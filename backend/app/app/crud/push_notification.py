@@ -1,8 +1,8 @@
 from typing import Type
 
-from app.crud.base import CRUDBase
-from app.models.push_notification import PushNotification
-from app.schemas.push_notification import (PushNotificationSchema,
+from crud.base import CRUDBase
+from models.push_notification import PushNotification
+from schemas.push_notification import (PushNotificationSchema,
                                            PushNotificationSchemaIn)
 
 

@@ -6,12 +6,12 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from app.api.deps.user import current_active_user, current_active_verified_user, current_superuser
-from app.core.config import settings
+from api.deps.user import current_active_user, current_active_verified_user, current_superuser
+from core.config import settings
 import app.db.base  # noqa
-from app.db.base_class import Base
-from app.db.session import async_session
-from app.schemas.user import UserDB
+from db.base_class import Base
+from db.session import async_session
+from schemas.user import UserDB
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -48,8 +48,8 @@ def override_get_db(db_session: AsyncSession) -> Callable:
 
 @pytest_asyncio.fixture()
 def app(override_get_db: Callable) -> FastAPI:
-    from app.api.deps.db import get_db
-    from app.main import app
+    from api.deps.db import get_db
+    from main import app
 
     app.dependency_overrides[get_db] = override_get_db
     return app

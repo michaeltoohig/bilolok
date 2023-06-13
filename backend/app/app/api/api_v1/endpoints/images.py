@@ -1,8 +1,8 @@
 from enum import Enum
 from pathlib import Path
 from typing import Any, List, Optional
-from app.crud.video import CRUDVideo
-from app.schemas.video import VideoSchemaIn
+from crud.video import CRUDVideo
+from schemas.video import VideoSchemaIn
 
 import jwt
 from fastapi import Body, Depends, Header, HTTPException, status, APIRouter, Query
@@ -10,17 +10,17 @@ from fastapi_crudrouter import SQLAlchemyCRUDRouter
 from fastapi_users.jwt import JWT_ALGORITHM
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
-from app.api.deps.db import get_db
-from app.api.deps.image import get_image_or_404
-from app.api.deps.user import current_active_verified_user, current_superuser
-from app.core.config import settings
-from app.core.users import UserManager, get_jwt_strategy, get_user_manager
-from app.crud.image import CRUDImage
-from app.crud.nakamal import CRUDNakamal
-from app.crud.user import CRUDUser
-from app.models.image import Image
-from app.models.user import User
-from app.schemas.image import ImageSchema, ImageSchemaIn, ImageSchemaOut
+from api.deps.db import get_db
+from api.deps.image import get_image_or_404
+from api.deps.user import current_active_verified_user, current_superuser
+from core.config import settings
+from core.users import UserManager, get_jwt_strategy, get_user_manager
+from crud.image import CRUDImage
+from crud.nakamal import CRUDNakamal
+from crud.user import CRUDUser
+from models.image import Image
+from models.user import User
+from schemas.image import ImageSchema, ImageSchemaIn, ImageSchemaOut
 
 # # TODO remove this CRUDRouter as we are no longer even using it due to special schema handling
 # router = SQLAlchemyCRUDRouter(
