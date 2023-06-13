@@ -7,8 +7,8 @@ Create Date: 2021-10-24 17:31:40.331293
 """
 from alembic import op
 import sqlalchemy as sa
-import fastapi_users
 import sqlalchemy_utc
+import fastapi_users_db_sqlalchemy
 
 
 # revision identifiers, used by Alembic.
@@ -23,12 +23,12 @@ def upgrade():
     op.create_table('image',
     sa.Column('created_at', sqlalchemy_utc.sqltypes.UtcDateTime(timezone=True), nullable=True),
     sa.Column('updated_at', sqlalchemy_utc.sqltypes.UtcDateTime(timezone=True), nullable=True),
-    sa.Column('id', fastapi_users.db.sqlalchemy.GUID(), nullable=False),
+    sa.Column('id', fastapi_users_db_sqlalchemy.GUID(), nullable=False),
     sa.Column('file_id', sa.String(), nullable=False),
     sa.Column('filename', sa.String(), nullable=True),
     sa.Column('filetype', sa.String(), nullable=True),
-    sa.Column('user_id', fastapi_users.db.sqlalchemy.GUID(), nullable=False),
-    sa.Column('nakamal_id', fastapi_users.db.sqlalchemy.GUID(), nullable=False),
+    sa.Column('user_id', fastapi_users_db_sqlalchemy.GUID(), nullable=False),
+    sa.Column('nakamal_id', fastapi_users_db_sqlalchemy.GUID(), nullable=False),
     sa.ForeignKeyConstraint(['nakamal_id'], ['nakamal.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id'),
