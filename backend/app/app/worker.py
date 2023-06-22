@@ -18,13 +18,13 @@ from schemas.user import UserSchema  # noqa
 
 
 ARQ_BACKGROUND_FUNCTIONS = [
-    "app.tasks.utils.test_arq",
-    "app.tasks.utils.test_arq_subtask",
-    "app.tasks.utils.daily_send_push_notification",
-    "app.tasks.nakamal.select_featured_nakamal",
-    "app.tasks.nakamal.update_nakamal_chief",
-    "app.tasks.nakamal.daily_check_chief",
-    "app.tasks.video.process_video",
+    "tasks.utils.test_arq",
+    "tasks.utils.test_arq_subtask",
+    "tasks.utils.daily_send_push_notification",
+    "tasks.nakamal.select_featured_nakamal",
+    "tasks.nakamal.update_nakamal_chief",
+    "tasks.nakamal.daily_check_chief",
+    "tasks.video.process_video",
 ]
 
 
@@ -62,19 +62,19 @@ class WorkerSettings:
     # XXX https://github.com/samuelcolvin/arq/issues/304 before uncommenting cron_jobs
     cron_jobs = [
         cron(
-            "app.tasks.utils.daily_send_push_notification",
+            "tasks.utils.daily_send_push_notification",
             weekday={0, 1, 2, 3, 4, 5},
             hour=6,
             minute=0,
         ),
         cron(
-            "app.tasks.nakamal.select_featured_nakamal",
+            "tasks.nakamal.select_featured_nakamal",
             hour=HOUR_MIDNIGHT,
             minute=0,
             run_at_startup=True,  # our redis is currently not persistent so we need to run this at startup
         ),
         cron(
-            "app.tasks.nakamal.daily_check_chief",
+            "tasks.nakamal.daily_check_chief",
             hour=HOUR_MIDNIGHT,
             minute=0,
         )

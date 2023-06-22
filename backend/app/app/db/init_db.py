@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 # from app import crud
 from core.config import settings
-from core.users import fastapi_users
+from core.users import create_user
 from db.session import async_engine, async_session
 from schemas.user import UserCreate
 from crud.video import CRUDVideo
@@ -16,20 +16,24 @@ from crud.video import CRUDVideo
 
 
 async def init_db(db: Session) -> None:
-    async with async_engine.begin() as connection:
-        async with async_session(bind=connection) as session:
-            try:
-                await fastapi_users.create_user(
-                    UserCreate(
-                        email=settings.FIRST_SUPERUSER,
-                        password=settings.FIRST_SUPERUSER_PASSWORD,
-                        is_active=True,
-                        is_verified=True,
-                        is_superuser=True,
-                    )
-                )
-            except:
-                pass  # user already exists
+    await create_user(settings.FIRST_SUPERUSER, settings.FIRST_SUPERUSER_PASSWORD, is_superuser=True)
+    
+    # async with async_engine.begin() as connection:
+    #     async with async_session(bind=connection) as session:
+    #         try:
+    #             user_db = get_user_db(session)
+    #             await fastapi_users.create_user(
+    #                 UserCreate(
+    #                     email=settings.FIRST_SUPERUSER,
+    #                     password=settings.FIRST_SUPERUSER_PASSWORD,
+    #                     is_active=True,
+    #                     is_verified=True,
+    #                     is_superuser=True,
+    #                 )
+    #             )
+    #         except Exception:
+    #             raise
+    #             pass  # user already exists
 
             # # TODO remove in future release - only needed for one production release
             # watermark = Path(settings.DATA_LOCAL_DIR) / "images" / "watermark.png"

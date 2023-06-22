@@ -84,6 +84,7 @@ class CRUDNakamal(CRUDBase[Nakamal, NakamalSchemaIn, NakamalSchema]):
     async def get_multi(self) -> List[NakamalSchema]:
         query = select(self._table).options(selectinload(self._table.resources))
         results = await self._db_session.execute(query)
+        # XXX why is this a generator exactly?
         return (self._schema.from_orm(item) for item in results.scalars())
 
     async def add_resource(self, item_id: UUID, resource):

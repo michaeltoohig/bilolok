@@ -1,19 +1,24 @@
-# Name the node stage "builder"
-FROM node:10 AS builder
-# Set working directory
-WORKDIR /app
-# Copy all files from current directory to working dir in image
-COPY . .
-# install node modules and build assets
-RUN yarn install && yarn build
+FROM node:10 as base
 
-# nginx state for serving content
-FROM nginx:1.19-alpine
-# Set working directory to nginx asset directory
+RUN npm i -g yarn
+
+FROM base AS dependencies
+
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install
+
+FROM base as build
+
+WORKDIR /app
+COPY . .
+COPY --from=dependencies /app/node_modules ./node_modules
+RUN yarn build
+
+FROM nginx:1.19-alpine as deploy
+
 WORKDIR /usr/share/nginx/html
-# Remove default nginx static assets
 RUN rm -rf ./*
-# Copy static assets from builder stage
-COPY --from=builder /app/dist .
-# Containers run nginx with global directives and daemon off
+COPY --from=build /app/dist .
+EXPOSE 80
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

@@ -1,3 +1,49 @@
+x-backend: &backend
+  build:
+    context: ./backend/app
+    dockerfile: backend.dockerfile
+    target: development
+  volumes:
+    - "${DATA_LOCAL_DIR}:/data"
+  depends_on:
+    - db
+    - redis
+  environment:
+    - DATA_LOCAL_DIR=/data
+    - DEBUG
+    - SECRET_KEY
+    - SERVER_HOST
+    - FRONTEND_HOST
+    - BACKEND_CORS_ORIGINS
+    - PROJECT_NAME
+    - PROJECT_SLUG
+    # - SENTRY_DSN
+    # - SENTRY_HOST
+    # - SENTRY_PROJECT_IDS
+    - VAPID_PRIVATE_KEY
+    - VAPID_PUBLIC_KEY
+    - VAPID_MAILTO
+    - POSTGRES_SERVER
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
+    - REDIS_SERVER
+    - REDIS_PORT
+    - MAIL_TLS
+    - MAIL_SSL
+    - MAIL_PORT
+    - MAIL_SERVER
+    - MAIL_USERNAME
+    - MAIL_PASSWORD
+    - MAIL_FROM
+    - MAIL_FROM_NAME
+    - MAIL_USE_CREDENTIALS
+    - FIRST_SUPERUSER
+    - FIRST_SUPERUSER_PASSWORD
+    - VIDEO_SERVER
+    - THUMBOR_SECURITY_KEY
+    - THUMBOR_SERVER
+
 services:
   db:
     image: postgres:13
@@ -34,15 +80,14 @@ services:
     ports:
       - "6379:6379"
 
-  # admin:
-  #   image: adminer
-  #   restart: always
-  #   ports:
-  #     - 8081:8080
-  #   depends_on: 
-  #     - db
-  #   profiles:
-  #     - dev
+  admin:
+    image: adminer
+    ports:
+      - 8081:8080
+    depends_on: 
+      - db
+    # profiles:
+    #   - dev
 
   # mail:
   #   image: maildev/maildev
@@ -117,71 +162,36 @@ services:
   # ffmpeg:
   #   image: jrottenberg/ffmpeg:4.4-alpine
 
-  backend:
+  frontend:
     build:
-      context: ./backend/app
-      dockerfile: backend.dockerfile
-      target: development
-      # args:
-      #   INSTALL_DEV: ${INSTALL_DEV-false}
-    # command: /code/start-reload.sh
+      context: frontend
+      dockerfile: Dockerfile
+      target: dependencies
+    stdin_open: true
+    command: yarn serve
+    ports:
+      - 3000:3000
+    volumes:
+      - './frontend:/app:cached'
+      - './frontend/node_modules:/app/node_modules:cached'
+    environment:
+      NODE_ENV: development
+
+
+  backend:
+    <<: *backend
     ports:
       - "8000:8000"
     volumes:
-      - "${DATA_LOCAL_DIR}:/code/data/"
-    depends_on:
-      - db
-      - redis
-    environment:
-      - DATA_LOCAL_DIR=/code/data/
-      - DEBUG
-      - SECRET_KEY
-      - SERVER_HOST
-      - FRONTEND_HOST
-      - BACKEND_CORS_ORIGINS
-      - PROJECT_NAME
-      - PROJECT_SLUG
-      # - SENTRY_DSN
-      # - SENTRY_HOST
-      # - SENTRY_PROJECT_IDS
-      - VAPID_PRIVATE_KEY
-      - VAPID_PUBLIC_KEY
-      - VAPID_MAILTO
-      - POSTGRES_SERVER
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_DB
-      - REDIS_SERVER
-      - REDIS_PORT
-      - MAIL_TLS
-      - MAIL_SSL
-      - MAIL_PORT
-      - MAIL_SERVER
-      - MAIL_USERNAME
-      - MAIL_PASSWORD
-      - MAIL_FROM
-      - MAIL_FROM_NAME
-      - MAIL_USE_CREDENTIALS
-      - FIRST_SUPERUSER
-      - FIRST_SUPERUSER_PASSWORD
-      - VIDEO_SERVER
-      - THUMBOR_SECURITY_KEY
-      - THUMBOR_SERVER
-
-    # env_file:
-    #   - .env
-
-  # worker:
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   build:
-  #     context: ./backend
-  #     dockerfile: worker.dockerfile
-  #     args:
-  #       INSTALL_DEV: ${INSTALL_DEV-false}
+      - ./backend/app/app:/app
+      - "${DATA_LOCAL_DIR}:/data"
+    
+  worker:
+    <<: *backend
+    command: arq worker.WorkerSettings
+    volumes:
+      # - ./backend/app/app:/app
+      - "${DATA_LOCAL_DIR}:/data"
   
 volumes:
   bilolok-db-data:

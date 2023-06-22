@@ -11,8 +11,10 @@ async def select_featured_nakamal(ctx: dict):
     async with db_session() as db:
         crud_nakamal = CRUDNakamal(db)
         nakamals = await crud_nakamal.get_multi()
-        nakamal_ids = map(lambda n: n.id, nakamals)
-        featured_id = random.choice(list(nakamal_ids))
+        nakamal_ids = list(map(lambda n: n.id, nakamals))
+        if len(nakamal_ids) == 0:
+            return "No nakamals available."
+        featured_id = random.choice(nakamal_ids)
         await redis.set("featured-nakamal", str(featured_id))
         await db.commit()
 
