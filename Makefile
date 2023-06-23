@@ -3,6 +3,9 @@
 COMPOSE_FILE := docker-compose.yml
 ENV_FILE := config/.env
 
+.PHONY: sbul
+sbul: stop build up logs
+
 .PHONY: build
 build:
 	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) build $(c)

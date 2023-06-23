@@ -162,21 +162,20 @@ services:
   # ffmpeg:
   #   image: jrottenberg/ffmpeg:4.4-alpine
 
-  frontend:
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-      target: dependencies
-    stdin_open: true
-    command: yarn serve
-    ports:
-      - 3000:3000
-    volumes:
-      - './frontend:/app:cached'
-      - './frontend/node_modules:/app/node_modules:cached'
-    environment:
-      NODE_ENV: development
-
+  # frontend:
+  #   build:
+  #     context: frontend
+  #     dockerfile: Dockerfile
+  #     target: dependencies
+  #   stdin_open: true
+  #   command: yarn serve
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - './frontend:/app:cached'
+  #     - './frontend/node_modules:/app/node_modules:cached'
+  #   environment:
+  #     NODE_ENV: development
 
   backend:
     <<: *backend
