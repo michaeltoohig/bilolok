@@ -33,8 +33,7 @@ logs:
 .PHONY: login-backend
 login-backend:
 	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) exec backend bash
-	
-	
+
 # .PHONY: config
 # config:
 # 	# Run and remove instantly
