@@ -10,7 +10,7 @@ I am finding it hard to figure out how I setup for development in the past.
 Clearly my system wasn't that great but Docker-for-Windows has since improved and I can get everything into docker now.
 - [ ] Deploy on VPS
 
-- [ ] Frontend docker for development
+- [x] Frontend docker for development
 Mkae it easier for development in future
 - [ ] Update Python version
 3.8 is getting a tad old

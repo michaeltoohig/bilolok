@@ -1,6 +1,4 @@
-FROM node:10 as base
-
-RUN npm i -g yarn
+FROM node:14 as base
 
 FROM base AS dependencies
 

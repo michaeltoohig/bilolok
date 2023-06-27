@@ -89,13 +89,13 @@ services:
     # profiles:
     #   - dev
 
-  # mail:
-  #   image: maildev/maildev
-  #   ports:
-  #     - "1025:25"
-  #     - "8082:80"
-  #   profiles:
-  #     - dev
+  mail:
+    image: maildev/maildev
+    ports:
+      - "1025:25"
+      - "1080:1080"
+    # profiles:
+    #   - dev
 
   tusd:
     image: tusproject/tusd
@@ -108,7 +108,7 @@ services:
     command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http http://host.docker.internal:8000/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
 
   thumbor:
-    image: minimalcompact/thumbor
+    image: ghcr.io/minimalcompact/thumbor
     volumes:
       - "${DATA_LOCAL_DIR}/:/data/uploads/"
     # env_file:
@@ -138,7 +138,7 @@ services:
       - FILE_LOADER_ROOT_PATH=/data/uploads/
 
   thumbor-proxy:
-    image: minimalcompact/thumbor-nginx-proxy-cache
+    image: ghcr.io/minimalcompact/thumbor-nginx-proxy-cache
     environment:
       # setting the DEFAULT_HOST to the same as the VIRTUAL_HOST above.
       # Makes sure it works irrespective of the host name
@@ -146,9 +146,9 @@ services:
       - DEFAULT_HOST=localhost
       # optional: control cache memory size (default 500m), cache size (default 10g) and inactive (default 300m)
       #           see https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path
-      - PROXY_CACHE_SIZE=1g
+      - PROXY_CACHE_SIZE=500m
       - PROXY_CACHE_MEMORY_SIZE=250m
-      - PROXY_CACHE_INACTIVE=100m
+      - PROXY_CACHE_INACTIVE=1m
     volumes:
       # this is essential for nginx-proxy to detect docker containers, scaling etc
       # see https://github.com/jwilder/nginx-proxy
@@ -170,13 +170,12 @@ services:
     stdin_open: true
     command: yarn serve
     ports:
-      - 3000:3000
+      - 8080:8080
     volumes:
       - './frontend:/app:cached'
       - './frontend/node_modules:/app/node_modules:cached'
     environment:
       NODE_ENV: development
-
 
   backend:
     <<: *backend

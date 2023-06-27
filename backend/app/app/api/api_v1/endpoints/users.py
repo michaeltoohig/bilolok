@@ -19,19 +19,23 @@ from models.user import User
 from schemas.checkin import CheckinSchemaOut
 from schemas.image import ImageSchemaOut
 from schemas.trip import TripSchemaOut
-from schemas.user import UserDB, UserSchema, UserSchemaDetails, UserUpdate
+from schemas.user import UserSchema, UserSchemaDetails, UserUpdate, User as AdminUserSchema
+
 
 # NOTE in this router we approximate the endpoints provided by the
 # FastAPI-Users user_router. I made some changes to support returning
 # user objects as either the public facing `UserSchema` or the administrative
-# schema `UserDB`.
+# schema `AdminUserSchema`.
+# NOTE: major updates to FastAPI-Users in past years.
+# We may be able to replace this router
+
 
 router = APIRouter()
 
 
 @router.get(
     "/me",
-    response_model=UserDB,
+    response_model=AdminUserSchema,
     responses={
         status.HTTP_401_UNAUTHORIZED: {
             "description": "Missing token or inactive user.",
@@ -46,7 +50,7 @@ async def get_me(
 
 @router.patch(
     "/me",
-    response_model=UserDB,
+    response_model=AdminUserSchema,
     responses={
         status.HTTP_401_UNAUTHORIZED: {
             "description": "Missing token or inactive user.",
@@ -118,7 +122,7 @@ async def get_all(
     """
     if superuser and auth:
         items = await user_manager.get_multi()
-        return [UserDB(**item.dict()) for item in items]
+        return [AdminUserSchema(**item.dict()) for item in items]
     else:
         crud_user = CRUDUser(db)
         items = await crud_user.get_multi()
@@ -139,7 +143,7 @@ async def get_all(
 
 @router.get(
     "/{item_id:uuid}",
-    response_model=Union[UserDB, UserSchema],
+    response_model=Union[AdminUserSchema, UserSchema],
     responses={
         status.HTTP_401_UNAUTHORIZED: {
             "description": "Missing token or inactive user.",
@@ -162,7 +166,7 @@ async def get_user(
 ) -> Any:
     if superuser and auth:
         item = await user_manager.get(item_id)
-        return UserDB(**item.dict())
+        return AdminUserSchema(**item.dict())
     else:
         crud_user = CRUDUser(db)
         item = await crud_user.get_by_id(item_id)
@@ -171,7 +175,7 @@ async def get_user(
 
 @router.patch(
     "/{item_id:uuid}",
-    response_model=UserDB,
+    response_model=AdminUserSchema,
     responses={
         status.HTTP_401_UNAUTHORIZED: {
             "description": "Missing token or inactive user.",
