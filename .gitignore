@@ -1,5 +1,8 @@
 .env
 
+# development data
+_local_data/
+
 # backend
 __pycache__
 app.egg-info
