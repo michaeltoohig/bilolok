@@ -16,3 +16,48 @@ Mkae it easier for development in future
 3.8 is getting a tad old
 - [ ] Update SQLAlchemy
 Requires big update to CRUD classes to account for this
+
+## Notes to upgrade Python and Fastapi
+
+Below are current package versions and my notes based on considerations I should take to upgrade to the latest version of each of the following packages.
+
+fastapi > 0.73
+ - 0.95.1 fixes bug related to `Annotated` in path
+ - 0.95.0 recommends and now supports use of `Annotated`
+ - 0.93.0 `startup` and `shutdown` event hooks are replaced with single `lifespan` hook
+ - 0.91.0 technically fixes past middleware behaviour; may introduce bug
+ - 0.89.0 `response_model` is replaced by function return type annotation (reduces boilerplate)
+ - 0.86.0 supports py3.11
+ - 0.81.0 allow middleware to raise `HTTPException`
+ - 0.78.0 allows omitting `default=...` in parameter declarations
+ - 0.74.0 dependencies with `yield` can now catch `HTTPException`; however I found this release to cause errors with `asyncpg` in the past: see my demo project for work around
+fastapi-mail > 0.4.1
+ - 1.2.0 changes html field to body
+   - breaks old TLS related config vars
+ - 1.0.5/6 upgrades fastapi to 0.75.0 and httpx
+fastapi-crudrouter > git-hash
+ - 3.8.5 supports py3.10
+ - 3.8.6 supports py3.11
+ - 3.9.x supports async SQLAlchemy**
+fastapi-users > 9.2.5
+ - will require checking docs as many breaking changes
+ - 10.4.0 supports SQLAlchemy 2.0; pin `fastapi-users-db-sqlalchemy<5.0.0` for SQLA 1.4
+ - 10.3.0 changes JWT claim `user_id` changed to standard `sub`
+ - 10.2.x adds new `on_after_login` hook
+ - 10.1.2 returns 204 on successful login
+ - 10.1.0 adds new hooks `on_before_delete` and `on_after_delete`
+ - 10.0.7 replaces `aioredis` package with `redis` as main redis package now supports async
+ - 10.0.0 breaks how user is handled; now returns ORM object instead of Pydantic object; migration path exists in docs
+   - see: https://fastapi-users.github.io/fastapi-users/10.0/migration/9x_to_10x/
+   - breaks SQLA 1.4; supports SQLA 2.0 ***
+ - 9.3.x allows newer/better encryption algos; may require alembic migration to support longer `password_hash` string in users table
+sqlalchemy-continuum > idk
+ - has branch to support SQLA 2.0 but not quite ready see: https://github.com/kvesteri/sqlalchemy-continuum/issues/326
+ - does support SQLA 1.4 so perhaps I can stop at this SQLA version until 2.0 is supported... may not be possile with our dependency requirements
+
+When I approached this codebas that had been left to run without updates for so long I knew I was in for a complex upgrade path as the packages were all dependent on SQLAlchemy which was going through a serious upgrade before I stopped working on this project.
+Now, my core project dependencies require I upgrade SQLA to continue and therefore require upgrading all at once rather than upgrading one at a time.
+There is probably a small, happy path I could follow to upgrade each major dependencies slowly, but it appears finding that happy path may be impossible and may introduce unnecessary difficulty.
+So while Package A uses SQLA 2.0 and latest FastApi, so all other majore project dependencies must too upgrade to be compatible with the latest FastApi version.
+I believe the best path forward is to document each dependencies update strategy and document breaking changes and just wing it from there.
+But atleast I'll be informed to what errors to expect before I update anything which should help with the whole process.
