@@ -55,6 +55,34 @@ alembic migration --autogenerate -m "Your migrtation message"
 alembic upgrade head
 ```
 
+### DB Backup/Restore
+
+An ansible `backup.yml` playbook can periodically backup the database and files.
+The part that became the most tedious to remember was restoring the database so here are the steps.
+
+1. Run `pg_dump` with `-c` on docker container (via `backup.yml` playbook) 
+
+```
+docker exec -t {{ db_container_name }} bash -c 'pg_dump -c -U {{ db_user }} {{ db_name }} | gzip > backups/dump_{{ now }}.sql.gz'
+```
+
+2. Create new database and role
+
+```
+create database {{ db_name }}
+create role {{ db_user }} with password {{ db_pass }}
+grant all privileges on database {{ db_name }} to {{ db_user }}
+```
+
+3. Copy backup file into the container or make a temporary volume to backup file
+
+4. Run command to restore to our newly created and empty database
+
+```
+docker compose exec db
+psql -U {{ db_user }} -d {{ db_name }} -f dump_{{ now }}.sql
+```
+
 #### OpenGraph Tags
 
 Currently OG tags are a sticking point of my frontend implementation.

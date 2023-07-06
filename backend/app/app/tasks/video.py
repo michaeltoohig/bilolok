@@ -65,7 +65,7 @@ async def process_video(ctx: dict, item_id: UUID):
             logger.info(f"Got video {str(video.id)}")
             # transcoded file
             watermark = Path(settings.DATA_LOCAL_DIR) / "images" / "watermark.png"
-            assert watermark.exists()
+            assert watermark.exists(), "watermark file is missing"
             sfp = Path(settings.DATA_LOCAL_DIR) / crud_video._original_filepath(video)
             logger.debug(f"Got video {str(video.id)} original path {str(sfp)}")
             ffp = Path(settings.DATA_LOCAL_DIR) / crud_video._video_filepath(video)

@@ -1,11 +1,11 @@
 # Roadmap
 
 Current project codebase is far behind on updates.
-This mostly falls back to development being dependent on SQLAlchemy 1.3 and it was undergoing major changes towards version 2.0 while FastAPI was also going through growing pains as it was young when this project started too.
+This mostly falls back to development being dependent on SQLAlchemy 1.3 and it was undergoing major changes towards version 1.4 and 2.0 while FastAPI was also going through growing pains as it was young when this project started too.
 
-In the beginning of the project I ran into issues with Docker for Windows with WSL 1 so I didn't use Docker much but in past years I have other projects that work well with Docker with WSL 2 so I also want to migrate the codebase to Docker for easier development startup and deployment.
+In the beginning of the project I ran into issues with Docker for Windows with WSL 1 so I didn't use Docker much but in past years I have other projects that work well with Docker with WSL 2 so I also want to migrate this codebase to Docker for easier development startup and deployment.
 
-- [ ] Update dev docker config with explicit envvars rather than implicit envfile
+- [x] Update dev docker config with explicit envvars rather than implicit envfile
 - [x] Makefile for easy dev, setup, deploy, etc.
 - [ ] Update deployment scripts to use new production docker-compose.yml
 
@@ -13,7 +13,21 @@ In the beginning of the project I ran into issues with Docker for Windows with W
 - [ ] Update Python version; 3.8 is getting a tad old
 - [ ] Update SQLAlchemy, requires big update to many packages; see below
 
-## Notes to upgrade Python and Fastapi and SQLAlchemy
+
+## New Docker Deployment Plan
+
+- [x] stop old services
+- [x] one last backup to local machine
+  - [x] confirm backup
+- [ ] setup staging environment with current dev branch to test everything
+  - if I had money to burn I would do this on a new VPS
+  - [ ] upgrade docker to latest versions
+- [ ] test staging environment by updating DNS to point to it
+- [ ] fully commit to merging dev branch to master
+- [ ] update deployment scripts to match what was learned in staging testing
+- [ ] deploy
+
+## Notes to upgrade Python and FastAPI and SQLAlchemy
 
 Below are current package versions and my notes based on considerations I should take to upgrade to the latest version of each of the following packages.
 

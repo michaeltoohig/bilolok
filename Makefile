@@ -34,6 +34,10 @@ logs:
 login-backend:
 	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) exec backend bash
 
+.PHONY: login-db
+login-db:
+	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) exec db bash
+
 # .PHONY: config
 # config:
 # 	# Run and remove instantly
