@@ -1,58 +1,81 @@
-version: "3.9"
+x-backend: &backend
+  build:
+    context: ./backend/app
+    dockerfile: backend.dockerfile
+    target: production
+  volumes:
+    - "${DATA_LOCAL_DIR}:/data"
+  depends_on:
+    - db
+    - redis
+  environment:
+    - DATA_LOCAL_DIR=/data
+    - DEBUG
+    - SECRET_KEY
+    - SERVER_HOST
+    - FRONTEND_HOST
+    - BACKEND_CORS_ORIGINS
+    - PROJECT_NAME
+    - PROJECT_SLUG
+    # - SENTRY_DSN
+    # - SENTRY_HOST
+    # - SENTRY_PROJECT_IDS
+    - VAPID_PRIVATE_KEY
+    - VAPID_PUBLIC_KEY
+    - VAPID_MAILTO
+    - POSTGRES_SERVER
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+    - POSTGRES_DB
+    - REDIS_SERVER
+    - REDIS_PORT
+    - MAIL_TLS
+    - MAIL_SSL
+    - MAIL_PORT
+    - MAIL_SERVER
+    - MAIL_USERNAME
+    - MAIL_PASSWORD
+    - MAIL_FROM
+    - MAIL_FROM_NAME
+    - MAIL_USE_CREDENTIALS
+    - FIRST_SUPERUSER
+    - FIRST_SUPERUSER_PASSWORD
+    - VIDEO_SERVER
+    - THUMBOR_SECURITY_KEY
+    - THUMBOR_SERVER
 
 services:
-  # TODO Deploy following app services via docker-compose.
-  #  Currently, they are deployed directly on the serve in ansible deployment scripts.
-  # backend:
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - PORT=5000
-  #   build:
-  #     context: ./backend
-  #     dockerfile: backend.dockerfile
-  #   command: /start.sh
-
-  # worker:
-  #   depends_on:
-  #     - db
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   build:
-  #     context: ./backend
-  #     dockerfile: worker.dockerfile
-
-  # frontend:
-  #   depends_on:
-  #     - backend
-  #   # env_file:
-  #   #   -
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-
   db:
     image: postgres:13
     volumes:
-      - bilolok-db-data-prod:/var/lib/postgresql/data/pgdata
-      - /tmp/backups/db:/backups
-    env_file:
-      - .env
+      - bilolok-db-data:/var/lib/postgresql/data/pgdata
     environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_SERVER
+      - POSTGRES_PORT
+      - POSTGRES_DB
       - PGDATA=/var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
 
   redis:
     image: redis:6
-    env_file:
-      - .env
     ports:
       - "6379:6379"
+
+  admin:
+    image: adminer
+    ports:
+      - 8081:8080
+    depends_on: 
+      - db
+
+  mail:
+    image: maildev/maildev
+    ports:
+      - "1025:25"
+      - "1080:1080"
 
   tusd:
     image: tusproject/tusd
@@ -60,25 +83,21 @@ services:
       - "8070:8070"
     volumes:
       - "${DATA_LOCAL_DIR}/uploads/:/data/"
-    env_file:
-      - .env
-    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http https://api.bilolok.com/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
+    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http http://host.docker.internal:8000/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
 
   thumbor:
-    image: minimalcompact/thumbor
+    image: ghcr.io/minimalcompact/thumbor
     volumes:
       - "${DATA_LOCAL_DIR}/:/data/uploads/"
-    env_file:
-      - .env
     environment:
       # VIRTUAL_HOST is picked up by nginx-proxy. Here it's set for localhost
       # but you usually need to point it to your domain, e.g. thumbor.example.com
-      - VIRTUAL_HOST=image.bilolok.com
+      - VIRTUAL_HOST=localhost
       # THUMBOR_NUM_PROCESSES control how many processes run inside the container
       # Normally this is set in connection with the number of CPU cores
       # Note however that you can also use the docker-compose scale option to dynamically
       # scale your thumbor instances
-      - THUMBOR_NUM_PROCESSES=1
+      - THUMBOR_NUM_PROCESSES=4
       # this would allow CORS from any origin (you can restrict to specific origins if you want)
       - CORS_ALLOW_ORIGIN=*
       # returns a webp image if browser Accept headers match
@@ -93,31 +112,51 @@ services:
       - SECURITY_KEY=${THUMBOR_SECURITY_KEY}
       - LOADER=thumbor.loaders.file_loader
       - FILE_LOADER_ROOT_PATH=/data/uploads/
-    restart: always
 
-  nginx-proxy:
-    image: minimalcompact/thumbor-nginx-proxy-cache
+  thumbor-proxy:
+    image: ghcr.io/minimalcompact/thumbor-nginx-proxy-cache
     environment:
       # setting the DEFAULT_HOST to the same as the VIRTUAL_HOST above.
       # Makes sure it works irrespective of the host name
       # Normally this won't be necessary, but it helps for testing.
-      - DEFAULT_HOST=image.bilolok.com
+      - DEFAULT_HOST=localhost
       # optional: control cache memory size (default 500m), cache size (default 10g) and inactive (default 300m)
       #           see https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_cache_path
-      - PROXY_CACHE_SIZE=10g
-      - PROXY_CACHE_MEMORY_SIZE=500m
-      - PROXY_CACHE_INACTIVE=168h
+      - PROXY_CACHE_SIZE=500m
+      - PROXY_CACHE_MEMORY_SIZE=250m
+      - PROXY_CACHE_INACTIVE=1m
     volumes:
       # this is essential for nginx-proxy to detect docker containers, scaling etc
       # see https://github.com/jwilder/nginx-proxy
       - /var/run/docker.sock:/tmp/docker.sock:ro
       # mapping cache folder, to persist it independently of the container
-      - bilolok-img-cache-data-prod:/var/cache/nginx
+      - bilolok-img-cache-data:/var/cache/nginx
     ports:
       - "8888:80"
       # - "4443:4443"
-    restart: always
-  
+
+  # ffmpeg:
+  #   image: jrottenberg/ffmpeg:4.4-alpine
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - 8080:8080
+    environment:
+      NODE_ENV: production
+
+  backend:
+    <<: *backend
+    ports:
+      - "8000:80"
+    
+  worker:
+    <<: *backend
+    command: arq worker.WorkerSettings
+
 volumes:
-  bilolok-db-data-prod:
-  bilolok-img-cache-data-prod:
+  bilolok-db-data:
+  bilolok-img-cache-data:

@@ -1,6 +1,6 @@
 FROM node:14 as base
 
-FROM base AS dependencies
+FROM base AS development
 
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -13,7 +13,7 @@ COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 RUN yarn build
 
-FROM nginx:1.19-alpine as deploy
+FROM nginx:1.19-alpine as production
 
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*

@@ -64,7 +64,6 @@ EXPOSE 8000
 ENTRYPOINT /docker-entrypoint.sh $0 $@
 CMD ["uvicorn", "--reload", "--host=0.0.0.0", "--port=8000", "main:app"]
 
-
 # 'lint' stage runs black and isort
 # running in check mode means build will fail if any linting errors occur
 FROM development AS lint

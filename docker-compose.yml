@@ -166,7 +166,7 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
-      target: dependencies
+      target: development
     stdin_open: true
     command: yarn serve
     ports:

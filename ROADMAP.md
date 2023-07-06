@@ -21,8 +21,18 @@ In the beginning of the project I ran into issues with Docker for Windows with W
   - [x] confirm backup
 - [ ] setup staging environment with current dev branch to test everything
   - if I had money to burn I would do this on a new VPS
-  - [ ] upgrade docker to latest versions
+  - [x] upgrade docker to latest versions
+  - [x] restore sql dump file
+  - [ ] use production docker compose file (continue here at frontend production deployment)
+    - [ ] build frontend to correct target
+    - [ ] deploy frontend somehow
+    - [ ] update deployment playbook and variables
+      - [ ] be_api_port
+      - [ ] TBD
+  - [ ] develop process to build frontend and deploy it
 - [ ] test staging environment by updating DNS to point to it
+  - [ ] backend api
+  - [ ] frontend
 - [ ] fully commit to merging dev branch to master
 - [ ] update deployment scripts to match what was learned in staging testing
 - [ ] deploy
