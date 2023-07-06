@@ -144,19 +144,19 @@ services:
       dockerfile: Dockerfile
       target: production
     ports:
-      - 8080:8080
+      - 8080:80
     environment:
       NODE_ENV: production
 
   backend:
     <<: *backend
     ports:
-      - "8000:80"
+      - "8000:8000"
     
   worker:
     <<: *backend
     command: arq worker.WorkerSettings
-
+  
 volumes:
   bilolok-db-data:
   bilolok-img-cache-data:

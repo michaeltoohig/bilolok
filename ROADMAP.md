@@ -35,6 +35,7 @@ In the beginning of the project I ran into issues with Docker for Windows with W
   - [ ] frontend
 - [ ] fully commit to merging dev branch to master
 - [ ] update deployment scripts to match what was learned in staging testing
+- [ ] confirm UFW firewall is not sidestepped by docker compose ports
 - [ ] deploy
 
 ## Notes to upgrade Python and FastAPI and SQLAlchemy

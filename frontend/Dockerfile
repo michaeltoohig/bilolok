@@ -10,7 +10,7 @@ FROM base as build
 
 WORKDIR /app
 COPY . .
-COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=development /app/node_modules ./node_modules
 RUN yarn build
 
 FROM nginx:1.19-alpine as production
