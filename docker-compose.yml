@@ -164,7 +164,7 @@ services:
 
   frontend:
     build:
-      context: frontend
+      context: ./frontend
       dockerfile: Dockerfile
       target: development
     stdin_open: true

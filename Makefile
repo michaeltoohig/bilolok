@@ -1,7 +1,10 @@
-# SHELL := /bin/bash
-# PWD=$(shell pwd)
-COMPOSE_FILE := docker-compose.yml
-ENV_FILE := config/.env
+ifeq "$(APPLICATION_CONFIG)" "production"
+	COMPOSE_FILE := docker-compose.prod.yml
+	ENV_FILE := config/.env.production
+else
+	COMPOSE_FILE := docker-compose.yml
+	ENV_FILE := config/.env.development
+endif
 
 .PHONY: sbul
 sbul: stop build up logs
