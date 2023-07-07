@@ -24,12 +24,13 @@ In the beginning of the project I ran into issues with Docker for Windows with W
   - [x] upgrade docker to latest versions
   - [x] restore sql dump file
   - [ ] use production docker compose file (continue here at frontend production deployment)
-    - [ ] build frontend to correct target
+    - [x] build frontend to correct target
     - [ ] deploy frontend somehow
     - [ ] update deployment playbook and variables
       - [ ] be_api_port
       - [ ] TBD
   - [ ] develop process to build frontend and deploy it
+    - I find using nginx image to host build files is easy enough but it feels a bit... dirty? But the benefit of a one line startup is appealing right now.
 - [ ] test staging environment by updating DNS to point to it
   - [ ] backend api
   - [ ] frontend
