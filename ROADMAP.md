@@ -1,6 +1,6 @@
 # Roadmap
 
-Current project codebase is far behind on updates.
+Current project codebase is far behind on updates and is in need of some refactoring.
 This mostly falls back to development being dependent on SQLAlchemy 1.3 and it was undergoing major changes towards version 1.4 and 2.0 while FastAPI was also going through growing pains as it was young when this project started too.
 
 In the beginning of the project I ran into issues with Docker for Windows with WSL 1 so I didn't use Docker much but in past years I have other projects that work well with Docker with WSL 2 so I also want to migrate this codebase to Docker for easier development startup and deployment.
@@ -13,7 +13,6 @@ In the beginning of the project I ran into issues with Docker for Windows with W
 - [ ] Update Python version; 3.8 is getting a tad old
 - [ ] Update SQLAlchemy, requires big update to many packages; see below
 
-
 ## New Docker Deployment Plan
 
 - [x] stop old services
@@ -23,7 +22,8 @@ In the beginning of the project I ran into issues with Docker for Windows with W
   - if I had money to burn I would do this on a new VPS
   - [x] upgrade docker to latest versions
   - [x] restore sql dump file
-  - [ ] use production docker compose file (continue here at frontend production deployment)
+  - [x] update tusd service to use new webhook address to backend in shared docker network
+  - [ ] use production docker compose file
     - [x] build frontend to correct target
     - [ ] deploy frontend somehow
     - [ ] update deployment playbook and variables
@@ -91,3 +91,10 @@ The largest hurdle to upgrading to Vue3 in the past was Veutify was taking *fore
 > It appears they are still in development???
 
 Either way I'll support the old API and update the backend first then look at the frontend.
+
+- [ ] make sense of what my current API usage strategy is; appears API requests are going at in random order and causing issue loading things in time or in sensible orders
+  - make simplified home page
+  - add logs
+  - review requests and errors
+  - move to use of full page loaders instead of individual component loaders may make sense.
+- [ ] carefully consider keeping any custom caching layers - offload more to service worker? that is their strong suit isn't?

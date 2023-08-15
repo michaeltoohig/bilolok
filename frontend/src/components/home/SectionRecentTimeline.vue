@@ -91,15 +91,15 @@ export default {
       return this.recentCheckins; //.slice(0, n);
     },
     images() {
-      const n = Math.min(this.recentImages.length, this.recentItemCount);
+      // const n = Math.min(this.recentImages.length, this.recentItemCount);
       return this.recentImages; //.slice(0, n);
     },
     trips() {
-      const n = Math.min(this.recentImages.length, this.recentItemCount);
+      // const n = Math.min(this.recentImages.length, this.recentItemCount);
       return this.recentTrips; //.slice(0, n);
     },
     videos() {
-      const n = Math.min(this.recentVideos.length, this.recentItemCount);
+      // const n = Math.min(this.recentVideos.length, this.recentItemCount);
       return this.recentVideos; //.slice(0, n);
     },
     timelineItems() {

@@ -13,7 +13,7 @@ export default {
   //   let cached = ls.get(resource);
   //   if (cached) {
   //     cached.push(resp.data);
-  //     ls.set(resource, cached, { ttl: 3600 });
+  //     // ls.set(resource, cached, { ttl: 3600 });
   //   }
   //   return resp.data
   // },

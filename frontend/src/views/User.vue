@@ -230,12 +230,12 @@ export default {
       }
     },
   },
-  async mounted() {
+  async created() {
     this.loading = true;
     const { id } = this.$route.params;
     await this.$store.dispatch('user/loadOne', id);
     // Load data here so it is available for sub-components
-    await this.fetchData(id);
+    this.fetchData(id);
     this.loading = false;
   },
 };

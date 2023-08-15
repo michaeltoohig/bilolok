@@ -21,17 +21,17 @@ const getters = {
   },
 };
 
-const loadingPromises = {
-  users: false,
-  user: {},
-};
+// const loadingPromises = {
+//   users: false,
+//   user: {},
+// };
 
-async function loadOrWait(loadingPromises, id, fetchFunction) {
-  if (!loadingPromises[id]) {
-    loadingPromises[id] = fetchFunction();
-  }
-  await loadingPromises[id];
-};
+// async function loadOrWait(loadingPromises, id, fetchFunction) {
+//   if (!loadingPromises[id]) {
+//     loadingPromises[id] = fetchFunction();
+//   }
+//   await loadingPromises[id];
+// };
 
 const actions = {
   getUsers: async ({ commit, dispatch, rootState }, payload) => {
@@ -61,15 +61,17 @@ const actions = {
     
     let user;
     const cacheKey = `users:${id}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       user = cached;
     } else {
-      await loadOrWait(loadingPromises.user, id, async () => {
-        const resp = await usersApi.get(id, token);
-        user = resp.data;
-        ls.set(cacheKey, user, { ttl: 300 });
-      });
+      // await loadOrWait(loadingPromises.user, id, async () => {
+      //   const resp = await usersApi.get(id, token);
+      //   user = resp.data;
+      //   // ls.set(cacheKey, user, { ttl: 300 });
+      // });
+      const resp = await usersApi.get(id, token);
+      user = resp.data;
     }
     commit('add', user);
     return Promise.resolve(getters.find(id));    

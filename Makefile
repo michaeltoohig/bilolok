@@ -33,6 +33,10 @@ down:
 logs:
 	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) logs --tail=100 -f $(c)
 
+.PHONY: login-frontend
+login-frontend:
+	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) exec frontend bash
+
 .PHONY: login-backend
 login-backend:
 	docker compose --file $(COMPOSE_FILE) --env-file $(ENV_FILE) exec backend bash

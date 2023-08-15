@@ -117,7 +117,7 @@ function commitAddCheckin(checkin, commit) {
 const actions = {
   load: async ({ commit }) => {
     const cacheKey = 'checkins';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -126,20 +126,20 @@ const actions = {
       checkins.forEach((item) => {
         commitAddCheckin(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let checkin;
     const cacheKey = `checkins:${id}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       checkin = cached;
     } else {
       const resp = await checkinsApi.get(id);
       checkin = resp.data;
-      ls.set(cacheKey, checkin, { ttl: 300 });
+      // ls.set(cacheKey, checkin, { ttl: 300 });
     }
     commitAddCheckin(checkin, commit);
     return Promise.resolve(getters.find(id));
@@ -147,7 +147,7 @@ const actions = {
   getRecent: async ({ commit }) => {
     let items;
     const cacheKey = 'checkins:recent';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -162,12 +162,12 @@ const actions = {
         commitAddCheckin(item, commit);
       });
       commit('setRecentIds', items.map((i) => i.id));
-      ls.set(cacheKey, true, { ttl: 60 });  
+      // ls.set(cacheKey, true, { ttl: 60 });  
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const cacheKey = `checkins:nakamal:${nakamalId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -176,12 +176,12 @@ const actions = {
       checkins.forEach((item) => {
         commitAddCheckin(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   getUser: async ({ commit }, userId) => {
     const cacheKey = `checkins:user:${userId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -190,7 +190,7 @@ const actions = {
       checkins.forEach((item) => {
         commitAddCheckin(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {

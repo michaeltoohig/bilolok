@@ -70,7 +70,7 @@ services:
       - "8070:8070"
     volumes:
       - "${DATA_LOCAL_DIR}/uploads/:/data/"
-    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http http://host.docker.internal:8000/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
+    command: -port 8070 -upload-dir /data/ -behind-proxy -hooks-http https://backend:8000/api/v1/tus-hook -hooks-http-forward-headers authorization -hooks-enabled-events pre-create,post-finish
 
   thumbor:
     image: ghcr.io/minimalcompact/thumbor

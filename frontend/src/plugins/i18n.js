@@ -5,7 +5,7 @@ import { getLocale, saveLocale } from '@/utils';
 Vue.use(VueI18n);
 
 function loadLocaleMessages() {
-  const locales = require.context('@/locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
+  const locales = require.context('@/i18n', true, /[A-Za-z0-9-_,\s]+\.json$/i);
   const messages = {};
   locales.keys().forEach((key) => {
     const matched = key.match(/([A-Za-z0-9-_]+)\./i);
@@ -25,7 +25,7 @@ if (locale === undefined) {
 
 const i18n = new VueI18n({
   locale,
-  fallbackLocale: 'bi',
+  fallbackLocale: ['en', 'bi'],
   messages: loadLocaleMessages(),
 });
 

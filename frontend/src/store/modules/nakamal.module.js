@@ -105,7 +105,7 @@ function setLightBadge(light) {
       lightBadge['color'] = 'purple';
       break;
     case 'pink':
-      lightBadge['color'] = 'pink lighte-2';
+      lightBadge['color'] = 'pink light-2';
       break;
     case 'candle':
       lightBadge['color'] = 'grey';
@@ -161,12 +161,12 @@ async function loadOrWait(loadingPromises, id, fetchFunction) {
 const actions = {
   load: async ({ commit }) => {
     const cacheKey = 'nakamals';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
       const resp = await nakamalsApi.getAll({});
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
       const nakamals = resp.data
       nakamals.forEach((item) => {
         commitAddNakamal(item, commit);
@@ -176,14 +176,14 @@ const actions = {
   loadOne: async ({ commit, dispatch, getters }, id) => {
     let nakamal;
     const cacheKey = `nakamals:${id}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       nakamal = cached;
     } else {
       await loadOrWait(loadingPromises.nakamal, id, async () => {
         let resp = await nakamalsApi.get(id);
         nakamal = resp.data;
-        ls.set(cacheKey, nakamal, { ttl: 300 });
+        // ls.set(cacheKey, nakamal, { ttl: 300 });
       });
     }
     commitAddNakamal(nakamal, commit);
@@ -255,7 +255,7 @@ const actions = {
   },
   loadChiefNakamals: async ({ commit, getters }, userId) => {
     const cacheKey = `nakamals:chief:${userId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -265,7 +265,7 @@ const actions = {
         nakamals.forEach((item) => {
           commitAddNakamal(item, commit);
         });
-        ls.set(cacheKey, true, { ttl: 300 });
+        // ls.set(cacheKey, true, { ttl: 300 });
       } catch(error) {
         console.log('load cheif of nakamals error', error);
       }
@@ -274,14 +274,14 @@ const actions = {
   loadFeatured: async ({ commit, getters }) => {
     let nakamal;
     const cacheKey = `nakamals:featured`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       nakamal = cached;
     } else {
       try {
         const resp = await nakamalsApi.getFeatured();
         nakamal = resp.data;
-        ls.set(cacheKey, nakamal, { ttl: 300 });
+        // ls.set(cacheKey, nakamal, { ttl: 300 });
       } catch(error) {
         console.log('featured nakamal error', error);
       }
@@ -302,7 +302,7 @@ const actions = {
       const nakamal = resp.data;
       commitAddNakamal(nakamal, commit);
       // TODO this is fragile - multiple locations setting cache values
-      ls.set(`nakamals:${nakamalId}`, nakamal, { ttl: 300 });
+      // ls.set(`nakamals:${nakamalId}`, nakamal, { ttl: 300 });
       // ls.remove(`nakamals:${nakamalId}`);
     } catch (error) {
       console.log('set profile image for nakamal error', error);
