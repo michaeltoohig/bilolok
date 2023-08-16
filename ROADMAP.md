@@ -25,15 +25,16 @@ In the beginning of the project I ran into issues with Docker for Windows with W
   - [x] restore sql dump file
   - [ ] use production docker compose file (continue here at frontend production deployment)
     - [x] build frontend to correct target
-    - [ ] deploy frontend somehow
+    - [x] deploy frontend somehow
     - [ ] update deployment playbook and variables
       - [ ] be_api_port
       - [ ] TBD
+    - [x] update backend to use production target
   - [ ] develop process to build frontend and deploy it
     - I find using nginx image to host build files is easy enough but it feels a bit... dirty? But the benefit of a one line startup is appealing right now.
-- [ ] test staging environment by updating DNS to point to it
-  - [ ] backend api
-  - [ ] frontend
+- [x] test staging environment by updating DNS to point to it
+  - [x] backend api
+  - [x] frontend
 - [ ] fully commit to merging dev branch to master
 - [ ] update deployment scripts to match what was learned in staging testing
 - [ ] confirm UFW firewall is not sidestepped by docker compose ports

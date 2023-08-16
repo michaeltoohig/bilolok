@@ -17,7 +17,7 @@ x-backend: &backend
     - BACKEND_CORS_ORIGINS
     - PROJECT_NAME
     - PROJECT_SLUG
-    # - SENTRY_DSN
+    - SENTRY_DSN
     # - SENTRY_HOST
     # - SENTRY_PROJECT_IDS
     - VAPID_PRIVATE_KEY
