@@ -91,7 +91,7 @@ function commitAddVideo(video, commit) {
 const actions = {
   load: async ({ commit }) => {
     const cacheKey = 'videos';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -99,20 +99,20 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 }); 
+      // ls.set(cacheKey, true, { ttl: 300 }); 
     }
   },
   loadOne: async ({ commit, getters }, id) => {
     // TODO handle network errors
     let video;
     const cacheKey = `videos:${id}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       video = cached;
     } else {
       let resp = await videosApi.get(id);
       video = resp.data;
-      ls.set(cacheKey, video, { ttl: 300 });
+      // ls.set(cacheKey, video, { ttl: 300 });
     }
     commitAddVideo(video, commit);
     return Promise.resolve(getters.find(id));
@@ -120,7 +120,7 @@ const actions = {
   getRecent: async ({ commit }) => {
     let items;
     const cacheKey = 'videos:recent';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -135,12 +135,12 @@ const actions = {
         commitAddVideo(item, commit);
       });
       commit('setRecentIds', items.map((i) => i.id));
-      ls.set(cacheKey, true, { ttl: 60 });
+      // ls.set(cacheKey, true, { ttl: 60 });
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const cacheKey = `videos:nakamal:${nakamalId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -149,12 +149,12 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   getUser: async ({ commit }, userId) => {
     const cacheKey = `videos:user:${userId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -163,7 +163,7 @@ const actions = {
       videos.forEach((item) => {
         commitAddVideo(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   add: async ({ commit, dispatch, rootState }, payload) => {

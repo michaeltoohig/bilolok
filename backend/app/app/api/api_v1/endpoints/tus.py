@@ -58,7 +58,7 @@ async def tus_hook(
     scheme, _, token = (
         tusdIn.get("HTTPRequest").get("Header").get("Authorization")[0].partition(" ")
     )
-    assert scheme == "Bearer"
+    assert scheme == "Bearer", "Incorrect authorization scheme"
     try:
         jwt_strategy = get_jwt_strategy()
         data = jwt.decode(
@@ -70,6 +70,7 @@ async def tus_hook(
         user_id = data.get("user_id")
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        logger.debug(f"Tusd request made for user_id={user_id}")
         # Check user is verified and active or superuser
         user = await user_manager.get(user_id)
         status_code = status.HTTP_401_UNAUTHORIZED
@@ -89,6 +90,7 @@ async def tus_hook(
     try:
         target = tusdIn.get("Upload").get("MetaData").get("Target")
         target = UploadTarget(target)
+        logger.debug(f"Tusd request made for target={target.name}")
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Target is not valid"
@@ -107,6 +109,7 @@ async def tus_hook(
         # Below could be some sort of task that handles image storage
         #  using the `.info` file in the uploads directory
         file_id = tusdIn.get("Upload").get("ID")
+        logger.debug(f"handling post-finish hook file_id={file_id}")
         filename = tusdIn.get("Upload").get("MetaData").get("filename")
         filetype = tusdIn.get("Upload").get("MetaData").get("filetype")
         if target == UploadTarget.NAKAMAL:
@@ -215,3 +218,6 @@ async def tus_hook(
             except Exception:
                 # TODO log
                 raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # end post-finish hook
+        logger.info(f"File upload complete file_id={file_id}")

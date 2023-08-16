@@ -11,6 +11,7 @@ import router from './router';
 import store from './store';
 import vuetify from './plugins/vuetify';
 import './plugins/photoswipe';
+import './plugins/meta';
 import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'leaflet/dist/leaflet.css';

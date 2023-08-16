@@ -6,6 +6,7 @@
 import store from '@/store';
 
 const adminRouteGuard = async (to, from, next) => {
+  console.log("TODO remove this") // TODO remove this guard when router 
   if (!store.getters['auth/hasAdminAccess']) {
     next('/home');
   }

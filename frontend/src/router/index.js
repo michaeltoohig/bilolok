@@ -1,117 +1,96 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Meta from 'vue-meta';
-import Home from '@/views/Home.vue';
+import store from '@/store';
+import routes from './routes';
 
 Vue.use(VueRouter);
-Vue.use(Meta);
-
-const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: Home,
-  },
-  {
-    path: '/auth/:auth',
-    name: 'Auth',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/Auth.vue'),
-    // importing store to this file caused a circular dependency error
-    // so authRouteGuard is in the component.
-    // beforeEnter: authRouteGuard,
-    // beforeUpdate: authRouteGuard,
-  },
-  {
-    path: '/user',
-    name: 'UserList',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/UserList.vue'),
-  },
-  {
-    path: '/user/:id',
-    name: 'User',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/User.vue'),
-  },
-  {
-    path: '/about',
-    name: 'About',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/About.vue'),
-  },
-  {
-    path: '/map',
-    name: 'Map',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/Map.vue'),
-  },
-  // {
-  //   path: '/search',
-  //   name: 'Search',
-  //   component: () => import(/* webpackChunkName: "public" */ '@/views/Search.vue'),
-  // },
-  {
-    path: '/nakamal/:id',
-    name: 'Nakamal',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/Nakamal.vue'),
-  },
-  {
-    path: '/nakamal/:id/edit',
-    name: 'NakamalEdit',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/NakamalEdit.vue'),
-  },
-  {
-    path: '/checkin/:id',
-    name: 'Checkin',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Checkin.vue'),
-  },
-  {
-    path: '/image/:id',
-    name: 'Image',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Image.vue'),
-  },
-  {
-    path: '/trip/:id',
-    name: 'Trip',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Trip.vue'),
-  },
-  {
-    path: '/video/:id',
-    name: 'Video',
-    component: () => import(/* webpackChunkName: "public" */ '@/views/share/Video.vue'),
-  },
-  {
-    path: '/admin',
-    name: 'Admin',
-    redirect: '/admin/users/all',
-    component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/Admin.vue'),
-    children: [
-      {
-        path: 'users',
-        redirect: 'users/all',
-      },
-      {
-        path: 'users/all',
-        name: 'AdminUsers',
-        component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/Users.vue'),
-      },
-      {
-        path: 'users/edit/:id',
-        name: 'AdminUsersEdit',
-        component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/UserEdit.vue'),
-      },
-      {
-        path: 'users/create',
-        name: 'AdminUsersCreate',
-        component: () => import(/* webpackChunkName: "admin" */ '@/views/admin/UserCreate.vue'),
-      },
-    ],
-  },
-  {
-    path: '/*', redirect: '/',
-  },
-];
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+// Before each route evaluates...
+router.beforeEach((routeTo, routeFrom, next) => {
+  // If this isn't an initial page load...
+  if (routeFrom.name !== null) {
+    // Start the route progress bar.
+    // NProgress.start();
+  }
+
+  // Check if auth is required on this route
+  const authRequired = routeTo.matched.some((route) => route.meta?.authRequired);
+  if (!authRequired) return next();
+
+  // const authStore = useAuthStore();
+  // authStore.user ? next() : redirectToLogin();
+  console.log('login status check', store.getters['auth/isLoggedIn']);
+  store.getters['auth/isLoggedIn'] ? next() : redirectToLogin();
+
+  function redirectToLogin() {
+    console.log(`[AUTH REDIRECT] must be logged into access ${routeTo.fullPath}`);
+    // ElMessage({
+    //   message: 'You must be logged in to view that page.',
+    //   grouping: true,
+    //   type: 'info',
+    // });
+    // Pass the original route to the login component
+    // next({ name: 'login', query: { redirectFrom: routeTo.fullPath } });
+    next({ name: 'Auth', params: { auth: 'login' } });
+  };
+});
+
+
+router.beforeResolve(async (routeTo, routeFrom, next) => {
+  // Create a `beforeResolve` hook, which fires whenever
+  // `beforeRouteEnter` and `beforeRouteUpdate` would. This
+  // allows us to ensure data is fetched even when params change,
+  // but the resolved route does not. We put it in `meta` to
+  // indicate that it's a hook we created, rather than part of
+  // Vue Router (yet?).
+  try {
+    // For each matched route...
+    for (const route of routeTo.matched) {
+      console.log('beforeResolve root');
+      await new Promise((resolve, reject) => {
+        // If a `beforeResolve` hook is defined, call it with
+        // the same arguments as the `beforeEnter` hook.
+        if (route.meta && route.meta.beforeResolve) {
+          route.meta.beforeResolve(routeTo, routeFrom, (...args) => {
+            // If the user chose to redirect...
+            if (args.length) {
+              // If redirecting to the same route we're coming from...
+              if (routeFrom.name === args[0].name) {
+                // Complete the animation of the route progress bar.
+                // NProgress.done();
+              }
+              // Complete the redirect.
+              next(...args);
+              resolve();
+              // reject(new Error('Redirected'));
+            } else {
+              resolve();
+            }
+          })
+        } else {
+          // Otherwise, continue resolving the route.
+          resolve();
+        }
+      })
+    }
+    // If a `beforeResolve` hook chose to redirect, just return.
+  } catch (error) {
+    return;
+  }
+  // If we reach this point, continue resolving the route.
+  next();
+});
+
+// When each route is finished evaluating...
+router.afterEach((routeTo, routeFrom) => {
+  // Complete the animation of the route progress bar.
+  // NProgress.done();
 });
 
 export default router;

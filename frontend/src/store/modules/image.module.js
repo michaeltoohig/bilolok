@@ -65,13 +65,13 @@ const actions = {
     // TODO handle network errors
     let image;
     const cacheKey = `images:${id}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       image = cached;
     } else {
       let resp = await imagesApi.get(id);
       image = resp.data;
-      ls.set(cacheKey, image, { ttl: 900 });
+      // ls.set(cacheKey, image, { ttl: 900 });
     }
     commitAddImage(image, commit);
     return Promise.resolve(getters.find(id));
@@ -79,7 +79,7 @@ const actions = {
   getRecent: async ({ commit }) => {
     let items;
     const cacheKey = 'images:recent';
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -94,12 +94,12 @@ const actions = {
         commitAddImage(item, commit);
       });
       commit('setRecentIds', items.map((i) => i.id));
-      ls.set(cacheKey, true, { ttl: 60 });
+      // ls.set(cacheKey, true, { ttl: 60 });
     }
   },
   getNakamal: async ({ commit }, nakamalId) => {
     const cacheKey = `images:nakamal:${nakamalId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -108,12 +108,12 @@ const actions = {
       images.forEach((item) => {
         commitAddImage(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   getUser: async ({ commit }, userId) => {
     const cacheKey = `images:user:${userId}`;
-    const cached = ls.get(cacheKey);
+    const cached = false; // ls.get('does-not-exist'); // cacheKey - replaced to remove cache
     if (cached) {
       return;
     } else {
@@ -122,7 +122,7 @@ const actions = {
       images.forEach((item) => {
         commitAddImage(item, commit);
       });
-      ls.set(cacheKey, true, { ttl: 300 });
+      // ls.set(cacheKey, true, { ttl: 300 });
     }
   },
   remove: async ({ commit, dispatch, rootState }, id) => {

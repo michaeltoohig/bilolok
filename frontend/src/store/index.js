@@ -5,6 +5,7 @@ import checkinModule from './modules/checkin.module';
 import imageModule from './modules/image.module';
 import mapModule from './modules/map.module';
 import nakamalModule from './modules/nakamal.module';
+import nakamalAltModule from './modules/nakamal.alt.module';
 import notifyModule from './modules/notify.module';
 import settingModule from './modules/setting.module';
 import tripModule from './modules/trip.module';
@@ -24,6 +25,7 @@ export default new Vuex.Store({
     image: imageModule,
     map: mapModule,
     nakamal: nakamalModule,
+    nakamalAlt: nakamalAltModule,
     notify: notifyModule,
     setting: settingModule,
     trip: tripModule,
