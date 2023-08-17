@@ -11,7 +11,7 @@ const initialState = () => ({
 const state = initialState();
 
 const getters = {
-  get: (state, _, __, rootGetters) => id => {
+  get: (state) => id => {
     return state.byId[id];
   },
   selected: (state, getters) => {
@@ -26,7 +26,7 @@ const actions = {
       let resp = await nakamalsApi.get(id);
       commit('ADD', resp.data);
     } catch (err) {
-      console.error('nakamal load error');
+      console.error('nakamal load error', err);
       throw err;
     }
   },

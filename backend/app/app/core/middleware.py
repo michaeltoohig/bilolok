@@ -94,6 +94,7 @@ middleware = [
 
 # Set all CORS enabled origins
 if settings.BACKEND_CORS_ORIGINS:
+    print(settings.BACKEND_CORS_ORIGINS)
     middleware.append(
         Middleware(
             CORSMiddleware,

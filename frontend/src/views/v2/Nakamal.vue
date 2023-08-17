@@ -151,7 +151,7 @@ import CardChief from '@/components/nakamal/CardChief.vue';
 import VideoUploadDialog from '@/components/nakamal/VideoUploadDialog.vue';
 
 export default {
-  name: 'Nakamal',
+  name: 'Nakamal2',
   // props: {
   //   nakamal: {
   //     type: Object,
@@ -169,13 +169,17 @@ export default {
   },
   data() {
     return {
-      nakamalProfile: null,
+      // nakamalProfile: null,
     };
   },
   computed: {
     ...mapGetters({
-      nakamal: 'nakamalAlt/selected',
+      nakamal: 'nakamal2/selected',
+      profile: 'image2/get',
     }),
+    nakamalProfile() {
+      return this.profile(this.nakamal.profile);
+    },
   },
 };
 </script>
