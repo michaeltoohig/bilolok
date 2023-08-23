@@ -1,3 +1,4 @@
+from email.mime import image
 from typing import Any, AsyncIterator, List
 from uuid import UUID
 from crud.video import CRUDVideo
@@ -169,6 +170,44 @@ async def update_featured(
     await redis.set("featured-nakamal", str(item.id))
     # TODO load profile
     return NakamalSchemaOut(**item.dict())
+
+
+@router.get(
+    "/{item_id:uuid}/timeline",
+)
+async def get_timeline(
+    db: AsyncSession = Depends(get_db),
+    *,
+    item: NakamalSchema = Depends(get_nakamal_or_404),
+) -> List[Any]:
+    # TODO get all timeline items and remove endpoints for individual timeline items unless I recall a need for them.
+    # TODO handle 100 checkins will be a shorter timespan than 100 videos and therefore the timeline will be out of order by the second page
+    crud_image = CRUDImage(db)
+    crud_checkin = CRUDCheckin(db)
+    crud_video = CRUDVideo(db)
+    crud_trip = CRUDTrip(db)
+
+    images = await crud_image.get_multi_by_nakamal(item.id)
+    checkins = await crud_checkin.get_multi_by_nakamal(item.id)
+    videos = await crud_video.get_multi_by_nakamal(item.id)
+    trips = await crud_trip.get_multi_by_nakamal(item.id)
+    
+    data = []
+    
+    for checkin in checkins:
+        data.append({"type": "checkin", "data": CheckinSchemaOut(**checkin.dict())})
+    for image in images:
+        data.append({"type": "image", "data": ImageSchemaOut(**image.dict())})
+    for video in videos:
+        data.append({"type": "video", "data": VideoSchemaOut(**video.dict())})
+    for trip in trips:
+        data.append({"type": "trip", "data": TripSchemaOut(**trip.dict())})
+    print(len(data))
+    print(data)
+
+    data = sorted(data, key=lambda i: i.get("data").created_at, reverse=True)
+    print(data)
+    return data
 
 
 @router.get(

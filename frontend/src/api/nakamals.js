@@ -39,6 +39,15 @@ export default {
   async deleteProfileImage(token, id, imageId) {
     return Vue.prototype.$http.delete(`${resource}/${id}/profiles/${imageId}`, authHeaders(token));
   },
+
+  async getTimeline(id, skip = 0, limit = 100) {
+    return Vue.prototype.$http.get(`${resource}/${id}/timeline`, {
+      params: {
+        skip,
+        limit,
+      },
+    });
+  },
   
   async getImages(id, skip = 0, limit = 100) {
     return Vue.prototype.$http.get(`${resource}/${id}/images`, {

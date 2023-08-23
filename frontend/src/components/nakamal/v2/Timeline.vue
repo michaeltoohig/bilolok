@@ -4,6 +4,7 @@
       <NakamalPost
         :nakamal="nakamal"
         @select-checkin="selectCheckin"
+        @select-image="selectImage"
         @select-video="selectVideo"
       ></NakamalPost>
 
@@ -11,7 +12,7 @@
     </div>
 
     <v-alert
-      v-show="!checkins.length"
+      v-show="false"
       class="mx-auto elevation-2"
       color="info"
       colored-border
@@ -61,13 +62,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import dayjs from 'dayjs';
 import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
 import TripTimelineCard from '@/components/timeline/TripTimelineCard.vue';
 import NakamalPost from '@/components/nakamal/NakamalPost.vue';
+import nakamalsApi from '@/api/nakamals';
 
 export default {
   name: 'TabTimeline',
@@ -82,51 +84,59 @@ export default {
   data() {
     return {
       loading: true,
+      // timelineItems: [],
       // items: [],
     };
   },
   computed: {
     ...mapGetters({
+      timelineItems: 'nakamal2/timeline',
       isUserVerified: 'auth/isUserVerified',
-      getImages: 'image/nakamal',
-      getCheckins: 'checkin/nakamal',
-      getVideos: 'video/nakamal',
-      getTrips: 'trip/nakamal',
+      // getImages: 'image/nakamal',
+      // getCheckins: 'checkin/nakamal',
+      // getVideos: 'video/nakamal',
+      // getTrips: 'trip/nakamal',
     }),
-    checkins() {
-      if (!this.nakamal) return [];
-      return this.getCheckins(this.nakamal.id);
-    },
-    images() {
-      if (!this.nakamal) return [];
-      return this.getImages(this.nakamal.id);
-    },
-    videos() {
-      if (!this.nakamal) return [];
-      return this.getVideos(this.nakamal.id);
-    },
-    trips() {
-      if (!this.nakamal) return [];
-      return this.getTrips(this.nakamal.id);
-    },
-    timelineItems() {
-      let items = [];
-      items = items.concat(this.checkins.map((i) => ({ type: 'checkin', data: i })));
-      items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
-      items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
-      items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
-      return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
-    },
+    // checkins() {
+    //   if (!this.nakamal) return [];
+    //   return this.getCheckins(this.nakamal.id);
+    // },
+    // images() {
+    //   if (!this.nakamal) return [];
+    //   return this.getImages(this.nakamal.id);
+    // },
+    // videos() {
+    //   if (!this.nakamal) return [];
+    //   return this.getVideos(this.nakamal.id);
+    // },
+    // trips() {
+    //   if (!this.nakamal) return [];
+    //   return this.getTrips(this.nakamal.id);
+    // },
+    // timelineItems() {
+    //   let items = [];
+    //   items = items.concat(this.checkins.map((i) => ({ type: 'checkin', data: i })));
+    //   items = items.concat(this.images.map((i) => ({ type: 'image', data: i })));
+    //   items = items.concat(this.trips.map((i) => ({ type: 'trip', data: i })));
+    //   items = items.concat(this.videos.map((i) => ({ type: 'video', data: i })));
+    //   return items.sort((a, b) => (dayjs(b.data.created_at).isAfter(a.data.created_at) ? 1 : -1));
+    // },
   },
   methods: {
-    async fetchData() {
-      await Promise.all([
-        this.$store.dispatch('checkin/getNakamal', this.nakamal.id),
-        this.$store.dispatch('image/getNakamal', this.nakamal.id),
-        this.$store.dispatch('trip/getNakamal', this.nakamal.id),
-        this.$store.dispatch('video/getNakamal', this.nakamal.id),
-      ]);
-    },
+    ...mapActions({
+      fetchTimeline: 'nakamal2/fetchTimeline',
+    }),
+    // async fetchData() {
+    //   console.log("fetchData v2 timeline.vue", this.nakamal.id);
+    //   const resp = await nakamalsApi.getTimeline(this.nakamal.id);
+    //   this.timelineItems = resp.data;
+    //   // await Promise.all([
+    //   //   this.$store.dispatch('checkin/getNakamal', this.nakamal.id),
+    //   //   this.$store.dispatch('image/getNakamal', this.nakamal.id),
+    //   //   this.$store.dispatch('trip/getNakamal', this.nakamal.id),
+    //   //   this.$store.dispatch('video/getNakamal', this.nakamal.id),
+    //   // ]);
+    // },
     // updateTimelineItems() {
     //   let items = [];
     //   items = items.concat(this.checkins.map((i) => ({ type: 'checkin', data: i })));
@@ -137,6 +147,9 @@ export default {
     // },
     selectCheckin() {
       this.$emit('select-checkin');
+    },
+    selectImage() {
+      this.$emit('select-image');
     },
     selectVideo() {
       this.$emit('select-video');
@@ -150,9 +163,9 @@ export default {
     // remove dependency on multiple stores
     // this data should update each time checked anyways so don't rely on caching on client (except SW)
     
-    this.loading = true;
-    // TODO timeline API endpoint instead of this
-    await this.fetchData();
+    // this.loading = true;
+    // await this.fetchData();
+    await this.fetchTimeline(this.nakamal.id);
     this.loading = false;
   },
 };

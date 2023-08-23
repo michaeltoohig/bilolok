@@ -1,5 +1,18 @@
 # Roadmap
 
+## Upgrade Plan
+
+Updating the code enough for deployment has occurred but now I am left with a codebase that is fragile, more than a couple years of additional experience plus having the benefit of fresh sight I see places to improve the codebase.
+
+- [x] Re-write entrypoint to verify any existing auth tokens before app appears
+  - maybe not as easy as imagined as I now use `beforeEach` and that calls before the `App.vue` component is created.
+- [ ] Consistent API returns ID of related elements by default unless specifically requesting to attach the full related object but let's try to discourage that for now.
+- [ ] FE stores for major pages of the app as loading a full nakamal for the nakamal page should not be the same as the light-weight nakamal object returned for the map view.
+- [ ] Allow SW to cache but otherwise limit frontend caching to avoid headache; still allows for offline usage. And refreshing the "page" means the local cache is thrown out and fixes some types of errors I've seen due to cache persisting longer than intended.
+- [ ] 
+
+## Details for Roadmap
+
 Current project codebase is far behind on updates and is in need of some refactoring.
 This mostly falls back to development being dependent on SQLAlchemy 1.3 and it was undergoing major changes towards version 1.4 and 2.0 while FastAPI was also going through growing pains as it was young when this project started too.
 

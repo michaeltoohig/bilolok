@@ -107,7 +107,7 @@ export default {
     },
     toNakamal() {
       const { id } = this.nakamal;
-      this.$store.dispatch('nakamal/select', id)
+      this.$store.dispatch('nakamal2/select', id)
         .then(() => {
           this.$router.push({ name: 'Nakamal', params: { id } });
         });

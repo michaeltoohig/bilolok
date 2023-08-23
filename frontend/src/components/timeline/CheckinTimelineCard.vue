@@ -57,8 +57,8 @@ export default {
       isLoggedIn: 'auth/isLoggedIn',
       currentUser: 'auth/user',
       hasAdminAccess: 'auth/hasAdminAccess',
-      findNakamal: 'nakamal/find',
-      findUser: 'user/find',
+      // findNakamal: 'nakamal/find',
+      // findUser: 'user/find',
     }),
     isMine() {
       if (!this.user || !this.isLoggedIn) return false;
@@ -110,14 +110,15 @@ export default {
     },
     ...mapActions({
       loadUser: 'user/loadOne',
-      loadNakamal: 'nakamal/loadOne',
+      loadNakamal: 'nakamal2/fetch',
     }),
   },
   async created() {
+    console.log('item.nakamal for checkin', this.item.nakamal);
     if (this.item.nakamal) {
-      this.nakamal = await this.loadNakamal(this.item.nakamal);
+      this.nakamal = await this.loadNakamal(this.item.nakamal.id);
     }
-    this.user = await this.loadUser(this.item.user);
+    this.user = await this.loadUser(this.item.user.id);
   },
 };
 </script>

@@ -47,19 +47,20 @@ const routes = [
     name: "Nakamal",
     component: () => import(/* webpackChunkName: "public" */ "@/views/v2/Nakamal.vue"),
     meta: {
-      authRequired: true,
       async beforeResolve(routeTo, routeFrom, next) {
         const nakamalId = routeTo.params.id;
         try {
           await store.dispatch("nakamal2/fetch", nakamalId);
           await store.dispatch("nakamal2/select", nakamalId);
-          const nakamal = store.getters("nakamal2/selected")
-          if (nakamal.profile) {
-            await store.dispatch("image2/fetch", nakamal.profile)
-          }
+          // TODO how to getter nakamal from ID?
+          // const nakamal = store.getter("nakamal2/selected")
+          // console.log('beforeResolve nak', nakamal, nakamal.profile);
+          // if (nakamal.profile) {
+          //   await store.dispatch("image2/fetch", nakamal.profile)
+          // }
           next();
         } catch (err) {
-          console.error(err);
+          console.error('beforeResolve Nak Error', err)
           next({ name: "404" });
         }
       },

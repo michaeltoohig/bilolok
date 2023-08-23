@@ -14,7 +14,7 @@
       </span>
     </v-system-bar>
 
-    <v-main v-if="loggedIn===null">
+    <v-main v-if="loggedIn===null && !ready">
       <v-container fill-height>
         <v-layout align-center justify-center>
           <v-flex>
@@ -101,6 +101,11 @@ export default {
     DialogInstallApp,
   },
   mixins: [OfflineMixin],
+  data() {
+    return {
+      ready: false,
+    };
+  },
   computed: {
     ...mapGetters({
       loggedIn: 'auth/isLoggedIn',
@@ -125,6 +130,7 @@ export default {
     }
     // Lastly, check user auth status which will remove the loading screen
     await this.checkLoggedIn();
+    this.ready = true;
   },
 };
 </script>

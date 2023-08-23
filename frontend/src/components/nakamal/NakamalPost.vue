@@ -25,25 +25,31 @@
 
       <v-card-actions>
         <v-btn
+          small
+          outline
           color="primary"
           @click="selectVideo"
         >
-          <v-icon class="mr-2">mdi-video-plus</v-icon>
+          <v-icon small class="mr-2">mdi-video-plus</v-icon>
           {{ $t('video.title') }}
         </v-btn>
         <v-btn
-          style="display: none"
+          small
+          outline
           color="primary"
+          @click="selectImage"
         >
-          <v-icon class="mr-2">mdi-image-plus</v-icon>
+          <v-icon small class="mr-2">mdi-image-plus</v-icon>
           Image
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn
+          small
+          outline
           color="secondary"
           @click="submitCheckin"
         >
-          <v-icon class="mr-2">mdi-marker-check</v-icon>
+          <v-icon small class="mr-2">mdi-marker-check</v-icon>
           {{ $t('checkin.title') }}
         </v-btn>
       </v-card-actions>
@@ -83,6 +89,9 @@ export default {
     },
     selectCheckin() {
       this.$emit('select-checkin');
+    },
+    selectImage() {
+      this.$emit('select-image');
     },
     selectVideo() {
       this.$emit('select-video');

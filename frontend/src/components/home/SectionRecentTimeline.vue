@@ -37,20 +37,7 @@
           :linkNakamal="true"
         />
       </div>
-      <div class="text-center">
-        <v-icon x-large class="mb-3">mdi-dots-vertical</v-icon>
-        <h2 class="headline text-h2">{{ $t('home.end_of_feed') }}</h2>
-        <p>{{ $t('home.end_of_feed_extra') }}</p>
-        <v-btn
-          x-large
-          tile
-          color="primary"
-          :to="{ name: 'Map' }"
-        >
-          {{ $t('home.go_to_map') }}
-          <v-icon>mdi-chevron-right</v-icon>
-        </v-btn>
-      </div>
+      <TimelineCallToActionVue />
     </v-container>
   </div>
 </template>
@@ -64,6 +51,7 @@ import CheckinTimelineCard from '@/components/timeline/CheckinTimelineCard.vue';
 import ImageTimelineCard from '@/components/timeline/ImageTimelineCard.vue';
 import TripTimelineCard from '@/components/timeline/TripTimelineCard.vue';
 import VideoTimelineCard from '@/components/timeline/VideoTimelineCard.vue';
+import TimelineCallToActionVue from './TimelineCallToAction.vue';
 
 export default {
   name: 'SectionRecentTimeline',
@@ -72,6 +60,7 @@ export default {
     ImageTimelineCard,
     TripTimelineCard,
     VideoTimelineCard,
+    TimelineCallToActionVue,
   },
   data() {
     return {

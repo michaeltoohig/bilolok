@@ -114,21 +114,25 @@ const actions = {
   //   }
   // },
   async checkLoggedIn({ commit, dispatch, getters }) {
+    console.log('checkLoggedIn start: isLoggedIn=', getters.isLoggedIn)
     if (!getters.isLoggedIn) {
       let token = getters.token;
       if (!token) {
+        console.log('no token, getting local token...')
         const localToken = getLocalToken();
         if (localToken) {
+          console.log('setToken local found')
           commit('setToken', localToken);
           token = localToken;
         }
       }
       if (token) {
+        console.log('getMe for found token')
         try {
           const response = await usersApi.getMe(token);
           await dispatch('user/loadOne', response.data.id, { root: true });
-          commit('setLoggedIn', true);
           commit('setUserProfile', response.data);
+          commit('setLoggedIn', true);
         } catch (error) {
           await dispatch('removeLogIn');
         }

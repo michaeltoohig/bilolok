@@ -5,7 +5,7 @@ import { latLng } from 'leaflet';
 const initialState = () => ({
   byId: [],
   allIds: [],
-  selectedId: null,
+  selectedId: null, // the currently active nakamal (not featured or something else)
 });
 
 const state = initialState();
@@ -17,6 +17,9 @@ const getters = {
   selected: (state, getters) => {
     if (state.selectedId === null) return null;
     return getters.get(state.selectedId);
+  },
+  timeline: (state) => {
+    return state.timeline;
   },
 };
 
@@ -33,10 +36,19 @@ const actions = {
   select: async ({ commit, dispatch }, id) => {
     commit('SELECT', id);
   },
+  fetchTimeline: async ({ commit }, id) => {
+    try {
+      const resp = await nakamalsApi.getTimeline(id);
+      commit('TIMELINE', resp.data);
+    } catch (err) {
+      console.error('nakamal timeline load error', err);
+      throw err;
+    }
+  }
 }
 
 const mutations = {
-  ADD (context, nakamal) {
+  ADD: (state, nakamal) => {
     let i = {
       ...nakamal,
       latLng: latLng(nakamal.lat, nakamal.lng),
@@ -47,7 +59,13 @@ const mutations = {
     state.allIds.push(i.id);
   },
   SELECT: (state, id) => {
+    // reset previously selected nakamal state
+    state.timeline = undefined;
+    // set the ID for the selected ID now that state is reset
     state.selectedId = id;
+  },
+  TIMELINE: (state, items) => {
+    state.timeline = items;
   },
 };
 
